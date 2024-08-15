@@ -2,10 +2,7 @@ export default function Login() {
   return (
     <div className="flex-2 flex h-[60vh] w-[80vw] flex-row rounded-[10rem] bg-slate-200 p-10">
       <div className="m-auto">
-        <img
-          src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExaHhvb3d3b2M3M3l6dHVxdjRzcmc2OTE5bjdtZGp3MXlnNnJ2d2RxeiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/sbW2AUZLt98WoenLSl/giphy.webp"
-          alt="Capy!"
-        />
+        <img src="/src/img/girando.webp" alt="Capy!" />
       </div>
 
       <div className="m-auto">
