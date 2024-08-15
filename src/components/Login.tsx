@@ -31,7 +31,7 @@ export default function Login() {
           </div>
 
           <button
-            className="m-auto flex items-end justify-end rounded bg-slate-800 py-2 px-4 text-white hover:bg-slate-900"
+            className="m-auto flex items-end justify-end rounded bg-slate-800 px-4 py-2 text-white hover:bg-slate-900"
             type="submit"
           >
             Login
