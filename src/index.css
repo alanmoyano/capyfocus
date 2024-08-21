@@ -8,7 +8,7 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: light-dark(rgba(255, 255, 255, 0.87), black);
+  color: rgba(255, 255, 255, 0.87);
   background-color: #abb9e7;
 
   font-synthesis: none;
@@ -31,5 +31,5 @@ h1 {
 }
 
 input {
-  @apply rounded-md p-2 bg-slate-700;
+  @apply rounded-md p-2 bg-slate-700 text-primary;
 }
