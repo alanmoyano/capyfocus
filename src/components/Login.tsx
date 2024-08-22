@@ -1,7 +1,5 @@
 import { Input } from "./ui/input";
 
-import Ojo from "./icons/Ojo";
-
 export default function Login() {
   return (
     <main className="flex h-screen w-[80vw] rounded-[10rem] bg-slate-200 text-black md:h-[60vh]">
