@@ -1,17 +1,21 @@
+import { Input } from "./ui/input";
+
 import Ojo from "./icons/Ojo";
 
 export default function Login() {
   return (
-    <main className="h-screen w-[80vw] rounded-[10rem] bg-slate-200 p-10 text-black md:h-[60vh]">
-      <div className="flex flex-col md:flex-row">
+    <main className="flex h-screen w-[80vw] rounded-[10rem] bg-slate-200 text-black md:h-[60vh]">
+      <div className="m-auto flex flex-col md:flex-row gap-10">
         <div className="m-auto">
           <img src="/girando.gif" alt="Capy!" />
         </div>
 
         <div className="m-auto">
           <div className="mb-8">
-            <h1>Inicie sesión en Capyfocus</h1>
-            <p className="text-lg text-slate-900">
+            <h1 className="mx-1 text-4xl font-bold">
+              Inicie sesión en Capyfocus
+            </h1>
+            <p className="ml-1 text-lg text-slate-900">
               Ingrese sus credenciales para continuar
             </p>
           </div>
@@ -22,11 +26,24 @@ export default function Login() {
           >
             <div className="flex flex-col">
               <label>Username</label>
-              <input type="text" placeholder="breightend" />
+              <Input
+                placeholder="Breightend"
+                type="text"
+                autoComplete="off"
+                className="max-w-md"
+              />
             </div>
 
-            <div className="flex flex-col">
+            <div className="m-auto flex flex-col md:m-0">
               <label className="block">Password</label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Enter password"
+                className="max-w-96 md:max-w-md"
+              />
+
+              {/* password con ojito para ver o no
               <div className="relative">
                 <input
                   id="password"
@@ -49,6 +66,7 @@ export default function Login() {
                   <Ojo />
                 </button>
               </div>
+              */}
             </div>
 
             <button
