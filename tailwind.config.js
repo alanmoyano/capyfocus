@@ -17,6 +17,9 @@ module.exports = {
       },
     },
     extend: {
+      colors: {
+        bg: "#abb9e7"
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },

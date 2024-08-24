@@ -14,15 +14,17 @@ export default function Login() {
             <h1 className="md:text mx-1 text-pretty text-center text-2xl font-bold md:text-3xl lg:text-4xl">
               Inicie sesión
             </h1>
-            <p className="ml-1 text-pretty text-center text-lg text-slate-900">
+            <p className="ml-1 text-pretty text-center text-lg text-slate-600">
               Ingrese sus credenciales para continuar
             </p>
           </div>
 
           <form
             className="flex flex-col gap-4"
-            onSubmit={(e) => e.preventDefault()}
+            // onSubmit={(e) => e.preventDefault()}
+            action="https://google.com"
             autoComplete="off"
+            id="form"
           >
             <div className="flex flex-col">
               <label>Username</label>
@@ -62,13 +64,21 @@ export default function Login() {
               </div>
               */}
             </div>
-
-            <div className="flex justify-end gap-4">
-              <Button type="button" className="bg-slate-700">Registrar</Button>
-
-              <Button type="submit">Iniciar</Button>
-            </div>
           </form>
+
+          <p className="ml-2 mt-1 text-slate-500">
+            No tienes una cuenta?{" "}
+            <a href="#" className="text-indigo-600">
+              créala aquí
+            </a>
+          </p>
+          <Button
+            type="submit"
+            className="ml-auto flex justify-end mt-4"
+            form="form"
+          >
+            Iniciar
+          </Button>
         </div>
       </div>
     </main>

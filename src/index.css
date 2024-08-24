@@ -7,8 +7,10 @@
   line-height: 1.5;
   font-weight: 400;
 
+  --bg: #abb9e7;
+
   color: rgba(255, 255, 255, 0.87);
-  background-color: #abb9e7;
+  background-color: var(--bg);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
