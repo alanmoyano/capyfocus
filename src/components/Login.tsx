@@ -1,19 +1,20 @@
+import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
 export default function Login() {
   return (
-    <main className="flex h-screen w-[80vw] rounded-[10rem] bg-slate-200 text-black md:h-[60vh]">
-      <div className="m-auto flex flex-col md:flex-row gap-10">
+    <main className="flex h-full w-[80vw] items-center justify-center rounded-[10rem] bg-slate-200 p-4 text-black md:h-[70vh]">
+      <div className="xl:gap-30 flex flex-col p-10 sm:gap-10 md:flex-row lg:gap-20 2xl:gap-40">
         <div className="m-auto">
-          <img src="/girando.gif" alt="Capy!" />
+          <img src="/girando.gif" width={366.33} height={395} alt="Capy!" />
         </div>
 
         <div className="m-auto">
-          <div className="mb-8">
-            <h1 className="mx-1 text-4xl font-bold">
-              Inicie sesión en Capyfocus
+          <div className="mb-4 mt-2">
+            <h1 className="md:text mx-1 text-pretty text-center text-2xl font-bold md:text-3xl lg:text-4xl">
+              Inicie sesión
             </h1>
-            <p className="ml-1 text-lg text-slate-900">
+            <p className="ml-1 text-pretty text-center text-lg text-slate-900">
               Ingrese sus credenciales para continuar
             </p>
           </div>
@@ -21,24 +22,19 @@ export default function Login() {
           <form
             className="flex flex-col gap-4"
             onSubmit={(e) => e.preventDefault()}
+            autoComplete="off"
           >
             <div className="flex flex-col">
               <label>Username</label>
-              <Input
-                placeholder="Breightend"
-                type="text"
-                autoComplete="off"
-                className="max-w-md"
-              />
+              <Input placeholder="Breightend" type="text" />
             </div>
 
-            <div className="m-auto flex flex-col md:m-0">
-              <label className="block">Password</label>
+            <div className="flex flex-col">
+              <label>Password</label>
               <Input
                 id="password"
                 type="password"
                 placeholder="Enter password"
-                className="max-w-96 md:max-w-md"
               />
 
               {/* password con ojito para ver o no
@@ -67,12 +63,11 @@ export default function Login() {
               */}
             </div>
 
-            <button
-              className="m-auto flex items-end justify-end rounded bg-slate-800 px-4 py-2 text-white hover:bg-slate-900"
-              type="submit"
-            >
-              Login
-            </button>
+            <div className="flex justify-end gap-4">
+              <Button type="button" className="bg-slate-700">Registrar</Button>
+
+              <Button type="submit">Iniciar</Button>
+            </div>
           </form>
         </div>
       </div>
