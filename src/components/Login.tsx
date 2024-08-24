@@ -6,7 +6,14 @@ export default function Login() {
     <main className="flex h-full w-[80vw] items-center justify-center rounded-[10rem] bg-slate-200 p-4 text-black md:h-[70vh]">
       <div className="xl:gap-30 flex flex-col p-10 sm:gap-10 md:flex-row lg:gap-20 2xl:gap-40">
         <div className="m-auto">
-          <img src="/girando.gif" width={366.33} height={395} alt="Capy!" />
+          <img
+            src="/girando.gif"
+            width={366.33}
+            height={395}
+            style={{
+              aspectRatio: "366/301",
+            }}
+          />
         </div>
 
         <div className="m-auto">
@@ -74,7 +81,7 @@ export default function Login() {
           </p>
           <Button
             type="submit"
-            className="ml-auto flex justify-end mt-4"
+            className="ml-auto mt-4 flex justify-end"
             form="form"
           >
             Iniciar
