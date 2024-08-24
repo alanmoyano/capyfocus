@@ -7,9 +7,10 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: light-dark(rgba(255, 255, 255, 0.87), black);
-  background-color: #abb9e7;
+  --bg: #abb9e7;
+
+  color: rgba(255, 255, 255, 0.87);
+  background-color: var(--bg);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -19,17 +20,8 @@
 
 body {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
 
   min-height: 100vh;
-}
-
-h1 {
-  @apply text-4xl font-bold;
-}
-
-input {
-  @apply rounded-md p-2 bg-slate-700;
 }
