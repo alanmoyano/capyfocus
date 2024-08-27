@@ -1,27 +1,26 @@
+import { Link } from "wouter";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
 export default function Login() {
   return (
-    <main className="flex h-full w-[80vw] items-center justify-center rounded-[10rem] bg-slate-200 p-4 text-black md:h-[70vh]">
+    <main className="flex h-full w-[80vw] items-center justify-center rounded-[10rem] bg-secondary p-4 text-current md:h-[70vh]">
       <div className="xl:gap-30 flex flex-col p-10 sm:gap-10 md:flex-row lg:gap-20 2xl:gap-40">
         <div className="m-auto">
           <img
             src="/girando.gif"
             width={366.33}
             height={395}
-            style={{
-              aspectRatio: "366/301",
-            }}
+            className="aspect-[366/301]"
           />
         </div>
 
         <div className="m-auto">
           <div className="mb-4 mt-2">
-            <h1 className="md:text mx-1 text-pretty text-center text-2xl font-bold md:text-3xl lg:text-4xl">
+            <h1 className="mx-1 text-pretty text-center text-2xl font-bold md:text-3xl lg:text-4xl">
               Inicie sesión
             </h1>
-            <p className="ml-1 text-pretty text-center text-lg text-slate-600">
+            <p className="text-muted ml-1 text-pretty text-center text-lg">
               Ingrese sus credenciales para continuar
             </p>
           </div>
@@ -73,15 +72,18 @@ export default function Login() {
             </div>
           </form>
 
-          <p className="ml-2 mt-1 text-slate-500">
-            No tienes una cuenta?{" "}
-            <a href="#" className="text-indigo-600">
+          <p className="text-muted ml-2 mt-1">
+            No tienes una cuenta?
+            <Link
+              to="/signup"
+              className="rounded-lg px-1 font-semibold text-text transition-all duration-200 hover:bg-primary/50"
+            >
               créala aquí
-            </a>
+            </Link>
           </p>
           <Button
             type="submit"
-            className="ml-auto mt-4 flex justify-end"
+            className="text-cream ml-auto mt-4 flex justify-end"
             form="form"
           >
             Iniciar

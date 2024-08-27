@@ -7,15 +7,33 @@
   line-height: 1.5;
   font-weight: 400;
 
-  --bg: #abb9e7;
-
-  color: rgba(255, 255, 255, 0.87);
-  background-color: var(--bg);
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  color: hsl(var(--text));
+  background-color: hsl(var(--background));
+}
+
+@layer base {
+  :root {
+    --cream: 330 20% 98%;
+    --text: 330 20% 2%;
+    --muted: 0 0% 15%;
+    --background: 330 37% 97%;
+    --primary: 271 64% 45%;
+    --secondary: 325 88% 70%;
+    --accent: 204 72% 63%;
+  }
+  .dark {
+    --text: 330 20% 98%;
+    --muted: 330 20% 82%;
+    --background: 330 25% 5%;
+    --primary: 271 64% 55%;
+    --secondary: 325 88% 30%;
+    --accent: 204 72% 37%;
+  }
 }
 
 body {
