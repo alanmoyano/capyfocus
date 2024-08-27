@@ -8,10 +8,11 @@ import Pomodoro from './components/Pomodoro'
 import Timer from './components/Timer'
 import Badges from './components/Badges'
 import Navbar from './components/Navbar'
+import { ThemeProvider } from './components/providers/ThemeProvider'
 
 function App() {
   return (
-    <>
+    <ThemeProvider defaultTheme='dark' storageKey='theme'>
       <SpeedInsights />
 
       <Navbar />
@@ -39,7 +40,7 @@ function App() {
 
         <Route component={() => <>404!</>} />
       </Switch>
-    </>
+    </ThemeProvider>
   )
 }
 
