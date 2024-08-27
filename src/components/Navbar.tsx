@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "wouter";
 
 type NavbarLinkProps = {
@@ -19,6 +19,33 @@ function NavbarLink({ to, location, children }: NavbarLinkProps) {
 
 export default function Navbar() {
   const location = useLocation()[0];
+
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme) return savedTheme;
+
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      return "dark";
+    }
+
+    return "light";
+  });
+
+  function toggleTheme() {
+    setTheme((prevTheme) => {
+      const newTheme = prevTheme === "light" ? "dark" : "light";
+      localStorage.setItem("theme", newTheme);
+
+      return newTheme;
+    });
+  }
+
+  if (theme === "dark") {
+    document.documentElement.classList.add("dark");
+  } else {
+    document.documentElement.classList.remove("dark");
+  }
 
   return (
     <nav className="fixed start-0 top-0 z-20 w-full border-b bg-accent">
@@ -41,6 +68,9 @@ export default function Navbar() {
         <NavbarLink to="/badges" location={location}>
           Badges
         </NavbarLink>
+        <button onClick={toggleTheme} className="rounded bg-primary p-2">
+          Theme: {theme}
+        </button>
       </div>
     </nav>
   );
