@@ -3,5 +3,5 @@ export default function Badges() {
     <>
       <h1>Badges!</h1>
     </>
-  );
+  )
 }

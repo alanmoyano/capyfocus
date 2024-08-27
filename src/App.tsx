@@ -1,13 +1,13 @@
-import { SpeedInsights } from "@vercel/speed-insights/react";
+import { SpeedInsights } from '@vercel/speed-insights/react'
 
-import { Link, Route, Switch } from "wouter";
+import { Link, Route, Switch } from 'wouter'
 
-import Login from "./components/Login";
-import SignUp from "./components/SignUp";
-import Pomodoro from "./components/Pomodoro";
-import Timer from "./components/Timer";
-import Badges from "./components/Badges";
-import Navbar from "./components/Navbar";
+import Login from './components/Login'
+import SignUp from './components/SignUp'
+import Pomodoro from './components/Pomodoro'
+import Timer from './components/Timer'
+import Badges from './components/Badges'
+import Navbar from './components/Navbar'
 
 function App() {
   return (
@@ -18,29 +18,29 @@ function App() {
 
       <Switch>
         <Route
-          path="/"
+          path='/'
           component={() => (
             <>
               <h1>hola!</h1>
-              <Link to="/login" className="font-bold text-primary">
+              <Link to='/login' className='font-bold text-primary'>
                 Login
               </Link>
             </>
           )}
         />
 
-        <Route path="/login" component={Login} />
-        <Route path="/signup" component={SignUp} />
+        <Route path='/login' component={Login} />
+        <Route path='/signup' component={SignUp} />
 
-        <Route path="/pomodoro" component={Pomodoro} />
-        <Route path="/timer" component={Timer} />
+        <Route path='/pomodoro' component={Pomodoro} />
+        <Route path='/timer' component={Timer} />
 
-        <Route path="/badges" component={Badges} />
+        <Route path='/badges' component={Badges} />
 
         <Route component={() => <>404!</>} />
       </Switch>
     </>
-  );
+  )
 }
 
-export default App;
+export default App

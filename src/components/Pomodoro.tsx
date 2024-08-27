@@ -3,5 +3,5 @@ export default function Pomodoro() {
     <>
       <h1>Pomodoro!</h1>
     </>
-  );
+  )
 }

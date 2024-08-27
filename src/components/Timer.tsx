@@ -3,5 +3,5 @@ export default function Timer() {
     <>
       <h1>Timer!</h1>
     </>
-  );
+  )
 }
