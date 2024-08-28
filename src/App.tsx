@@ -18,17 +18,14 @@ function App() {
       {/* <Navbar /> */}
 
       <Switch>
-        <Route
-          path='/'
-          component={() => (
-            <>
-              <h1>hola!</h1>
-              <Link to='/login' className='font-bold text-primary'>
-                Login
-              </Link>
-            </>
-          )}
-        />
+        <Route path='/'>
+          <>
+            <h1>hola!</h1>
+            <Link to='/login' className='font-bold text-primary'>
+              Login
+            </Link>
+          </>
+        </Route>
 
         <Route path='/login' component={Login} />
         <Route path='/signup' component={SignUp} />
@@ -38,7 +35,7 @@ function App() {
 
         <Route path='/badges' component={Badges} />
 
-        <Route component={() => <>404!</>} />
+        <Route>404!</Route>
       </Switch>
     </ThemeProvider>
   )
