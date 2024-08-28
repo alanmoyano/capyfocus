@@ -1,17 +1,17 @@
-import React, { useState } from 'react'
-import { Link, useLocation, useRoute } from 'wouter'
+import React from 'react'
+import { Link, useRoute } from 'wouter'
 import { ModeToggle } from './ModeToggle'
 
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
+  // NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-  NavigationMenuViewport
+  navigationMenuTriggerStyle
+  // NavigationMenuViewport
 } from '@/components/ui/navigation-menu'
 
 type NavbarLinkProps = {

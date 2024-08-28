@@ -14,7 +14,7 @@
 
   --cream: 330 20% 98%;
   --muted: 0 0% 15%;
-  
+
   color: hsl(var(--text));
   background-color: hsl(var(--background));
 }
@@ -42,7 +42,7 @@
     --ring: 189 46% 40%;
     --radius: 0.5rem;
   }
- 
+
   .dark {
     --background: 30 31% 5%;
     --foreground: 29 84% 95%;

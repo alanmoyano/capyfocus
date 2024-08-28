@@ -73,7 +73,7 @@ export default function SignUp() {
               Ya tienes una cuenta?{' '}
               <Link
                 to='/login'
-                className='rounded-lg px-1 font-semibold text-text transition-all duration-200 hover:bg-primary/50'
+                className='text-text rounded-lg px-1 font-semibold transition-all duration-200 hover:bg-primary/50'
               >
                 inicia sesión aquí
               </Link>
@@ -81,7 +81,7 @@ export default function SignUp() {
             <Button
               type='submit'
               form='form'
-              className='ml-auto mt-4 flex justify-end text-cream'
+              className='text-cream ml-auto mt-4 flex justify-end'
             >
               Registrarme
             </Button>
