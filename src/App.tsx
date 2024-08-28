@@ -12,7 +12,7 @@ import { ThemeProvider } from './components/providers/ThemeProvider'
 
 function App() {
   return (
-    <ThemeProvider defaultTheme='dark' storageKey='theme'>
+    <ThemeProvider defaultTheme='light' storageKey='theme'>
       <SpeedInsights />
 
       {/* <Navbar /> */}
