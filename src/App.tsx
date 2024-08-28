@@ -17,19 +17,16 @@ function App() {
 
       {/* <Navbar /> */}
 
-      <Route
-        path='/'
-        component={() => (
+      <Switch>
+        <Route path='/'>
           <>
             <h1>hola!</h1>
             <Link to='/login' className='font-bold text-primary'>
               Login
             </Link>
           </>
-        )}
-      />
+        </Route>
 
-      <Switch>
         <Route path='/login' component={Login} />
         <Route path='/signup' component={SignUp} />
 
