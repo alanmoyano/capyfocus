@@ -5,7 +5,7 @@ import { Input } from './ui/input'
 export default function SignUp() {
   return (
     <>
-      <main className='flex h-full w-[80vw] items-center justify-center rounded-[10rem] bg-secondary p-4 text-current md:h-[70vh]'>
+      <section className='flex h-full w-[80vw] items-center justify-center rounded-[10rem] bg-secondary p-4 text-current md:h-[70vh]'>
         <div className='xl:gap-30 flex flex-col p-10 sm:gap-10 md:flex-row lg:gap-20 2xl:gap-40'>
           <div className='m-auto'>
             <img
@@ -87,7 +87,7 @@ export default function SignUp() {
             </Button>
           </div>
         </div>
-      </main>
+      </section>
     </>
   )
 }
