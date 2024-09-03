@@ -1,15 +1,15 @@
 import React from 'react'
-import { Link, useRoute } from 'wouter'
+import { useRoute } from 'wouter'
 import { ModeToggle } from './ModeToggle'
 
 import {
   NavigationMenu,
-  NavigationMenuContent,
+  // NavigationMenuContent,
   // NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
+  // NavigationMenuTrigger,
   navigationMenuTriggerStyle
   // NavigationMenuViewport
 } from '@/components/ui/navigation-menu'
@@ -23,14 +23,13 @@ function NavbarLink({ to, children }: NavbarLinkProps) {
   const isActive = useRoute(to)[0]
 
   return (
-    <Link to={to}>
-      <NavigationMenuLink
-        active={isActive}
-        className={navigationMenuTriggerStyle()}
-      >
-        {children}
-      </NavigationMenuLink>
-    </Link>
+    <NavigationMenuLink
+      active={isActive}
+      className={navigationMenuTriggerStyle()}
+      href={to}
+    >
+      {children}
+    </NavigationMenuLink>
   )
 }
 
@@ -62,8 +61,8 @@ export default function Navbar() {
     //     <ModeToggle />
     //   </div>
     // </nav>
-    <NavigationMenu className='fixed start-0 top-0 z-20 w-full border-b'>
-      <NavigationMenuList className='mx-auto flex max-w-screen-xl flex-wrap items-center justify-center p-2'>
+    <NavigationMenu className='fixed top-0 z-20 w-screen'>
+      <NavigationMenuList className='p-2'>
         <NavigationMenuItem>
           <NavbarLink to='/'>Inicio</NavbarLink>
         </NavigationMenuItem>
@@ -89,15 +88,7 @@ export default function Navbar() {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Item One</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <NavigationMenuLink>Link</NavigationMenuLink>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuLink>
-            <ModeToggle />
-          </NavigationMenuLink>
+          <ModeToggle />
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
