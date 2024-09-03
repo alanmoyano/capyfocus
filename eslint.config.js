@@ -46,7 +46,11 @@ export default tseslint.config(
         { ignoreArrowShorthand: true }
       ],
       '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
-      'react/prop-types': 'off'
+      'react/prop-types': 'off',
+      '@typescript-eslint/restrict-template-expressions': [
+        'error',
+        { allowNumber: true }
+      ]
     }
   }
 )

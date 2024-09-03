@@ -7,7 +7,7 @@ import SignUp from './components/SignUp'
 import Pomodoro from './components/Pomodoro'
 import Timer from './components/Timer'
 import Badges from './components/Badges'
-// import Navbar from './components/Navbar'
+import Navbar from './components/Navbar'
 import { ThemeProvider } from './components/providers/ThemeProvider'
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
     <ThemeProvider defaultTheme='light' storageKey='theme'>
       <SpeedInsights />
 
-      {/* <Navbar /> */}
+      <Navbar />
 
       <Switch>
         <Route path='/'>
@@ -30,8 +30,12 @@ function App() {
         <Route path='/login' component={Login} />
         <Route path='/signup' component={SignUp} />
 
-        <Route path='/pomodoro' component={Pomodoro} />
-        <Route path='/timer' component={Timer} />
+        <Route path='/pomodoro'>
+          <Pomodoro pomodoroSessions={2} />
+        </Route>
+        <Route path='/timer'>
+          <Timer />
+        </Route>
 
         <Route path='/badges' component={Badges} />
 
