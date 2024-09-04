@@ -1,4 +1,4 @@
-import { Link } from 'wouter'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 export default function Inicio() {
   return (
@@ -9,10 +9,12 @@ export default function Inicio() {
         </div>
 
         <div className='m-auto'>
-          <h1>hola!</h1>
-          <Link to='/login' className='font-bold text-primary'>
-            Login
-          </Link>
+          <h1 className='text-4xl font-bold'>Hola!</h1>
+          <p>Elije tu método de estudio:</p>
+          <ToggleGroup type='single' className='rounded-xl bg-primary/60 p-2'>
+            <ToggleGroupItem value='Capydoro'>Capydoro</ToggleGroupItem>
+            <ToggleGroupItem value='Capymetro'>Capymetro</ToggleGroupItem>
+          </ToggleGroup>
         </div>
       </section>
     </>
