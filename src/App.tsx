@@ -1,4 +1,5 @@
 import { SpeedInsights } from '@vercel/speed-insights/react'
+import { Analytics } from '@vercel/analytics/react'
 
 import { Route, Switch } from 'wouter'
 
@@ -15,6 +16,7 @@ function App() {
   return (
     <ThemeProvider defaultTheme='light' storageKey='theme'>
       <SpeedInsights />
+      <Analytics />
 
       <Navbar />
 
