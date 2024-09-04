@@ -61,12 +61,21 @@ export default function Navbar() {
     //     <ModeToggle />
     //   </div>
     // </nav>
-    <NavigationMenu className='fixed top-0 z-20 w-screen'>
-      <NavigationMenuList className='p-2'>
-        <NavigationMenuItem>
-          <NavbarLink to='/'>Inicio</NavbarLink>
-        </NavigationMenuItem>
+    <NavigationMenu className='sticky w-screen p-2'>
+      <div className='flex flex-1 justify-start'>
+        {/* <NavbarLink to='/'>Inicio</NavbarLink>
 
+        versión con logo! */}
+
+        <NavbarLink to='/'>
+          <div className='flex items-center justify-center gap-2'>
+            <img src='/logo.png' height={30} width={30} />
+            <p>Capyfocus</p>
+          </div>
+        </NavbarLink>
+      </div>
+
+      <NavigationMenuList>
         <NavigationMenuItem>
           <NavbarLink to='/login'>Login</NavbarLink>
         </NavigationMenuItem>
@@ -86,11 +95,9 @@ export default function Navbar() {
         <NavigationMenuItem>
           <NavbarLink to='/badges'>Badges</NavbarLink>
         </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <ModeToggle />
-        </NavigationMenuItem>
       </NavigationMenuList>
+
+      <ModeToggle className='flex flex-1 justify-end' />
     </NavigationMenu>
   )
 }

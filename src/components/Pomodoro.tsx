@@ -73,7 +73,7 @@ export default function Pomodoro({
 
   return (
     <div className='flex flex-col items-center justify-center'>
-      <h1 className='text-4xl'>Timer!</h1>
+      <h1 className='text-4xl font-bold'>Capydoro</h1>
 
       <ActualTimer mode={mode} time={countdown} />
 
@@ -108,8 +108,10 @@ export default function Pomodoro({
       </div>
 
       {pomodoroCount.current >= pomodoroSessions && (
-        <Confetti effectCount={1} />
+        <Confetti mode='boom' particleCount={150} />
       )}
+
+      {/* <Confetti mode='boom' particleCount={150} /> */}
 
       <p>Pomodoro count: {Math.floor(pomodoroCount.current)}</p>
     </div>
