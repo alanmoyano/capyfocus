@@ -63,16 +63,16 @@ export default function Navbar() {
     // </nav>
     <NavigationMenu className='sticky w-screen p-2'>
       <div className='flex flex-1 justify-start'>
-        <NavbarLink to='/'>Inicio</NavbarLink>
+        {/* <NavbarLink to='/'>Inicio</NavbarLink>
 
-        {/* versión con logo!
+        versión con logo! */}
 
         <NavbarLink to='/'>
           <div className='flex items-center justify-center gap-2'>
             <img src='/logo.png' height={30} width={30} />
             <p>Capyfocus</p>
           </div>
-        </NavbarLink> */}
+        </NavbarLink>
       </div>
 
       <NavigationMenuList>
