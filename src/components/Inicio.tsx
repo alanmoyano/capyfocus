@@ -8,11 +8,10 @@ import {
 } from '@/components/ui/tooltip'
 import { Button } from './ui/button'
 
-<<<<<<< HEAD
-import { Edit3, Hourglass, Star, Timer, Trash } from 'lucide-react'
-=======
-import { Hourglass, Timer, Trash, Edit3, Star, StarOff} from 'lucide-react'
->>>>>>> bbf889b445d9a293292483f2005b32949ae87d37
+
+import { Edit3, Hourglass, Star, Timer, Trash, StarOff } from 'lucide-react'
+
+
 
 import {
   Select,
@@ -96,15 +95,15 @@ export default function Inicio() {
     }
 
   const [objetivos, setObjetivos] = useState<string[]>([])
-<<<<<<< HEAD
-  const [objetivosFav, setObjetivosFav] = useState<string[]>([]) 
+
+ 
   
   // vacia
   /* const [value, setValue] = useState('') */
-=======
+
   const [objetivosFav, setObjetivosFav] = useState<string[]>([]) // vacia
   const [inputValue, setInputValue] = useState('')
->>>>>>> bbf889b445d9a293292483f2005b32949ae87d37
+
   const [index, setIndex] = useState<number|null>(null) // hasta que se toque
 
   const handleAdd = (e: React.KeyboardEvent<HTMLInputElement>) => {
