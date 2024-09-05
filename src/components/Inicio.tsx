@@ -1,4 +1,4 @@
-import { Input } from "@/components/ui/input"
+import { Input } from '@/components/ui/input'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import {
   Tooltip,
@@ -8,10 +8,7 @@ import {
 } from '@/components/ui/tooltip'
 import { Button } from './ui/button'
 
-
 import { Edit3, Hourglass, Star, Timer, Trash, StarOff } from 'lucide-react'
-
-
 
 import {
   Select,
@@ -23,48 +20,46 @@ import {
   SelectValue
 } from '@/components/ui/select'
 
-import { Check, ChevronsUpDown } from "lucide-react"
-import * as React from "react"
- 
+import { Check, ChevronsUpDown } from 'lucide-react'
+import * as React from 'react'
+
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList,
-} from "@/components/ui/command"
+  CommandList
+} from '@/components/ui/command'
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { cn } from "@/lib/utils"
- 
+  PopoverTrigger
+} from '@/components/ui/popover'
+import { cn } from '@/lib/utils'
+
 const frameworks = [
   {
-    value: "next.js",
-    label: "Next.js",
+    value: 'next.js',
+    label: 'Next.js'
   },
   {
-    value: "sveltekit",
-    label: "SvelteKit",
+    value: 'sveltekit',
+    label: 'SvelteKit'
   },
   {
-    value: "nuxt.js",
-    label: "Nuxt.js",
+    value: 'nuxt.js',
+    label: 'Nuxt.js'
   },
   {
-    value: "remix",
-    label: "Remix",
+    value: 'remix',
+    label: 'Remix'
   },
   {
-    value: "astro",
-    label: "Astro",
-  },
+    value: 'astro',
+    label: 'Astro'
+  }
 ]
- 
-
 
 import { useState } from 'react'
 
@@ -79,32 +74,30 @@ const descriptions: Record<CapyMetodos, string> = {
 
 export default function Inicio() {
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("")
+  const [value, setValue] = React.useState('')
 
   const [description, setDescription] =
     useState<keyof typeof descriptions>('Capydoro')
 
-    const [, setLocation] = useLocation()
+  const [, setLocation] = useLocation()
 
-    const handleAccept = () => {
-      if (description === 'Capydoro') {
-        setLocation('/capydoro') 
-      } else if (description === 'Capymetro') {
-        setLocation('/capymetro') 
-      }
+  const handleAccept = () => {
+    if (description === 'Capydoro') {
+      setLocation('/capydoro')
+    } else {
+      setLocation('/capymetro')
     }
+  }
 
   const [objetivos, setObjetivos] = useState<string[]>([])
 
- 
-  
   // vacia
   /* const [value, setValue] = useState('') */
 
   const [objetivosFav, setObjetivosFav] = useState<string[]>([]) // vacia
   const [inputValue, setInputValue] = useState('')
 
-  const [index, setIndex] = useState<number|null>(null) // hasta que se toque
+  const [index, setIndex] = useState<number | null>(null) // hasta que se toque
 
   const handleAdd = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key == 'Enter') {
@@ -116,16 +109,19 @@ export default function Inicio() {
   const handleDelete = (index: number) => {
     const auxObjetivos = objetivos.filter((_, i) => i !== index) //hola a los que no son
     setObjetivos(auxObjetivos)
-    const auxObjetivosFav = objetivosFav.filter((_, i) => i !== index);
+    const auxObjetivosFav = objetivosFav.filter((_, i) => i !== index)
     setObjetivosFav(auxObjetivosFav)
   }
-  
+
   const handleEdit = (index: number) => {
     setIndex(index)
   }
 
-  const handleSaveEdit = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-    if (e.key == 'Enter'){
+  const handleSaveEdit = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    if (e.key == 'Enter') {
       const auxObjetivos = [...objetivos]
       auxObjetivos[index] = e.currentTarget.value.trim()
       setObjetivos(auxObjetivos)
@@ -133,15 +129,13 @@ export default function Inicio() {
     }
   }
 
-  const handleFav = (key) => {
+  const handleFav = (key: string) => {
     if (objetivosFav.includes(key)) {
-      setObjetivosFav(objetivosFav.filter(favKey => favKey !== key));
+      setObjetivosFav(objetivosFav.filter(favKey => favKey !== key))
     } else {
-      setObjetivosFav([...objetivosFav, key]);
+      setObjetivosFav([...objetivosFav, key])
     }
-  };
-  
-
+  }
 
   return (
     <>
@@ -168,7 +162,6 @@ export default function Inicio() {
                   </TooltipProvider>
                 </SelectItem>
                 <SelectItem value='pasivoAgresiva'>
-                  
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -180,7 +173,6 @@ export default function Inicio() {
                     </Tooltip>
                   </TooltipProvider>
                 </SelectItem>
-                
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -210,50 +202,49 @@ export default function Inicio() {
             </ToggleGroupItem>
           </ToggleGroup>
 
-
           <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
             <div className='flex items-center gap-2'>
               <Input
-                  type='text'
-                  placeholder='Ingrese el objetivo'
-                  value={inputValue}
-                  onKeyDown={handleAdd}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  className='p-3 rounded-md border border-secondary bg-white shadow-md focus:outline-none focus:ring-2 hover:shadow-lg transition-shadow duration-200 ease-in-out'
+                type='text'
+                placeholder='Ingrese el objetivo'
+                value={inputValue}
+                onKeyDown={handleAdd}
+                onChange={e => setInputValue(e.target.value)}
+                className='rounded-md border border-secondary bg-white p-3 shadow-md transition-shadow duration-200 ease-in-out hover:shadow-lg focus:outline-none focus:ring-2'
               />
             </div>
             <div className='mt-4'>
-              <ul className='list-inside list-disc text-black text-base space-y-2'>
+              <ul className='list-inside list-disc space-y-2 text-base text-black'>
                 {objetivos.map((objetivo, key) => (
                   <li key={key} className='flex items-center justify-between'>
-                    
-                    {index === key? (
+                    {index === key ? (
                       <div className='flex items-center gap-2'>
-                        <Input 
-                        type='text' 
-                        defaultValue={objetivo}
-                        onKeyDown={(e) => handleSaveEdit(e, key)}
-                        className='p-3 rounded-md border border-secondary bg-white shadow-md focus:outline-none focus:ring-2 hover:shadow-lg transition-shadow duration-200 ease-in-out'
+                        <Input
+                          type='text'
+                          defaultValue={objetivo}
+                          onKeyDown={e => handleSaveEdit(e, key)}
+                          className='rounded-md border border-secondary bg-white p-3 shadow-md transition-shadow duration-200 ease-in-out hover:shadow-lg focus:outline-none focus:ring-2'
                         />
-                      </div>) : ( 
+                      </div>
+                    ) : (
                       <div className='flex w-full items-center justify-between'>
-                          <span>{objetivo}</span>
-                          <div className='flex items-center gap-2'>
-                            <button onClick={() => handleEdit(key)}>
-                              <Edit3 size={20} />
-                            </button>
-                            <button onClick={() => handleDelete(key)}>
-                              <Trash size={20} />
-                            </button>
-                            <button onClick={() => handleFav(key)}>
-                              {objetivosFav.includes(key) ? (
-                                <StarOff size={20} style={{ color: '#ffbc05' }} />
-                              ) : (
-                                <Star size={20} className='text-black-500' />
-                              )}
-                            </button>
-                          </div>
+                        <span>{objetivo}</span>
+                        <div className='flex items-center gap-2'>
+                          <button onClick={() => handleEdit(key)}>
+                            <Edit3 size={20} />
+                          </button>
+                          <button onClick={() => handleDelete(key)}>
+                            <Trash size={20} />
+                          </button>
+                          <button onClick={() => handleFav(String(key))}>
+                            {objetivosFav.includes(String(key)) ? (
+                              <StarOff size={20} style={{ color: '#ffbc05' }} />
+                            ) : (
+                              <Star size={20} className='text-black-500' />
+                            )}
+                          </button>
                         </div>
+                      </div>
                     )}
                   </li>
                 ))}
@@ -264,8 +255,7 @@ export default function Inicio() {
           <Button
             type='submit'
             className='ml-auto mt-4 flex justify-end'
-            
-            onClick={handleAccept} 
+            onClick={handleAccept}
           >
             Aceptar
           </Button>
@@ -276,48 +266,48 @@ export default function Inicio() {
         </div>
       </section>
       <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-[200px] justify-between"
-        >
-          {value
-            ? frameworks.find((framework) => framework.value === value)?.label
-            : "Select framework..."}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
-        <Command>
-          <CommandInput placeholder="Search framework..." />
-          <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
-            <CommandGroup>
-              {frameworks.map((framework) => (
-                <CommandItem
-                  key={framework.value}
-                  value={framework.value}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue)
-                    setOpen(false)
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      value === framework.value ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  {framework.label}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant='outline'
+            role='combobox'
+            aria-expanded={open}
+            className='w-[200px] justify-between'
+          >
+            {value
+              ? frameworks.find(framework => framework.value === value)?.label
+              : 'Select framework...'}
+            <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className='w-[200px] p-0'>
+          <Command>
+            <CommandInput placeholder='Search framework...' />
+            <CommandList>
+              <CommandEmpty>No framework found.</CommandEmpty>
+              <CommandGroup>
+                {frameworks.map(framework => (
+                  <CommandItem
+                    key={framework.value}
+                    value={framework.value}
+                    onSelect={currentValue => {
+                      setValue(currentValue === value ? '' : currentValue)
+                      setOpen(false)
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        'mr-2 h-4 w-4',
+                        value === framework.value ? 'opacity-100' : 'opacity-0'
+                      )}
+                    />
+                    {framework.label}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
     </>
   )
 }

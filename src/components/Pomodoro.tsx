@@ -113,9 +113,11 @@ export default function Pomodoro({
         </div>
       </div>
       <div>
-          <Button className='flex flex-col' onClick={handleAccept}>Volver</Button>
+        <Button className='flex flex-col' onClick={handleAccept}>
+          Volver
+        </Button>
       </div>
-      
+
       {pomodoroCount.current >= pomodoroSessions && (
         <Confetti mode='boom' particleCount={150} />
       )}

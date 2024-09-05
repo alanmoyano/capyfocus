@@ -39,10 +39,9 @@ function App() {
           </Route>
 
           <Route path='/capyInsignias' component={Badges} />
-          <Route path='/capyEstadisticas' component={CapyEstadisticas}/>
+          <Route path='/capyEstadisticas' component={CapyEstadisticas} />
 
-          <Route path='/usuario' component={Usuario}/>
-
+          <Route path='/usuario' component={Usuario} />
 
           <Route>404!</Route>
         </Switch>
