@@ -74,12 +74,13 @@ export default function Timer() {
         {/* Columna 2:*/}
         <div className='col-span-1 grid grid-cols-2 gap-4 mt-32'>
           <div className='text-black'>
-            <div className='bg-accent/90 rounded-xl'>
+            <div className='bg-accent/90 rounded-xl p-4'>
 
             <ActualTimer mode={'Session'} time={Sessioncountup} />
             </div>
             <div className='mt-16 ml-10'>
               <Button
+              className=' '
                 onClick={() => {
                   setIsActive(prev => !prev)
                 }}
@@ -90,7 +91,7 @@ export default function Timer() {
           </div>
 
           <div className=' text-black'>
-              <div className='bg-accent/90 rounded-xl'>
+              <div className='bg-accent/90 p-4 rounded-xl'>
 
             <ActualTimer mode={'Break'} time={Breakcountup} />
               </div>
