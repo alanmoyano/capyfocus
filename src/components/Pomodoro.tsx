@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button'
+import { useLocation } from 'wouter'
 import Confetti from 'react-confetti-boom'
 
 type Mode = 'Session' | 'Break'
@@ -71,6 +72,11 @@ export default function Pomodoro({
     setCountdown(mode === 'Session' ? sessionSeconds : breakSeconds)
   }, [mode, sessionSeconds, breakSeconds])
 
+  const [, setLocation] = useLocation()
+  const handleAccept = () => {
+    setLocation('/')
+  }
+
   return (
     <div className='flex flex-col items-center justify-center'>
       <h1 className='text-4xl font-bold'>Capydoro</h1>
@@ -105,6 +111,11 @@ export default function Pomodoro({
           <p>Break minutes: {breakSeconds / 60}</p>
           <Button onClick={() => setBreakSeconds(prev => prev + 60)}>+</Button>
         </div>
+      </div>
+      <div>
+        <Button className='flex flex-col' onClick={handleAccept}>
+          Volver
+        </Button>
       </div>
 
       {pomodoroCount.current >= pomodoroSessions && (

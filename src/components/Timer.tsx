@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button'
+import { useLocation } from 'wouter'
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Session' | 'Break'
@@ -60,27 +61,30 @@ export default function Timer() {
   //   setCountdown(mode === 'Session' ? sessionSeconds : breakSeconds)
   // }, [mode, sessionSeconds, breakSeconds])
 
+  const [, setLocation] = useLocation()
+  const handleAccept = () => {
+    setLocation('/')
+  }
+
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyMetro!</h1>
 
-      <div className=' grid  grid-cols-2 gap-4'>
-
+      <div className='grid grid-cols-2 gap-4'>
         {/* Columna 1:  */}
-        <div className='col-span-1 p-4  '>
+        <div className='col-span-1 p-4'>
           <img src='/idle.gif' />
         </div>
 
         {/* Columna 2:*/}
-        <div className='col-span-1 grid grid-cols-2 gap-4 mt-32'>
+        <div className='col-span-1 mt-32 grid grid-cols-2 gap-4'>
           <div className='text-black'>
-            <div className='bg-accent/90 rounded-xl p-4'>
-
-            <ActualTimer mode={'Session'} time={Sessioncountup} />
+            <div className='rounded-xl bg-accent/90 p-4'>
+              <ActualTimer mode={'Session'} time={Sessioncountup} />
             </div>
-            <div className='mt-16 ml-10'>
+            <div className='ml-10 mt-16'>
               <Button
-              className=' '
+                className=' '
                 onClick={() => {
                   setIsActive(prev => !prev)
                 }}
@@ -90,11 +94,10 @@ export default function Timer() {
             </div>
           </div>
 
-          <div className=' text-black'>
-              <div className='bg-accent/90 p-4 rounded-xl'>
-
-            <ActualTimer mode={'Break'} time={Breakcountup} />
-              </div>
+          <div className='text-black'>
+            <div className='rounded-xl bg-accent/90 p-4'>
+              <ActualTimer mode={'Break'} time={Breakcountup} />
+            </div>
             <div className='mt-16'>
               <Button
                 className='flex flex-col'
@@ -109,7 +112,12 @@ export default function Timer() {
         </div>
       </div>
       <div>
-                <p>Objetivos?</p> 
+        <p>Objetivos?</p>
+      </div>
+      <div>
+        <Button className='flex flex-col' onClick={handleAccept}>
+          Volver
+        </Button>
       </div>
 
       {/* {pomodoroCount.current >= pomodoroSessions && (

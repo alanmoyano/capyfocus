@@ -1,8 +1,7 @@
-
-export default function CapyEstadisticas (){
-    return (
-        <>
-        <p>CapyEstadisticas</p>
-        </>
-    )
+export default function CapyEstadisticas() {
+  return (
+    <>
+      <p>CapyEstadisticas</p>
+    </>
+  )
 }
