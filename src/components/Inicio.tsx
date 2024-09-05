@@ -10,6 +10,7 @@ import {
 import { Button } from './ui/button'
 
 import { Hourglass, Timer } from 'lucide-react'
+
 import {
   Select,
   SelectContent,
@@ -20,7 +21,20 @@ import {
   SelectValue
 } from '@/components/ui/select'
 
+import { useState } from 'react'
+
+
+type CapyMetodos = 'Capydoro' | 'Capymetro'
+
+const descriptions: Record<CapyMetodos, string> = {
+  Capydoro: 'Estudia con el método Pomodoro',
+  Capymetro: 'Estudia con un cronómetro'
+}
+
 export default function Inicio() {
+  const [description, setDescription] =
+    useState<keyof typeof descriptions>('Capydoro')
+
   return (
     <>
       <section className='flex flex-col gap-20 p-10 md:flex-row'>
@@ -45,10 +59,25 @@ export default function Inicio() {
           <p>Elije tu método de estudio:</p>
           <ToggleGroup
             type='single'
-            className='flex gap-2 rounded-xl bg-primary/60 p-2'
+
+            className='rounded-xl bg-primary/60 p-2'
+            onValueChange={value => setDescription(value as CapyMetodos)}
           >
-            <ToggleGroupItem value='Capydoro'>Capydoro</ToggleGroupItem>
-            <ToggleGroupItem value='Capymetro'>Capymetro</ToggleGroupItem>
+            <ToggleGroupItem
+              value='Capydoro'
+              className='flex items-center justify-center gap-1'
+            >
+              <Timer size={20} />
+              Capydoro
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value='Capymetro'
+              className='flex items-center justify-center gap-1'
+            >
+              <Hourglass size={20} />
+              Capymetro
+            </ToggleGroupItem>
+
           </ToggleGroup>
 
           <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
@@ -94,6 +123,10 @@ export default function Inicio() {
             >
               Aceptar
             </Button>
+          </div>
+
+          <div className='mt-4'>
+            <p>{descriptions[description]}</p>
           </div>
         </div>
       </section>
