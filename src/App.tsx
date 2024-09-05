@@ -11,6 +11,8 @@ import Badges from './components/Badges'
 import Navbar from './components/Navbar'
 import { ThemeProvider } from './components/providers/ThemeProvider'
 import Inicio from './components/Inicio'
+import CapyEstadisticas from './components/CapyEstadisticas'
+import Usuario from './components/Usuario'
 
 function App() {
   return (
@@ -29,14 +31,18 @@ function App() {
           <Route path='/login' component={Login} />
           <Route path='/signup' component={SignUp} />
 
-          <Route path='/pomodoro'>
+          <Route path='/capydoro'>
             <Pomodoro pomodoroSessions={1} />
           </Route>
-          <Route path='/timer'>
+          <Route path='/capymetro'>
             <Timer />
           </Route>
 
-          <Route path='/badges' component={Badges} />
+          <Route path='/capyInsignias' component={Badges} />
+          <Route path='/capyEstadisticas' component={CapyEstadisticas}/>
+
+          <Route path='/usuario' component={Usuario}/>
+
 
           <Route>404!</Route>
         </Switch>

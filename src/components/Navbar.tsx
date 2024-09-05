@@ -1,6 +1,19 @@
 import React from 'react'
 import { useRoute } from 'wouter'
 import { ModeToggle } from './ModeToggle'
+import { Button } from './ui/button'
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 import {
   NavigationMenu,
@@ -67,7 +80,7 @@ export default function Navbar() {
 
         versión con logo! */}
 
-        <NavbarLink to='/'>
+        <NavbarLink to='/usuario'>
           <div className='flex items-center justify-center gap-2'>
             <img src='/logo.png' height={30} width={30} />
             <p>Capyfocus</p>
@@ -85,16 +98,41 @@ export default function Navbar() {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavbarLink to='/pomodoro'>Pomodoro</NavbarLink>
+          <NavbarLink to='/'>Inicio</NavbarLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavbarLink to='/timer'>Timer</NavbarLink>
+          
+          
+          <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" className='border-0'>Musica</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle >Links Spotify</DialogTitle>
+          <DialogDescription className='text-accent/100'>
+            Musica seleccionada especiamente para concentrarse! Elige el estilo que mas se adapte!.
+          </DialogDescription>
+        </DialogHeader>
+          <p>Aca van los Links!</p>
+        <DialogFooter>
+         <p>Gracias por escuchas nuestra Musica!</p>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavbarLink to='/badges'>Badges</NavbarLink>
+          <NavbarLink to='/capyInsignias'>CapyInsiginas</NavbarLink>
         </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <NavbarLink to='/capyEstadisticas'>CapyEstadisticas</NavbarLink>
+        </NavigationMenuItem>
+
       </NavigationMenuList>
 
       <ModeToggle className='flex flex-1 justify-end' />

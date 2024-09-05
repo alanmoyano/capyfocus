@@ -21,6 +21,8 @@ import {
 
 import { useState } from 'react'
 
+import { useLocation } from 'wouter'
+
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
 const descriptions: Record<CapyMetodos, string> = {
@@ -31,6 +33,17 @@ const descriptions: Record<CapyMetodos, string> = {
 export default function Inicio() {
   const [description, setDescription] =
     useState<keyof typeof descriptions>('Capydoro')
+
+    const [, setLocation] = useLocation()
+
+    const handleAccept = () => {
+      if (description === 'Capydoro') {
+        setLocation('/capydoro') 
+      } else if (description === 'Capymetro') {
+        setLocation('/capymetro') 
+      }
+    }
+ 
 
   return (
     <>
@@ -104,7 +117,8 @@ export default function Inicio() {
           <Button
             type='submit'
             className='ml-auto mt-4 flex justify-end'
-            form='form'
+            
+            onClick={handleAccept} 
           >
             Aceptar
           </Button>
