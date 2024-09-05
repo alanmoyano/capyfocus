@@ -64,7 +64,7 @@ export default function Timer() {
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyMetro!</h1>
 
-      <div className=' grid min-h-screen grid-cols-2 gap-4'>
+      <div className=' grid  grid-cols-2 gap-4'>
 
         {/* Columna 1:  */}
         <div className='col-span-1 p-4  '>
@@ -107,6 +107,9 @@ export default function Timer() {
             </div>
           </div>
         </div>
+      </div>
+      <div>
+                <p>Objetivos?</p> 
       </div>
 
       {/* {pomodoroCount.current >= pomodoroSessions && (
