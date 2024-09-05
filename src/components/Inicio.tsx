@@ -8,7 +8,11 @@ import {
 } from '@/components/ui/tooltip'
 import { Button } from './ui/button'
 
+<<<<<<< HEAD
 import { Edit3, Hourglass, Star, Timer, Trash } from 'lucide-react'
+=======
+import { Hourglass, Timer, Trash, Edit3, Star, StarOff} from 'lucide-react'
+>>>>>>> bbf889b445d9a293292483f2005b32949ae87d37
 
 import {
   Select,
@@ -92,16 +96,21 @@ export default function Inicio() {
     }
 
   const [objetivos, setObjetivos] = useState<string[]>([])
+<<<<<<< HEAD
   const [objetivosFav, setObjetivosFav] = useState<string[]>([]) 
   
   // vacia
   /* const [value, setValue] = useState('') */
+=======
+  const [objetivosFav, setObjetivosFav] = useState<string[]>([]) // vacia
+  const [inputValue, setInputValue] = useState('')
+>>>>>>> bbf889b445d9a293292483f2005b32949ae87d37
   const [index, setIndex] = useState<number|null>(null) // hasta que se toque
 
   const handleAdd = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key == 'Enter') {
-      setObjetivos([...objetivos, value])
-      setValue('')
+      setObjetivos([...objetivos, inputValue])
+      setInputValue('')
     }
   }
 
@@ -125,16 +134,15 @@ export default function Inicio() {
     }
   }
 
-  const handleFav = (index: number) => {
-    const objetivo = objetivos[index]
-    if (objetivosFav.includes(objetivo)) {
-      setObjetivosFav(prev => prev.filter(objetivoFav => objetivoFav !== objetivo))
+  const handleFav = (key) => {
+    if (objetivosFav.includes(key)) {
+      setObjetivosFav(objetivosFav.filter(favKey => favKey !== key));
     } else {
-      setObjetivosFav(prev => [...prev, objetivo]);  // agregarlo al combobox cuando lo instale
+      setObjetivosFav([...objetivosFav, key]);
     }
-  }
+  };
+  
 
-  // estilo estrella!
 
   return (
     <>
@@ -206,34 +214,52 @@ export default function Inicio() {
 
           <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
             <div className='flex items-center gap-2'>
-              <Input type='objetivo' placeholder='Ingrese el objetivo' value={value} onKeyDown={handleAdd} onChange={(e) => setValue(e.target.value)}
-                     className='w-60 p-2 rounded border border-gray-300 bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500'
+              <Input
+                  type='text'
+                  placeholder='Ingrese el objetivo'
+                  value={inputValue}
+                  onKeyDown={handleAdd}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  className='p-3 rounded-md border border-secondary bg-white shadow-md focus:outline-none focus:ring-2 hover:shadow-lg transition-shadow duration-200 ease-in-out'
               />
             </div>
-            <ul className='list-inside list-disc'>
-              {objetivos.map((objetivo, key) => (
-                <li key={key} className='flex items.center gap-2 mb-2'>
-                  {index === key? (
-                    <Input type='text' defaultValue={objetivo}
-                    onKeyDown={(e) => handleSaveEdit(e, key)}
-                    className='w-40 p-2 rounded border border-gray-300 bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500'/>
-                  ) : ( // sino veo los botones
-                    <>
-                    <span>{objetivo}</span>
-                    <button onClick={() => handleEdit(key)}>
-                      <Edit3 size={20}/>
-                    </button>
-                    <button onClick={()=> handleDelete(key)}>
-                      <Trash size={20} />
-                    </button>
-                    <button onClick={() => handleFav(key)}>
-                      <Star size={20}/> 
-                    </button>
-                    </>
-                  )}
-                </li>
-              ))}
-            </ul>
+            <div className='mt-4'>
+              <ul className='list-inside list-disc text-black text-base space-y-2'>
+                {objetivos.map((objetivo, key) => (
+                  <li key={key} className='flex items-center justify-between'>
+                    
+                    {index === key? (
+                      <div className='flex items-center gap-2'>
+                        <Input 
+                        type='text' 
+                        defaultValue={objetivo}
+                        onKeyDown={(e) => handleSaveEdit(e, key)}
+                        className='p-3 rounded-md border border-secondary bg-white shadow-md focus:outline-none focus:ring-2 hover:shadow-lg transition-shadow duration-200 ease-in-out'
+                        />
+                      </div>) : ( 
+                      <div className='flex w-full items-center justify-between'>
+                          <span>{objetivo}</span>
+                          <div className='flex items-center gap-2'>
+                            <button onClick={() => handleEdit(key)}>
+                              <Edit3 size={20} />
+                            </button>
+                            <button onClick={() => handleDelete(key)}>
+                              <Trash size={20} />
+                            </button>
+                            <button onClick={() => handleFav(key)}>
+                              {objetivosFav.includes(key) ? (
+                                <StarOff size={20} style={{ color: '#ffbc05' }} />
+                              ) : (
+                                <Star size={20} className='text-black-500' />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           <Button
