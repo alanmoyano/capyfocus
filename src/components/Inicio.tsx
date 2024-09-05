@@ -10,9 +10,18 @@ import {
 import { Button } from './ui/button'
 
 import { Hourglass, Timer } from 'lucide-react'
+import { useState } from 'react'
+
+type CapyMetodos = 'Capydoro' | 'Capymetro'
+
+const descriptions: Record<CapyMetodos, string> = {
+  Capydoro: 'Estudia con el método Pomodoro',
+  Capymetro: 'Estudia con un cronómetro'
+}
 
 export default function Inicio() {
-
+  const [description, setDescription] =
+    useState<keyof typeof descriptions>('Capydoro')
   return (
     <>
       <section className='flex flex-col gap-20 p-10 md:flex-row'>
@@ -23,13 +32,28 @@ export default function Inicio() {
         <div className='m-auto'>
           <h1 className='text-4xl font-bold'>Hola!</h1>
           <p>Elije tu método de estudio:</p>
-          <ToggleGroup type='single' className='rounded-xl bg-primary/60 p-2'>
-            <ToggleGroupItem value='Capydoro'>Capydoro</ToggleGroupItem>
-            <ToggleGroupItem value='Capymetro'>Capymetro</ToggleGroupItem>
+          <ToggleGroup
+            type='single'
+            className='rounded-xl bg-primary/60 p-2'
+            onValueChange={value => setDescription(value as CapyMetodos)}
+          >
+            <ToggleGroupItem
+              value='Capydoro'
+              className='flex items-center justify-center gap-1'
+            >
+              <Timer size={20} />
+              Capydoro
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value='Capymetro'
+              className='flex items-center justify-center gap-1'
+            >
+              <Hourglass size={20} />
+              Capymetro
+            </ToggleGroupItem>
           </ToggleGroup>
-          
-          <div className='rounded-xl bg-secondary/60 p-4 mt-4'>
 
+          <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
             <Carousel
               className='w-full max-w-xs'
               opts={{
@@ -72,6 +96,10 @@ export default function Inicio() {
             >
               Aceptar
             </Button>
+          </div>
+
+          <div className='mt-4'>
+            <p>{descriptions[description]}</p>
           </div>
         </div>
       </section>
