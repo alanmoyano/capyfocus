@@ -187,7 +187,7 @@ export default function Inicio() {
             onValueChange={value => setDescription(value as CapyMetodos)}
           >
             <ToggleGroupItem
-              value='Capydpro'
+              value='Capydoro'
               className='flex items-center justify-center gap-1'
             >
               <Timer size={20} />
