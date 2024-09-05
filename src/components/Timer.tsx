@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button'
+import { useLocation } from 'wouter'
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Session' | 'Break'
@@ -24,6 +25,7 @@ export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
     </>
   )
 }
+
 
 export default function Timer() {
   const [Sessioncountup, setSessionCountup] = useState(0)
@@ -59,6 +61,11 @@ export default function Timer() {
   // useEffect(() => {
   //   setCountdown(mode === 'Session' ? sessionSeconds : breakSeconds)
   // }, [mode, sessionSeconds, breakSeconds])
+  
+  const [, setLocation] = useLocation()
+  const handleAccept = () => {
+    setLocation('/')
+  }
 
   return (
     <>
@@ -110,6 +117,9 @@ export default function Timer() {
       </div>
       <div>
                 <p>Objetivos?</p> 
+      </div>
+      <div>
+          <Button className='flex flex-col' onClick={handleAccept}>Volver</Button>
       </div>
 
       {/* {pomodoroCount.current >= pomodoroSessions && (
