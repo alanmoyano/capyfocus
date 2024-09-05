@@ -1,13 +1,11 @@
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { Card, CardContent } from '@/components/ui/card'
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious
-} from '@/components/ui/carousel'
 import { Button } from './ui/button'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip'
 
 import { Hourglass, Timer } from 'lucide-react'
 
@@ -22,7 +20,6 @@ import {
 } from '@/components/ui/select'
 
 import { useState } from 'react'
-
 
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
@@ -41,14 +38,37 @@ export default function Inicio() {
         <div className='m-auto'>
           <img src='/idle.gif' />
           <Select>
-            <SelectTrigger className='w-[280px] ml-4'>
+            <SelectTrigger className='ml-4 w-[280px]'>
               <SelectValue placeholder='Selecciona una motivación' />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Tipo de motivación</SelectLabel>
-                <SelectItem value='positiva'>Positiva</SelectItem>
-                <SelectItem value='pasivoAgresiva'>Pasivo/Agresiva</SelectItem>
+                <SelectItem value='positiva'>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <p>Positiva</p>
+                      </TooltipTrigger>
+                      <TooltipContent className='ml-16'>
+                        <p>Mensajes positivos</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </SelectItem>
+                <SelectItem value='pasivoAgresiva'>
+                  
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <p>Pasivo/Agresivo</p>
+                      </TooltipTrigger>
+                      <TooltipContent className='ml-16'>
+                        <p>Mensajes pasivos/agresivos</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -59,7 +79,6 @@ export default function Inicio() {
           <p>Elije tu método de estudio:</p>
           <ToggleGroup
             type='single'
-
             className='rounded-xl bg-primary/60 p-2'
             onValueChange={value => setDescription(value as CapyMetodos)}
           >
@@ -77,53 +96,18 @@ export default function Inicio() {
               <Hourglass size={20} />
               Capymetro
             </ToggleGroupItem>
-
           </ToggleGroup>
 
           <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
-            <Carousel
-              className='w-full max-w-xs'
-              opts={{
-                align: 'start',
-                loop: true
-              }}
-            >
-              <CarouselContent>
-                <CarouselItem>
-                  <div className='p-1'>
-                    <Card>
-                      <CardContent className='flex aspect-square items-center justify-center p-2'>
-                        <span className='text-4xl font-semibold'>
-                          <Hourglass size={96} className='' />
-                        </span>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </CarouselItem>
-                <CarouselItem>
-                  <div className='p-1'>
-                    <Card>
-                      <CardContent className='flex aspect-square items-center justify-center p-2'>
-                        <span className='text-4xl font-semibold'>
-                          <Timer size={96} className='' />
-                        </span>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </CarouselItem>
-              </CarouselContent>
-
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
-            <Button
-              type='submit'
-              className='ml-auto mt-4 flex justify-end'
-              form='form'
-            >
-              Aceptar
-            </Button>
+            <p>Objetivos</p>
           </div>
+          <Button
+            type='submit'
+            className='ml-auto mt-4 flex justify-end'
+            form='form'
+          >
+            Aceptar
+          </Button>
 
           <div className='mt-4'>
             <p>{descriptions[description]}</p>
