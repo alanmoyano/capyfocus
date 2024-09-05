@@ -10,26 +10,48 @@ import {
 import { Button } from './ui/button'
 
 import { Hourglass, Timer } from 'lucide-react'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 
 export default function Inicio() {
-
   return (
     <>
       <section className='flex flex-col gap-20 p-10 md:flex-row'>
         <div className='m-auto'>
           <img src='/idle.gif' />
+          <Select>
+            <SelectTrigger className='w-[280px] ml-4'>
+              <SelectValue placeholder='Selecciona una motivación' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Tipo de motivación</SelectLabel>
+                <SelectItem value='positiva'>Positiva</SelectItem>
+                <SelectItem value='pasivoAgresiva'>Pasivo/Agresiva</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className='m-auto'>
           <h1 className='text-4xl font-bold'>Hola!</h1>
           <p>Elije tu método de estudio:</p>
-          <ToggleGroup type='single' className='rounded-xl bg-primary/60 p-2'>
+          <ToggleGroup
+            type='single'
+            className='flex gap-2 rounded-xl bg-primary/60 p-2'
+          >
             <ToggleGroupItem value='Capydoro'>Capydoro</ToggleGroupItem>
             <ToggleGroupItem value='Capymetro'>Capymetro</ToggleGroupItem>
           </ToggleGroup>
-          
-          <div className='rounded-xl bg-secondary/60 p-4 mt-4'>
 
+          <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
             <Carousel
               className='w-full max-w-xs'
               opts={{
