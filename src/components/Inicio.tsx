@@ -1,5 +1,6 @@
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Button } from './ui/button'
+import { Input } from "@/components/ui/input"
 import {
   Tooltip,
   TooltipContent,
@@ -7,7 +8,7 @@ import {
   TooltipTrigger
 } from '@/components/ui/tooltip'
 
-import { Hourglass, Timer } from 'lucide-react'
+import { Hourglass, Timer, Trash, Edit3, Star } from 'lucide-react'
 
 import {
   Select,
@@ -18,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+
 
 import { useState } from 'react'
 
@@ -43,7 +45,49 @@ export default function Inicio() {
         setLocation('/capymetro') 
       }
     }
- 
+
+  const [objetivos, setObjetivos] = useState<string[]>([])
+  const [objetivosFav, setObjetivosFav] = useState<string[]>([]) // vacia
+  const [value, setValue] = useState('')
+  const [index, setIndex] = useState<number|null>(null) // hasta que se toque
+
+  const handleAdd = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key == 'Enter') {
+      setObjetivos([...objetivos, value])
+      setValue('')
+    }
+  }
+
+  const handleDelete = (index: number) => {
+    const auxObjetivos = objetivos.filter((_, i) => i !== index) //hola a los que no son
+    setObjetivos(auxObjetivos)
+    const auxObjetivosFav = objetivosFav.filter((_, i) => i !== index);
+    setObjetivosFav(auxObjetivosFav)
+  }
+  
+  const handleEdit = (index: number) => {
+    setIndex(index)
+  }
+
+  const handleSaveEdit = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+    if (e.key == 'Enter'){
+      const auxObjetivos = [...objetivos]
+      auxObjetivos[index] = e.currentTarget.value.trim()
+      setObjetivos(auxObjetivos)
+      setIndex(null)
+    }
+  }
+
+  const handleFav = (index: number) => {
+    const objetivo = objetivos[index]
+    if (objetivosFav.includes(objetivo)) {
+      setObjetivosFav(prev => prev.filter(objetivoFav => objetivoFav !== objetivo))
+    } else {
+      setObjetivosFav(prev => [...prev, objetivo]);  // agregarlo al combobox cuando lo instale
+    }
+  }
+
+  // estilo estrella!
 
   return (
     <>
@@ -90,14 +134,14 @@ export default function Inicio() {
 
         <div className='m-auto'>
           <h1 className='text-4xl font-bold'>Hola!</h1>
-          <p>Elije tu método de estudio:</p>
+          <p>Elige tu método de estudio:</p>
           <ToggleGroup
             type='single'
             className='rounded-xl bg-primary/60 p-2'
             onValueChange={value => setDescription(value as CapyMetodos)}
           >
             <ToggleGroupItem
-              value='Capydoro'
+              value='Capydpro'
               className='flex items-center justify-center gap-1'
             >
               <Timer size={20} />
@@ -112,9 +156,39 @@ export default function Inicio() {
             </ToggleGroupItem>
           </ToggleGroup>
 
+
           <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
-            <p>Objetivos</p>
+            <div className='flex items-center gap-2'>
+              <Input type='objetivo' placeholder='Ingrese el objetivo' value={value} onKeyDown={handleAdd} onChange={(e) => setValue(e.target.value)}
+                     className='w-60 p-2 rounded border border-gray-300 bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500'
+              />
+            </div>
+            <ul className='list-inside list-disc'>
+              {objetivos.map((objetivo, key) => (
+                <li key={key} className='flex items.center gap-2 mb-2'>
+                  {index === key? (
+                    <Input type='text' defaultValue={objetivo}
+                    onKeyDown={(e) => handleSaveEdit(e, key)}
+                    className='w-40 p-2 rounded border border-gray-300 bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500'/>
+                  ) : ( // sino veo los botones
+                    <>
+                    <span>{objetivo}</span>
+                    <button onClick={() => handleEdit(key)}>
+                      <Edit3 size={20}/>
+                    </button>
+                    <button onClick={()=> handleDelete(key)}>
+                      <Trash size={20} />
+                    </button>
+                    <button onClick={() => handleFav(key)}>
+                      <Star size={20}/> 
+                    </button>
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
           </div>
+
           <Button
             type='submit'
             className='ml-auto mt-4 flex justify-end'
