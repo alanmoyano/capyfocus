@@ -1,5 +1,5 @@
 import React from 'react'
-import { useRoute } from 'wouter'
+import { Link, useRoute } from 'wouter'
 import { ModeToggle } from './ModeToggle'
 import { Button } from './ui/button'
 
@@ -115,6 +115,8 @@ export default function Navbar() {
             Musica seleccionada especiamente para concentrarse! Elige el estilo que mas se adapte!.
           </DialogDescription>
         </DialogHeader>
+        <iframe className="border-radius:12px" src="https://open.spotify.com/embed/playlist/6xYhxczmfgi6L6knoEHktx?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        <iframe className="border-radius:12px" src="https://open.spotify.com/embed/playlist/5GnSqO293GdPWaJhD6iz8E?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
           <p>Aca van los Links!</p>
         <DialogFooter>
          <p>Gracias por escuchas nuestra Musica!</p>
