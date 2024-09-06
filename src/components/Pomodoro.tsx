@@ -118,12 +118,7 @@ export default function Pomodoro({
           <Button onClick={() => setBreakSeconds(prev => prev + 60)}>+</Button>
         </div>
       </div>
-      <div>
-        <Button className='flex flex-col' onClick={handleAccept}>
-          Volver
-        </Button>
-      </div>
-
+      
       {pomodoroCount.current >= pomodoroSessions && (
         <Confetti mode='boom' particleCount={150} />
       )}
@@ -133,10 +128,10 @@ export default function Pomodoro({
       <p>Pomodoro count: {Math.floor(pomodoroCount.current)}</p>
 
       <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
-        <h1 className="text-xl">Objetivos de la sesión</h1>
-        <ul className="list-inside list-disc space-y-2 text-black">
+        <h1 className='text-xl '>Objetivos de la sesión</h1>
+        <ul className='list-inside list-disc space-y-2 text-black'>
           {objetivos.map((objetivo, key) => (
-            <li key={key} className="flex space-x-2 items-center">
+            <li key={key} className='flex space-x-2 items-center'>
               <input type='checkbox' id={`checkbox-${key}`} className='mr-2'/>
               <label htmlFor={`checkbox-${key}`} className='flex-1'>{objetivo}</label>
               {objetivosFav.includes(objetivo) && (
@@ -145,6 +140,11 @@ export default function Pomodoro({
             </li>
           ))}
         </ul>
+      </div>
+      <div>
+        <Button className='flex flex-col' onClick={handleAccept}>
+          Volver
+        </Button>
       </div>
     </div>
 

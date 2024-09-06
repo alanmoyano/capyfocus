@@ -116,10 +116,10 @@ export default function Timer() {
         </div>
       </div>
       <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
-        <h1 className="text-xl font-bold">Aca tendrian que aparecer los objetivos....</h1>
-        <ul className="list-inside list-disc space-y-2 text-black">
+        <h1 className='text-xl font-bold'>Aca tendrian que aparecer los objetivos....</h1>
+        <ul className='list-inside list-disc space-y-2 text-black'>
           {objetivos.map((objetivo, key) => (
-            <li key={key} className="flex justify-between items-center">
+            <li key={key} className='flex justify-between items-center'>
               <span>{objetivo}</span>
               {objetivosFav.includes(objetivo) && (
                 <Star size={20} style={{ color: '#ffbc05' }} />
