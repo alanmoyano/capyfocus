@@ -90,6 +90,7 @@ export default function Timer() {
             </div>
             <div className='ml-10 mt-16'>
               <Button
+                variant={'accent'}
                 className=' '
                 onClick={() => {
                   setIsActive(prev => !prev)
@@ -107,6 +108,7 @@ export default function Timer() {
             <div className='mt-16'>
               <Button
                 className='flex flex-col'
+                variant={'destructive'}
                 onClick={() => {
                   finalizarSesion()
                 }}
