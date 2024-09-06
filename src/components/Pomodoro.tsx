@@ -4,7 +4,9 @@ import { Checkbox } from './ui/checkbox'
 import { useLocation } from 'wouter'
 import { useObjetivos } from './ObjetivosContext'
 import { Star } from 'lucide-react'
+import CapySound from '../assets/Sonido_de_caripincho.mp3'
 import Confetti from 'react-confetti-boom'
+import useSound from 'use-sound'
 
 
 type Mode = 'Session' | 'Break'
@@ -44,7 +46,7 @@ export default function Pomodoro({
   const [mode, setMode] = useState<Mode>('Session')
   const timer = useRef<NodeJS.Timeout>()
   const pomodoroCount = useRef(0)
-
+  const [capySound] = useSound(CapySound)
   useEffect(() => {
     if (!isActive) return () => clearInterval(timer.current)
     if (pomodoroCount.current >= pomodoroSessions) {
@@ -56,6 +58,7 @@ export default function Pomodoro({
         setCountdown(prev => prev - 1)
       }, 1000)
     } else {
+      capySound()
       clearInterval(timer.current)
       setCountdown(mode === 'Session' ? breakSeconds : sessionSeconds)
       setMode(prev => (prev === 'Session' ? 'Break' : 'Session'))
@@ -69,6 +72,7 @@ export default function Pomodoro({
     sessionSeconds,
     breakSeconds,
     mode,
+    capySound,
     pomodoroSessions
   ])
 
