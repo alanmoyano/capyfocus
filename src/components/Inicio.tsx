@@ -93,8 +93,9 @@ export default function Inicio() {
   const [date, setDate] = React.useState<Date | undefined>(new Date())
   const [inputValue, setInputValue] = useState('')
   const [index, setIndex] = useState<number | null>(null)
-  
-  const {objetivos, setObjetivos, objetivosFav, setObjetivosFav} = useObjetivos()
+
+  const { objetivos, setObjetivos, objetivosFav, setObjetivosFav } =
+    useObjetivos()
 
   const [description, setDescription] =
     useState<keyof typeof descriptions>('Capydoro')
@@ -314,29 +315,32 @@ export default function Inicio() {
                             </Tooltip>
                           </TooltipProvider>
 
-
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                          <Button
-                            variant='icon'
-                            size='icon'
-                            onClick={() => handleFav(String(key))}
-                          >
-                            {objetivosFav.includes(String(key)) ? (
-                              <StarOff size={20} style={{ color: '#ffbc05' }} />
-                            ) : (
-                              <Star size={20} className='text-black-500' />
-                            )}
-                          </Button>
-                          </TooltipTrigger>
+                                <Button
+                                  variant='icon'
+                                  size='icon'
+                                  onClick={() => handleFav(String(key))}
+                                >
+                                  {objetivosFav.includes(String(key)) ? (
+                                    <StarOff
+                                      size={20}
+                                      style={{ color: '#ffbc05' }}
+                                    />
+                                  ) : (
+                                    <Star
+                                      size={20}
+                                      className='text-black-500'
+                                    />
+                                  )}
+                                </Button>
+                              </TooltipTrigger>
                               <TooltipContent>
                                 <p>Favorito</p>
                               </TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
-
-                          
                         </div>
                       </div>
                     )}
