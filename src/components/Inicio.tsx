@@ -89,6 +89,11 @@ const descriptions: Record<CapyMetodos, string> = {
 export default function Inicio() {
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState('')
+  const [date, setDate] = React.useState<Date | undefined>(new Date())
+  const [objetivosFav, setObjetivosFav] = useState<string[]>([])
+  const [inputValue, setInputValue] = useState('')
+  const [index, setIndex] = useState<number | null>(null)
+  const [objetivos, setObjetivos] = useState<string[]>([])
 
   const [description, setDescription] =
     useState<keyof typeof descriptions>('Capydoro')
@@ -102,18 +107,6 @@ export default function Inicio() {
       setLocation('/capymetro')
     }
   }
-
-  const [date, setDate] = React.useState<Date | undefined>(new Date())
-
-  const [objetivos, setObjetivos] = useState<string[]>([])
-
-  // vacia
-  /* const [value, setValue] = useState('') */
-
-  const [objetivosFav, setObjetivosFav] = useState<string[]>([]) // vacia
-  const [inputValue, setInputValue] = useState('')
-
-  const [index, setIndex] = useState<number | null>(null) // hasta que se toque
 
   const handleAdd = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key == 'Enter') {
@@ -253,8 +246,6 @@ export default function Inicio() {
                           
                           <button onClick={() => handleDelete(key)}>
                             <Trash size={20} />
-                            
-                    
                           </button>
                           <button onClick={() => handleFav(String(key))}>
                             {objetivosFav.includes(String(key)) ? (
