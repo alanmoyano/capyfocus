@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button'
+import { Checkbox } from './ui/checkbox'
 import { useLocation } from 'wouter'
 import { useObjetivos } from './ObjetivosContext'
 import { Star } from 'lucide-react'
@@ -82,6 +83,8 @@ export default function Pomodoro({
 
   const {objetivos, objetivosFav } = useObjetivos()
 
+  console.log('Objetivos favoritos:', objetivosFav);
+
 
   return (
     <div className='flex flex-col items-center justify-center'>
@@ -132,11 +135,11 @@ export default function Pomodoro({
         <ul className='list-inside list-disc space-y-2 text-black'>
           {objetivos.map((objetivo, key) => (
             <li key={key} className='flex space-x-2 items-center'>
-              <input type='checkbox' id={`checkbox-${key}`} className='mr-2'/>
-              <label htmlFor={`checkbox-${key}`} className='flex-1'>{objetivo}</label>
+              <span><Checkbox className='mr-2'/>{objetivo}</span>
               {objetivosFav.includes(objetivo) && (
                 <Star size={20} style={{ color: '#ffbc05' }} />
               )}
+
             </li>
           ))}
         </ul>

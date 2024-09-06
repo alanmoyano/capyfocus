@@ -111,7 +111,7 @@ export default function Inicio() {
   }
 
   const handleAdd = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key == 'Enter') {
+    if (e.key == 'Enter' && inputValue.trim() != '') {
       setObjetivos([...objetivos, inputValue])
       setInputValue('')
     }
@@ -132,7 +132,7 @@ export default function Inicio() {
     e: React.KeyboardEvent<HTMLInputElement>,
     index: number
   ) => {
-    if (e.key == 'Enter') {
+    if (e.key == 'Enter' && inputValue.trim() != '') {
       const auxObjetivos = [...objetivos]
       auxObjetivos[index] = e.currentTarget.value.trim()
       setObjetivos(auxObjetivos)
