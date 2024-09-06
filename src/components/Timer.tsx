@@ -3,6 +3,7 @@ import { Button } from './ui/button'
 import { useLocation } from 'wouter'
 import { useObjetivos } from './ObjetivosContext'
 import { Star } from 'lucide-react'
+import { Checkbox } from "@/components/ui/checkbox"
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Session' | 'Break'
@@ -115,6 +116,7 @@ export default function Timer() {
           </div>
         </div>
       </div>
+       <span><Checkbox /> Brendismo gano!</span>
       <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
         <h1 className='text-xl font-bold'>Aca tendrian que aparecer los objetivos....</h1>
         <ul className='list-inside list-disc space-y-2 text-black'>
