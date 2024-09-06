@@ -6,7 +6,6 @@ import { useObjetivos } from './ObjetivosContext'
 import { Star } from 'lucide-react'
 import Confetti from 'react-confetti-boom'
 
-
 type Mode = 'Session' | 'Break'
 
 function addZeroIfNeeded(value: number) {
@@ -72,19 +71,17 @@ export default function Pomodoro({
     pomodoroSessions
   ])
 
+  const {objetivos, objetivosFav, setObjetivos } = useObjetivos()
+
   useEffect(() => {
     setCountdown(mode === 'Session' ? sessionSeconds : breakSeconds)
   }, [mode, sessionSeconds, breakSeconds])
 
   const [, setLocation] = useLocation()
   const handleAccept = () => {
+    setObjetivos([])
     setLocation('/')
   }
-
-  const {objetivos, objetivosFav } = useObjetivos()
-
-  console.log('Objetivos favoritos:', objetivosFav);
-
 
   return (
     <div className='flex flex-col items-center justify-center'>
@@ -137,9 +134,11 @@ export default function Pomodoro({
             <li key={key} className='flex space-x-2 items-center'>
               <span><Checkbox className='mr-2'/>{objetivo}</span>
               {objetivosFav.includes(objetivo) && (
-                <Star size={20} style={{ color: '#ffbc05' }} />
+                <Star
+                size={20}
+                style={{ color: '#ffbc05' }}
+              />
               )}
-
             </li>
           ))}
         </ul>

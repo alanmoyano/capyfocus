@@ -140,11 +140,11 @@ export default function Inicio() {
     }
   }
 
-  const handleFav = (key: string) => {
-    if (objetivosFav.includes(key)) {
-      setObjetivosFav(objetivosFav.filter(favKey => favKey !== key))
+  const handleFav = (objetivo: string) => {
+    if (objetivosFav.includes(objetivo)) {
+      setObjetivosFav(objetivosFav.filter(objetivoFav => objetivoFav !== objetivo))
     } else {
-      setObjetivosFav([...objetivosFav, key])
+      setObjetivosFav([...objetivosFav, objetivo])
     }
   }
 
@@ -321,9 +321,9 @@ export default function Inicio() {
                                 <Button
                                   variant='icon'
                                   size='icon'
-                                  onClick={() => handleFav(String(key))}
+                                  onClick={() => handleFav(String(objetivo))}
                                 >
-                                  {objetivosFav.includes(String(key)) ? (
+                                  {objetivosFav.includes(String(objetivo)) ? (
                                     <StarOff
                                       size={20}
                                       style={{ color: '#ffbc05' }}
