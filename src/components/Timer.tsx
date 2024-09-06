@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button'
 import { useLocation } from 'wouter'
+import { useObjetivos } from './ObjetivosContext'
+import { Star } from 'lucide-react'
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Session' | 'Break'
@@ -66,6 +68,8 @@ export default function Timer() {
     setLocation('/')
   }
 
+  const {objetivos, objetivosFav } = useObjetivos()
+
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyMetro!</h1>
@@ -111,8 +115,18 @@ export default function Timer() {
           </div>
         </div>
       </div>
-      <div>
-        <p>Objetivos?</p>
+      <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
+        <h1 className='text-xl font-bold'>Aca tendrian que aparecer los objetivos....</h1>
+        <ul className='list-inside list-disc space-y-2 text-black'>
+          {objetivos.map((objetivo, key) => (
+            <li key={key} className='flex justify-between items-center'>
+              <span>{objetivo}</span>
+              {objetivosFav.includes(objetivo) && (
+                <Star size={20} style={{ color: '#ffbc05' }} />
+              )}
+            </li>
+          ))}
+        </ul>
       </div>
       <div>
         <Button className='flex flex-col' onClick={handleAccept}>

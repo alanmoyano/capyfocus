@@ -1,4 +1,5 @@
 import { Input } from '@/components/ui/input'
+import { useObjetivos } from './ObjetivosContext'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import {
   Tooltip,
@@ -90,10 +91,10 @@ export default function Inicio() {
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState('')
   const [date, setDate] = React.useState<Date | undefined>(new Date())
-  const [objetivosFav, setObjetivosFav] = useState<string[]>([])
   const [inputValue, setInputValue] = useState('')
   const [index, setIndex] = useState<number | null>(null)
-  const [objetivos, setObjetivos] = useState<string[]>([])
+  
+  const {objetivos, setObjetivos, objetivosFav, setObjetivosFav} = useObjetivos()
 
   const [description, setDescription] =
     useState<keyof typeof descriptions>('Capydoro')

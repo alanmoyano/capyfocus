@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button'
 import { useLocation } from 'wouter'
+import { useObjetivos } from './ObjetivosContext'
+import { Star } from 'lucide-react'
 import Confetti from 'react-confetti-boom'
+
 
 type Mode = 'Session' | 'Break'
 
@@ -77,6 +80,8 @@ export default function Pomodoro({
     setLocation('/')
   }
 
+  const {objetivos, objetivosFav } = useObjetivos()
+
 
   return (
     <div className='flex flex-col items-center justify-center'>
@@ -113,12 +118,7 @@ export default function Pomodoro({
           <Button onClick={() => setBreakSeconds(prev => prev + 60)}>+</Button>
         </div>
       </div>
-      <div>
-        <Button className='flex flex-col' onClick={handleAccept}>
-          Volver
-        </Button>
-      </div>
-
+      
       {pomodoroCount.current >= pomodoroSessions && (
         <Confetti mode='boom' particleCount={150} />
       )}
@@ -128,10 +128,23 @@ export default function Pomodoro({
       <p>Pomodoro count: {Math.floor(pomodoroCount.current)}</p>
 
       <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
-        <h1 className="text-xl font-bold">Aca tendrian que aparecer los objetivos....</h1>
-        <ul>
-
+        <h1 className='text-xl '>Objetivos de la sesión</h1>
+        <ul className='list-inside list-disc space-y-2 text-black'>
+          {objetivos.map((objetivo, key) => (
+            <li key={key} className='flex space-x-2 items-center'>
+              <input type='checkbox' id={`checkbox-${key}`} className='mr-2'/>
+              <label htmlFor={`checkbox-${key}`} className='flex-1'>{objetivo}</label>
+              {objetivosFav.includes(objetivo) && (
+                <Star size={20} style={{ color: '#ffbc05' }} />
+              )}
+            </li>
+          ))}
         </ul>
+      </div>
+      <div>
+        <Button className='flex flex-col' onClick={handleAccept}>
+          Volver
+        </Button>
       </div>
     </div>
 
