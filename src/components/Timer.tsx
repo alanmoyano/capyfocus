@@ -63,13 +63,13 @@ export default function Timer() {
   // useEffect(() => {
   //   setCountdown(mode === 'Session' ? sessionSeconds : breakSeconds)
   // }, [mode, sessionSeconds, breakSeconds])
-  const {objetivos, objetivosFav, setObjetivos } = useObjetivos()
+  const {objetivos, objetivosFav, setObjetivos, tiempo, setTiempo } = useObjetivos()
 
   const [, setLocation] = useLocation()
 
   const handleAccept = () => {
     setLocation('/')
-    setObjetivos([])
+    // setObjetivos([]) 
   }
 
   return (
