@@ -5,7 +5,8 @@ interface ObjetivosContextData {
     objetivosFav: string[],
     // funcion que despacha una accion de tipo state con un string[]
     setObjetivos: React.Dispatch<React.SetStateAction<string[]>>
-    setObjetivosFav: React.Dispatch<React.SetStateAction<string[]>>;
+    setObjetivosFav: React.Dispatch<React.SetStateAction<string[]>>
+
 }
 
 // datos que va a manejar, valor predeterminado x si no hay provider
@@ -14,10 +15,10 @@ export const ObjetivosContext = createContext<ObjetivosContextData | undefined>(
 export const ObjetivosProvider = ( { children }: {children: ReactNode }) => {
     // lo mismo que estaba alla ! ;)
     const [objetivos, setObjetivos] = useState<string[]>([])
-    const [objetivosFav, setObjetivosFav] = useState<string[]>([])
+    const [objetivosFav, setObjetivosFav] = useState<string[]>([]) 
 
     return(
-        <ObjetivosContext.Provider value={{objetivos, setObjetivos, objetivosFav, setObjetivosFav}}>
+        <ObjetivosContext.Provider value={{ objetivos, setObjetivos, objetivosFav, setObjetivosFav}}>
             {children}
         </ObjetivosContext.Provider>
     )
