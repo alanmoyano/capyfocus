@@ -75,7 +75,7 @@ export default function Pomodoro({
     pomodoroSessions
   ])
 
-  const {objetivos, objetivosFav, setObjetivos } = useObjetivos()
+  const { objetivos, objetivosFav, setObjetivos } = useObjetivos()
 
   useEffect(() => {
     setCountdown(mode === 'Session' ? sessionSeconds : breakSeconds)
@@ -122,7 +122,7 @@ export default function Pomodoro({
           <Button onClick={() => setBreakSeconds(prev => prev + 60)}>+</Button>
         </div>
       </div>
-      
+
       {pomodoroCount.current >= pomodoroSessions && (
         <Confetti mode='boom' particleCount={150} />
       )}
@@ -132,16 +132,16 @@ export default function Pomodoro({
       <p>Pomodoro count: {Math.floor(pomodoroCount.current)}</p>
 
       <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
-        <h1 className='text-xl '>Objetivos de la sesión</h1>
+        <h1 className='text-xl'>Objetivos de la sesión</h1>
         <ul className='list-inside list-disc space-y-2 text-black'>
           {objetivos.map((objetivo, key) => (
-            <li key={key} className='flex space-x-2 items-center'>
-              <span><Checkbox className='mr-2'/>{objetivo}</span>
+            <li key={key} className='flex items-center space-x-2'>
+              <span>
+                <Checkbox className='mr-2' />
+                {objetivo}
+              </span>
               {objetivosFav.includes(objetivo) && (
-                <Star
-                size={20}
-                style={{ color: '#ffbc05' }}
-              />
+                <Star size={20} style={{ color: '#ffbc05' }} />
               )}
             </li>
           ))}
@@ -153,8 +153,5 @@ export default function Pomodoro({
         </Button>
       </div>
     </div>
-
-    
-    
   )
 }
