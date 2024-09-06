@@ -8,6 +8,18 @@ import {
 } from '@/components/ui/tooltip'
 import { Button } from './ui/button'
 
+import { Label } from '@/components/ui/label'
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger
+} from '@/components/ui/sheet'
+
 import { Edit3, Hourglass, Star, Timer, Trash, StarOff } from 'lucide-react'
 
 import {
@@ -37,6 +49,8 @@ import {
   PopoverTrigger
 } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
+
+import { Calendar } from '@/components/ui/calendar'
 
 const frameworks = [
   {
@@ -88,6 +102,8 @@ export default function Inicio() {
       setLocation('/capymetro')
     }
   }
+
+  const [date, setDate] = React.useState<Date | undefined>(new Date())
 
   const [objetivos, setObjetivos] = useState<string[]>([])
 
@@ -191,6 +207,7 @@ export default function Inicio() {
               className='flex items-center justify-center gap-1'
             >
               <Timer size={20} />
+              
               Capydoro
             </ToggleGroupItem>
             <ToggleGroupItem
@@ -233,8 +250,11 @@ export default function Inicio() {
                           <button onClick={() => handleEdit(key)}>
                             <Edit3 size={20} />
                           </button>
+                          
                           <button onClick={() => handleDelete(key)}>
                             <Trash size={20} />
+                            
+                    
                           </button>
                           <button onClick={() => handleFav(String(key))}>
                             {objetivosFav.includes(String(key)) ? (
@@ -251,14 +271,53 @@ export default function Inicio() {
               </ul>
             </div>
           </div>
+          <div className='flex space-x-4 mt-5'>
 
           <Button
             type='submit'
-            className='ml-auto mt-4 flex justify-end'
+            className=' flex justify-end'
             onClick={handleAccept}
-          >
+            >
             Aceptar
           </Button>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button  className='bg-secondary'>
+                    + Evento
+                  </Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle>Agrega evento</SheetTitle>
+                    <SheetDescription>Agrega eventos desde aqui.</SheetDescription>
+                  </SheetHeader>
+                  <div className='grid gap-4 py-4'>
+                    <div className='grid grid-cols-4 items-center gap-4'>
+                      <Label htmlFor='name' className='text-right'>
+                        Nombre
+                      </Label>
+                      <Input id='name' type='text' className='col-span-3' />
+                    </div>
+                    <div className='grid grid-cols-4 items-center gap-4'>
+                      <Label htmlFor='username' className='text-right'>
+                        Calendario
+                      </Label>
+                      </div>
+                      <Calendar
+                        mode='single'
+                        selected={date}
+                        onSelect={setDate}
+                        className='rounded-md border'
+                        />
+                  </div>
+                  <SheetFooter>
+                    <SheetClose asChild>
+                      <Button type='submit'>Guardar</Button>
+                    </SheetClose>
+                  </SheetFooter>
+                </SheetContent>
+              </Sheet>
+                        </div>
 
           <div className='mt-4'>
             <p>{descriptions[description]}</p>
@@ -308,6 +367,7 @@ export default function Inicio() {
           </Command>
         </PopoverContent>
       </Popover>
+
     </>
   )
 }
