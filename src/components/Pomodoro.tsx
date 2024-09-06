@@ -77,6 +77,7 @@ export default function Pomodoro({
     setLocation('/')
   }
 
+
   return (
     <div className='flex flex-col items-center justify-center'>
       <h1 className='text-4xl font-bold'>Capydoro</h1>
@@ -125,6 +126,16 @@ export default function Pomodoro({
       {/* <Confetti mode='boom' particleCount={150} /> */}
 
       <p>Pomodoro count: {Math.floor(pomodoroCount.current)}</p>
+
+      <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
+        <h1 className="text-xl font-bold">Aca tendrian que aparecer los objetivos....</h1>
+        <ul>
+
+        </ul>
+      </div>
     </div>
+
+    
+    
   )
 }
