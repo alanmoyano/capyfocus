@@ -151,6 +151,7 @@ export default function Inicio() {
       <section className='flex flex-col gap-20 p-10 md:flex-row'>
         <div className='m-auto'>
           <img src='/idle.gif' />
+          {/* Motivación */}
           <Select>
             <SelectTrigger className='ml-4 w-[280px]'>
               <SelectValue placeholder='Selecciona una motivación' />
@@ -210,7 +211,45 @@ export default function Inicio() {
               Capymetro
             </ToggleGroupItem>
           </ToggleGroup>
-
+          {/* Agregar evento  */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant='secondary' className='mt-6 bg-secondary'>
+                + Evento
+              </Button>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>Agrega evento</SheetTitle>
+                <SheetDescription>Agrega eventos desde aqui.</SheetDescription>
+              </SheetHeader>
+              <div className='grid gap-4 py-4'>
+                <div className='grid grid-cols-4 items-center gap-4'>
+                  <Label htmlFor='name' className='text-right'>
+                    Nombre
+                  </Label>
+                  <Input id='name' type='text' className='col-span-3' />
+                </div>
+                <div className='grid grid-cols-4 items-center gap-4'>
+                  <Label htmlFor='username' className='text-right'>
+                    Calendario
+                  </Label>
+                </div>
+                <Calendar
+                  mode='single'
+                  selected={date}
+                  onSelect={setDate}
+                  className='rounded-md border'
+                />
+              </div>
+              <SheetFooter>
+                <SheetClose asChild>
+                  <Button type='submit'>Guardar</Button>
+                </SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
+          {/* Objetivos */}
           <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
             <div className='flex items-center gap-2'>
               <Input
@@ -238,21 +277,65 @@ export default function Inicio() {
                     ) : (
                       <div className='flex w-full items-center justify-between'>
                         <span>{objetivo}</span>
-                        <div className='flex items-center gap-2'>
-                          <button onClick={() => handleEdit(key)}>
-                            <Edit3 size={20} />
-                          </button>
+                        <div className='flex items-center'>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant='icon'
+                                  size='icon'
+                                  onClick={() => handleEdit(key)}
+                                >
+                                  {' '}
+                                  <Edit3 size={20} />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Modificar</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
 
-                          <button onClick={() => handleDelete(key)}>
-                            <Trash size={20} />
-                          </button>
-                          <button onClick={() => handleFav(String(key))}>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant='icon'
+                                  size='icon'
+                                  onClick={() => handleDelete(key)}
+                                >
+                                  <Trash size={20} />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Eliminar</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+
+
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                          <Button
+                            variant='icon'
+                            size='icon'
+                            onClick={() => handleFav(String(key))}
+                          >
                             {objetivosFav.includes(String(key)) ? (
                               <StarOff size={20} style={{ color: '#ffbc05' }} />
                             ) : (
                               <Star size={20} className='text-black-500' />
                             )}
-                          </button>
+                          </Button>
+                          </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Favorito</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+
+                          
                         </div>
                       </div>
                     )}
@@ -261,7 +344,7 @@ export default function Inicio() {
               </ul>
             </div>
           </div>
-          <div className='mt-5 flex space-x-4'>
+          <div className='mt-5 flex justify-end space-x-4'>
             <Button
               type='submit'
               className='flex justify-end'
@@ -269,45 +352,7 @@ export default function Inicio() {
             >
               Aceptar
             </Button>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button className='bg-secondary'>+ Evento</Button>
-              </SheetTrigger>
-              <SheetContent>
-                <SheetHeader>
-                  <SheetTitle>Agrega evento</SheetTitle>
-                  <SheetDescription>
-                    Agrega eventos desde aqui.
-                  </SheetDescription>
-                </SheetHeader>
-                <div className='grid gap-4 py-4'>
-                  <div className='grid grid-cols-4 items-center gap-4'>
-                    <Label htmlFor='name' className='text-right'>
-                      Nombre
-                    </Label>
-                    <Input id='name' type='text' className='col-span-3' />
-                  </div>
-                  <div className='grid grid-cols-4 items-center gap-4'>
-                    <Label htmlFor='username' className='text-right'>
-                      Calendario
-                    </Label>
-                  </div>
-                  <Calendar
-                    mode='single'
-                    selected={date}
-                    onSelect={setDate}
-                    className='rounded-md border'
-                  />
-                </div>
-                <SheetFooter>
-                  <SheetClose asChild>
-                    <Button type='submit'>Guardar</Button>
-                  </SheetClose>
-                </SheetFooter>
-              </SheetContent>
-            </Sheet>
           </div>
-
           <div className='mt-4'>
             <p>{descriptions[description]}</p>
           </div>
