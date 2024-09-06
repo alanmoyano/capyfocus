@@ -207,7 +207,6 @@ export default function Inicio() {
               className='flex items-center justify-center gap-1'
             >
               <Timer size={20} />
-              
               Capydoro
             </ToggleGroupItem>
             <ToggleGroupItem
@@ -250,11 +249,9 @@ export default function Inicio() {
                           <button onClick={() => handleEdit(key)}>
                             <Edit3 size={20} />
                           </button>
-                          
+
                           <button onClick={() => handleDelete(key)}>
                             <Trash size={20} />
-                            
-                    
                           </button>
                           <button onClick={() => handleFav(String(key))}>
                             {objetivosFav.includes(String(key)) ? (
@@ -271,53 +268,52 @@ export default function Inicio() {
               </ul>
             </div>
           </div>
-          <div className='flex space-x-4 mt-5'>
-
-          <Button
-            type='submit'
-            className=' flex justify-end'
-            onClick={handleAccept}
+          <div className='mt-5 flex space-x-4'>
+            <Button
+              type='submit'
+              className='flex justify-end'
+              onClick={handleAccept}
             >
-            Aceptar
-          </Button>
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button  className='bg-secondary'>
-                    + Evento
-                  </Button>
-                </SheetTrigger>
-                <SheetContent>
-                  <SheetHeader>
-                    <SheetTitle>Agrega evento</SheetTitle>
-                    <SheetDescription>Agrega eventos desde aqui.</SheetDescription>
-                  </SheetHeader>
-                  <div className='grid gap-4 py-4'>
-                    <div className='grid grid-cols-4 items-center gap-4'>
-                      <Label htmlFor='name' className='text-right'>
-                        Nombre
-                      </Label>
-                      <Input id='name' type='text' className='col-span-3' />
-                    </div>
-                    <div className='grid grid-cols-4 items-center gap-4'>
-                      <Label htmlFor='username' className='text-right'>
-                        Calendario
-                      </Label>
-                      </div>
-                      <Calendar
-                        mode='single'
-                        selected={date}
-                        onSelect={setDate}
-                        className='rounded-md border'
-                        />
+              Aceptar
+            </Button>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button className='bg-secondary'>+ Evento</Button>
+              </SheetTrigger>
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle>Agrega evento</SheetTitle>
+                  <SheetDescription>
+                    Agrega eventos desde aqui.
+                  </SheetDescription>
+                </SheetHeader>
+                <div className='grid gap-4 py-4'>
+                  <div className='grid grid-cols-4 items-center gap-4'>
+                    <Label htmlFor='name' className='text-right'>
+                      Nombre
+                    </Label>
+                    <Input id='name' type='text' className='col-span-3' />
                   </div>
-                  <SheetFooter>
-                    <SheetClose asChild>
-                      <Button type='submit'>Guardar</Button>
-                    </SheetClose>
-                  </SheetFooter>
-                </SheetContent>
-              </Sheet>
-                        </div>
+                  <div className='grid grid-cols-4 items-center gap-4'>
+                    <Label htmlFor='username' className='text-right'>
+                      Calendario
+                    </Label>
+                  </div>
+                  <Calendar
+                    mode='single'
+                    selected={date}
+                    onSelect={setDate}
+                    className='rounded-md border'
+                  />
+                </div>
+                <SheetFooter>
+                  <SheetClose asChild>
+                    <Button type='submit'>Guardar</Button>
+                  </SheetClose>
+                </SheetFooter>
+              </SheetContent>
+            </Sheet>
+          </div>
 
           <div className='mt-4'>
             <p>{descriptions[description]}</p>
@@ -367,7 +363,6 @@ export default function Inicio() {
           </Command>
         </PopoverContent>
       </Popover>
-
     </>
   )
 }
