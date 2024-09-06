@@ -1,4 +1,4 @@
-import React, {createContext, useState, ReactNode, useContext} from "react";
+import React, { createContext, useState, ReactNode, useContext } from 'react'
 
 interface ObjetivosContextData {
     objetivos: string[],
@@ -11,7 +11,9 @@ interface ObjetivosContextData {
 }
 
 // datos que va a manejar, valor predeterminado x si no hay provider
-export const ObjetivosContext = createContext<ObjetivosContextData | undefined>(undefined)
+export const ObjetivosContext = createContext<ObjetivosContextData | undefined>(
+  undefined
+)
 
 export const ObjetivosProvider = ( { children }: {children: ReactNode }) => {
     // lo mismo que estaba alla ! ;)
@@ -27,9 +29,9 @@ export const ObjetivosProvider = ( { children }: {children: ReactNode }) => {
 }
 
 export const useObjetivos = () => {
-    const context = useContext(ObjetivosContext)
-    if (context === undefined) {
-        throw new Error('error en contexto')
-    }
-    return context
+  const context = useContext(ObjetivosContext)
+  if (context === undefined) {
+    throw new Error('error en contexto')
+  }
+  return context
 }

@@ -142,7 +142,9 @@ export default function Inicio() {
 
   const handleFav = (objetivo: string) => {
     if (objetivosFav.includes(objetivo)) {
-      setObjetivosFav(objetivosFav.filter(objetivoFav => objetivoFav !== objetivo))
+      setObjetivosFav(
+        objetivosFav.filter(objetivoFav => objetivoFav !== objetivo)
+      )
     } else {
       setObjetivosFav([...objetivosFav, objetivo])
     }
