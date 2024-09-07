@@ -1,3 +1,18 @@
+import { KeyboardEvent, useState } from 'react'
+
+import { useLocation } from 'wouter'
+
+import {
+  Edit3,
+  Hourglass,
+  Star,
+  Timer,
+  Trash,
+  StarOff,
+  Check,
+  ChevronsUpDown
+} from 'lucide-react'
+
 import { Input } from '@/components/ui/input'
 import { useObjetivos } from './ObjetivosContext'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
@@ -21,8 +36,6 @@ import {
   SheetTrigger
 } from '@/components/ui/sheet'
 
-import { Edit3, Hourglass, Star, Timer, Trash, StarOff } from 'lucide-react'
-
 import {
   Select,
   SelectContent,
@@ -32,9 +45,6 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-
-import { Check, ChevronsUpDown } from 'lucide-react'
-import * as React from 'react'
 
 import {
   Command,
@@ -53,33 +63,6 @@ import { cn } from '@/lib/utils'
 
 import { Calendar } from '@/components/ui/calendar'
 
-const frameworks = [
-  {
-    value: 'next.js',
-    label: 'Next.js'
-  },
-  {
-    value: 'sveltekit',
-    label: 'SvelteKit'
-  },
-  {
-    value: 'nuxt.js',
-    label: 'Nuxt.js'
-  },
-  {
-    value: 'remix',
-    label: 'Remix'
-  },
-  {
-    value: 'astro',
-    label: 'Astro'
-  }
-]
-
-import { useState } from 'react'
-
-import { useLocation } from 'wouter'
-
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
 const descriptions: Record<CapyMetodos, string> = {
@@ -88,9 +71,9 @@ const descriptions: Record<CapyMetodos, string> = {
 }
 
 export default function Inicio() {
-  const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState('')
-  const [date, setDate] = React.useState<Date | undefined>(new Date())
+  const [open, setOpen] = useState(false)
+  const [value] = useState('')
+  const [date, setDate] = useState<Date | undefined>(new Date())
   const [inputValue, setInputValue] = useState('')
   const [index, setIndex] = useState<number | null>(null)
 
@@ -110,7 +93,7 @@ export default function Inicio() {
     }
   }
 
-  const handleAdd = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleAdd = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key == 'Enter' && inputValue.trim() != '') {
       setObjetivos([...objetivos, inputValue])
       setInputValue('')
@@ -120,8 +103,6 @@ export default function Inicio() {
   const handleDelete = (index: number) => {
     const auxObjetivos = objetivos.filter((_, i) => i !== index) //hola a los que no son
     setObjetivos(auxObjetivos)
-    const auxObjetivosFav = objetivosFav.filter((_, i) => i !== index)
-    setObjetivosFav(auxObjetivosFav)
   }
 
   const handleEdit = (index: number) => {
@@ -129,7 +110,7 @@ export default function Inicio() {
   }
 
   const handleSaveEdit = (
-    e: React.KeyboardEvent<HTMLInputElement>,
+    e: KeyboardEvent<HTMLInputElement>,
     index: number
   ) => {
     if (e.key == 'Enter' && inputValue.trim() != '') {
@@ -371,36 +352,39 @@ export default function Inicio() {
             variant='outline'
             role='combobox'
             aria-expanded={open}
-            className='w-[200px] justify-between'
+            className='justify-between'
           >
             {value
-              ? frameworks.find(framework => framework.value === value)?.label
-              : 'Select framework...'}
+              ? objetivosFav.find(objetivoFav => objetivoFav === value)
+              : 'Seleccionar objetivo favorito...'}
             <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className='w-[200px] p-0'>
+        <PopoverContent className='p-0'>
           <Command>
-            <CommandInput placeholder='Search framework...' />
+            <CommandInput placeholder='Seleccionar objetivo favorito...' />
             <CommandList>
-              <CommandEmpty>No framework found.</CommandEmpty>
+              <CommandEmpty>No se encontró el objetivo.</CommandEmpty>
               <CommandGroup>
-                {frameworks.map(framework => (
+                {objetivosFav.map(objetivoFav => (
                   <CommandItem
-                    key={framework.value}
-                    value={framework.value}
+                    key={objetivoFav}
+                    value={objetivoFav}
                     onSelect={currentValue => {
-                      setValue(currentValue === value ? '' : currentValue)
+                      // setValue(currentValue === value ? '' : currentValue)
                       setOpen(false)
+                      setInputValue('')
+                      if (!objetivos.includes(currentValue))
+                        setObjetivos([...objetivos, currentValue])
                     }}
                   >
                     <Check
                       className={cn(
                         'mr-2 h-4 w-4',
-                        value === framework.value ? 'opacity-100' : 'opacity-0'
+                        value === objetivoFav ? 'opacity-100' : 'opacity-0'
                       )}
                     />
-                    {framework.label}
+                    {objetivoFav}
                   </CommandItem>
                 ))}
               </CommandGroup>
