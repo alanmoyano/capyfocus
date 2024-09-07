@@ -2,11 +2,18 @@ import { useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button'
 import { useLocation } from 'wouter'
 import { useObjetivos } from './ObjetivosContext'
-import { Star } from 'lucide-react'
+import { Star, NotebookPen, Moon  } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Session' | 'Break'
+type Accion = 'Estudiar' | 'Descansar'
+
+const descriptions: Record<Accion, string> = {
+  Estudiar: 'Estudiando...',
+  Descansar: 'Descansando...'}
+
 
 function addZeroIfNeeded(value: number) {
   return value.toString().padStart(2, '0')
@@ -43,6 +50,9 @@ export default function Timer() {
     setBreakCountup(0)
     setSessionCountup(0)
   }
+
+  const [description, setDescription] =
+  useState<keyof typeof descriptions>('Estudiar')
 
   useEffect(() => {
     if (!isActive) {
@@ -88,16 +98,43 @@ export default function Timer() {
             <div className='rounded-xl bg-accent/90 p-4'>
               <ActualTimer mode={'Session'} time={Sessioncountup} />
             </div>
-            <div className='ml-10 mt-16'>
-              <Button
-                variant={'accent'}
-                className=' '
-                onClick={() => {
-                  setIsActive(prev => !prev)
-                }}
+            <div className=''>
+
+            <div className=' mt-16'>
+
+
+            <ToggleGroup
+            type='single'
+            className='rounded-xl bg-primary/90 p-2'
+            onValueChange={value => setDescription(value as Accion)}
+            >
+            <ToggleGroupItem
+              value='Estudiar'
+              className={`flex items-center justify-center gap-1 ${isActive ? 'bg-muted text-muted-foreground' : 'bg-primary/90'}`}
+
+              onClick={() => {
+                setIsActive(prev => !prev)
+              }}
               >
-                {isActive ? 'Descansar' : 'Estudiar'}
-              </Button>
+              <NotebookPen/>
+              Estudiar
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value='Descansar'
+              className='flex items-center justify-center gap-1 '
+             
+              onClick={() => {
+                setIsActive(prev => !prev)
+              }}
+              >
+              <Moon/>
+              Descansar
+            </ToggleGroupItem>
+          </ToggleGroup>
+          <p className='mt-2'>{descriptions[description]}</p>
+              </div>
+          
+
             </div>
           </div>
 
@@ -105,7 +142,7 @@ export default function Timer() {
             <div className='rounded-xl bg-accent/90 p-4'>
               <ActualTimer mode={'Break'} time={Breakcountup} />
             </div>
-            <div className='mt-16'>
+            <div className='mt-40 ml-16 '>
               <Button
                 className='flex flex-col'
                 variant={'destructive'}
