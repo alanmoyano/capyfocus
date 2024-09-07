@@ -4,6 +4,7 @@ import { useLocation } from 'wouter'
 import { useObjetivos } from './ObjetivosContext'
 import { Star } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
+import { navigationMenuTriggerStyle } from './ui/navigation-menu'
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Session' | 'Break'
@@ -66,32 +67,35 @@ export default function Timer() {
   const { objetivos, objetivosFav, setTiempo, tiempo} = useObjetivos()
 
   const [, setLocation] = useLocation()
-
+  const [lastCheckedObj, setLastCheckedObj] = useState<number|null>(null)
   const handleAccept = () => {
     setLocation('/')
     // setObjetivos([])
   }
 
   const handleCheckbox = (objetivo: string, key: number) => {
-    console.log('Checkbox activado para objetivo:', objetivo, ', Key:', key)
-    console.log('Segundo de la sesion en el que se completó: ', Sessioncountup)
-    if (key !== 0) {console.log('Tiemmmpoooo:', tiempo[objetivos[key-1]] - Sessioncountup)}
-    if (key === 0){
-        setTiempo(prev => ({
-            ...prev, [objetivo] : Sessioncountup
-        }))
-    }
-    else{
-      const tiempoObjAnterior = tiempo[objetivos[key - 1]]
+    /*console.log('Checkbox activado para objetivo:', objetivo, ', Key:', key)
+      console.log('Segundo de la sesion en el que se completó: ', Sessioncountup)
+     if (lastCheckedObj !==null) {console.log('lastCheckedKey:', lastCheckedObj, 'tiempo: ', tiempo[objetivos[lastCheckedObj]])
+      console.log('Resta:', Math.abs(tiempo[objetivos[lastCheckedObj]] - Sessioncountup))
+     } */
+    
+    if (lastCheckedObj === null){
+      setTiempo(prev => ({
+        ...prev, [objetivo] : Sessioncountup
+      }))
+    } else {
+      const tiempoObjAnterior = tiempo[objetivos[lastCheckedObj]]
       if (tiempoObjAnterior !== undefined) {
         setTiempo(prev => ({
-          ...prev, [objetivo] : Sessioncountup - tiempo[objetivos[key - 1]]
+          ...prev, [objetivo] : tiempoObjAnterior - Sessioncountup
         }))
       }
     }
+    setLastCheckedObj(key)
   }
 
-  // bloquear desmarcar, calcular tiempo, segundo + obj.
+  // bloquear desmarcar
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyMetro!</h1>
