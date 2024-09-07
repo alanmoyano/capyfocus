@@ -63,7 +63,7 @@ export default function Timer() {
   // useEffect(() => {
   //   setCountdown(mode === 'Session' ? sessionSeconds : breakSeconds)
   // }, [mode, sessionSeconds, breakSeconds])
-  const { objetivos, objetivosFav } = useObjetivos()
+  const { objetivos, objetivosFav, setTiempo, tiempo} = useObjetivos()
 
   const [, setLocation] = useLocation()
 
@@ -72,6 +72,26 @@ export default function Timer() {
     // setObjetivos([])
   }
 
+  const handleCheckbox = (objetivo: string, key: number) => {
+    console.log('Checkbox activado para objetivo:', objetivo, ', Key:', key)
+    console.log('Segundo de la sesion en el que se completó: ', Sessioncountup)
+    if (key !== 0) {console.log('Tiemmmpoooo:', tiempo[objetivos[key-1]] - Sessioncountup)}
+    if (key === 0){
+        setTiempo(prev => ({
+            ...prev, [objetivo] : Sessioncountup
+        }))
+    }
+    else{
+      const tiempoObjAnterior = tiempo[objetivos[key - 1]]
+      if (tiempoObjAnterior !== undefined) {
+        setTiempo(prev => ({
+          ...prev, [objetivo] : Sessioncountup - tiempo[objetivos[key - 1]]
+        }))
+      }
+    }
+  }
+
+  // bloquear desmarcar, calcular tiempo, segundo + obj.
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyMetro!</h1>
@@ -125,7 +145,7 @@ export default function Timer() {
           {objetivos.map((objetivo, key) => (
             <li key={key} className='flex items-center space-x-2'>
               <span>
-                <Checkbox className='mr-2' />
+                <Checkbox onClick={() => handleCheckbox(objetivo, key)} className='mr-2' />
                 {objetivo}
               </span>
               {objetivosFav.includes(objetivo) && (
@@ -133,7 +153,7 @@ export default function Timer() {
               )}
             </li>
           ))}
-        </ul>
+        </ul> 
       </div>
       <div>
         <Button className='flex flex-col' onClick={handleAccept}>
