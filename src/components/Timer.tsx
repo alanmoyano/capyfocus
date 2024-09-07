@@ -64,22 +64,27 @@ export default function Timer() {
   // useEffect(() => {
   //   setCountdown(mode === 'Session' ? sessionSeconds : breakSeconds)
   // }, [mode, sessionSeconds, breakSeconds])
-  const { objetivos, objetivosFav, setTiempo, tiempo} = useObjetivos()
+  
 
   const [, setLocation] = useLocation()
+
   const [lastCheckedObj, setLastCheckedObj] = useState<number|null>(null)
+  const {objetivos,setObjetivos, objetivosFav, setTiempo, tiempo} = useObjetivos()
+  const [marked, setMarked] = useState<string[]>([])
+
   const handleAccept = () => {
     setLocation('/')
-    // setObjetivos([])
+    setObjetivos(prevObjetivos => prevObjetivos.filter(obj => !marked.includes(obj)))
   }
 
   const handleCheckbox = (objetivo: string, key: number) => {
-    /*console.log('Checkbox activado para objetivo:', objetivo, ', Key:', key)
-      console.log('Segundo de la sesion en el que se completó: ', Sessioncountup)
-     if (lastCheckedObj !==null) {console.log('lastCheckedKey:', lastCheckedObj, 'tiempo: ', tiempo[objetivos[lastCheckedObj]])
-      console.log('Resta:', Math.abs(tiempo[objetivos[lastCheckedObj]] - Sessioncountup))
-     } */
-    
+    if (marked.includes(objetivo)) {
+      return;
+    }
+    setMarked([...marked, objetivo])
+    /*console.log('Checkbox activado para objetivo:', objetivo, ', Key:', key, 'Tiempo:', Sessioncountup)
+    if (lastCheckedObj !==null) {console.log('lastCheckedKey:', lastCheckedObj, 'tiempo: ',  Math.abs(tiempo[objetivos[lastCheckedObj]]), 'Resta:', Sessioncountup - tiempo[objetivos[lastCheckedObj]])}
+    */
     if (lastCheckedObj === null){
       setTiempo(prev => ({
         ...prev, [objetivo] : Sessioncountup
@@ -88,14 +93,13 @@ export default function Timer() {
       const tiempoObjAnterior = tiempo[objetivos[lastCheckedObj]]
       if (tiempoObjAnterior !== undefined) {
         setTiempo(prev => ({
-          ...prev, [objetivo] : tiempoObjAnterior - Sessioncountup
+          ...prev, [objetivo] : Sessioncountup - tiempoObjAnterior
         }))
       }
     }
     setLastCheckedObj(key)
   }
 
-  // bloquear desmarcar
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyMetro!</h1>
@@ -149,7 +153,8 @@ export default function Timer() {
           {objetivos.map((objetivo, key) => (
             <li key={key} className='flex items-center space-x-2'>
               <span>
-                <Checkbox onClick={() => handleCheckbox(objetivo, key)} className='mr-2' />
+                <Checkbox checked={marked.includes(objetivo)}
+                onClick={() => handleCheckbox(objetivo, key)} className='mr-2' />
                 {objetivo}
               </span>
               {objetivosFav.includes(objetivo) && (
