@@ -277,6 +277,7 @@ export default function Inicio() {
                           onKeyDown={e => handleSaveEdit(e, key)}
                           className='rounded-md border border-secondary bg-white p-3 shadow-md transition-shadow duration-200 ease-in-out hover:shadow-lg focus:outline-none focus:ring-2'
                         />
+                        
                       </div>
                     ) : (
                       <div className='flex w-full items-center justify-between'>
