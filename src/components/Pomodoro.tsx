@@ -9,7 +9,7 @@ import Confetti from 'react-confetti-boom'
 import useSound from 'use-sound'
 
 
-type Mode = 'Estudiando' | 'Break'
+type Mode = 'Estudiando' | 'Descansando'
 
 function addZeroIfNeeded(value: number) {
   return value.toString().padStart(2, '0')
@@ -28,7 +28,6 @@ export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
       <h2 className='text-xl flex justify-center'>
         <span className='font-semibold'>{mode}</span>
       </h2>
-      {mode === 'Break' && <p>A descansar!</p>}
       <p className='text-lg'> </p>
       <span className='justify-center items-center flex font-bold text-3xl'>{formatTime(time)}</span>
     </>
@@ -62,7 +61,7 @@ export default function Pomodoro({
       capySound()
       clearInterval(timer.current)
       setCountdown(mode === 'Estudiando' ? breakSeconds : sessionSeconds)
-      setMode(prev => (prev === 'Estudiando' ? 'Break' : 'Estudiando'))
+      setMode(prev => (prev === 'Estudiando' ? 'Descansando' : 'Estudiando'))
       pomodoroCount.current += 0.5
     }
 
@@ -153,6 +152,7 @@ export default function Pomodoro({
         {/* Primer columna */}
         <div className='col-span-1'>
           <img src='/idle.gif' />
+
         </div>
 
         {/* Segunda columna  */}
@@ -165,7 +165,7 @@ export default function Pomodoro({
               >
                 -
               </Button>
-              <p>Session minutes: {sessionSeconds / 60}</p>
+              <p>Tiempo de Estudio: {sessionSeconds / 60}</p>
               <Button onClick={() => setSessionSeconds(prev => prev + 60)}>
                 +
               </Button>
@@ -182,7 +182,7 @@ export default function Pomodoro({
               >
                 -
               </Button>
-              <p>Break minutes: {breakSeconds / 60}</p>
+              <p>Tiempo de Descanso: {breakSeconds / 60}</p>
               <Button onClick={() => setBreakSeconds(prev => prev + 60)}>
                 +
               </Button>
@@ -202,7 +202,7 @@ export default function Pomodoro({
                     <span>
                       <Checkbox
                         checked={marked.includes(objetivo)}
-                        disabled={mode === 'Break' || !isActive}
+                        disabled={mode === 'Descansando' || !isActive}
                         onClick={() => handleCheckbox(objetivo, key)}
                         className='mr-2'
                       />
