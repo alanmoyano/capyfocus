@@ -131,80 +131,100 @@ export default function Pomodoro({
   }
 
   return (
-    <div className='flex flex-col items-center justify-center'>
-      <h1 className='text-4xl font-bold'>Capydoro</h1>
-      <ActualTimer mode={mode} time={countdown} />
+    <>
+      <h1 className='text-4xl mb-6 font-bold'>Capydoro</h1>
+      <div className='flex w-1/2  justify-end'>
+        <span className=''>
+          <ActualTimer mode={mode} time={countdown} />
+          <Button className='mt-2 ' 
+          onClick={() => setIsActive(prev => !prev)}>
+            {isActive ? 'Desactivar' : 'Activar'}
+          </Button>
+        </span>
+      </div>
 
-      <Button onClick={() => setIsActive(prev => !prev)}>
-        {isActive ? 'Desactivar' : 'Activar'}
-      </Button>
-      <div className='col-span-1 mt-32 grid grid-cols-2 gap-4'>
-        <div className='col-span-1 p-4'>
+      <div className='grid grid-cols-2 gap-4'>
+        {/* Primer columna */}
+        <div className='col-span-1'>
           <img src='/idle.gif' />
         </div>
-        <div className='flex items-center justify-center gap-3'>
-          <div className='flex items-center justify-center gap-2 rounded-xl bg-secondary/35 p-4'>
-            <Button
-              onClick={() => setSessionSeconds(prev => prev - 60)}
-              disabled={sessionSeconds <= 60}
-            >
-              -
-            </Button>
-            <p>Session minutes: {sessionSeconds / 60}</p>
-            <Button onClick={() => setSessionSeconds(prev => prev + 60)}>
-              +
-            </Button>
-          </div>
 
-          <div className='flex items-center justify-center gap-2 rounded-xl bg-secondary/35 p-4'>
-            <Button
-              onClick={() => setBreakSeconds(prev => prev - 60)}
-              disabled={breakSeconds <= 60}
-            >
-              -
-            </Button>
-            <p>Break minutes: {breakSeconds / 60}</p>
-            <Button onClick={() => setBreakSeconds(prev => prev + 60)}>
-              +
-            </Button>
+        {/* Segunda columna  */}
+        <div className='col-span-1 mt-9 grid grid-cols-2 gap-4'>
+          <div className='text-black'>
+            <div className='mt-4 flex items-center justify-center gap-2 rounded-xl bg-secondary/60 p-4'>
+              <Button
+                onClick={() => setSessionSeconds(prev => prev - 60)}
+                disabled={sessionSeconds <= 60}
+              >
+                -
+              </Button>
+              <p>Session minutes: {sessionSeconds / 60}</p>
+              <Button onClick={() => setSessionSeconds(prev => prev + 60)}>
+                +
+              </Button>
+            </div>
+            {pomodoroCount.current >= pomodoroSessions && (
+              <Confetti mode='boom' particleCount={150} />
+            )}
+            {/* <Confetti mode='boom' particleCount={150} /> */}
+
+            <p className=''>
+              Pomodoro count: {Math.floor(pomodoroCount.current)}
+            </p>
+          </div>
+          {/* Tercer columna */}
+          <div className='text-black'>
+            <div className='mt-4 flex items-center justify-center gap-2 rounded-xl bg-secondary/60 p-4'>
+              <Button
+                onClick={() => setBreakSeconds(prev => prev - 60)}
+                disabled={breakSeconds <= 60}
+              >
+                -
+              </Button>
+              <p>Break minutes: {breakSeconds / 60}</p>
+              <Button onClick={() => setBreakSeconds(prev => prev + 60)}>
+                +
+              </Button>
+            </div>
+            <div className='mt-4 rounded-xl bg-accent/90 p-4'>
+              <h1 className='text-xl'>Objetivos de la sesión:</h1>
+              <ul className='list-inside list-disc space-y-2 text-black'>
+                {objetivos.map((objetivo, key) => (
+                  <li key={key} className='flex items-center space-x-2'>
+                    <span>
+                      <Checkbox
+                        checked={marked.includes(objetivo)}
+                        disabled={mode === 'Break' || !isActive}
+                        onClick={() => handleCheckbox(objetivo, key)}
+                        className='mr-2'
+                      />
+                      {objetivo}
+                    </span>
+                    {objetivosFav.includes(objetivo) && (
+                      <Star size={20} style={{ color: '#ffbc05' }} />
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className='flex w-full justify-end'>
+              <Button
+                className='mt-6 '
+                variant={'destructive'}
+              >
+                Finalizar Sesion
+              </Button>
+            </div>
           </div>
         </div>
       </div>
 
-      {pomodoroCount.current >= pomodoroSessions && (
-        <Confetti mode='boom' particleCount={150} />
-      )}
-
-      {/* <Confetti mode='boom' particleCount={150} /> */}
-
-      <p>Pomodoro count: {Math.floor(pomodoroCount.current)}</p>
-
-      <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
-        <h1 className='text-xl'>Objetivos de la sesión</h1>
-        <ul className='list-inside list-disc space-y-2 text-black'>
-          {objetivos.map((objetivo, key) => (
-            <li key={key} className='flex items-center space-x-2'>
-              <span>
-                <Checkbox
-                  checked={marked.includes(objetivo)}
-                  disabled={mode === 'Break' || !isActive}
-                  onClick={() => handleCheckbox(objetivo, key)}
-                  className='mr-2'
-                />
-                {objetivo}
-              </span>
-              {objetivosFav.includes(objetivo) && (
-                <Star size={20} style={{ color: '#ffbc05' }} />
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
       <div>
         <Button className='flex flex-col' onClick={handleAccept}>
           Volver
         </Button>
       </div>
-    </div>
+    </>
   )
 }

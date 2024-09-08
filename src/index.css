@@ -65,6 +65,11 @@
     --ring: 189 46% 60%;
   }
 }
+.posision1 {
+  position: absolute;
+  top: 130px;
+  left: 600px;
+}
 
 body {
   min-height: 100vh;
