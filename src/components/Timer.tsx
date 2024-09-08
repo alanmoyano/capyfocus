@@ -12,10 +12,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 type Mode = 'Session' | 'Break'
 type Accion = 'Estudiar' | 'Descansar'
 
-const descriptions: Record<Accion, string> = {
-  Estudiar: 'Estudiando...',
-  Descansar: 'Descansando...'
-}
+
 
 function addZeroIfNeeded(value: number) {
   return value.toString().padStart(2, '0')
