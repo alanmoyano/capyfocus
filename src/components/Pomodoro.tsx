@@ -133,36 +133,41 @@ export default function Pomodoro({
   return (
     <div className='flex flex-col items-center justify-center'>
       <h1 className='text-4xl font-bold'>Capydoro</h1>
-
       <ActualTimer mode={mode} time={countdown} />
 
       <Button onClick={() => setIsActive(prev => !prev)}>
         {isActive ? 'Desactivar' : 'Activar'}
       </Button>
-
-      <div className='m-4 flex gap-4'>
-        <div className='flex items-center justify-center gap-2 rounded-xl bg-secondary/25 p-2'>
-          <Button
-            onClick={() => setSessionSeconds(prev => prev - 60)}
-            disabled={sessionSeconds <= 60}
-          >
-            -
-          </Button>
-          <p>Session minutes: {sessionSeconds / 60}</p>
-          <Button onClick={() => setSessionSeconds(prev => prev + 60)}>
-            +
-          </Button>
+      <div className='col-span-1 mt-32 grid grid-cols-2 gap-4'>
+        <div className='col-span-1 p-4'>
+          <img src='/idle.gif' />
         </div>
+        <div className='flex items-center justify-center gap-3'>
+          <div className='flex items-center justify-center gap-2 rounded-xl bg-secondary/35 p-4'>
+            <Button
+              onClick={() => setSessionSeconds(prev => prev - 60)}
+              disabled={sessionSeconds <= 60}
+            >
+              -
+            </Button>
+            <p>Session minutes: {sessionSeconds / 60}</p>
+            <Button onClick={() => setSessionSeconds(prev => prev + 60)}>
+              +
+            </Button>
+          </div>
 
-        <div className='flex items-center justify-center gap-2 rounded-xl bg-secondary/25 p-2'>
-          <Button
-            onClick={() => setBreakSeconds(prev => prev - 60)}
-            disabled={breakSeconds <= 60}
-          >
-            -
-          </Button>
-          <p>Break minutes: {breakSeconds / 60}</p>
-          <Button onClick={() => setBreakSeconds(prev => prev + 60)}>+</Button>
+          <div className='flex items-center justify-center gap-2 rounded-xl bg-secondary/35 p-4'>
+            <Button
+              onClick={() => setBreakSeconds(prev => prev - 60)}
+              disabled={breakSeconds <= 60}
+            >
+              -
+            </Button>
+            <p>Break minutes: {breakSeconds / 60}</p>
+            <Button onClick={() => setBreakSeconds(prev => prev + 60)}>
+              +
+            </Button>
+          </div>
         </div>
       </div>
 
