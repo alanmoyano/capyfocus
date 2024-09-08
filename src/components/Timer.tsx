@@ -135,7 +135,7 @@ export default function Timer() {
             <div className='rounded-xl bg-accent/90 p-4'>
               <ActualTimer mode={'Session'} time={Sessioncountup} />
             </div>
-            <div className=''>
+            
               <div className='mt-16'>
                 <ToggleGroup
                   type='single'
@@ -162,14 +162,33 @@ export default function Timer() {
                   </ToggleGroupItem>
                 </ToggleGroup>
               </div>
-            </div>
           </div>
 
           <div className='text-black'>
             <div className='rounded-xl bg-accent/90 p-4'>
               <ActualTimer mode={'Break'} time={Breakcountup} />
             </div>
-            <div className='ml-16 mt-40'>
+            <div className='mt-16 rounded-xl bg-primary/90 p-4'>
+              <h1 className='text-xl'>Objetivos de la sesión</h1>
+              <ul className='list-inside list-disc space-y-2 text-black'>
+                {objetivos.map((objetivo, key) => (
+                  <li key={key} className='flex items-center space-x-2'>
+                    <span>
+                      <Checkbox
+                        checked={marked.includes(objetivo)}
+                        onClick={() => handleCheckbox(objetivo, key)}
+                        className='mr-2'
+                      />
+                      {objetivo}
+                    </span>
+                    {objetivosFav.includes(objetivo) && (
+                      <Star size={20} style={{ color: '#ffbc05' }} />
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className='ml-32 mt-6'>
               <Button
                 className='flex flex-col'
                 variant={'destructive'}
@@ -183,27 +202,7 @@ export default function Timer() {
           </div>
         </div>
       </div>
-      <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
-        <h1 className='text-xl'>Objetivos de la sesión</h1>
-        <ul className='list-inside list-disc space-y-2 text-black'>
-          {objetivos.map((objetivo, key) => (
-            <li key={key} className='flex items-center space-x-2'>
-              <span>
-                <Checkbox
-                  checked={marked.includes(objetivo)}
-                  onClick={() => handleCheckbox(objetivo, key)}
-                  className='mr-2'
-                />
-                {objetivo}
-              </span>
-              {objetivosFav.includes(objetivo) && (
-                <Star size={20} style={{ color: '#ffbc05' }} />
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div>
+      <div className='ml-32'>
         <Button className='flex flex-col' onClick={handleAccept}>
           Volver
         </Button>
