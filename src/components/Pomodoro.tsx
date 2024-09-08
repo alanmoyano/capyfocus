@@ -51,7 +51,7 @@ export default function Pomodoro() {
     if (countdown >= 0) {
       timer.current = setInterval(() => {
         setCountdown(prev => prev - 1)
-        if (mode === 'Estudiando'){
+        if (mode === 'Estudiando') {
           setObjStudyTime(prev => prev + 1)
         }
       }, 1000)
@@ -70,8 +70,7 @@ export default function Pomodoro() {
     setCountdown(mode === 'Estudiando' ? sessionSeconds : breakSeconds)
   }, [mode, sessionSeconds, breakSeconds])
 
-  const [lastCheckedObj, setLastCheckedObj] = useState<number | null>(null)
-  const { objetivos, setObjetivos, objetivosFav, tiempo, setTiempo } =
+  const { objetivos, setObjetivos, objetivosFav, setTiempo } =
     useObjetivos()
   const [marked, setMarked] = useState<string[]>([])
   const [, setLocation] = useLocation()
@@ -97,21 +96,11 @@ export default function Pomodoro() {
       'Tiempo dedicado:',
       ObjStudyTime
     )
-    if (lastCheckedObj === null) {
-      setTiempo(prev => ({
-        ...prev,
-        [objetivo]: ObjStudyTime
-      }))
-    } else {
-      const tiempoObjAnterior = tiempo[objetivos[lastCheckedObj]]
-      if (tiempoObjAnterior) {
-        setTiempo(prev => ({
-          ...prev,
-          [objetivo]: ObjStudyTime
-        }))
-      }
-    }
-    setLastCheckedObj(key)
+    setTiempo(prev => ({
+      ...prev,
+      [objetivo]: ObjStudyTime
+    }))
+
     setObjStudyTime(0)
   }
 
