@@ -109,7 +109,6 @@ export default function Pomodoro({
     setLastCheckedObj(key)
   }
 
-  // testear si se inicia y termina con un break al medio
   return (
     <div className='flex flex-col items-center justify-center'>
       <h1 className='text-4xl font-bold'>Capydoro</h1>
