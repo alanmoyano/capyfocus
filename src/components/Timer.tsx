@@ -41,7 +41,7 @@ export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
 export default function Timer() {
   const [Sessioncountup, setSessionCountup] = useState(0)
   const [Breakcountup, setBreakCountup] = useState(0)
-  const [isActive, setIsActive] = useState(true)
+  const [isActive, setIsActive] = useState<boolean | null>(true)
   const [mode, setMode] = useState<Mode>('Session')
   const timer = useRef<NodeJS.Timeout>()
 
@@ -71,6 +71,13 @@ export default function Timer() {
     }
     return () => clearInterval(timer.current)
   }, [isActive, mode])
+
+  /* Esto es para que los botones si los tocas mas de una vez no hagan nada */
+  const handleToggle = (value: boolean) => {
+    if (isActive !== value) {
+      setIsActive(value) // Cambia el estado si no está ya activo
+    }
+  }
 
   // useEffect(() => {
   //   setCountdown(mode === 'Session' ? sessionSeconds : breakSeconds)
@@ -138,25 +145,22 @@ export default function Timer() {
                   <ToggleGroupItem
                     value='Estudiar'
                     className={`flex items-center justify-center gap-1 ${isActive ? 'bg-muted text-muted-foreground' : 'bg-primary/90'}`}
-                    onClick={() => {
-                      setIsActive(prev => !prev)
-                    }}
+                    onClick={() => handleToggle(true)}
                   >
                     <NotebookPen />
                     Estudiar
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     value='Descansar'
-                    className='flex items-center justify-center gap-1'
+                    className={`flex items-center justify-center gap-1 ${isActive ? 'bg-primary/90' : 'bg-muted text-muted-foreground'}`}
                     onClick={() => {
-                      setIsActive(prev => !prev)
+                      handleToggle(false)
                     }}
                   >
                     <Moon />
                     Descansar
                   </ToggleGroupItem>
                 </ToggleGroup>
-                <p className='mt-2'>{descriptions[description]}</p>
               </div>
             </div>
           </div>
