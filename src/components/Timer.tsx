@@ -5,6 +5,9 @@ import { useObjetivos } from './ObjetivosContext'
 import { Star, NotebookPen, Moon  } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+
+import { navigationMenuTriggerStyle } from './ui/navigit pull gation-menu'
+
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Session' | 'Break'
@@ -73,13 +76,40 @@ export default function Timer() {
   // useEffect(() => {
   //   setCountdown(mode === 'Session' ? sessionSeconds : breakSeconds)
   // }, [mode, sessionSeconds, breakSeconds])
-  const { objetivos, objetivosFav } = useObjetivos()
+  
 
   const [, setLocation] = useLocation()
 
+  const [lastCheckedObj, setLastCheckedObj] = useState<number|null>(null)
+  const {objetivos,setObjetivos, objetivosFav, setTiempo, tiempo} = useObjetivos()
+  const [marked, setMarked] = useState<string[]>([])
+
   const handleAccept = () => {
     setLocation('/')
-    // setObjetivos([])
+    setObjetivos(prevObjetivos => prevObjetivos.filter(obj => !marked.includes(obj)))
+  }
+
+  const handleCheckbox = (objetivo: string, key: number) => {
+    if (marked.includes(objetivo)) {
+      return;
+    }
+    setMarked([...marked, objetivo])
+    /*console.log('Checkbox activado para objetivo:', objetivo, ', Key:', key, 'Tiempo:', Sessioncountup)
+    if (lastCheckedObj !==null) {console.log('lastCheckedKey:', lastCheckedObj, 'tiempo: ',  Math.abs(tiempo[objetivos[lastCheckedObj]]), 'Resta:', Sessioncountup - tiempo[objetivos[lastCheckedObj]])}
+    */
+    if (lastCheckedObj === null){
+      setTiempo(prev => ({...
+        prev, [objetivo] : Sessioncountup
+      }))
+    } else {
+      const tiempoObjAnterior = tiempo[objetivos[lastCheckedObj]]
+      if (tiempoObjAnterior !== undefined) {
+        setTiempo(prev => ({
+          ...prev, [objetivo] : Sessioncountup - tiempoObjAnterior
+        }))
+      }
+    }
+    setLastCheckedObj(key)
   }
 
   return (
@@ -162,7 +192,8 @@ export default function Timer() {
           {objetivos.map((objetivo, key) => (
             <li key={key} className='flex items-center space-x-2'>
               <span>
-                <Checkbox className='mr-2' />
+                <Checkbox checked={marked.includes(objetivo)}
+                onClick={() => handleCheckbox(objetivo, key)} className='mr-2' />
                 {objetivo}
               </span>
               {objetivosFav.includes(objetivo) && (
@@ -170,7 +201,7 @@ export default function Timer() {
               )}
             </li>
           ))}
-        </ul>
+        </ul> 
       </div>
       <div>
         <Button className='flex flex-col' onClick={handleAccept}>

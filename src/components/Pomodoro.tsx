@@ -75,16 +75,38 @@ export default function Pomodoro({
     pomodoroSessions
   ])
 
-  const { objetivos, objetivosFav, setObjetivos } = useObjetivos()
-
   useEffect(() => {
     setCountdown(mode === 'Session' ? sessionSeconds : breakSeconds)
   }, [mode, sessionSeconds, breakSeconds])
 
+  //const [lastCheckedObj, setLastCheckedObj] = useState<number|null>(null)
+  const {objetivos,setObjetivos, objetivosFav} = useObjetivos()
+  const [marked, setMarked] = useState<string[]>([])
   const [, setLocation] = useLocation()
   const handleAccept = () => {
-    setObjetivos([])
     setLocation('/')
+    setObjetivos(prevObjetivos => prevObjetivos.filter(obj => !marked.includes(obj)))
+  }
+
+  const handleCheckbox = (objetivo: string, key: number) => {
+    if (marked.includes(objetivo)) {
+      return;
+    }
+    setMarked([...marked, objetivo])
+    /*
+    if (lastCheckedObj === null){
+      setTiempo(prev => ({
+        ...prev, [objetivo] : ? ver lo del break
+      }))
+    } else {
+      const tiempoObjAnterior = tiempo[objetivos[lastCheckedObj]]
+      if (tiempoObjAnterior !== undefined) {
+        setTiempo(prev => ({
+          ...prev, [objetivo] : ? - tiempoObjAnterior
+        }))
+      }
+    }*/
+    //setLastCheckedObj(key)
   }
 
   return (
@@ -135,16 +157,17 @@ export default function Pomodoro({
         <h1 className='text-xl'>Objetivos de la sesión</h1>
         <ul className='list-inside list-disc space-y-2 text-black'>
           {objetivos.map((objetivo, key) => (
-            <li key={key} className='flex items-center space-x-2'>
-              <span>
-                <Checkbox className='mr-2' />
-                {objetivo}
-              </span>
-              {objetivosFav.includes(objetivo) && (
-                <Star size={20} style={{ color: '#ffbc05' }} />
-              )}
-            </li>
-          ))}
+              <li key={key} className='flex items-center space-x-2'>
+                <span>
+                  <Checkbox checked={marked.includes(objetivo)}
+                  onClick={() => handleCheckbox(objetivo, key)} className='mr-2' />
+                  {objetivo}
+                </span>
+                {objetivosFav.includes(objetivo) && (
+                  <Star size={20} style={{ color: '#ffbc05' }} />
+                )}
+              </li>
+            ))}
         </ul>
       </div>
       <div>
