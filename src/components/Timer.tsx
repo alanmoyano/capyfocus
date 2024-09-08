@@ -94,6 +94,7 @@ export default function Timer() {
 
   const handleCheckbox = (objetivo: string, key: number) => {
     if (marked.includes(objetivo)) {
+      // Esto sirve para no poder desmarcar los objetivos
       return
     }
     setMarked([...marked, objetivo])

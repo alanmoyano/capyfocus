@@ -8,7 +8,6 @@ import CapySound from '../assets/Sonido_de_caripincho.mp3'
 import Confetti from 'react-confetti-boom'
 import useSound from 'use-sound'
 
-
 type Mode = 'Estudiando' | 'Descansando'
 
 function addZeroIfNeeded(value: number) {
@@ -25,20 +24,18 @@ function formatTime(seconds: number) {
 export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
   return (
     <>
-      <h2 className='text-xl flex justify-center'>
+      <h2 className='flex justify-center text-xl'>
         <span className='font-semibold'>{mode}</span>
       </h2>
       <p className='text-lg'> </p>
-      <span className='justify-center items-center flex font-bold text-3xl'>{formatTime(time)}</span>
+      <span className='flex items-center justify-center text-3xl font-bold'>
+        {formatTime(time)}
+      </span>
     </>
   )
 }
 
-export default function Pomodoro({
-  pomodoroSessions = 1
-}: {
-  pomodoroSessions?: number
-}) {
+export default function Pomodoro() {
   const [sessionSeconds, setSessionSeconds] = useState(25 * 60)
   const [breakSeconds, setBreakSeconds] = useState(5 * 60)
   const [countdown, setCountdown] = useState(sessionSeconds)
@@ -47,15 +44,16 @@ export default function Pomodoro({
   const timer = useRef<NodeJS.Timeout>()
   const pomodoroCount = useRef(0)
   const [capySound] = useSound(CapySound)
+  const [ObjStudyTime, setObjStudyTime] = useState(0)
   useEffect(() => {
     if (!isActive) return () => clearInterval(timer.current)
-    if (pomodoroCount.current >= pomodoroSessions) {
-      return () => clearInterval(timer.current)
-    }
 
     if (countdown >= 0) {
       timer.current = setInterval(() => {
         setCountdown(prev => prev - 1)
+        if (mode === 'Estudiando'){
+          setObjStudyTime(prev => prev + 1)
+        }
       }, 1000)
     } else {
       capySound()
@@ -66,15 +64,7 @@ export default function Pomodoro({
     }
 
     return () => clearInterval(timer.current)
-  }, [
-    isActive,
-    countdown,
-    sessionSeconds,
-    breakSeconds,
-    mode,
-    capySound,
-    pomodoroSessions
-  ])
+  }, [isActive, countdown, sessionSeconds, breakSeconds, mode, capySound])
 
   useEffect(() => {
     setCountdown(mode === 'Estudiando' ? sessionSeconds : breakSeconds)
@@ -94,57 +84,51 @@ export default function Pomodoro({
 
   const handleCheckbox = (objetivo: string, key: number) => {
     // Ver cómo hacer para contabilizar el tiempo entre sesiones de un obj.
+    if (marked.includes(objetivo)) {
+      return
+    }
     setMarked([...marked, objetivo])
-    const timeSinceActive = sessionSeconds - countdown
+    //const timeSinceActive = sessionSeconds - countdown
     console.log(
       'Checkbox activado para objetivo:',
       objetivo,
       ', Key:',
       key,
-      'Tiempo:',
-      timeSinceActive
+      'Tiempo dedicado:',
+      ObjStudyTime
     )
-    if (lastCheckedObj !== null) {
-      console.log(
-        'lastCheckedKey:',
-        lastCheckedObj,
-        'tiempo: ',
-        Math.abs(tiempo[objetivos[lastCheckedObj]]),
-        'Resta:',
-        timeSinceActive - tiempo[objetivos[lastCheckedObj]]
-      )
-    }
     if (lastCheckedObj === null) {
       setTiempo(prev => ({
         ...prev,
-        [objetivo]: timeSinceActive
+        [objetivo]: ObjStudyTime
       }))
     } else {
       const tiempoObjAnterior = tiempo[objetivos[lastCheckedObj]]
       if (tiempoObjAnterior) {
         setTiempo(prev => ({
           ...prev,
-          [objetivo]: timeSinceActive - tiempoObjAnterior
+          [objetivo]: ObjStudyTime
         }))
       }
     }
     setLastCheckedObj(key)
+    setObjStudyTime(0)
   }
 
   return (
     <>
-      <h1 className='text-4xl mb-6 font-bold'>Capydoro</h1>
-      <div className='flex w-1/2  justify-end'>
+      <h1 className='mb-6 text-4xl font-bold'>Capydoro</h1>
+      <div className='flex w-1/2 justify-end'>
         <span className='rounded-xl bg-secondary/60 p-4'>
           <ActualTimer mode={mode} time={countdown} />
-          {pomodoroCount.current >= pomodoroSessions && (
-              <Confetti mode='boom' particleCount={150} />
-            )}
-            {/* <Confetti mode='boom' particleCount={150} /> */}
+          {pomodoroCount.current >= 1 && (
+            <Confetti mode='boom' particleCount={150} />
+          )}
+          {/* <Confetti mode='boom' particleCount={150} /> */}
 
-            <p className=''>
-              Pomodoro count: {Math.floor(pomodoroCount.current)}
-            </p>
+          <p className=''>
+            Pomodoro count: {Math.floor(pomodoroCount.current)}
+          </p>
         </span>
       </div>
 
@@ -152,7 +136,6 @@ export default function Pomodoro({
         {/* Primer columna */}
         <div className='col-span-1'>
           <img src='/idle.gif' />
-
         </div>
 
         {/* Segunda columna  */}
@@ -160,39 +143,44 @@ export default function Pomodoro({
           <div className='text-black'>
             <div className='mt-4 flex items-center justify-center gap-2 rounded-xl bg-secondary/60 p-4'>
               <Button
-                onClick={() => setSessionSeconds(prev => prev - 60)}
-                disabled={sessionSeconds <= 60}
+                onClick={() => setSessionSeconds(10)}
+                disabled={sessionSeconds <= 60 || isActive}
               >
                 -
               </Button>
               <p>Tiempo de Estudio: {sessionSeconds / 60}</p>
-              <Button onClick={() => setSessionSeconds(prev => prev + 60)}>
+              <Button
+                onClick={() => setSessionSeconds(prev => prev + 60)}
+                disabled={isActive}
+              >
                 +
               </Button>
             </div>
-
-
           </div>
           {/* Tercer columna */}
           <div className='text-black'>
             <div className='mt-4 flex items-center justify-center gap-2 rounded-xl bg-secondary/60 p-4'>
               <Button
-                onClick={() => setBreakSeconds(prev => prev - 60)}
-                disabled={breakSeconds <= 60}
+                onClick={() => setBreakSeconds(10)}
+                disabled={breakSeconds <= 60 || isActive}
               >
                 -
               </Button>
               <p>Tiempo de Descanso: {breakSeconds / 60}</p>
-              <Button onClick={() => setBreakSeconds(prev => prev + 60)}>
+              <Button
+                onClick={() => setBreakSeconds(prev => prev + 60)}
+                disabled={isActive}
+              >
                 +
               </Button>
             </div>
             <div className='flex w-full justify-end'>
-
-            <Button className='mt-2 ' 
-          onClick={() => setIsActive(prev => !prev)}>
-            {isActive ? 'Desactivar' : 'Empezar'}
-          </Button>
+              <Button
+                className='mt-2'
+                onClick={() => setIsActive(prev => !prev)}
+              >
+                {isActive ? 'Desactivar' : 'Empezar'}
+              </Button>
             </div>
             <div className='mt-4 rounded-xl bg-accent/90 p-4'>
               <h1 className='text-xl'>Objetivos de la sesión:</h1>
@@ -216,10 +204,7 @@ export default function Pomodoro({
               </ul>
             </div>
             <div className='flex w-full justify-end'>
-              <Button
-                className='mt-6 '
-                variant={'destructive'}
-              >
+              <Button className='mt-6' variant={'destructive'}>
                 Finalizar Sesion
               </Button>
             </div>
