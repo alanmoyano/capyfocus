@@ -38,6 +38,7 @@
     "react-confetti-boom": "^1.0.0",
     "react-day-picker": "8.10.1",
     "react-dom": "^18.3.1",
+    "react-resizable-panels": "^2.1.2",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "use-sound": "^4.0.3",

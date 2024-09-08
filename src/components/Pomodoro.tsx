@@ -8,7 +8,8 @@ import CapySound from '../assets/Sonido_de_caripincho.mp3'
 import Confetti from 'react-confetti-boom'
 import useSound from 'use-sound'
 
-type Mode = 'Session' | 'Break'
+
+type Mode = 'Estudiando' | 'Break'
 
 function addZeroIfNeeded(value: number) {
   return value.toString().padStart(2, '0')
@@ -24,11 +25,12 @@ function formatTime(seconds: number) {
 export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
   return (
     <>
-      <h2 className='text-xl'>
-        Mode: <span className='font-semibold'>{mode}</span>
+      <h2 className='text-xl flex justify-center'>
+        <span className='font-semibold'>{mode}</span>
       </h2>
       {mode === 'Break' && <p>A descansar!</p>}
-      <p className='text-lg'>Time left: {formatTime(time)}</p>
+      <p className='text-lg'> </p>
+      <span className='justify-center items-center flex font-bold text-3xl'>{formatTime(time)}</span>
     </>
   )
 }
@@ -42,7 +44,7 @@ export default function Pomodoro({
   const [breakSeconds, setBreakSeconds] = useState(5 * 60)
   const [countdown, setCountdown] = useState(sessionSeconds)
   const [isActive, setIsActive] = useState(false)
-  const [mode, setMode] = useState<Mode>('Session')
+  const [mode, setMode] = useState<Mode>('Estudiando')
   const timer = useRef<NodeJS.Timeout>()
   const pomodoroCount = useRef(0)
   const [capySound] = useSound(CapySound)
@@ -59,8 +61,8 @@ export default function Pomodoro({
     } else {
       capySound()
       clearInterval(timer.current)
-      setCountdown(mode === 'Session' ? breakSeconds : sessionSeconds)
-      setMode(prev => (prev === 'Session' ? 'Break' : 'Session'))
+      setCountdown(mode === 'Estudiando' ? breakSeconds : sessionSeconds)
+      setMode(prev => (prev === 'Estudiando' ? 'Break' : 'Estudiando'))
       pomodoroCount.current += 0.5
     }
 
@@ -76,7 +78,7 @@ export default function Pomodoro({
   ])
 
   useEffect(() => {
-    setCountdown(mode === 'Session' ? sessionSeconds : breakSeconds)
+    setCountdown(mode === 'Estudiando' ? sessionSeconds : breakSeconds)
   }, [mode, sessionSeconds, breakSeconds])
 
   const [lastCheckedObj, setLastCheckedObj] = useState<number | null>(null)
@@ -134,12 +136,16 @@ export default function Pomodoro({
     <>
       <h1 className='text-4xl mb-6 font-bold'>Capydoro</h1>
       <div className='flex w-1/2  justify-end'>
-        <span className=''>
+        <span className='rounded-xl bg-secondary/60 p-4'>
           <ActualTimer mode={mode} time={countdown} />
-          <Button className='mt-2 ' 
-          onClick={() => setIsActive(prev => !prev)}>
-            {isActive ? 'Desactivar' : 'Activar'}
-          </Button>
+          {pomodoroCount.current >= pomodoroSessions && (
+              <Confetti mode='boom' particleCount={150} />
+            )}
+            {/* <Confetti mode='boom' particleCount={150} /> */}
+
+            <p className=''>
+              Pomodoro count: {Math.floor(pomodoroCount.current)}
+            </p>
         </span>
       </div>
 
@@ -164,14 +170,8 @@ export default function Pomodoro({
                 +
               </Button>
             </div>
-            {pomodoroCount.current >= pomodoroSessions && (
-              <Confetti mode='boom' particleCount={150} />
-            )}
-            {/* <Confetti mode='boom' particleCount={150} /> */}
 
-            <p className=''>
-              Pomodoro count: {Math.floor(pomodoroCount.current)}
-            </p>
+
           </div>
           {/* Tercer columna */}
           <div className='text-black'>
@@ -186,6 +186,13 @@ export default function Pomodoro({
               <Button onClick={() => setBreakSeconds(prev => prev + 60)}>
                 +
               </Button>
+            </div>
+            <div className='flex w-full justify-end'>
+
+            <Button className='mt-2 ' 
+          onClick={() => setIsActive(prev => !prev)}>
+            {isActive ? 'Desactivar' : 'Empezar'}
+          </Button>
             </div>
             <div className='mt-4 rounded-xl bg-accent/90 p-4'>
               <h1 className='text-xl'>Objetivos de la sesión:</h1>
