@@ -2,10 +2,16 @@
 
 Nuestro hermoso trabajo para el seminario integrador
 
+> [!Important]
+> Antes de pushear: `npm run prePush`
+
+## Despliegues
+
+- [Producción](https://capyfocus.vercel.app/)
+- [Preview](https://capyfocus-preview.vercel.app/)
+
 ## Dev tools
 
-- [Paleta Clara](https://www.realtimecolors.com/?colors=060405-faf4f7-7529bc-f66fbe-5daee5&fonts=Inter-Poppins)
-- [Paleta Oscura](https://www.realtimecolors.com/?colors=fbf9fa-100a0d-8f43d6-900958-1a6ca2&fonts=Inter-Poppins)
-
-- [De acá saqué la Navbar](https://flowbite.com/docs/components/navbar/#sticky-navbar)
-- [Para hacer paletas de colores estilo tailwind](https://uicolors.app/create)
+- [Paleta](https://www.realtimecolors.com/?colors=160c02-f6f2ee-fecc8b-c1e1c1-bce0e6&fonts=Inter-Inter)
+- [Componentes](https://ui.shadcn.com/docs/components)
+- [Iconos](https://lucide.dev/icons/)
