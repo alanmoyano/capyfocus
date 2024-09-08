@@ -70,8 +70,7 @@ export default function Pomodoro() {
     setCountdown(mode === 'Estudiando' ? sessionSeconds : breakSeconds)
   }, [mode, sessionSeconds, breakSeconds])
 
-  const { objetivos, setObjetivos, objetivosFav, setTiempo } =
-    useObjetivos()
+  const { objetivos, setObjetivos, objetivosFav, setTiempo } = useObjetivos()
   const [marked, setMarked] = useState<string[]>([])
   const [, setLocation] = useLocation()
   const handleAccept = () => {
@@ -107,104 +106,117 @@ export default function Pomodoro() {
   return (
     <>
       <h1 className='mb-6 text-4xl font-bold'>Capydoro</h1>
-      <div className='flex w-1/2 justify-end'>
-        <span className='rounded-xl bg-secondary/60 p-4'>
-          <ActualTimer mode={mode} time={countdown} />
-          {pomodoroCount.current >= 1 && (
-            <Confetti mode='boom' particleCount={150} />
-          )}
-          {/* <Confetti mode='boom' particleCount={150} /> */}
-
-          <p className=''>
-            Pomodoro count: {Math.floor(pomodoroCount.current)}
-          </p>
-        </span>
-      </div>
-
+      <p className='mt-2 flex w-2/4 justify-end'>
+        Coloca el tiempo a estudiar y descansar:
+      </p>
       <div className='grid grid-cols-2 gap-4'>
         {/* Primer columna */}
-        <div className='col-span-1'>
-          <img src='/idle.gif' />
-        </div>
+        <div className='col-span-1'></div>
 
         {/* Segunda columna  */}
-        <div className='col-span-1 mt-9 grid grid-cols-2 gap-4'>
-          <div className='text-black'>
-            <div className='mt-4 flex items-center justify-center gap-2 rounded-xl bg-secondary/60 p-4'>
-              <Button
-                onClick={() => setSessionSeconds(10)}
-                disabled={sessionSeconds <= 60 || isActive}
-              >
-                -
-              </Button>
-              <p>Tiempo de Estudio: {sessionSeconds / 60}</p>
-              <Button
-                onClick={() => setSessionSeconds(prev => prev + 60)}
-                disabled={isActive}
-              >
-                +
-              </Button>
+        <div className='w-3/2 col-span-1 grid grid-cols-2 gap-16'>
+          <div className='flex justify-center text-black'>
+            <div className='mt-4 w-56 gap-2 rounded-xl bg-secondary/60 p-2'>
+              <p className='flex'>Minutos de Estudio:</p>
+              <div className='flex items-center justify-center gap-4'>
+                <Button
+                  className=''
+                  onClick={() => setSessionSeconds(10)}
+                  disabled={sessionSeconds <= 60 || isActive}
+                >
+                  -
+                </Button>
+                <p>{sessionSeconds / 60}</p>
+                <Button
+                  onClick={() => setSessionSeconds(prev => prev + 60)}
+                  disabled={isActive}
+                >
+                  +
+                </Button>
+              </div>
             </div>
           </div>
           {/* Tercer columna */}
           <div className='text-black'>
-            <div className='mt-4 flex items-center justify-center gap-2 rounded-xl bg-secondary/60 p-4'>
-              <Button
-                onClick={() => setBreakSeconds(10)}
-                disabled={breakSeconds <= 60 || isActive}
-              >
-                -
-              </Button>
-              <p>Tiempo de Descanso: {breakSeconds / 60}</p>
-              <Button
-                onClick={() => setBreakSeconds(prev => prev + 60)}
-                disabled={isActive}
-              >
-                +
-              </Button>
+            <div className='mt-4 w-56 items-center justify-center rounded-xl bg-secondary/60 p-2'>
+              <h3>Minutos de descanso:</h3>
+              <div className='flex items-center justify-center gap-4'>
+                <Button
+                  onClick={() => setBreakSeconds(10)}
+                  disabled={breakSeconds <= 60 || isActive}
+                >
+                  -
+                </Button>
+                <p> {breakSeconds / 60}</p>
+                <Button
+                  onClick={() => setBreakSeconds(prev => prev + 60)}
+                  disabled={isActive}
+                >
+                  +
+                </Button>
+              </div>
             </div>
-            <div className='flex w-full justify-end'>
-              <Button
-                className='mt-2'
-                onClick={() => setIsActive(prev => !prev)}
-              >
-                {isActive ? 'Desactivar' : 'Empezar'}
-              </Button>
+          </div>
+        </div>
+      </div>
+
+      <div className='grid grid-cols-2 gap-12'>
+        <div className=''>
+          <img src='/idle.gif' />
+        </div>
+        {/* Columna 2 */}
+        <div className=''>
+          <div className='mt-16 flex justify-center'>
+            <span className='rounded-xl bg-secondary/90 p-4'>
+              <ActualTimer mode={mode} time={countdown} />
+              {pomodoroCount.current >= 1 && (
+                <Confetti mode='boom' particleCount={150} />
+              )}
+              {/* <Confetti mode='boom' particleCount={150} /> */}
+
+              <p className=''>
+                Cantidad de pomodoros: {Math.floor(pomodoroCount.current)}
+              </p>
+            </span>
+          </div>
+          <div className='mt-4 flex justify-center'>
+            <Button className='' onClick={() => setIsActive(prev => !prev)}>
+              {isActive ? 'Terminar' : 'Empezar'}
+            </Button>
+          </div>
+
+          <div className='mt-4 rounded-xl bg-accent/90 p-4'>
+            <h1 className='text-xl'>Objetivos de la sesión:</h1>
+            <ul className='list-inside list-disc space-y-2 text-black'>
+              {objetivos.map((objetivo, key) => (
+                <li key={key} className='flex items-center space-x-2'>
+                  <span>
+                    <Checkbox
+                      checked={marked.includes(objetivo)}
+                      disabled={mode === 'Descansando' || !isActive}
+                      onClick={() => handleCheckbox(objetivo, key)}
+                      className='mr-2'
+                    />
+                    {objetivo}
+                  </span>
+                  {objetivosFav.includes(objetivo) && (
+                    <Star size={20} style={{ color: '#ffbc05' }} />
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className='container mt-8 flex w-full gap-44'>
+            <div className='flex justify-start items-start'>
+              <Button onClick={handleAccept}>Volver</Button>
             </div>
-            <div className='mt-4 rounded-xl bg-accent/90 p-4'>
-              <h1 className='text-xl'>Objetivos de la sesión:</h1>
-              <ul className='list-inside list-disc space-y-2 text-black'>
-                {objetivos.map((objetivo, key) => (
-                  <li key={key} className='flex items-center space-x-2'>
-                    <span>
-                      <Checkbox
-                        checked={marked.includes(objetivo)}
-                        disabled={mode === 'Descansando' || !isActive}
-                        onClick={() => handleCheckbox(objetivo, key)}
-                        className='mr-2'
-                      />
-                      {objetivo}
-                    </span>
-                    {objetivosFav.includes(objetivo) && (
-                      <Star size={20} style={{ color: '#ffbc05' }} />
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className='flex w-full justify-end'>
-              <Button className='mt-6' variant={'destructive'}>
+            <div className='flex justify-end'>
+              <Button className='' variant={'destructive'}>
                 Finalizar Sesion
               </Button>
             </div>
           </div>
         </div>
-      </div>
-
-      <div>
-        <Button className='flex flex-col' onClick={handleAccept}>
-          Volver
-        </Button>
       </div>
     </>
   )

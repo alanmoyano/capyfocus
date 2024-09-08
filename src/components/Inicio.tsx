@@ -96,11 +96,10 @@ export default function Inicio() {
     }
   }
 
-  const handleSelect = ( value: string) =>{
+  const handleSelect = (value: string) => {
     console.log(value)
 
     //setMotivationType(value)
-    
   }
 
   const handleAdd = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -151,14 +150,14 @@ export default function Inicio() {
         <div className='m-auto'>
           <img src='/idle.gif' />
           {/* Motivación */}
-          <Select onValueChange={(value) => handleSelect(value)} >
+          <Select onValueChange={value => handleSelect(value)}>
             <SelectTrigger className='ml-4 w-[280px]'>
               <SelectValue placeholder='Selecciona una motivación' />
             </SelectTrigger>
-            <SelectContent >
+            <SelectContent>
               <SelectGroup>
                 <SelectLabel>Tipo de motivación</SelectLabel>
-                <SelectItem key={0} value='positiva' >
+                <SelectItem key={0} value='positiva'>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -169,7 +168,7 @@ export default function Inicio() {
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                </SelectItem >
+                </SelectItem>
                 <SelectItem key={1} value='pasivoAgresiva'>
                   <TooltipProvider>
                     <Tooltip>
@@ -259,6 +258,56 @@ export default function Inicio() {
                 onChange={e => setInputValue(e.target.value)}
                 className='rounded-md border border-secondary bg-white p-3 shadow-md transition-shadow duration-200 ease-in-out hover:shadow-lg focus:outline-none focus:ring-2'
               />
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant='outline'
+                    role='combobox'
+                    aria-expanded={open}
+                    className='justify-between'
+                  >
+                    {value ? (
+                      objetivosFav.find(objetivoFav => objetivoFav === value)
+                    ) : (
+                      <Star />
+                    )}
+                    <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className='p-0'>
+                  <Command>
+                    <CommandInput placeholder='Seleccionar objetivo favorito...' />
+                    <CommandList>
+                      <CommandEmpty>No se encontró el objetivo.</CommandEmpty>
+                      <CommandGroup>
+                        {objetivosFav.map(objetivoFav => (
+                          <CommandItem
+                            key={objetivoFav}
+                            value={objetivoFav}
+                            onSelect={currentValue => {
+                              // setValue(currentValue === value ? '' : currentValue)
+                              setOpen(false)
+                              setInputValue('')
+                              if (!objetivos.includes(currentValue))
+                                setObjetivos([...objetivos, currentValue])
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                'mr-2 h-4 w-4',
+                                value === objetivoFav
+                                  ? 'opacity-100'
+                                  : 'opacity-0'
+                              )}
+                            />
+                            {objetivoFav}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
             <div className='mt-4'>
               <ul className='list-inside list-disc space-y-2 text-base text-black'>
@@ -360,52 +409,6 @@ export default function Inicio() {
           </div>
         </div>
       </section>
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant='outline'
-            role='combobox'
-            aria-expanded={open}
-            className='justify-between'
-          >
-            {value
-              ? objetivosFav.find(objetivoFav => objetivoFav === value)
-              : 'Seleccionar objetivo favorito...'}
-            <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className='p-0'>
-          <Command>
-            <CommandInput placeholder='Seleccionar objetivo favorito...' />
-            <CommandList>
-              <CommandEmpty>No se encontró el objetivo.</CommandEmpty>
-              <CommandGroup>
-                {objetivosFav.map(objetivoFav => (
-                  <CommandItem
-                    key={objetivoFav}
-                    value={objetivoFav}
-                    onSelect={currentValue => {
-                      // setValue(currentValue === value ? '' : currentValue)
-                      setOpen(false)
-                      setInputValue('')
-                      if (!objetivos.includes(currentValue))
-                        setObjetivos([...objetivos, currentValue])
-                    }}
-                  >
-                    <Check
-                      className={cn(
-                        'mr-2 h-4 w-4',
-                        value === objetivoFav ? 'opacity-100' : 'opacity-0'
-                      )}
-                    />
-                    {objetivoFav}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      </Popover>
     </>
   )
 }
