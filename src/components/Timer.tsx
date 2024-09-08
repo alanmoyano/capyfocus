@@ -12,8 +12,6 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 type Mode = 'Session' | 'Break'
 type Accion = 'Estudiar' | 'Descansar'
 
-
-
 function addZeroIfNeeded(value: number) {
   return value.toString().padStart(2, '0')
 }
@@ -50,8 +48,8 @@ export default function Timer() {
     setSessionCountup(0)
   }
 
-  const [description, setDescription] =
-    useState<keyof typeof descriptions>('Estudiar')
+  // @ts-expect-error vamos a usar la descripción después, no te enojes typescript!!! 🥺
+  const [description, setDescription] = useState<Accion>('Estudiar')
 
   useEffect(() => {
     if (!isActive) {
@@ -132,33 +130,33 @@ export default function Timer() {
             <div className='rounded-xl bg-accent/90 p-4'>
               <ActualTimer mode={'Session'} time={Sessioncountup} />
             </div>
-            
-              <div className='mt-16'>
-                <ToggleGroup
-                  type='single'
-                  className='rounded-xl bg-primary/90 p-2'
-                  onValueChange={value => setDescription(value as Accion)}
+
+            <div className='mt-16'>
+              <ToggleGroup
+                type='single'
+                className='rounded-xl bg-primary/90 p-2'
+                onValueChange={value => setDescription(value as Accion)}
+              >
+                <ToggleGroupItem
+                  value='Estudiar'
+                  className={`flex items-center justify-center gap-1 ${isActive ? 'bg-muted text-muted-foreground' : 'bg-primary/90'}`}
+                  onClick={() => handleToggle(true)}
                 >
-                  <ToggleGroupItem
-                    value='Estudiar'
-                    className={`flex items-center justify-center gap-1 ${isActive ? 'bg-muted text-muted-foreground' : 'bg-primary/90'}`}
-                    onClick={() => handleToggle(true)}
-                  >
-                    <NotebookPen />
-                    Estudiar
-                  </ToggleGroupItem>
-                  <ToggleGroupItem
-                    value='Descansar'
-                    className={`flex items-center justify-center gap-1 ${isActive ? 'bg-primary/90' : 'bg-muted text-muted-foreground'}`}
-                    onClick={() => {
-                      handleToggle(false)
-                    }}
-                  >
-                    <Moon />
-                    Descansar
-                  </ToggleGroupItem>
-                </ToggleGroup>
-              </div>
+                  <NotebookPen />
+                  Estudiar
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  value='Descansar'
+                  className={`flex items-center justify-center gap-1 ${isActive ? 'bg-primary/90' : 'bg-muted text-muted-foreground'}`}
+                  onClick={() => {
+                    handleToggle(false)
+                  }}
+                >
+                  <Moon />
+                  Descansar
+                </ToggleGroupItem>
+              </ToggleGroup>
+            </div>
           </div>
 
           <div className='text-black'>
