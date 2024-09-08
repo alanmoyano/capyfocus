@@ -62,6 +62,7 @@ import {
 import { cn } from '@/lib/utils'
 
 import { Calendar } from '@/components/ui/calendar'
+//import { useMotivation } from './MotivationContext'
 
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
@@ -85,12 +86,21 @@ export default function Inicio() {
 
   const [, setLocation] = useLocation()
 
+  //const [, setMotivationType] = useMotivation()
+
   const handleAccept = () => {
     if (description === 'Capydoro') {
       setLocation('/capydoro')
     } else {
       setLocation('/capymetro')
     }
+  }
+
+  const handleSelect = ( value: string) =>{
+    console.log(value)
+
+    //setMotivationType(value)
+    
   }
 
   const handleAdd = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -141,14 +151,14 @@ export default function Inicio() {
         <div className='m-auto'>
           <img src='/idle.gif' />
           {/* Motivación */}
-          <Select>
+          <Select onValueChange={(value) => handleSelect(value)} >
             <SelectTrigger className='ml-4 w-[280px]'>
               <SelectValue placeholder='Selecciona una motivación' />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent >
               <SelectGroup>
                 <SelectLabel>Tipo de motivación</SelectLabel>
-                <SelectItem value='positiva'>
+                <SelectItem key={0} value='positiva' >
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -159,8 +169,8 @@ export default function Inicio() {
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                </SelectItem>
-                <SelectItem value='pasivoAgresiva'>
+                </SelectItem >
+                <SelectItem key={1} value='pasivoAgresiva'>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>

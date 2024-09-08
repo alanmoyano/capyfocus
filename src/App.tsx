@@ -14,6 +14,7 @@ import { ObjetivosProvider } from './components/ObjetivosContext'
 import Inicio from './components/Inicio'
 import CapyEstadisticas from './components/CapyEstadisticas'
 import Usuario from './components/Usuario'
+import { MotivationProvider } from './components/MotivationContext'
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
       <SpeedInsights />
       <Analytics />
       <ObjetivosProvider>
+      <MotivationProvider>
         <Navbar />
 
         <main>
@@ -33,7 +35,7 @@ function App() {
             <Route path='/signup' component={SignUp} />
 
             <Route path='/capydoro'>
-              <Pomodoro pomodoroSessions={1} />
+              <Pomodoro />
             </Route>
             <Route path='/capymetro'>
               <Timer />
@@ -47,6 +49,7 @@ function App() {
             <Route>404!</Route>
           </Switch>
         </main>
+        </MotivationProvider>
       </ObjetivosProvider>
     </ThemeProvider>
   )
