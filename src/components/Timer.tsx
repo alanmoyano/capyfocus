@@ -5,8 +5,8 @@ import { useObjetivos } from './ObjetivosContext'
 import { Star, NotebookPen, Moon  } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-
-import { navigationMenuTriggerStyle } from './ui/navigit pull gation-menu'
+import { navigationMenuTriggerStyle } from './ui/navigation-menu'
+//import { navigationMenuTriggerStyle } from './ui/navigit pull gation-menu'
 
 //import Confetti from 'react-confetti-boom'
 

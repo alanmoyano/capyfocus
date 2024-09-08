@@ -3,7 +3,7 @@ import { Button } from './ui/button'
 import { Checkbox } from './ui/checkbox'
 import { useLocation } from 'wouter'
 import { useObjetivos } from './ObjetivosContext'
-import { Star } from 'lucide-react'
+import { Star, TimerReset } from 'lucide-react'
 import CapySound from '../assets/Sonido_de_caripincho.mp3'
 import Confetti from 'react-confetti-boom'
 import useSound from 'use-sound'
@@ -79,8 +79,8 @@ export default function Pomodoro({
     setCountdown(mode === 'Session' ? sessionSeconds : breakSeconds)
   }, [mode, sessionSeconds, breakSeconds])
 
-  //const [lastCheckedObj, setLastCheckedObj] = useState<number|null>(null)
-  const {objetivos,setObjetivos, objetivosFav} = useObjetivos()
+  const [lastCheckedObj, setLastCheckedObj] = useState<number|null>(null)
+  const {objetivos,setObjetivos, objetivosFav, tiempo, setTiempo} = useObjetivos()
   const [marked, setMarked] = useState<string[]>([])
   const [, setLocation] = useLocation()
   const handleAccept = () => {
@@ -89,26 +89,27 @@ export default function Pomodoro({
   }
 
   const handleCheckbox = (objetivo: string, key: number) => {
-    if (marked.includes(objetivo)) {
-      return;
-    }
+    // Ver cómo hacer para contabilizar el tiempo entre sesiones de un obj.
     setMarked([...marked, objetivo])
-    /*
+    const timeSinceActive = sessionSeconds - countdown
+    console.log('Checkbox activado para objetivo:', objetivo, ', Key:', key, 'Tiempo:',  timeSinceActive)
+    if (lastCheckedObj !== null) {console.log('lastCheckedKey:', lastCheckedObj, 'tiempo: ',  Math.abs(tiempo[objetivos[lastCheckedObj]]), 'Resta:',  timeSinceActive - tiempo[objetivos[lastCheckedObj]])}
     if (lastCheckedObj === null){
       setTiempo(prev => ({
-        ...prev, [objetivo] : ? ver lo del break
+        ...prev, [objetivo] : timeSinceActive
       }))
     } else {
       const tiempoObjAnterior = tiempo[objetivos[lastCheckedObj]]
       if (tiempoObjAnterior !== undefined) {
         setTiempo(prev => ({
-          ...prev, [objetivo] : ? - tiempoObjAnterior
+          ...prev, [objetivo] :  timeSinceActive - tiempoObjAnterior
         }))
       }
-    }*/
-    //setLastCheckedObj(key)
+    }
+    setLastCheckedObj(key)
   }
 
+  // testear si se inicia y termina con un break al medio
   return (
     <div className='flex flex-col items-center justify-center'>
       <h1 className='text-4xl font-bold'>Capydoro</h1>
@@ -159,7 +160,7 @@ export default function Pomodoro({
           {objetivos.map((objetivo, key) => (
               <li key={key} className='flex items-center space-x-2'>
                 <span>
-                  <Checkbox checked={marked.includes(objetivo)}
+                  <Checkbox checked={marked.includes(objetivo)} disabled={mode === 'Break' || !isActive }
                   onClick={() => handleCheckbox(objetivo, key)} className='mr-2' />
                   {objetivo}
                 </span>
