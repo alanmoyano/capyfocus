@@ -3,7 +3,7 @@ import React, { createContext, useState, ReactNode, useContext } from 'react'
 type ObjetivosContextData = {
   objetivos: string[]
   objetivosFav: string[]
-  tiempo:  Record<string, number>
+  tiempo: Record<string, number>
   // funcion que despacha una accion de tipo state con un string[]
   setObjetivos: React.Dispatch<React.SetStateAction<string[]>>
   setObjetivosFav: React.Dispatch<React.SetStateAction<string[]>>

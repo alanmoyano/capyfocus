@@ -3,7 +3,7 @@ import { Button } from './ui/button'
 import { Checkbox } from './ui/checkbox'
 import { useLocation } from 'wouter'
 import { useObjetivos } from './ObjetivosContext'
-import { Star, TimerReset } from 'lucide-react'
+import { Star } from 'lucide-react'
 import CapySound from '../assets/Sonido_de_caripincho.mp3'
 import Confetti from 'react-confetti-boom'
 import useSound from 'use-sound'
@@ -79,30 +79,51 @@ export default function Pomodoro({
     setCountdown(mode === 'Session' ? sessionSeconds : breakSeconds)
   }, [mode, sessionSeconds, breakSeconds])
 
-  const [lastCheckedObj, setLastCheckedObj] = useState<number|null>(null)
-  const {objetivos,setObjetivos, objetivosFav, tiempo, setTiempo} = useObjetivos()
+  const [lastCheckedObj, setLastCheckedObj] = useState<number | null>(null)
+  const { objetivos, setObjetivos, objetivosFav, tiempo, setTiempo } =
+    useObjetivos()
   const [marked, setMarked] = useState<string[]>([])
   const [, setLocation] = useLocation()
   const handleAccept = () => {
     setLocation('/')
-    setObjetivos(prevObjetivos => prevObjetivos.filter(obj => !marked.includes(obj)))
+    setObjetivos(prevObjetivos =>
+      prevObjetivos.filter(obj => !marked.includes(obj))
+    )
   }
 
   const handleCheckbox = (objetivo: string, key: number) => {
     // Ver cómo hacer para contabilizar el tiempo entre sesiones de un obj.
     setMarked([...marked, objetivo])
     const timeSinceActive = sessionSeconds - countdown
-    console.log('Checkbox activado para objetivo:', objetivo, ', Key:', key, 'Tiempo:',  timeSinceActive)
-    if (lastCheckedObj !== null) {console.log('lastCheckedKey:', lastCheckedObj, 'tiempo: ',  Math.abs(tiempo[objetivos[lastCheckedObj]]), 'Resta:',  timeSinceActive - tiempo[objetivos[lastCheckedObj]])}
-    if (lastCheckedObj === null){
+    console.log(
+      'Checkbox activado para objetivo:',
+      objetivo,
+      ', Key:',
+      key,
+      'Tiempo:',
+      timeSinceActive
+    )
+    if (lastCheckedObj !== null) {
+      console.log(
+        'lastCheckedKey:',
+        lastCheckedObj,
+        'tiempo: ',
+        Math.abs(tiempo[objetivos[lastCheckedObj]]),
+        'Resta:',
+        timeSinceActive - tiempo[objetivos[lastCheckedObj]]
+      )
+    }
+    if (lastCheckedObj === null) {
       setTiempo(prev => ({
-        ...prev, [objetivo] : timeSinceActive
+        ...prev,
+        [objetivo]: timeSinceActive
       }))
     } else {
       const tiempoObjAnterior = tiempo[objetivos[lastCheckedObj]]
-      if (tiempoObjAnterior !== undefined) {
+      if (tiempoObjAnterior) {
         setTiempo(prev => ({
-          ...prev, [objetivo] :  timeSinceActive - tiempoObjAnterior
+          ...prev,
+          [objetivo]: timeSinceActive - tiempoObjAnterior
         }))
       }
     }
@@ -157,17 +178,21 @@ export default function Pomodoro({
         <h1 className='text-xl'>Objetivos de la sesión</h1>
         <ul className='list-inside list-disc space-y-2 text-black'>
           {objetivos.map((objetivo, key) => (
-              <li key={key} className='flex items-center space-x-2'>
-                <span>
-                  <Checkbox checked={marked.includes(objetivo)} disabled={mode === 'Break' || !isActive }
-                  onClick={() => handleCheckbox(objetivo, key)} className='mr-2' />
-                  {objetivo}
-                </span>
-                {objetivosFav.includes(objetivo) && (
-                  <Star size={20} style={{ color: '#ffbc05' }} />
-                )}
-              </li>
-            ))}
+            <li key={key} className='flex items-center space-x-2'>
+              <span>
+                <Checkbox
+                  checked={marked.includes(objetivo)}
+                  disabled={mode === 'Break' || !isActive}
+                  onClick={() => handleCheckbox(objetivo, key)}
+                  className='mr-2'
+                />
+                {objetivo}
+              </span>
+              {objetivosFav.includes(objetivo) && (
+                <Star size={20} style={{ color: '#ffbc05' }} />
+              )}
+            </li>
+          ))}
         </ul>
       </div>
       <div>

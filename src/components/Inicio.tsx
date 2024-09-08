@@ -94,7 +94,11 @@ export default function Inicio() {
   }
 
   const handleAdd = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key == 'Enter' && inputValue.trim() != '' && !(objetivos.includes(inputValue))) {
+    if (
+      e.key == 'Enter' &&
+      inputValue.trim() != '' &&
+      !objetivos.includes(inputValue)
+    ) {
       setObjetivos([...objetivos, inputValue])
       setInputValue('')
     }
@@ -258,7 +262,6 @@ export default function Inicio() {
                           onKeyDown={e => handleSaveEdit(e, key)}
                           className='rounded-md border border-secondary bg-white p-3 shadow-md transition-shadow duration-200 ease-in-out hover:shadow-lg focus:outline-none focus:ring-2'
                         />
-                        
                       </div>
                     ) : (
                       <div className='flex w-full items-center justify-between'>

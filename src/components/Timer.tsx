@@ -2,10 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button'
 import { useLocation } from 'wouter'
 import { useObjetivos } from './ObjetivosContext'
-import { Star, NotebookPen, Moon  } from 'lucide-react'
+import { Star, NotebookPen, Moon } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { navigationMenuTriggerStyle } from './ui/navigation-menu'
 //import { navigationMenuTriggerStyle } from './ui/navigit pull gation-menu'
 
 //import Confetti from 'react-confetti-boom'
@@ -15,8 +14,8 @@ type Accion = 'Estudiar' | 'Descansar'
 
 const descriptions: Record<Accion, string> = {
   Estudiar: 'Estudiando...',
-  Descansar: 'Descansando...'}
-
+  Descansar: 'Descansando...'
+}
 
 function addZeroIfNeeded(value: number) {
   return value.toString().padStart(2, '0')
@@ -55,7 +54,7 @@ export default function Timer() {
   }
 
   const [description, setDescription] =
-  useState<keyof typeof descriptions>('Estudiar')
+    useState<keyof typeof descriptions>('Estudiar')
 
   useEffect(() => {
     if (!isActive) {
@@ -76,36 +75,37 @@ export default function Timer() {
   // useEffect(() => {
   //   setCountdown(mode === 'Session' ? sessionSeconds : breakSeconds)
   // }, [mode, sessionSeconds, breakSeconds])
-  
 
   const [, setLocation] = useLocation()
 
-  const [lastCheckedObj, setLastCheckedObj] = useState<number|null>(null)
-  const {objetivos,setObjetivos, objetivosFav, setTiempo, tiempo} = useObjetivos()
+  const [lastCheckedObj, setLastCheckedObj] = useState<number | null>(null)
+  const { objetivos, setObjetivos, objetivosFav, setTiempo, tiempo } =
+    useObjetivos()
   const [marked, setMarked] = useState<string[]>([])
 
   const handleAccept = () => {
     setLocation('/')
-    setObjetivos(prevObjetivos => prevObjetivos.filter(obj => !marked.includes(obj)))
+    setObjetivos(prevObjetivos =>
+      prevObjetivos.filter(obj => !marked.includes(obj))
+    )
   }
 
   const handleCheckbox = (objetivo: string, key: number) => {
     if (marked.includes(objetivo)) {
-      return;
+      return
     }
     setMarked([...marked, objetivo])
     /*console.log('Checkbox activado para objetivo:', objetivo, ', Key:', key, 'Tiempo:', Sessioncountup)
     if (lastCheckedObj !==null) {console.log('lastCheckedKey:', lastCheckedObj, 'tiempo: ',  Math.abs(tiempo[objetivos[lastCheckedObj]]), 'Resta:', Sessioncountup - tiempo[objetivos[lastCheckedObj]])}
     */
-    if (lastCheckedObj === null){
-      setTiempo(prev => ({...
-        prev, [objetivo] : Sessioncountup
-      }))
+    if (lastCheckedObj === null) {
+      setTiempo(prev => ({ ...prev, [objetivo]: Sessioncountup }))
     } else {
       const tiempoObjAnterior = tiempo[objetivos[lastCheckedObj]]
-      if (tiempoObjAnterior !== undefined) {
+      if (tiempoObjAnterior) {
         setTiempo(prev => ({
-          ...prev, [objetivo] : Sessioncountup - tiempoObjAnterior
+          ...prev,
+          [objetivo]: Sessioncountup - tiempoObjAnterior
         }))
       }
     }
@@ -129,42 +129,35 @@ export default function Timer() {
               <ActualTimer mode={'Session'} time={Sessioncountup} />
             </div>
             <div className=''>
-
-            <div className=' mt-16'>
-
-
-            <ToggleGroup
-            type='single'
-            className='rounded-xl bg-primary/90 p-2'
-            onValueChange={value => setDescription(value as Accion)}
-            >
-            <ToggleGroupItem
-              value='Estudiar'
-              className={`flex items-center justify-center gap-1 ${isActive ? 'bg-muted text-muted-foreground' : 'bg-primary/90'}`}
-
-              onClick={() => {
-                setIsActive(prev => !prev)
-              }}
-              >
-              <NotebookPen/>
-              Estudiar
-            </ToggleGroupItem>
-            <ToggleGroupItem
-              value='Descansar'
-              className='flex items-center justify-center gap-1 '
-             
-              onClick={() => {
-                setIsActive(prev => !prev)
-              }}
-              >
-              <Moon/>
-              Descansar
-            </ToggleGroupItem>
-          </ToggleGroup>
-          <p className='mt-2'>{descriptions[description]}</p>
+              <div className='mt-16'>
+                <ToggleGroup
+                  type='single'
+                  className='rounded-xl bg-primary/90 p-2'
+                  onValueChange={value => setDescription(value as Accion)}
+                >
+                  <ToggleGroupItem
+                    value='Estudiar'
+                    className={`flex items-center justify-center gap-1 ${isActive ? 'bg-muted text-muted-foreground' : 'bg-primary/90'}`}
+                    onClick={() => {
+                      setIsActive(prev => !prev)
+                    }}
+                  >
+                    <NotebookPen />
+                    Estudiar
+                  </ToggleGroupItem>
+                  <ToggleGroupItem
+                    value='Descansar'
+                    className='flex items-center justify-center gap-1'
+                    onClick={() => {
+                      setIsActive(prev => !prev)
+                    }}
+                  >
+                    <Moon />
+                    Descansar
+                  </ToggleGroupItem>
+                </ToggleGroup>
+                <p className='mt-2'>{descriptions[description]}</p>
               </div>
-          
-
             </div>
           </div>
 
@@ -172,7 +165,7 @@ export default function Timer() {
             <div className='rounded-xl bg-accent/90 p-4'>
               <ActualTimer mode={'Break'} time={Breakcountup} />
             </div>
-            <div className='mt-40 ml-16 '>
+            <div className='ml-16 mt-40'>
               <Button
                 className='flex flex-col'
                 variant={'destructive'}
@@ -192,8 +185,11 @@ export default function Timer() {
           {objetivos.map((objetivo, key) => (
             <li key={key} className='flex items-center space-x-2'>
               <span>
-                <Checkbox checked={marked.includes(objetivo)}
-                onClick={() => handleCheckbox(objetivo, key)} className='mr-2' />
+                <Checkbox
+                  checked={marked.includes(objetivo)}
+                  onClick={() => handleCheckbox(objetivo, key)}
+                  className='mr-2'
+                />
                 {objetivo}
               </span>
               {objetivosFav.includes(objetivo) && (
@@ -201,7 +197,7 @@ export default function Timer() {
               )}
             </li>
           ))}
-        </ul> 
+        </ul>
       </div>
       <div>
         <Button className='flex flex-col' onClick={handleAccept}>
