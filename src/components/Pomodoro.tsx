@@ -105,7 +105,7 @@ export default function Pomodoro() {
 
   return (
     <>
-      <h1 className='mb-6 text-4xl font-bold'>Capydoro</h1>
+      <h1 className='mt-4 text-4xl font-bold '>Capydoro!</h1>
       <p className='mt-2 flex w-2/4 justify-end'>
         Coloca el tiempo a estudiar y descansar:
       </p>
