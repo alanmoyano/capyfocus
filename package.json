@@ -7,6 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "format": "prettier --write ./src",
+    "check": "tsc -b && echo 'todo bien!' || echo 'todo no bien :('",
+    "prePush": "npm run format && npm run check",
     "preview": "vite preview"
   },
   "dependencies": {
