@@ -105,7 +105,7 @@ export default function Pomodoro() {
 
   return (
     <>
-      <h1 className='mt-4 text-4xl font-bold '>Capydoro!</h1>
+      <h1 className='mt-4 text-4xl font-bold'>Capydoro!</h1>
       <p className='mt-2 flex w-2/4 justify-end'>
         Coloca el tiempo a estudiar y descansar:
       </p>
@@ -121,7 +121,7 @@ export default function Pomodoro() {
               <div className='flex items-center justify-center gap-4'>
                 <Button
                   className=''
-                  onClick={() => setSessionSeconds(10)}
+                  onClick={() => setSessionSeconds(prev => prev - 60)}
                   disabled={sessionSeconds <= 60 || isActive}
                 >
                   -
@@ -142,7 +142,7 @@ export default function Pomodoro() {
               <h3>Minutos de descanso:</h3>
               <div className='flex items-center justify-center gap-4'>
                 <Button
-                  onClick={() => setBreakSeconds(10)}
+                  onClick={() => setBreakSeconds(prev => prev - 60)}
                   disabled={breakSeconds <= 60 || isActive}
                 >
                   -
@@ -207,7 +207,7 @@ export default function Pomodoro() {
             </ul>
           </div>
           <div className='container mt-8 flex w-full gap-44'>
-            <div className='flex justify-start items-start'>
+            <div className='flex items-start justify-start'>
               <Button onClick={handleAccept}>Volver</Button>
             </div>
             <div className='flex justify-end'>
