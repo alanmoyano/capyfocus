@@ -1,8 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button'
+import { useLocation } from 'wouter'
+import { useObjetivos } from './ObjetivosContext'
+import { Star, NotebookPen, Moon } from 'lucide-react'
+import { Checkbox } from '@/components/ui/checkbox'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+//import { navigationMenuTriggerStyle } from './ui/navigit pull gation-menu'
+
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Session' | 'Break'
+type Accion = 'Estudiar' | 'Descansar'
 
 function addZeroIfNeeded(value: number) {
   return value.toString().padStart(2, '0')
@@ -18,11 +26,9 @@ function formatTime(seconds: number) {
 export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
   return (
     <>
-      <h2 className='text-xl'>
-        Chronometer for <span className='font-semibold'>{mode}</span>
-      </h2>
+      <h2 className='text-xl font-semibold'>{mode}</h2>
 
-      <p className='text-lg'>Time passed: {formatTime(time)}</p>
+      <span className='text-lg'>Tiempo: {formatTime(time)}</span>
     </>
   )
 }
@@ -30,7 +36,7 @@ export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
 export default function Timer() {
   const [Sessioncountup, setSessionCountup] = useState(0)
   const [Breakcountup, setBreakCountup] = useState(0)
-  const [isActive, setIsActive] = useState(true)
+  const [isActive, setIsActive] = useState<boolean | null>(true)
   const [mode, setMode] = useState<Mode>('Session')
   const timer = useRef<NodeJS.Timeout>()
 
@@ -41,6 +47,9 @@ export default function Timer() {
     setBreakCountup(0)
     setSessionCountup(0)
   }
+
+  // @ts-expect-error vamos a usar la descripción después, no te enojes typescript!!! 🥺
+  const [description, setDescription] = useState<Accion>('Estudiar')
 
   useEffect(() => {
     if (!isActive) {
@@ -58,44 +67,154 @@ export default function Timer() {
     return () => clearInterval(timer.current)
   }, [isActive, mode])
 
+  /* Esto es para que los botones si los tocas mas de una vez no hagan nada */
+  const handleToggle = (value: boolean) => {
+    if (isActive !== value) {
+      setIsActive(value) // Cambia el estado si no está ya activo
+    }
+  }
+
   // useEffect(() => {
   //   setCountdown(mode === 'Session' ? sessionSeconds : breakSeconds)
   // }, [mode, sessionSeconds, breakSeconds])
 
+  const [, setLocation] = useLocation()
+
+  const [lastCheckedObj, setLastCheckedObj] = useState<number | null>(null)
+  const { objetivos, setObjetivos, objetivosFav, setTiempo, tiempo } =
+    useObjetivos()
+  const [marked, setMarked] = useState<string[]>([])
+
+  const handleAccept = () => {
+    setLocation('/')
+    setObjetivos(prevObjetivos =>
+      prevObjetivos.filter(obj => !marked.includes(obj))
+    )
+  }
+
+  const handleCheckbox = (objetivo: string, key: number) => {
+    if (marked.includes(objetivo)) {
+      // Esto sirve para no poder desmarcar los objetivos
+      return
+    }
+    setMarked([...marked, objetivo])
+    /*console.log('Checkbox activado para objetivo:', objetivo, ', Key:', key, 'Tiempo:', Sessioncountup)
+    if (lastCheckedObj !==null) {console.log('lastCheckedKey:', lastCheckedObj, 'tiempo: ',  Math.abs(tiempo[objetivos[lastCheckedObj]]), 'Resta:', Sessioncountup - tiempo[objetivos[lastCheckedObj]])}
+    */
+    if (lastCheckedObj === null) {
+      setTiempo(prev => ({ ...prev, [objetivo]: Sessioncountup }))
+    } else {
+      const tiempoObjAnterior = tiempo[objetivos[lastCheckedObj]]
+      if (tiempoObjAnterior) {
+        setTiempo(prev => ({
+          ...prev,
+          [objetivo]: Sessioncountup - tiempoObjAnterior
+        }))
+      }
+    }
+    setLastCheckedObj(key)
+  }
+
   return (
     <>
-      <div className='flex flex-col items-center justify-center'>
-        <h1 className='text-4xl'>CapyMetro!</h1>
-        <div className='row flex flex-col items-center justify-center'>
-            <ActualTimer mode={'Session'} time={Sessioncountup} />
-            <ActualTimer mode={'Break'} time={Breakcountup} />
+      <h1 className='mt-4 text-4xl font-bold'>CapyMetro!</h1>
+
+      <div className='grid grid-cols-2 gap-4'>
+        {/* Columna 1:  */}
+        <div className='col-span-1 p-4'>
+          <img src='/idle.gif' />
+          <iframe
+                className='border-radius:12px'
+                src='https://open.spotify.com/embed/playlist/6xYhxczmfgi6L6knoEHktx?utm_source=generator'
+                width='100%'
+                height='152'
+                allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
+                loading='lazy'
+              ></iframe>
         </div>
 
-        <Button
-          onClick={() => {
-            setIsActive(prev => !prev)
-          }}
-        >
-          {isActive ? 'Descansar' : 'Estudiar'}
-        </Button>
+        {/* Columna 2:*/}
+        <div className='col-span-1 mt-32 grid grid-cols-2 gap-4'>
+          <div className='text-black'>
+            <div className='rounded-xl bg-accent/90 p-4'>
+              <ActualTimer mode={'Session'} time={Sessioncountup} />
+            </div>
 
-        <br />
+            <div className='mt-16'>
+              <ToggleGroup
+                type='single'
+                className='rounded-xl bg-primary/90 p-2'
+                onValueChange={value => setDescription(value as Accion)}
+              >
+                <ToggleGroupItem
+                  value='Estudiar'
+                  className={`flex items-center justify-center gap-1 ${isActive ? 'bg-muted text-muted-foreground' : 'bg-primary/90'}`}
+                  onClick={() => handleToggle(true)}
+                >
+                  <NotebookPen />
+                  Estudiar
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  value='Descansar'
+                  className={`flex items-center justify-center gap-1 ${isActive ? 'bg-primary/90' : 'bg-muted text-muted-foreground'}`}
+                  onClick={() => {
+                    handleToggle(false)
+                  }}
+                >
+                  <Moon />
+                  Descansar
+                </ToggleGroupItem>
+              </ToggleGroup>
+            </div>
+          </div>
 
-        <div>
-          <Button
-            className='flex flex-col'
-            onClick={() => {
-              finalizarSesion()
-            }}
-          >
-            Finalizar Sesion
-          </Button>
+          <div className='text-black'>
+            <div className='rounded-xl bg-accent/90 p-4'>
+              <ActualTimer mode={'Break'} time={Breakcountup} />
+            </div>
+            <div className='mt-16 rounded-xl bg-primary/90 p-4'>
+              <h1 className='text-xl'>Objetivos de la sesión</h1>
+              <ul className='list-inside list-disc space-y-2 text-black'>
+                {objetivos.map((objetivo, key) => (
+                  <li key={key} className='flex items-center space-x-2'>
+                    <span>
+                      <Checkbox
+                        checked={marked.includes(objetivo)}
+                        onClick={() => handleCheckbox(objetivo, key)}
+                        className='mr-2'
+                      />
+                      {objetivo}
+                    </span>
+                    {objetivosFav.includes(objetivo) && (
+                      <Star size={20} style={{ color: '#ffbc05' }} />
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className='flex w-full justify-end'>
+              <Button
+                className='mt-6'
+                variant={'destructive'}
+                onClick={() => {
+                  finalizarSesion()
+                }}
+              >
+                Finalizar Sesion
+              </Button>
+            </div>
+          </div>
         </div>
-
-        {/* {pomodoroCount.current >= pomodoroSessions && (
-        <Confetti effectCount={1} />
-      )} */}
       </div>
+      <div className='ml-32'>
+        <Button className='flex flex-col' onClick={handleAccept}>
+          Volver
+        </Button>
+      </div>
+
+      {/* {pomodoroCount.current >= pomodoroSessions && (
+        <Confetti effectCount={1} />
+        )} */}
     </>
   )
 }

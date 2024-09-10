@@ -1,6 +1,17 @@
 import React from 'react'
 import { useRoute } from 'wouter'
 import { ModeToggle } from './ModeToggle'
+import { Button } from './ui/button'
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog'
 
 import {
   NavigationMenu,
@@ -67,7 +78,7 @@ export default function Navbar() {
 
         versión con logo! */}
 
-        <NavbarLink to='/'>
+        <NavbarLink to='/usuario'>
           <div className='flex items-center justify-center gap-2'>
             <img src='/logo.png' height={30} width={30} />
             <p>Capyfocus</p>
@@ -85,15 +96,54 @@ export default function Navbar() {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavbarLink to='/pomodoro'>Pomodoro</NavbarLink>
+          <NavbarLink to='/'>Inicio</NavbarLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavbarLink to='/timer'>Timer</NavbarLink>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant='outline' className='border-0'>
+                Musica
+              </Button>
+            </DialogTrigger>
+            <DialogContent className='sm:max-w-[425px]'>
+              <DialogHeader>
+                <DialogTitle>Links Spotify</DialogTitle>
+                <DialogDescription className='text-accent/100'>
+                  Musica seleccionada especiamente para concentrarse! Elige el
+                  estilo que mas se adapte!.
+                </DialogDescription>
+              </DialogHeader>
+              <iframe
+                className='border-radius:12px'
+                src='https://open.spotify.com/embed/playlist/6xYhxczmfgi6L6knoEHktx?utm_source=generator'
+                width='100%'
+                height='152'
+                allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
+                loading='lazy'
+              ></iframe>
+              <iframe
+                className='border-radius:12px'
+                src='https://open.spotify.com/embed/playlist/5GnSqO293GdPWaJhD6iz8E?utm_source=generator'
+                width='100%'
+                height='152'
+                allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
+                loading='lazy'
+              ></iframe>
+              <p>Aca van los Links!</p>
+              <DialogFooter>
+                <p>Gracias por escuchas nuestra Musica!</p>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavbarLink to='/badges'>Badges</NavbarLink>
+          <NavbarLink to='/capyInsignias'>CapyInsiginas</NavbarLink>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <NavbarLink to='/capyEstadisticas'>CapyEstadisticas</NavbarLink>
         </NavigationMenuItem>
       </NavigationMenuList>
 

@@ -10,37 +10,47 @@ import Timer from './components/Timer'
 import Badges from './components/Badges'
 import Navbar from './components/Navbar'
 import { ThemeProvider } from './components/providers/ThemeProvider'
+import { ObjetivosProvider } from './components/ObjetivosContext'
 import Inicio from './components/Inicio'
+import CapyEstadisticas from './components/CapyEstadisticas'
+import Usuario from './components/Usuario'
+import { MotivationProvider } from './components/MotivationContext'
 
 function App() {
   return (
     <ThemeProvider defaultTheme='light' storageKey='theme'>
       <SpeedInsights />
       <Analytics />
+      <ObjetivosProvider>
+      <MotivationProvider>
+        <Navbar />
 
-      <Navbar />
+        <main>
+          <Switch>
+            <Route path='/'>
+              <Inicio />
+            </Route>
 
-      <main>
-        <Switch>
-          <Route path='/'>
-            <Inicio />
-          </Route>
+            <Route path='/login' component={Login} />
+            <Route path='/signup' component={SignUp} />
 
-          <Route path='/login' component={Login} />
-          <Route path='/signup' component={SignUp} />
+            <Route path='/capydoro'>
+              <Pomodoro />
+            </Route>
+            <Route path='/capymetro'>
+              <Timer />
+            </Route>
 
-          <Route path='/pomodoro'>
-            <Pomodoro pomodoroSessions={1} />
-          </Route>
-          <Route path='/timer'>
-            <Timer />
-          </Route>
+            <Route path='/capyInsignias' component={Badges} />
+            <Route path='/capyEstadisticas' component={CapyEstadisticas} />
 
-          <Route path='/badges' component={Badges} />
+            <Route path='/usuario' component={Usuario} />
 
-          <Route>404!</Route>
-        </Switch>
-      </main>
+            <Route>404!</Route>
+          </Switch>
+        </main>
+        </MotivationProvider>
+      </ObjetivosProvider>
     </ThemeProvider>
   )
 }
