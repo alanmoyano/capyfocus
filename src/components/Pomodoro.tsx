@@ -119,17 +119,48 @@ export default function Pomodoro() {
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>Capydoro!</h1>
-      <p className='mt-2 flex w-2/4 justify-end'>
-        Coloca el tiempo a estudiar y descansar:
-      </p>
-      <div className='grid grid-cols-2 gap-4'>
-        {/* Primer columna */}
-        <div className='col-span-1'></div>
-
-        {/* Segunda columna  */}
-        <div className='w-3/2 col-span-1 grid grid-cols-2 gap-16'>
-          <div className='flex justify-center text-black'>
-            <div className='mt-4 w-56 gap-2 rounded-xl bg-secondary/60 p-2'>
+      {/* Columna imagen  */}
+      <div className='grid grid-cols-2 gap-12'>
+        <div className=''>
+          <img src='/idle.gif' />
+          <iframe
+            className='border-radius:12px'
+            src='https://open.spotify.com/embed/playlist/6xYhxczmfgi6L6knoEHktx?utm_source=generator'
+            width='100%'
+            height='152'
+            allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
+            loading='lazy'
+            ></iframe>
+        </div>
+        {/* Columna 2 */}
+        <div className=''>
+            <p className='flex w-full justify-center mt-8 items-center'>
+              Coloca el tiempo a estudiar y descansar:
+            </p>
+          <div className='flex justify-between  gap-4'>
+            {/* subit y bajar tiempo de estudio */}
+            <div className='w-1/2 p-4 text-center'>
+              <div className='mt-2 items-center justify-center rounded-xl bg-secondary/60 p-2'>
+                <h3>Minutos de descanso:</h3>
+                <div className='flex items-center justify-center gap-4'>
+                  <Button
+                    onClick={() => setBreakSeconds(prev => prev - 60)}
+                    disabled={breakSeconds <= 60 || isActive}
+                  >
+                    -
+                  </Button>
+                  <p> {breakSeconds / 60}</p>
+                  <Button
+                    onClick={() => setBreakSeconds(prev => prev + 60)}
+                    disabled={isActive}
+                  >
+                    +
+                  </Button>
+                </div>
+              </div>
+            </div>
+            <div className='w-1/2 p-4 text-center'>
+            <div className='mt-2  gap-2 rounded-xl bg-secondary/60 p-2'>
               <p className='flex'>Minutos de Estudio:</p>
               <div className='flex items-center justify-center gap-4'>
                 <Button
@@ -148,46 +179,11 @@ export default function Pomodoro() {
                 </Button>
               </div>
             </div>
-          </div>
-          {/* Tercer columna */}
-          <div className='text-black'>
-            <div className='mt-4 w-56 items-center justify-center rounded-xl bg-secondary/60 p-2'>
-              <h3>Minutos de descanso:</h3>
-              <div className='flex items-center justify-center gap-4'>
-                <Button
-                  onClick={() => setBreakSeconds(prev => prev - 60)}
-                  disabled={breakSeconds <= 60 || isActive}
-                >
-                  -
-                </Button>
-                <p> {breakSeconds / 60}</p>
-                <Button
-                  onClick={() => setBreakSeconds(prev => prev + 60)}
-                  disabled={isActive}
-                >
-                  +
-                </Button>
-              </div>
+            
+            
             </div>
           </div>
-        </div>
-      </div>
-{/* Columna imagen  */}
-      <div className='grid grid-cols-2 gap-12'>
-        <div className=''>
-          <img src='/idle.gif' />
-          <iframe
-                className='border-radius:12px'
-                src='https://open.spotify.com/embed/playlist/6xYhxczmfgi6L6knoEHktx?utm_source=generator'
-                width='100%'
-                height='152'
-                allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
-                loading='lazy'
-              ></iframe>
-        </div>
-        {/* Columna 2 */}
-        <div className=''>
-          <div className='mt-16 flex justify-center'>
+          <div className='mt-8 flex justify-center'>
             <span className='rounded-xl bg-secondary/90 p-4'>
               <ActualTimer mode={mode} time={countdown} />
               {pomodoroCount.current >= 1 && (
