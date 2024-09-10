@@ -130,18 +130,39 @@ export default function Pomodoro() {
             height='152'
             allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
             loading='lazy'
-            ></iframe>
+          ></iframe>
         </div>
         {/* Columna 2 */}
         <div className=''>
-            <p className='flex w-full justify-center mt-8 items-center'>
-              Coloca el tiempo a estudiar y descansar:
-            </p>
-          <div className='flex justify-between  gap-4'>
+          <p className='mt-8 flex w-full items-center justify-center'>
+            Coloca el tiempo a estudiar y descansar
+          </p>
+          <div className='flex justify-between gap-4'>
             {/* subit y bajar tiempo de estudio */}
             <div className='w-1/2 p-4 text-center'>
-              <div className='mt-2 items-center justify-center rounded-xl bg-secondary/60 p-2'>
-                <h3>Minutos de descanso:</h3>
+              <div className='mt-2 items-center justify-center gap-2 rounded-xl bg-secondary/60 p-2'>
+                <h3>Minutos de Estudio</h3>
+                <div className='flex items-center justify-center gap-4'>
+                  <Button
+                    className=''
+                    onClick={() => setSessionSeconds(prev => prev - 60)}
+                    disabled={sessionSeconds <= 60 || isActive}
+                  >
+                    -
+                  </Button>
+                  <p>{sessionSeconds / 60}</p>
+                  <Button
+                    onClick={() => setSessionSeconds(prev => prev + 60)}
+                    disabled={isActive}
+                  >
+                    +
+                  </Button>
+                </div>
+              </div>
+            </div>
+            <div className='w-1/2 p-4 text-center'>
+              <div className='mt-2 items-center justify-center gap-2 rounded-xl bg-secondary/60 p-2'>
+                <h3>Minutos de descanso</h3>
                 <div className='flex items-center justify-center gap-4'>
                   <Button
                     onClick={() => setBreakSeconds(prev => prev - 60)}
@@ -158,29 +179,6 @@ export default function Pomodoro() {
                   </Button>
                 </div>
               </div>
-            </div>
-            <div className='w-1/2 p-4 text-center'>
-            <div className='mt-2  gap-2 rounded-xl bg-secondary/60 p-2'>
-              <p className='flex'>Minutos de Estudio:</p>
-              <div className='flex items-center justify-center gap-4'>
-                <Button
-                  className=''
-                  onClick={() => setSessionSeconds(prev => prev - 60)}
-                  disabled={sessionSeconds <= 60 || isActive}
-                >
-                  -
-                </Button>
-                <p>{sessionSeconds / 60}</p>
-                <Button
-                  onClick={() => setSessionSeconds(prev => prev + 60)}
-                  disabled={isActive}
-                >
-                  +
-                </Button>
-              </div>
-            </div>
-            
-            
             </div>
           </div>
           <div className='mt-8 flex justify-center'>
