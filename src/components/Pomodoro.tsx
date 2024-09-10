@@ -45,11 +45,24 @@ export default function Pomodoro() {
   const pomodoroCount = useRef(0)
   const [capySound] = useSound(CapySound)
   const [ObjStudyTime, setObjStudyTime] = useState(0)
+
+  //Revisar el funcionamiento de esta cosa!!!
+
+  // useEffect(() => {
+  //   const worker = new Worker('worker.js')
+
+  //   worker.postMessage('start')
+  //   worker.onmessage = () => console.log('hola!')
+
+  //   return () => worker.terminate()
+  // }, [])
+
   useEffect(() => {
     if (!isActive) return () => clearInterval(timer.current)
 
     if (countdown >= 0) {
       timer.current = setInterval(() => {
+        console.log(`Hola! actualizando, tiempo: ${formatTime(countdown)}`)
         setCountdown(prev => prev - 1)
         if (mode === 'Estudiando') {
           setObjStudyTime(prev => prev + 1)
