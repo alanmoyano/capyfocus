@@ -45,11 +45,24 @@ export default function Pomodoro() {
   const pomodoroCount = useRef(0)
   const [capySound] = useSound(CapySound)
   const [ObjStudyTime, setObjStudyTime] = useState(0)
+
+  //Revisar el funcionamiento de esta cosa!!!
+
+  // useEffect(() => {
+  //   const worker = new Worker('worker.js')
+
+  //   worker.postMessage('start')
+  //   worker.onmessage = () => console.log('hola!')
+
+  //   return () => worker.terminate()
+  // }, [])
+
   useEffect(() => {
     if (!isActive) return () => clearInterval(timer.current)
 
     if (countdown >= 0) {
       timer.current = setInterval(() => {
+        console.log(`Hola! actualizando, tiempo: ${formatTime(countdown)}`)
         setCountdown(prev => prev - 1)
         if (mode === 'Estudiando') {
           setObjStudyTime(prev => prev + 1)
@@ -105,68 +118,70 @@ export default function Pomodoro() {
 
   return (
     <>
-      <h1 className='mt-4 text-4xl font-bold '>Capydoro!</h1>
-      <p className='mt-2 flex w-2/4 justify-end'>
-        Coloca el tiempo a estudiar y descansar:
-      </p>
-      <div className='grid grid-cols-2 gap-4'>
-        {/* Primer columna */}
-        <div className='col-span-1'></div>
-
-        {/* Segunda columna  */}
-        <div className='w-3/2 col-span-1 grid grid-cols-2 gap-16'>
-          <div className='flex justify-center text-black'>
-            <div className='mt-4 w-56 gap-2 rounded-xl bg-secondary/60 p-2'>
-              <p className='flex'>Minutos de Estudio:</p>
-              <div className='flex items-center justify-center gap-4'>
-                <Button
-                  className=''
-                  onClick={() => setSessionSeconds(10)}
-                  disabled={sessionSeconds <= 60 || isActive}
-                >
-                  -
-                </Button>
-                <p>{sessionSeconds / 60}</p>
-                <Button
-                  onClick={() => setSessionSeconds(prev => prev + 60)}
-                  disabled={isActive}
-                >
-                  +
-                </Button>
-              </div>
-            </div>
-          </div>
-          {/* Tercer columna */}
-          <div className='text-black'>
-            <div className='mt-4 w-56 items-center justify-center rounded-xl bg-secondary/60 p-2'>
-              <h3>Minutos de descanso:</h3>
-              <div className='flex items-center justify-center gap-4'>
-                <Button
-                  onClick={() => setBreakSeconds(10)}
-                  disabled={breakSeconds <= 60 || isActive}
-                >
-                  -
-                </Button>
-                <p> {breakSeconds / 60}</p>
-                <Button
-                  onClick={() => setBreakSeconds(prev => prev + 60)}
-                  disabled={isActive}
-                >
-                  +
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <h1 className='mt-4 text-4xl font-bold'>Capydoro!</h1>
+      {/* Columna imagen  */}
       <div className='grid grid-cols-2 gap-12'>
         <div className=''>
           <img src='/idle.gif' />
+          <iframe
+            className='border-radius:12px'
+            src='https://open.spotify.com/embed/playlist/6xYhxczmfgi6L6knoEHktx?utm_source=generator'
+            width='100%'
+            height='152'
+            allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
+            loading='lazy'
+          ></iframe>
         </div>
         {/* Columna 2 */}
         <div className=''>
-          <div className='mt-16 flex justify-center'>
+          <p className='mt-8 flex w-full items-center justify-center'>
+            Coloca el tiempo a estudiar y descansar
+          </p>
+          <div className='flex justify-between gap-4'>
+            {/* subit y bajar tiempo de estudio */}
+            <div className='w-1/2 p-4 text-center'>
+              <div className='mt-2 items-center justify-center gap-2 rounded-xl bg-secondary/60 p-2'>
+                <h3>Minutos de Estudio</h3>
+                <div className='flex items-center justify-center gap-4'>
+                  <Button
+                    className=''
+                    onClick={() => setSessionSeconds(prev => prev - 60)}
+                    disabled={sessionSeconds <= 60 || isActive}
+                  >
+                    -
+                  </Button>
+                  <p>{sessionSeconds / 60}</p>
+                  <Button
+                    onClick={() => setSessionSeconds(prev => prev + 60)}
+                    disabled={isActive}
+                  >
+                    +
+                  </Button>
+                </div>
+              </div>
+            </div>
+            <div className='w-1/2 p-4 text-center'>
+              <div className='mt-2 items-center justify-center gap-2 rounded-xl bg-secondary/60 p-2'>
+                <h3>Minutos de descanso</h3>
+                <div className='flex items-center justify-center gap-4'>
+                  <Button
+                    onClick={() => setBreakSeconds(prev => prev - 60)}
+                    disabled={breakSeconds <= 60 || isActive}
+                  >
+                    -
+                  </Button>
+                  <p> {breakSeconds / 60}</p>
+                  <Button
+                    onClick={() => setBreakSeconds(prev => prev + 60)}
+                    disabled={isActive}
+                  >
+                    +
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className='mt-8 flex justify-center'>
             <span className='rounded-xl bg-secondary/90 p-4'>
               <ActualTimer mode={mode} time={countdown} />
               {pomodoroCount.current >= 1 && (
@@ -207,7 +222,7 @@ export default function Pomodoro() {
             </ul>
           </div>
           <div className='container mt-8 flex w-full gap-44'>
-            <div className='flex justify-start items-start'>
+            <div className='flex items-start justify-start'>
               <Button onClick={handleAccept}>Volver</Button>
             </div>
             <div className='flex justify-end'>

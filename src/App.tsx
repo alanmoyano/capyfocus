@@ -15,6 +15,7 @@ import Inicio from './components/Inicio'
 import CapyEstadisticas from './components/CapyEstadisticas'
 import Usuario from './components/Usuario'
 import { MotivationProvider } from './components/MotivationContext'
+import PruebaTabla from './components/PruebaTabla'
 
 function App() {
   return (
@@ -22,33 +23,34 @@ function App() {
       <SpeedInsights />
       <Analytics />
       <ObjetivosProvider>
-      <MotivationProvider>
-        <Navbar />
+        <MotivationProvider>
+          <Navbar />
 
-        <main>
-          <Switch>
-            <Route path='/'>
-              <Inicio />
-            </Route>
+          <main>
+            <Switch>
+              <Route path='/'>
+                <Inicio />
+              </Route>
 
-            <Route path='/login' component={Login} />
-            <Route path='/signup' component={SignUp} />
+              <Route path='/tablas' component={PruebaTabla} />
+              <Route path='/login' component={Login} />
+              <Route path='/signup' component={SignUp} />
 
-            <Route path='/capydoro'>
-              <Pomodoro />
-            </Route>
-            <Route path='/capymetro'>
-              <Timer />
-            </Route>
+              <Route path='/capydoro'>
+                <Pomodoro />
+              </Route>
+              <Route path='/capymetro'>
+                <Timer />
+              </Route>
 
-            <Route path='/capyInsignias' component={Badges} />
-            <Route path='/capyEstadisticas' component={CapyEstadisticas} />
+              <Route path='/capyInsignias' component={Badges} />
+              <Route path='/capyEstadisticas' component={CapyEstadisticas} />
 
-            <Route path='/usuario' component={Usuario} />
+              <Route path='/usuario' component={Usuario} />
 
-            <Route>404!</Route>
-          </Switch>
-        </main>
+              <Route>404!</Route>
+            </Switch>
+          </main>
         </MotivationProvider>
       </ObjetivosProvider>
     </ThemeProvider>
