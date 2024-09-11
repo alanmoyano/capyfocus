@@ -9,18 +9,23 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 //import Confetti from 'react-confetti-boom'
 
-type Mode = 'Session' | 'Break'
+type Mode = 'Sesión' | 'Descanso'
 type Accion = 'Estudiar' | 'Descansar'
 
 function addZeroIfNeeded(value: number) {
   return value.toString().padStart(2, '0')
 }
 
-function formatTime(seconds: number) {
-  const minutes = Math.floor(seconds / 60)
-  const remainingSeconds = seconds % 60
+function formatTime(time: number) {
+  const hours = Math.floor(time / 3600); // Calcula las horas
+  const minutes = Math.floor((time % 3600) / 60); // Calcula los minutos restantes
+  const remainingSeconds = time % 60; // Calcula los segundos restantes
 
-  return `${addZeroIfNeeded(minutes)}:${addZeroIfNeeded(remainingSeconds)}`
+  if (hours > 0) {
+    return `${addZeroIfNeeded(hours)}:${addZeroIfNeeded(minutes)}:${addZeroIfNeeded(remainingSeconds)}`;
+  } else {
+    return `${addZeroIfNeeded(minutes)}:${addZeroIfNeeded(remainingSeconds)}`;
+  }
 }
 
 export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
@@ -37,7 +42,7 @@ export default function Timer() {
   const [Sessioncountup, setSessionCountup] = useState(0)
   const [Breakcountup, setBreakCountup] = useState(0)
   const [isActive, setIsActive] = useState<boolean | null>(true)
-  const [mode, setMode] = useState<Mode>('Session')
+  const [mode, setMode] = useState<Mode>('Sesión')
   const timer = useRef<NodeJS.Timeout>()
 
   function finalizarSesion() {
@@ -53,13 +58,13 @@ export default function Timer() {
 
   useEffect(() => {
     if (!isActive) {
-      setMode('Break')
+      setMode('Descanso')
       clearInterval(timer.current)
       timer.current = setInterval(() => {
         setBreakCountup(prev => prev + 1)
       }, 1000)
     } else {
-      setMode('Session')
+      setMode('Sesión')
       timer.current = setInterval(() => {
         setSessionCountup(prev => prev + 1)
       }, 1000)
@@ -129,7 +134,7 @@ export default function Timer() {
         <div className='col-span-1 mt-32 grid grid-cols-2 gap-4'>
           <div className='text-black'>
             <div className='rounded-xl bg-accent/90 p-4'>
-              <ActualTimer mode={'Session'} time={Sessioncountup} />
+              <ActualTimer mode={'Sesión'} time={Sessioncountup} />
             </div>
 
             <div className='mt-16'>
@@ -162,7 +167,7 @@ export default function Timer() {
 
           <div className='text-black'>
             <div className='rounded-xl bg-accent/90 p-4'>
-              <ActualTimer mode={'Break'} time={Breakcountup} />
+              <ActualTimer mode={'Descanso'} time={Breakcountup} />
             </div>
             <div className='mt-16 rounded-xl bg-primary/90 p-4'>
               <h1 className='text-xl'>Objetivos de la sesión</h1>
