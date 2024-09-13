@@ -75,7 +75,7 @@ const descriptions: Record<CapyMetodos, string> = {
 }
 
 /* Evento */
-interface Event {
+type Event ={
   date: Date
   title: string
 }
@@ -275,7 +275,7 @@ export default function Inicio() {
                     mode='single'
                     selected={date}
                     onSelect={setDate}
-                    events={events}
+                    
                     className='flex w-full justify-center rounded-md border'
                     modifiers={{
                       eventDay: events.map(event => event.date)
@@ -471,6 +471,7 @@ export default function Inicio() {
           </div>
         </div>
       </section>
+
     </>
   )
 }
