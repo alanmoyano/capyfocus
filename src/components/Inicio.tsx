@@ -2,6 +2,8 @@ import { KeyboardEvent, useState } from 'react'
 
 import { useLocation } from 'wouter'
 
+import * as React from 'react'
+
 import {
   Edit3,
   Hourglass,
@@ -22,6 +24,7 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@/components/ui/tooltip'
+
 import { Button } from './ui/button'
 
 import { Label } from '@/components/ui/label'
@@ -71,6 +74,12 @@ const descriptions: Record<CapyMetodos, string> = {
   Capymetro: 'Estudia con un cronómetro'
 }
 
+/* Evento */
+interface Event {
+  date: Date
+  title: string
+}
+
 export default function Inicio() {
   const [open, setOpen] = useState(false)
   const [value] = useState('')
@@ -94,6 +103,10 @@ export default function Inicio() {
     } else {
       setLocation('/capymetro')
     }
+  }
+
+  const handleVolver = () => {
+    setLocation('/')
   }
 
   const handleSelect = (value: string) => {
@@ -143,6 +156,21 @@ export default function Inicio() {
       setObjetivosFav([...objetivosFav, objetivo])
     }
   }
+
+  /* Evento */
+
+  /* const [date, setDate] = React.useState<Date | undefined>(new Date()) */
+  const [events, setEvents] = React.useState<Event[]>([])
+  const [eventTitle, setEventTitle] = React.useState<string>('')
+
+  const addEvent = () => {
+    if (date && eventTitle) {
+      setEvents([...events, { date, title: eventTitle }])
+      setEventTitle('') // Limpiar el título después de añadir el evento
+    }
+  }
+
+
 
   return (
     <>
@@ -213,7 +241,7 @@ export default function Inicio() {
           <Sheet>
             <SheetTrigger asChild>
               <Button variant='secondary' className='mt-6 bg-secondary'>
-                + Evento
+                Eventos
               </Button>
             </SheetTrigger>
             <SheetContent>
@@ -226,23 +254,57 @@ export default function Inicio() {
                   <Label htmlFor='name' className='text-right'>
                     Nombre
                   </Label>
-                  <Input id='name' type='text' className='col-span-3' />
+                  <Input
+                    id='name'
+                    type='text'
+                    value={eventTitle}
+                    onChange={e => setEventTitle(e.target.value)}
+                    placeholder='Evento'
+                    className='col-span-3'
+                  />
                 </div>
                 <div className='grid grid-cols-4 items-center gap-4'>
                   <Label htmlFor='username' className='text-right'>
                     Calendario
                   </Label>
                 </div>
-                <Calendar
-                  mode='single'
-                  selected={date}
-                  onSelect={setDate}
-                  className='rounded-md border'
-                />
+                {/* Calendario */}
+
+                <div>
+                  <Calendar 
+                    mode='single'
+                    selected={date}
+                    onSelect={setDate}
+                    events={events}
+                    className='flex w-full justify-center rounded-md border'
+                    modifiers={{
+                      eventDay: events.map(event => event.date)
+                    }}
+                    modifiersClassNames={{
+                      eventDay: 'bg-secondary' // Estilo para días con eventos
+                    }}
+                  />
+
+                  <div className='mt-4'>
+                    <Button onClick={addEvent}>Agregar</Button>
+                  </div>
+                  <div className='mt-4'>
+                    <h2>Eventos:</h2>
+                    <ul>
+                      {events.map((event, index) => (
+                        <li key={index}>
+                          {event.date.toDateString()} - {event.title}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
               </div>
               <SheetFooter>
                 <SheetClose asChild>
-                  <Button type='submit'>Guardar</Button>
+                  <Button variant={'accent'} onClick={() => handleVolver()}>
+                    Volver
+                  </Button>
                 </SheetClose>
               </SheetFooter>
             </SheetContent>
