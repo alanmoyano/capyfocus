@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 
 import { Input } from '@/components/ui/input'
-import { ObjetivosContext, useObjetivos } from './ObjetivosContext'
+import {  useObjetivos } from './ObjetivosContext'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import {
   Tooltip,
@@ -66,7 +66,7 @@ import { cn } from '@/lib/utils'
 
 import { Calendar } from '@/components/ui/calendar'
 
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+
 import { Card, CardContent } from '@/components/ui/card'
 import {
   Carousel,
@@ -471,11 +471,17 @@ export default function Inicio() {
               <CarouselContent>
                 <CarouselItem key={1}>
                   <div className='p-1'>
-                    <Card className='w-full h-full relative group'>
+                    <Card className='group relative h-full w-full'>
                       <CardContent className='p-0'>
-                        <img src='./CapyChill.png' className='w-full h-full object-cover' alt="CapyChill" />
-                        <div className='absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
-                          <p className='text-white text-center p-2'>Música relajante para estudiar con tranquilidad</p>
+                        <img
+                          src='./CapyChill.png'
+                          className='h-full w-full object-cover'
+                          alt='CapyChill'
+                        />
+                        <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
+                          <p className='p-2 text-center text-white'>
+                            Música relajante para estudiar con tranquilidad
+                          </p>
                         </div>
                       </CardContent>
                     </Card>
@@ -485,11 +491,17 @@ export default function Inicio() {
 
                 <CarouselItem key={2}>
                   <div className='p-1'>
-                    <Card className='w-full h-full relative group'>
+                    <Card className='group relative h-full w-full'>
                       <CardContent className='p-0'>
-                        <img src='./CapyAmbiente.png' className='w-full h-full object-cover' alt="CapyAmbiente" />
-                        <div className='absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
-                          <p className='text-white text-center p-2'>Sonidos ambientales para mejorar la concentración</p>
+                        <img
+                          src='./CapyAmbiente.png'
+                          className='h-full w-full object-cover'
+                          alt='CapyAmbiente'
+                        />
+                        <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
+                          <p className='p-2 text-center text-white'>
+                            Sonidos ambientales para mejorar la concentración
+                          </p>
                         </div>
                       </CardContent>
                     </Card>
@@ -499,11 +511,17 @@ export default function Inicio() {
 
                 <CarouselItem key={3}>
                   <div className='p-1'>
-                    <Card className='w-full h-full relative group'>
+                    <Card className='group relative h-full w-full'>
                       <CardContent className='p-0'>
-                        <img src='./CapySinthwave.png' className='w-full h-full object-cover' alt="CapySinthwave" />
-                        <div className='absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
-                          <p className='text-white text-center p-2'>Música electrónica retro para un estudio energético</p>
+                        <img
+                          src='./CapySinthwave.png'
+                          className='h-full w-full object-cover'
+                          alt='CapySinthwave'
+                        />
+                        <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
+                          <p className='p-2 text-center text-white'>
+                            Música electrónica retro para un estudio energético
+                          </p>
                         </div>
                       </CardContent>
                     </Card>
@@ -513,11 +531,17 @@ export default function Inicio() {
 
                 <CarouselItem key={4}>
                   <div className='p-1'>
-                    <Card className='w-full h-full relative group'>
+                    <Card className='group relative h-full w-full'>
                       <CardContent className='p-0'>
-                        <img src='./CapyEpic.png' className='w-full h-full object-cover' alt="CapyEpic" />
-                        <div className='absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
-                          <p className='text-white text-center p-2'>Música épica para momentos de máxima concentración</p>
+                        <img
+                          src='./CapyEpic.png'
+                          className='h-full w-full object-cover'
+                          alt='CapyEpic'
+                        />
+                        <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
+                          <p className='p-2 text-center text-white'>
+                            Música épica para momentos de máxima concentración
+                          </p>
                         </div>
                       </CardContent>
                     </Card>
@@ -528,7 +552,6 @@ export default function Inicio() {
               <CarouselPrevious />
               <CarouselNext />
             </Carousel>
-          
           </div>
 
           <div className='mt-5 flex justify-end space-x-4'>
