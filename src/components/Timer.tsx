@@ -148,12 +148,12 @@ export default function Timer() {
             <div className='mt-16'>
               <ToggleGroup
                 type='single'
-                className='rounded-xl bg-primary/90 p-2'
+                className='rounded-xl bg-primary/90 gap-0'
                 onValueChange={value => setDescription(value as Accion)}
               >
                 <ToggleGroupItem
                   value='Estudiar'
-                  className={`flex items-center justify-center gap-1 ${isActive ? 'bg-muted text-muted-foreground' : 'bg-primary/90'}`}
+                  className={`flex items-center justify-center  ${isActive ? 'bg-muted text-muted-foreground' : 'bg-primary/90'}`}
                   onClick={() => handleToggle(true)}
                 >
                   <NotebookPen />
@@ -161,7 +161,7 @@ export default function Timer() {
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value='Descansar'
-                  className={`flex items-center justify-center gap-1 ${isActive ? 'bg-primary/90' : 'bg-muted text-muted-foreground'}`}
+                  className={`flex items-center justify-center ${isActive ? 'bg-primary/90' : 'bg-muted text-muted-foreground'}`}
                   onClick={() => {
                     handleToggle(false)
                   }}
