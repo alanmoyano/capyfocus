@@ -81,10 +81,6 @@ export default function Navbar() {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavbarLink to='/signup'>Signup</NavbarLink>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
           <NavbarLink to='/'>Inicio</NavbarLink>
         </NavigationMenuItem>
 

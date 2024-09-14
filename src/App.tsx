@@ -4,7 +4,6 @@ import { Analytics } from '@vercel/analytics/react'
 import { Route, Switch } from 'wouter'
 
 import Login from './components/Login'
-import SignUp from './components/SignUp'
 import Pomodoro from './components/Pomodoro'
 import Timer from './components/Timer'
 import Badges from './components/Badges'
@@ -34,7 +33,7 @@ function App() {
 
               <Route path='/tablas' component={PruebaTabla} />
               <Route path='/login' component={Login} />
-              <Route path='/signup' component={SignUp} />
+              
 
               <Route path='/capydoro'>
                 <Pomodoro />

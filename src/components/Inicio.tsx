@@ -78,6 +78,19 @@ import {
 } from '@/components/ui/carousel'
 //import { useMotivation } from './MotivationContext'
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog'
+
+
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
 const descriptions: Record<CapyMetodos, string> = {
@@ -492,93 +505,153 @@ export default function Inicio() {
               </ul>
             </div>
           </div>
-
-          <p className='mt-4 text-xl font-bold'>Musica para la sesion</p>
+      {/* Musica */}
           <div className='flex items-center justify-center'>
-            <Carousel className='w-2/3 max-w-xs' opts={{ loop: true }}>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant='outline' className='border-none'>
+                  Presiona aqui para elegir la musica
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Elige la musica para la sesion
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    <Carousel className='w-full max-w-md' opts={{ loop: true }}>
+                      <CarouselContent>
+                        {[
+                          {
+                            key: 1,
+                            src: './CapyChill.png',
+                            alt: 'CapyChill',
+                            title: 'Capy Chill',
+                            description:
+                              'Música relajante para estudiar con tranquilidad'
+                          },
+                          {
+                            key: 2,
+                            src: './CapyAmbiente.png',
+                            alt: 'CapyAmbiente',
+                            title: 'Capy Ambiente',
+                            description:
+                              'Sonidos ambientales para mejorar la concentración'
+                          },
+                          {
+                            key: 3,
+                            src: './CapySinthwave.png',
+                            alt: 'CapySinthwave',
+                            title: 'Capy Sinthwave',
+                            description:
+                              'Música electrónica retro para un estudio energético'
+                          },
+                          {
+                            key: 4,
+                            src: './CapyEpic.png',
+                            alt: 'CapyEpic',
+                            title: 'Capy Epic',
+                            description:
+                              'Música épica para momentos de máxima concentración'
+                          }
+                        ].map(item => (
+                          <CarouselItem key={item.key}>
+                            <div className='p-1'>
+                              <Card className='group relative h-48 w-full overflow-hidden'>
+                                <CardContent className='p-0'>
+                                  <img
+                                    src={item.src}
+                                    className='h-full w-full object-cover transition-transform duration-300 group-hover:scale-110'
+                                    alt={item.alt}
+                                  />
+                                  <div className='absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
+                                    <h3 className='mb-2 text-lg font-bold text-white'>
+                                      {item.title}
+                                    </h3>
+                                    <p className='px-4 text-center text-sm text-white'>
+                                      {item.description}
+                                    </p>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            </div>
+                          </CarouselItem>
+                        ))}
+                      </CarouselContent>
+                      <CarouselPrevious className='left-0' />
+                      <CarouselNext className='right-0' />
+                    </Carousel>
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction>Continue</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+          <div>
+            <Carousel className='w-full max-w-md' opts={{ loop: true }}>
               <CarouselContent>
-                <CarouselItem key={1}>
-                  <div className='p-1'>
-                    <Card className='group relative h-full w-full'>
-                      <CardContent className='p-0'>
-                        <img
-                          src='./CapyChill.png'
-                          className='h-full w-full object-cover'
-                          alt='CapyChill'
-                        />
-                        <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
-                          <p className='p-2 text-center text-white'>
-                            Música relajante para estudiar con tranquilidad
-                          </p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    <p className='mt-2 text-center text-sm'>Capy Chill</p>
-                  </div>
-                </CarouselItem>
-
-                <CarouselItem key={2}>
-                  <div className='p-1'>
-                    <Card className='group relative h-full w-full'>
-                      <CardContent className='p-0'>
-                        <img
-                          src='./CapyAmbiente.png'
-                          className='h-full w-full object-cover'
-                          alt='CapyAmbiente'
-                        />
-                        <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
-                          <p className='p-2 text-center text-white'>
-                            Sonidos ambientales para mejorar la concentración
-                          </p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    <p className='mt-2 text-center text-sm'>Capy Ambiente</p>
-                  </div>
-                </CarouselItem>
-
-                <CarouselItem key={3}>
-                  <div className='p-1'>
-                    <Card className='group relative h-full w-full'>
-                      <CardContent className='p-0'>
-                        <img
-                          src='./CapySinthwave.png'
-                          className='h-full w-full object-cover'
-                          alt='CapySinthwave'
-                        />
-                        <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
-                          <p className='p-2 text-center text-white'>
-                            Música electrónica retro para un estudio energético
-                          </p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    <p className='mt-2 text-center text-sm'>Capy Sinthwave</p>
-                  </div>
-                </CarouselItem>
-
-                <CarouselItem key={4}>
-                  <div className='p-1'>
-                    <Card className='group relative h-full w-full'>
-                      <CardContent className='p-0'>
-                        <img
-                          src='./CapyEpic.png'
-                          className='h-full w-full object-cover'
-                          alt='CapyEpic'
-                        />
-                        <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
-                          <p className='p-2 text-center text-white'>
-                            Música épica para momentos de máxima concentración
-                          </p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    <p className='mt-2 text-center text-sm'>Capy Epic</p>
-                  </div>
-                </CarouselItem>
+                {[
+                  {
+                    key: 1,
+                    src: './CapyChill.png',
+                    alt: 'CapyChill',
+                    title: 'Capy Chill',
+                    description:
+                      'Música relajante para estudiar con tranquilidad'
+                  },
+                  {
+                    key: 2,
+                    src: './CapyAmbiente.png',
+                    alt: 'CapyAmbiente',
+                    title: 'Capy Ambiente',
+                    description:
+                      'Sonidos ambientales para mejorar la concentración'
+                  },
+                  {
+                    key: 3,
+                    src: './CapySinthwave.png',
+                    alt: 'CapySinthwave',
+                    title: 'Capy Sinthwave',
+                    description:
+                      'Música electrónica retro para un estudio energético'
+                  },
+                  {
+                    key: 4,
+                    src: './CapyEpic.png',
+                    alt: 'CapyEpic',
+                    title: 'Capy Epic',
+                    description:
+                      'Música épica para momentos de máxima concentración'
+                  }
+                ].map(item => (
+                  <CarouselItem key={item.key}>
+                    <div className='p-1'>
+                      <Card className='group relative h-48 w-full overflow-hidden'>
+                        <CardContent className='p-0'>
+                          <img
+                            src={item.src}
+                            className='h-full w-full object-cover transition-transform duration-300 group-hover:scale-110'
+                            alt={item.alt}
+                          />
+                          <div className='absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
+                            <h3 className='mb-2 text-lg font-bold text-white'>
+                              {item.title}
+                            </h3>
+                            <p className='px-4 text-center text-sm text-white'>
+                              {item.description}
+                            </p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                ))}
               </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
+              <CarouselPrevious className='left-0' />
+              <CarouselNext className='right-0' />
             </Carousel>
           </div>
 
