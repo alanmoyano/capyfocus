@@ -2,6 +2,7 @@ import { Link } from 'wouter'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 
+
 export default function Login() {
   return (
     <section className='flex h-full w-[80vw] items-center justify-center rounded-[10rem] bg-secondary/60 p-4 text-current md:h-[70vh]'>
