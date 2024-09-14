@@ -4,6 +4,8 @@ import { useLocation } from 'wouter'
 
 import * as React from 'react'
 
+import { es } from 'date-fns/locale'
+
 import {
   Edit3,
   Hourglass,
@@ -16,7 +18,7 @@ import {
 } from 'lucide-react'
 
 import { Input } from '@/components/ui/input'
-import {  useObjetivos } from './ObjetivosContext'
+import { useObjetivos } from './ObjetivosContext'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import {
   Tooltip,
@@ -65,7 +67,6 @@ import {
 import { cn } from '@/lib/utils'
 
 import { Calendar } from '@/components/ui/calendar'
-
 
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -290,6 +291,28 @@ export default function Inicio() {
                     modifiersClassNames={{
                       eventDay: 'bg-secondary' // Estilo para días con eventos
                     }}
+                    locale={es}
+                    components={{
+                      DayContent: ({ date }) => {
+                        const event = events.find(
+                          e => e.date.toDateString() === date.toDateString()
+                        )
+                        return (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div>{date.getDate()}</div>
+                              </TooltipTrigger>
+                              {event && (
+                                <TooltipContent>
+                                  <p>{event.title}</p>
+                                </TooltipContent>
+                              )}
+                            </Tooltip>
+                          </TooltipProvider>
+                        )
+                      }
+                    }}
                   />
 
                   <div className='mt-4'>
@@ -300,7 +323,12 @@ export default function Inicio() {
                     <ul>
                       {events.map((event, index) => (
                         <li key={index}>
-                          {event.date.toDateString()} - {event.title}
+                          {event.date.toLocaleDateString('es-ES', {
+                            weekday: 'short',
+                            month: 'numeric',
+                            day: 'numeric'
+                          })}
+                          - {event.title}
                         </li>
                       ))}
                     </ul>
