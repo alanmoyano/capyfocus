@@ -121,7 +121,7 @@ export default function Timer() {
     }
     setLastCheckedObj(key)
   }
-  const { selectedMusic } = useMusic();
+   const { selectedMusic } = useMusic();
 
   return (
     <>
@@ -132,7 +132,7 @@ export default function Timer() {
         <div className='col-span-1 p-4'>
           <img src='/idle.gif' className='w-full h-auto' alt="Idle animation" />
           <div>
-      <h1>Capydoro</h1>
+      
       {selectedMusic && (
         <iframe 
           style={{ borderRadius: '12px' }}
@@ -142,9 +142,10 @@ export default function Timer() {
           frameBorder="0" 
           allowFullScreen={true}
           allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-          loading="lazy"
+          loading="eager"
         ></iframe>
       )}
+      
     </div>
         </div>
 

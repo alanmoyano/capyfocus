@@ -7,6 +7,7 @@ import { Star } from 'lucide-react'
 import CapySound from '../assets/Sonido_de_caripincho.mp3'
 import Confetti from 'react-confetti-boom'
 import useSound from 'use-sound'
+import { useMusic } from './MusicContext'
 
 type Mode = 'Estudiando' | 'Descansando'
 
@@ -44,7 +45,7 @@ export default function Pomodoro() {
   const timer = useRef<NodeJS.Timeout>()
   const pomodoroCount = useRef(0)
   const [capySound] = useSound(CapySound)
-  const [ObjStudyTime, setObjStudyTime] = useState(0)
+  const { selectedMusic } = useMusic()
 
   //Revisar el funcionamiento de esta cosa!!!
 
@@ -123,14 +124,20 @@ export default function Pomodoro() {
       <div className='grid grid-cols-2 gap-12'>
         <div className=''>
           <img src='/idle.gif' />
-          <iframe
-            className='border-radius:12px'
-            src='https://open.spotify.com/embed/playlist/6xYhxczmfgi6L6knoEHktx?utm_source=generator'
-            width='100%'
-            height='152'
-            allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
-            loading='lazy'
-          ></iframe>
+          <div>
+            {selectedMusic && (
+              <iframe
+                style={{ borderRadius: '12px' }}
+                src={`https://open.spotify.com/embed/playlist/${selectedMusic.spotifyUri}?utm_source=generator`}
+                width='100%'
+                height='152'
+                frameBorder='0'
+                allowFullScreen={true}
+                allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
+                loading='eager'
+              ></iframe>
+            )}
+          </div>
         </div>
         {/* Columna 2 */}
         <div className=''>
