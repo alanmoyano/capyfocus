@@ -45,6 +45,7 @@ export default function Pomodoro() {
   const timer = useRef<NodeJS.Timeout>()
   const pomodoroCount = useRef(0)
   const [capySound] = useSound(CapySound)
+  const [ObjStudyTime, setObjStudyTime] = useState(0)
   const { selectedMusic } = useMusic()
 
   //Revisar el funcionamiento de esta cosa!!!

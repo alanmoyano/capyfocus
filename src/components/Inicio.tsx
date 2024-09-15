@@ -603,7 +603,7 @@ export default function Inicio() {
               </AlertDialogContent>
             </AlertDialog>
           </div> */}
-          <div>
+          <div className='mt-4'>
             <Carousel className='w-full max-w-md' opts={{ loop: true }}>
               <CarouselContent>
                 {[
