@@ -7,6 +7,7 @@ import { Star } from 'lucide-react'
 import CapySound from '../assets/Sonido_de_caripincho.mp3'
 import Confetti from 'react-confetti-boom'
 import useSound from 'use-sound'
+import { useMusic } from './MusicContext'
 
 type Mode = 'Estudiando' | 'Descansando'
 
@@ -45,6 +46,7 @@ export default function Pomodoro() {
   const pomodoroCount = useRef(0)
   const [capySound] = useSound(CapySound)
   const [ObjStudyTime, setObjStudyTime] = useState(0)
+  const { selectedMusic } = useMusic()
 
   //Revisar el funcionamiento de esta cosa!!!
 
@@ -123,25 +125,52 @@ export default function Pomodoro() {
       <div className='grid grid-cols-2 gap-12'>
         <div className=''>
           <img src='/idle.gif' />
-          <iframe
-            className='border-radius:12px'
-            src='https://open.spotify.com/embed/playlist/6xYhxczmfgi6L6knoEHktx?utm_source=generator'
-            width='100%'
-            height='152'
-            allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
-            loading='lazy'
-            ></iframe>
+          <div>
+            {selectedMusic && (
+              <iframe
+                style={{ borderRadius: '12px' }}
+                src={`https://open.spotify.com/embed/playlist/${selectedMusic.spotifyUri}?utm_source=generator`}
+                width='100%'
+                height='152'
+                frameBorder='0'
+                allowFullScreen={true}
+                allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
+                loading='eager'
+              ></iframe>
+            )}
+          </div>
         </div>
         {/* Columna 2 */}
         <div className=''>
-            <p className='flex w-full justify-center mt-8 items-center'>
-              Coloca el tiempo a estudiar y descansar:
-            </p>
-          <div className='flex justify-between  gap-4'>
+          <p className='mt-8 flex w-full items-center justify-center'>
+            Coloca el tiempo a estudiar y descansar
+          </p>
+          <div className='flex justify-between gap-4'>
             {/* subit y bajar tiempo de estudio */}
             <div className='w-1/2 p-4 text-center'>
-              <div className='mt-2 items-center justify-center rounded-xl bg-secondary/60 p-2'>
-                <h3>Minutos de descanso:</h3>
+              <div className='mt-2 items-center justify-center gap-2 rounded-xl bg-secondary/60 p-2'>
+                <h3>Minutos de Estudio</h3>
+                <div className='flex items-center justify-center gap-4'>
+                  <Button
+                    className=''
+                    onClick={() => setSessionSeconds(prev => prev - 60)}
+                    disabled={sessionSeconds <= 60 || isActive}
+                  >
+                    -
+                  </Button>
+                  <p>{sessionSeconds / 60}</p>
+                  <Button
+                    onClick={() => setSessionSeconds(prev => prev + 60)}
+                    disabled={isActive}
+                  >
+                    +
+                  </Button>
+                </div>
+              </div>
+            </div>
+            <div className='w-1/2 p-4 text-center'>
+              <div className='mt-2 items-center justify-center gap-2 rounded-xl bg-secondary/60 p-2'>
+                <h3>Minutos de descanso</h3>
                 <div className='flex items-center justify-center gap-4'>
                   <Button
                     onClick={() => setBreakSeconds(prev => prev - 60)}
@@ -158,29 +187,6 @@ export default function Pomodoro() {
                   </Button>
                 </div>
               </div>
-            </div>
-            <div className='w-1/2 p-4 text-center'>
-            <div className='mt-2  gap-2 rounded-xl bg-secondary/60 p-2'>
-              <p className='flex'>Minutos de Estudio:</p>
-              <div className='flex items-center justify-center gap-4'>
-                <Button
-                  className=''
-                  onClick={() => setSessionSeconds(prev => prev - 60)}
-                  disabled={sessionSeconds <= 60 || isActive}
-                >
-                  -
-                </Button>
-                <p>{sessionSeconds / 60}</p>
-                <Button
-                  onClick={() => setSessionSeconds(prev => prev + 60)}
-                  disabled={isActive}
-                >
-                  +
-                </Button>
-              </div>
-            </div>
-            
-            
             </div>
           </div>
           <div className='mt-8 flex justify-center'>

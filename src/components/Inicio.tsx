@@ -2,6 +2,10 @@ import { KeyboardEvent, useState } from 'react'
 
 import { useLocation } from 'wouter'
 
+import * as React from 'react'
+
+import { es } from 'date-fns/locale'
+
 import {
   Edit3,
   Hourglass,
@@ -22,6 +26,7 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@/components/ui/tooltip'
+
 import { Button } from './ui/button'
 
 import { Label } from '@/components/ui/label'
@@ -62,13 +67,30 @@ import {
 import { cn } from '@/lib/utils'
 
 import { Calendar } from '@/components/ui/calendar'
+
+import { Card, CardContent } from '@/components/ui/card'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious
+} from '@/components/ui/carousel'
 //import { useMotivation } from './MotivationContext'
+
+import { useMusic } from './MusicContext'
 
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
 const descriptions: Record<CapyMetodos, string> = {
   Capydoro: 'Estudia con el método Pomodoro',
   Capymetro: 'Estudia con un cronómetro'
+}
+
+/* Evento */
+type Event = {
+  date: Date
+  title: string
 }
 
 export default function Inicio() {
@@ -96,6 +118,10 @@ export default function Inicio() {
     }
   }
 
+  const handleVolver = () => {
+    setLocation('/')
+  }
+
   const handleSelect = (value: string) => {
     console.log(value)
 
@@ -117,9 +143,9 @@ export default function Inicio() {
     const auxObjetivos = objetivos.filter((_, i) => i !== index) //hola a los que no son
     setObjetivos(auxObjetivos)
   }
-
   const handleEdit = (index: number) => {
     setIndex(index)
+    setInputValue(objetivos[index]) // Set the input value to the current objective
   }
 
   const handleSaveEdit = (
@@ -144,46 +170,34 @@ export default function Inicio() {
     }
   }
 
+  /* Evento */
+
+  /* const [date, setDate] = React.useState<Date | undefined>(new Date()) */
+  const [events, setEvents] = React.useState<Event[]>([])
+  const [eventTitle, setEventTitle] = React.useState<string>('')
+
+  const addEvent = () => {
+    if (date && eventTitle) {
+      setEvents([...events, { date, title: eventTitle }])
+      setEventTitle('') // Limpiar el título después de añadir el evento
+    }
+  }
+
+  // musica
+  const { setSelectedMusic } = useMusic()
+
+  const handleMusicSelection = (music: {
+    title: string
+    spotifyUri: string
+  }) => {
+    setSelectedMusic(music)
+  }
+
   return (
     <>
       <section className='flex flex-col gap-20 p-10 md:flex-row'>
         <div className='m-auto'>
           <img src='/idle.gif' />
-          {/* Motivación */}
-          <Select onValueChange={value => handleSelect(value)}>
-            <SelectTrigger className='ml-4 w-[280px]'>
-              <SelectValue placeholder='Selecciona una motivación' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Tipo de motivación</SelectLabel>
-                <SelectItem key={0} value='positiva'>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <p>Positiva</p>
-                      </TooltipTrigger>
-                      <TooltipContent className='ml-16'>
-                        <p>Mensajes positivos</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </SelectItem>
-                <SelectItem key={1} value='pasivoAgresiva'>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <p>Pasivo/Agresivo</p>
-                      </TooltipTrigger>
-                      <TooltipContent className='ml-16'>
-                        <p>Mensajes pasivos/agresivos</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
         </div>
 
         <div className='m-auto'>
@@ -213,7 +227,7 @@ export default function Inicio() {
           <Sheet>
             <SheetTrigger asChild>
               <Button variant='secondary' className='mt-6 bg-secondary'>
-                + Evento
+                Eventos
               </Button>
             </SheetTrigger>
             <SheetContent>
@@ -226,23 +240,83 @@ export default function Inicio() {
                   <Label htmlFor='name' className='text-right'>
                     Nombre
                   </Label>
-                  <Input id='name' type='text' className='col-span-3' />
+                  <Input
+                    id='name'
+                    type='text'
+                    value={eventTitle}
+                    onChange={e => setEventTitle(e.target.value)}
+                    placeholder='Evento'
+                    className='col-span-3'
+                  />
                 </div>
                 <div className='grid grid-cols-4 items-center gap-4'>
                   <Label htmlFor='username' className='text-right'>
                     Calendario
                   </Label>
                 </div>
-                <Calendar
-                  mode='single'
-                  selected={date}
-                  onSelect={setDate}
-                  className='rounded-md border'
-                />
+                {/* Calendario */}
+
+                <div>
+                  <Calendar
+                    mode='single'
+                    selected={date}
+                    onSelect={setDate}
+                    className='flex w-full justify-center rounded-md border'
+                    modifiers={{
+                      eventDay: events.map(event => event.date)
+                    }}
+                    modifiersClassNames={{
+                      eventDay: 'bg-secondary' // Estilo para días con eventos
+                    }}
+                    locale={es}
+                    components={{
+                      DayContent: ({ date }) => {
+                        const event = events.find(
+                          e => e.date.toDateString() === date.toDateString()
+                        )
+                        return (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div>{date.getDate()}</div>
+                              </TooltipTrigger>
+                              {event && (
+                                <TooltipContent>
+                                  <p>{event.title}</p>
+                                </TooltipContent>
+                              )}
+                            </Tooltip>
+                          </TooltipProvider>
+                        )
+                      }
+                    }}
+                  />
+
+                  <div className='mt-4'>
+                    <Button onClick={addEvent}>Agregar</Button>
+                  </div>
+                  <div className='mt-4'>
+                    <h2>Eventos:</h2>
+                    <ul>
+                      {events.map((event, index) => (
+                        <li key={index}>
+                          {event.date.toLocaleDateString('es-ES', {
+                            weekday: 'short',
+                            month: 'numeric',
+                            day: 'numeric'
+                          })}
+                          - {event.title}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
               </div>
               <SheetFooter>
                 <SheetClose asChild>
-                  <Button type='submit'>Guardar</Button>
+                  <Button variant={'accent'} onClick={() => handleVolver()}>
+                    Volver
+                  </Button>
                 </SheetClose>
               </SheetFooter>
             </SheetContent>
@@ -395,6 +469,221 @@ export default function Inicio() {
               </ul>
             </div>
           </div>
+          <div className='mt-6 flex items-center justify-center'>
+            {/* Motivación */}
+            <Select onValueChange={value => handleSelect(value)}>
+              <SelectTrigger className='ml-4 w-[280px]'>
+                <SelectValue placeholder='Selecciona una motivación' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Tipo de motivación</SelectLabel>
+                  <SelectItem key={0} value='positiva'>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <p>Positiva</p>
+                        </TooltipTrigger>
+                        <TooltipContent className='ml-16'>
+                          <p>Mensajes positivos</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </SelectItem>
+                  <SelectItem key={1} value='pasivoAgresiva'>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <p>Pasivo/Agresivo</p>
+                        </TooltipTrigger>
+                        <TooltipContent className='ml-16'>
+                          <p>Mensajes pasivos/agresivos</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          {/* Musica */}
+          {/* <div className='flex items-center justify-center'>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant='outline' className='border-none'>
+                  Presiona aqui para elegir la musica
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Elige la musica para la sesion
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    <Carousel className='w-full max-w-md' opts={{ loop: true }}>
+                      <CarouselContent>
+                        {[
+                          {
+                            key: 1,
+                            src: './CapyChill.png',
+                            alt: 'CapyChill',
+                            title: 'Capy Chill',
+                            description:
+                              'Música relajante para estudiar con tranquilidad',
+                            spotifyUri: '7u6QwhygZJJqqGWMMMINhR'
+                          },
+                          {
+                            key: 2,
+                            src: './CapyAmbiente.png',
+                            alt: 'CapyAmbiente',
+                            title: 'Capy Ambiente',
+                            description:
+                              'Sonidos ambientales para mejorar la concentración',
+                              spotifyUri: '4Pi6DScPJfg1RTGVZuxTZV'
+                          },
+                          {
+                            key: 3,
+                            src: './CapySinthwave.png',
+                            alt: 'CapySinthwave',
+                            title: 'Capy Sinthwave',
+                            description:
+                              'Música electrónica retro para un estudio energético',
+                              spotifyUri: '6xYhxczmfgi6L6knoEHktx'
+                          },
+                          {
+                            key: 4,
+                            src: './CapyEpic.png',
+                            alt: 'CapyEpic',
+                            title: 'Capy Epic',
+                            description:
+                              'Música épica para momentos de máxima concentración',
+                              spotifyUri: '5GnSqO293GdPWaJhD6iz8E'
+                          }
+                          // {
+                          //   key: 5,
+                          //   src: './NoCapyMusic.png',
+                          //   alt: 'NoCapyMusic',
+                          //   title: 'Sin Musica',
+                          //   description:
+                          //     'Reproduce tu propia musica'
+                          // }
+                        ].map(item => (
+                          <CarouselItem key={item.key}>
+                            <div className='p-1'>
+                              <Card className='group relative h-48 w-full overflow-hidden'>
+                                <CardContent className='p-0'>
+                                  <img
+                                    src={item.src}
+                                    className='h-full w-full object-cover transition-transform duration-300 group-hover:scale-110'
+                                    alt={item.alt}
+                                  />
+                                  <div className='absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
+                                    <h3 className='mb-2 text-lg font-bold text-white'>
+                                      {item.title}
+                                    </h3>
+                                    <p className='px-4 text-center text-sm text-white'>
+                                      {item.description}
+                                    </p>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            </div>
+                          </CarouselItem>
+                        ))}
+                      </CarouselContent>
+                      <CarouselPrevious className='left-0' />
+                      <CarouselNext className='right-0' />
+                    </Carousel>
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction>Continue</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div> */}
+          <div className='mt-4'>
+            <Carousel className='w-full max-w-md' opts={{ loop: true }}>
+              <CarouselContent>
+                {[
+                  {
+                    key: 1,
+                    src: './CapyChill.png',
+                    alt: 'CapyChill',
+                    title: 'Capy Chill',
+                    description:
+                      'Música relajante para estudiar con tranquilidad',
+                    spotifyUri: '7u6QwhygZJJqqGWMMMINhR'
+                  },
+                  {
+                    key: 2,
+                    src: './CapyAmbiente.png',
+                    alt: 'CapyAmbiente',
+                    title: 'Capy Ambiente',
+                    description:
+                      'Sonidos ambientales para mejorar la concentración',
+                    spotifyUri: '4Pi6DScPJfg1RTGVZuxTZV'
+                  },
+                  {
+                    key: 3,
+                    src: './CapySinthwave.png',
+                    alt: 'CapySinthwave',
+                    title: 'Capy Sinthwave',
+                    description:
+                      'Música electrónica retro para un estudio energético',
+                    spotifyUri: '6xYhxczmfgi6L6knoEHktx'
+                  },
+                  {
+                    key: 4,
+                    src: './CapyEpic.png',
+                    alt: 'CapyEpic',
+                    title: 'Capy Epic',
+                    description:
+                      'Música épica para momentos de máxima concentración',
+                    spotifyUri: '5GnSqO293GdPWaJhD6iz8E'
+                  }
+                  // {
+                  //   key: 5,
+                  //   src: './NoCapyMusic.png',
+                  //   alt: 'NoCapyMusic',
+                  //   title: 'Sin Musica',
+                  //   description:
+                  //     'Reproduce tu propia musica'
+                  // }
+                ].map(item => (
+                  <CarouselItem key={item.key}>
+                    <div
+                      className='p-1 '
+
+                    >
+                      <Card className='group relative h-48 w-full overflow-hidden'>
+                        <CardContent className='p-0'>
+                          <img
+                            src={item.src}
+                            className='h-full w-full object-cover transition-transform duration-300 group-hover:scale-110'
+                            alt={item.alt}
+                          />
+                          <div className='absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
+                            <h3 className='mb-2 text-lg font-bold text-white'>
+                              {item.title}
+                            </h3>
+                            <p className='px-4 text-center text-sm text-white'>
+                              {item.description}
+                            </p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                    <Button variant='outline' onClick={() => handleMusicSelection({ title: item.title, spotifyUri: item.spotifyUri })}>Seleccionar</Button>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className='left-0' />
+              <CarouselNext className='right-0' />
+            </Carousel>
+          </div>
+
           <div className='mt-5 flex justify-end space-x-4'>
             <Button
               type='submit'

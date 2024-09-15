@@ -6,21 +6,28 @@ import { Star, NotebookPen, Moon } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 //import { navigationMenuTriggerStyle } from './ui/navigit pull gation-menu'
+import { useMusic } from './MusicContext';
+
 
 //import Confetti from 'react-confetti-boom'
 
-type Mode = 'Session' | 'Break'
+type Mode = 'Sesión' | 'Descanso'
 type Accion = 'Estudiar' | 'Descansar'
 
 function addZeroIfNeeded(value: number) {
   return value.toString().padStart(2, '0')
 }
 
-function formatTime(seconds: number) {
-  const minutes = Math.floor(seconds / 60)
-  const remainingSeconds = seconds % 60
+function formatTime(time: number) {
+  const hours = Math.floor(time / 3600) // Calcula las horas
+  const minutes = Math.floor((time % 3600) / 60) // Calcula los minutos restantes
+  const remainingSeconds = time % 60 // Calcula los segundos restantes
 
-  return `${addZeroIfNeeded(minutes)}:${addZeroIfNeeded(remainingSeconds)}`
+  if (hours > 0) {
+    return `${addZeroIfNeeded(hours)}:${addZeroIfNeeded(minutes)}:${addZeroIfNeeded(remainingSeconds)}`
+  } else {
+    return `${addZeroIfNeeded(minutes)}:${addZeroIfNeeded(remainingSeconds)}`
+  }
 }
 
 export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
@@ -37,7 +44,7 @@ export default function Timer() {
   const [Sessioncountup, setSessionCountup] = useState(0)
   const [Breakcountup, setBreakCountup] = useState(0)
   const [isActive, setIsActive] = useState<boolean | null>(true)
-  const [mode, setMode] = useState<Mode>('Session')
+  const [mode, setMode] = useState<Mode>('Sesión')
   const timer = useRef<NodeJS.Timeout>()
 
   function finalizarSesion() {
@@ -48,18 +55,18 @@ export default function Timer() {
     setSessionCountup(0)
   }
 
-  // @ts-expect-error vamos a usar la descripción después, no te enojes typescript!!! 🥺
-  const [description, setDescription] = useState<Accion>('Estudiar')
+  // // @ts-expect-error vamos a usar la descripción después, no te enojes typescript!!! 🥺
+  const [, setDescription] = useState<Accion>('Estudiar')
 
   useEffect(() => {
     if (!isActive) {
-      setMode('Break')
+      setMode('Descanso')
       clearInterval(timer.current)
       timer.current = setInterval(() => {
         setBreakCountup(prev => prev + 1)
       }, 1000)
     } else {
-      setMode('Session')
+      setMode('Sesión')
       timer.current = setInterval(() => {
         setSessionCountup(prev => prev + 1)
       }, 1000)
@@ -114,102 +121,108 @@ export default function Timer() {
     }
     setLastCheckedObj(key)
   }
+   const { selectedMusic } = useMusic();
 
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyMetro!</h1>
 
-      <div className='grid grid-cols-2 gap-4'>
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         {/* Columna 1:  */}
         <div className='col-span-1 p-4'>
-          <img src='/idle.gif' />
-          <iframe
-                className='border-radius:12px'
-                src='https://open.spotify.com/embed/playlist/6xYhxczmfgi6L6knoEHktx?utm_source=generator'
-                width='100%'
-                height='152'
-                allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
-                loading='lazy'
-              ></iframe>
+          <img src='/idle.gif' className='w-full h-auto' alt="Idle animation" />
+          <div>
+      
+      {selectedMusic && (
+        <iframe 
+          style={{ borderRadius: '12px' }}
+          src={`https://open.spotify.com/embed/playlist/${selectedMusic.spotifyUri}?utm_source=generator`}
+          width="100%" 
+          height="152" 
+          frameBorder="0" 
+          allowFullScreen={true}
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+          loading="eager"
+        ></iframe>
+      )}
+      
+    </div>
         </div>
 
         {/* Columna 2:*/}
-        <div className='col-span-1 mt-32 grid grid-cols-2 gap-4'>
-          <div className='text-black'>
-            <div className='rounded-xl bg-accent/90 p-4'>
-              <ActualTimer mode={'Session'} time={Sessioncountup} />
+        <div className='col-span-1'>
+          {/* Contadores */}
+          <div className='text-black flex flex-col sm:flex-row justify-center items-center mt-6 w-full gap-2'>
+            <div className='rounded-xl bg-accent/90 w-full p-6 mb-2 sm:mb-0 sm:mr-2'>
+              <ActualTimer mode={'Sesión'} time={Sessioncountup} />
             </div>
-
-            <div className='mt-16'>
+            <div className='rounded-xl bg-accent/90 w-full p-6'>
+              <ActualTimer mode={'Descanso'} time={Breakcountup} />
+            </div>
+          </div>
+          <div className='mt-8 sm:mt-16'>
+            <div className="flex justify-center">
               <ToggleGroup
                 type='single'
-                className='rounded-xl bg-primary/90 p-2'
+                className='gap-0 p-1 rounded-xl bg-primary/90 w-full sm:w-2/3 mx-auto'
                 onValueChange={value => setDescription(value as Accion)}
               >
                 <ToggleGroupItem
                   value='Estudiar'
-                  className={`flex items-center justify-center gap-1 ${isActive ? 'bg-muted text-muted-foreground' : 'bg-primary/90'}`}
+                  className={`flex items-center justify-center w-1/2 ${isActive ? 'bg-muted text-muted-foreground' : 'bg-primary/90'}`}
                   onClick={() => handleToggle(true)}
                 >
-                  <NotebookPen />
+                  <NotebookPen className="mr-2" />
                   Estudiar
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value='Descansar'
-                  className={`flex items-center justify-center gap-1 ${isActive ? 'bg-primary/90' : 'bg-muted text-muted-foreground'}`}
+                  className={`flex items-center justify-center w-1/2 ${isActive ? 'bg-primary/90' : 'bg-muted text-muted-foreground'}`}
                   onClick={() => {
                     handleToggle(false)
                   }}
                 >
-                  <Moon />
+                  <Moon className="mr-2" />
                   Descansar
                 </ToggleGroupItem>
               </ToggleGroup>
             </div>
           </div>
-
-          <div className='text-black'>
-            <div className='rounded-xl bg-accent/90 p-4'>
-              <ActualTimer mode={'Break'} time={Breakcountup} />
-            </div>
-            <div className='mt-16 rounded-xl bg-primary/90 p-4'>
-              <h1 className='text-xl'>Objetivos de la sesión</h1>
-              <ul className='list-inside list-disc space-y-2 text-black'>
-                {objetivos.map((objetivo, key) => (
-                  <li key={key} className='flex items-center space-x-2'>
-                    <span>
-                      <Checkbox
-                        checked={marked.includes(objetivo)}
-                        onClick={() => handleCheckbox(objetivo, key)}
-                        className='mr-2'
-                      />
-                      {objetivo}
-                    </span>
-                    {objetivosFav.includes(objetivo) && (
-                      <Star size={20} style={{ color: '#ffbc05' }} />
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className='flex w-full justify-end'>
-              <Button
-                className='mt-6'
-                variant={'destructive'}
-                onClick={() => {
-                  finalizarSesion()
-                }}
-              >
-                Finalizar Sesion
-              </Button>
-            </div>
-          </div>
+        <div className='mt-8 rounded-xl bg-primary/90 p-4'>
+          <h1 className='text-xl'>Objetivos de la sesión</h1>
+          <ul className='list-inside list-disc space-y-2 text-black'>
+            {objetivos.map((objetivo, key) => (
+              <li key={key} className='flex items-center space-x-2'>
+                <span className='flex-grow'>
+                  <Checkbox
+                    checked={marked.includes(objetivo)}
+                    onClick={() => handleCheckbox(objetivo, key)}
+                    className='mr-2'
+                  />
+                  {objetivo}
+                </span>
+                {objetivosFav.includes(objetivo) && (
+                  <Star size={20} style={{ color: '#ffbc05' }} />
+                )}
+              </li>
+            ))}
+          </ul>
         </div>
-      </div>
-      <div className='ml-32'>
-        <Button className='flex flex-col' onClick={handleAccept}>
-          Volver
-        </Button>
+        <div className='flex flex-col sm:flex-row justify-between items-center mt-6'>
+          <Button
+            className='w-full sm:w-auto mb-2 sm:mb-0'
+            variant={'destructive'}
+            onClick={() => {
+              finalizarSesion()
+            }}
+          >
+            Finalizar Sesion
+          </Button>
+          <Button className='w-full sm:w-auto' onClick={handleAccept}>
+            Volver
+          </Button>
+        </div>
+        </div>
       </div>
 
       {/* {pomodoroCount.current >= pomodoroSessions && (
