@@ -24,37 +24,34 @@ function App() {
       <Analytics />
       <ObjetivosProvider>
         <MotivationProvider>
-       
-        <MusicProvider>
-          <Navbar />
+          <MusicProvider>
+            <Navbar />
 
-          <main>
-            <Switch>
-              <Route path='/'>
-                <Inicio />
-              </Route>
+            <main>
+              <Switch>
+                <Route path='/'>
+                  <Inicio />
+                </Route>
 
-              <Route path='/tablas' component={PruebaTabla} />
-              <Route path='/login' component={Login} />
-              
+                <Route path='/tablas' component={PruebaTabla} />
+                <Route path='/login' component={Login} />
 
-              <Route path='/capydoro'>
-                <Pomodoro />
-              </Route>
-              <Route path='/capymetro'>
-                <Timer />
-              </Route>
+                <Route path='/capydoro'>
+                  <Pomodoro />
+                </Route>
+                <Route path='/capymetro'>
+                  <Timer />
+                </Route>
 
-              <Route path='/capyInsignias' component={Badges} />
-              <Route path='/capyEstadisticas' component={CapyEstadisticas} />
+                <Route path='/capyInsignias' component={Badges} />
+                <Route path='/capyEstadisticas' component={CapyEstadisticas} />
 
-              <Route path='/usuario' component={Usuario} />
+                <Route path='/usuario' component={Usuario} />
 
-              <Route>404!</Route>
-            </Switch>
-          </main>
+                <Route>404!</Route>
+              </Switch>
+            </main>
           </MusicProvider>
-  
         </MotivationProvider>
       </ObjetivosProvider>
     </ThemeProvider>

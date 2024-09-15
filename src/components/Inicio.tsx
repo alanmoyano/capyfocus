@@ -2,8 +2,6 @@ import { KeyboardEvent, useState } from 'react'
 
 import { useLocation } from 'wouter'
 
-import * as React from 'react'
-
 import { es } from 'date-fns/locale'
 
 import {
@@ -103,8 +101,7 @@ export default function Inicio() {
   const { objetivos, setObjetivos, objetivosFav, setObjetivosFav } =
     useObjetivos()
 
-  const [description, setDescription] =
-    useState<keyof typeof descriptions>('Capydoro')
+  const [description, setDescription] = useState<CapyMetodos>('Capydoro')
 
   const [, setLocation] = useLocation()
 
@@ -172,9 +169,9 @@ export default function Inicio() {
 
   /* Evento */
 
-  /* const [date, setDate] = React.useState<Date | undefined>(new Date()) */
-  const [events, setEvents] = React.useState<Event[]>([])
-  const [eventTitle, setEventTitle] = React.useState<string>('')
+  /* const [date, setDate] = useState<Date | undefined>(new Date()) */
+  const [events, setEvents] = useState<Event[]>([])
+  const [eventTitle, setEventTitle] = useState<string>('')
 
   const addEvent = () => {
     if (date && eventTitle) {
@@ -195,7 +192,7 @@ export default function Inicio() {
 
   return (
     <>
-      <section className='flex flex-col gap-20 p-10 md:flex-row'>
+      <section className='container mt-10 flex flex-col gap-20 md:flex-row'>
         <div className='m-auto'>
           <img src='/idle.gif' />
         </div>
@@ -250,9 +247,7 @@ export default function Inicio() {
                   />
                 </div>
                 <div className='grid grid-cols-4 items-center gap-4'>
-                  <Label htmlFor='username' className='text-right'>
-                    Calendario
-                  </Label>
+                  <Label className='text-right'>Calendario</Label>
                 </div>
                 {/* Calendario */}
 
@@ -653,10 +648,7 @@ export default function Inicio() {
                   // }
                 ].map(item => (
                   <CarouselItem key={item.key}>
-                    <div
-                      className='p-1 '
-
-                    >
+                    <div className='p-1'>
                       <Card className='group relative h-48 w-full overflow-hidden'>
                         <CardContent className='p-0'>
                           <img
@@ -675,7 +667,17 @@ export default function Inicio() {
                         </CardContent>
                       </Card>
                     </div>
-                    <Button variant='outline' onClick={() => handleMusicSelection({ title: item.title, spotifyUri: item.spotifyUri })}>Seleccionar</Button>
+                    <Button
+                      variant='outline'
+                      onClick={() =>
+                        handleMusicSelection({
+                          title: item.title,
+                          spotifyUri: item.spotifyUri
+                        })
+                      }
+                    >
+                      Seleccionar
+                    </Button>
                   </CarouselItem>
                 ))}
               </CarouselContent>
