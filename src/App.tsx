@@ -14,6 +14,7 @@ import Inicio from './components/Inicio'
 import CapyEstadisticas from './components/CapyEstadisticas'
 import Usuario from './components/Usuario'
 import { MotivationProvider } from './components/MotivationContext'
+import { MusicProvider } from './components/MusicContext'
 import PruebaTabla from './components/PruebaTabla'
 
 function App() {
@@ -23,6 +24,8 @@ function App() {
       <Analytics />
       <ObjetivosProvider>
         <MotivationProvider>
+       
+        <MusicProvider>
           <Navbar />
 
           <main>
@@ -50,6 +53,8 @@ function App() {
               <Route>404!</Route>
             </Switch>
           </main>
+          </MusicProvider>
+  
         </MotivationProvider>
       </ObjetivosProvider>
     </ThemeProvider>
