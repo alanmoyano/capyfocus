@@ -36,31 +36,29 @@ export default function Login() {
   const [month, setMonth] = React.useState<number>(new Date().getMonth())
   const [year, setYear] = React.useState<number>(new Date().getFullYear())
   return (
-    <section className='flex h-full w-[80vw] items-center justify-center rounded-[10rem] bg-secondary/60 p-4 text-current md:h-[90vh]'>
+    <section className='flex h-full mt-4 w-[80vw] items-center justify-center rounded-[10rem] bg-secondary/60 p-4 text-current md:h-[90vh]'>
       <div className='xl:gap-30 flex flex-col p-10 sm:gap-10 md:flex-row lg:gap-20 2xl:gap-40'>
-        <div className='m-auto'>
+        <div className='m-auto w-full max-w-[300px] md:max-w-[366px]'>
           <img
             src='/girando.gif'
-            width={366.33}
-            height={395}
-            className='aspect-[366/301]'
+            className='w-full h-auto aspect-[366/301] object-contain'
             alt='capybara animation'
           />
         </div>
 
-        <div className='m-auto'>
+        <div className='m-auto w-full max-w-[400px] px-4 sm:px-0'>
           <div className='mb-4 mt-2'>
-            <Tabs defaultValue='account' className='w-[400px]'>
+            <Tabs defaultValue='account' className='w-full'>
               <TabsList className='grid w-full grid-cols-2'>
                 <TabsTrigger value='account'>Ingrese</TabsTrigger>
                 <TabsTrigger value='password'>Registrarse</TabsTrigger>
               </TabsList>
               <TabsContent value='account'>
-                <Card>
+                <Card className='h-auto sm:h-[550px]'>
                   <CardHeader>
-                    <CardTitle>Inicie Sesión</CardTitle>
+                    <CardTitle className='mt-8 sm:mt-16'>Inicie Sesión</CardTitle>
                     <CardDescription>
-                      Ingresa tus datos para iniciar sesión.
+                      Bienvenido de vuelta, ingresa tus datos para iniciar sesión.
                     </CardDescription>
                   </CardHeader>
                   <CardContent className='space-y-2'>
@@ -68,7 +66,7 @@ export default function Login() {
                       <Label htmlFor='username' className='font-medium'>
                         Usuario
                       </Label>
-                      <Input placeholder='Breightend' type='text' />
+                      <Input placeholder='Chicho' type='text' />
                     </div>
                     <div className='space-y-1'>
                       <Label htmlFor='contraseña' className='font-medium'>
@@ -80,14 +78,21 @@ export default function Login() {
                         type='password'
                       />
                     </div>
+                    <Label>¿Olvidaste tu contraseña?</Label>
+                    <Button
+                      variant={'link'}
+                      className='text-sm border-none font-normal'
+                    >
+                      Recuperar
+                    </Button>
                   </CardContent>
                   <CardFooter>
-                    <Button>Iniciar</Button>
+                    <Button className='w-1/2'>Iniciar</Button>
                   </CardFooter>
                 </Card>
               </TabsContent>
               <TabsContent value='password'>
-                <Card>
+                <Card className='h-auto sm:h-[550px]'>
                   <CardHeader>
                     <CardTitle>Registrarse</CardTitle>
                     <CardDescription>
@@ -114,7 +119,7 @@ export default function Login() {
                           <Button
                             variant={'outline'}
                             className={cn(
-                              'w-[280px] justify-start text-left font-normal',
+                              'w-full justify-start text-left font-normal',
                               !date && 'text-black'
                             )}
                           >
@@ -186,7 +191,7 @@ export default function Login() {
                     </div>
                   </CardContent>
                   <CardFooter>
-                    <Button>Guardar</Button>
+                    <Button className='w-1/2'>Guardar</Button>
                   </CardFooter>
                 </Card>
               </TabsContent>
