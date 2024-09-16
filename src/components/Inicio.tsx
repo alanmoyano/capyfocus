@@ -91,12 +91,56 @@ type Event = {
   title: string
 }
 
+const playlists = [
+  {
+    key: 1,
+    src: './CapyChill.png',
+    alt: 'CapyChill',
+    title: 'Capy Chill',
+    description: 'Música relajante para estudiar con tranquilidad',
+    spotifyUri: '7u6QwhygZJJqqGWMMMINhR'
+  },
+  {
+    key: 2,
+    src: './CapyAmbiente.png',
+    alt: 'CapyAmbiente',
+    title: 'Capy Ambiente',
+    description: 'Sonidos ambientales para mejorar la concentración',
+    spotifyUri: '4Pi6DScPJfg1RTGVZuxTZV'
+  },
+  {
+    key: 3,
+    src: './CapySinthwave.png',
+    alt: 'CapySinthwave',
+    title: 'Capy Sinthwave',
+    description: 'Música electrónica retro para un estudio energético',
+    spotifyUri: '6xYhxczmfgi6L6knoEHktx'
+  },
+  {
+    key: 4,
+    src: './CapyEpic.png',
+    alt: 'CapyEpic',
+    title: 'Capy Epic',
+    description: 'Música épica para momentos de máxima concentración',
+    spotifyUri: '5GnSqO293GdPWaJhD6iz8E'
+  }
+  // {
+  //   key: 5,
+  //   src: './NoCapyMusic.png',
+  //   alt: 'NoCapyMusic',
+  //   title: 'Sin Musica',
+  //   description:
+  //     'Reproduce tu propia musica'
+  // }
+]
+
 export default function Inicio() {
   const [open, setOpen] = useState(false)
   const [value] = useState('')
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [inputValue, setInputValue] = useState('')
   const [index, setIndex] = useState<number | null>(null)
+  const [selectedMotivation, setSelectedMotivation] = useState(-1)
 
   const { objetivos, setObjetivos, objetivosFav, setObjetivosFav } =
     useObjetivos()
@@ -192,7 +236,7 @@ export default function Inicio() {
 
   return (
     <>
-      <section className='container mt-10 flex flex-col gap-20 md:flex-row'>
+      <section className='mt-10 flex flex-col gap-20 p-10 md:flex-row'>
         <div className='m-auto'>
           <img src='/idle.gif' />
         </div>
@@ -598,56 +642,34 @@ export default function Inicio() {
               </AlertDialogContent>
             </AlertDialog>
           </div> */}
+
           <div className='mt-4'>
+            {selectedMotivation !== -1 && (
+              <div className='rounded-lg bg-accent p-2'>
+                <h2>
+                  Playlist seleccionada:{' '}
+                  <span className='font-semibold text-accent-foreground'>
+                    {playlists[selectedMotivation - 1].title}
+                  </span>
+                </h2>
+              </div>
+            )}
             <Carousel className='w-full max-w-md' opts={{ loop: true }}>
               <CarouselContent>
-                {[
-                  {
-                    key: 1,
-                    src: './CapyChill.png',
-                    alt: 'CapyChill',
-                    title: 'Capy Chill',
-                    description:
-                      'Música relajante para estudiar con tranquilidad',
-                    spotifyUri: '7u6QwhygZJJqqGWMMMINhR'
-                  },
-                  {
-                    key: 2,
-                    src: './CapyAmbiente.png',
-                    alt: 'CapyAmbiente',
-                    title: 'Capy Ambiente',
-                    description:
-                      'Sonidos ambientales para mejorar la concentración',
-                    spotifyUri: '4Pi6DScPJfg1RTGVZuxTZV'
-                  },
-                  {
-                    key: 3,
-                    src: './CapySinthwave.png',
-                    alt: 'CapySinthwave',
-                    title: 'Capy Sinthwave',
-                    description:
-                      'Música electrónica retro para un estudio energético',
-                    spotifyUri: '6xYhxczmfgi6L6knoEHktx'
-                  },
-                  {
-                    key: 4,
-                    src: './CapyEpic.png',
-                    alt: 'CapyEpic',
-                    title: 'Capy Epic',
-                    description:
-                      'Música épica para momentos de máxima concentración',
-                    spotifyUri: '5GnSqO293GdPWaJhD6iz8E'
-                  }
-                  // {
-                  //   key: 5,
-                  //   src: './NoCapyMusic.png',
-                  //   alt: 'NoCapyMusic',
-                  //   title: 'Sin Musica',
-                  //   description:
-                  //     'Reproduce tu propia musica'
-                  // }
-                ].map(item => (
-                  <CarouselItem key={item.key}>
+                {playlists.map(item => (
+                  <CarouselItem
+                    key={item.key}
+                    className='cursor-pointer'
+                    onClick={() => {
+                      handleMusicSelection({
+                        title: item.title,
+                        spotifyUri: item.spotifyUri
+                      })
+                      setSelectedMotivation(prev =>
+                        prev === item.key ? -1 : item.key
+                      )
+                    }}
+                  >
                     <div className='p-1'>
                       <Card className='group relative h-48 w-full overflow-hidden'>
                         <CardContent className='p-0'>
@@ -657,7 +679,9 @@ export default function Inicio() {
                             alt={item.alt}
                           />
                           <div className='absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
-                            <h3 className='mb-2 text-lg font-bold text-white'>
+                            <h3
+                              className={`mb-2 text-lg font-bold ${selectedMotivation === item.key ? 'text-xl text-accent' : 'text-white'}`}
+                            >
                               {item.title}
                             </h3>
                             <p className='px-4 text-center text-sm text-white'>
@@ -667,22 +691,11 @@ export default function Inicio() {
                         </CardContent>
                       </Card>
                     </div>
-                    <Button
-                      variant='outline'
-                      onClick={() =>
-                        handleMusicSelection({
-                          title: item.title,
-                          spotifyUri: item.spotifyUri
-                        })
-                      }
-                    >
-                      Seleccionar
-                    </Button>
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className='left-0' />
-              <CarouselNext className='right-0' />
+              <CarouselPrevious className='-left-8' />
+              <CarouselNext className='-right-8' />
             </Carousel>
           </div>
 
