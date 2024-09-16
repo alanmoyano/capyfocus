@@ -10,7 +10,7 @@ import {
 
 export default function PruebaTabla() {
   return (
-    <Table className='flex flex-col w-1/2 items-center justify-center'>
+    <Table className='flex w-1/2 flex-col items-center justify-center'>
       <TableCaption>A list of your recent invoices.</TableCaption>
       <TableHeader>
         <TableRow>
@@ -32,7 +32,8 @@ export default function PruebaTabla() {
           <TableCell>Pospuesto</TableCell>
           <TableCell>CapyDoro</TableCell>
           <TableCell className='text-right'>58:10</TableCell>
-        </TableRow>        <TableRow>
+        </TableRow>{' '}
+        <TableRow>
           <TableCell className='font-medium'>Objetivo 3</TableCell>
           <TableCell>Cumplido</TableCell>
           <TableCell>CapyMetro</TableCell>

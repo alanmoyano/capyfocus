@@ -21,7 +21,7 @@ export default function Usuario() {
   const handleLogin = () => {
     setLocation('/login')
   }
-  
+
   return (
     <>
       <h1 className='text-4xl font-bold'>Capy Datos</h1>
@@ -73,7 +73,7 @@ export default function Usuario() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <Button onClick={() => handleLogin()} className="mt-4">
+      <Button onClick={() => handleLogin()} className='mt-4'>
         Inciar sesion
       </Button>
     </>
