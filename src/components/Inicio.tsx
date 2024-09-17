@@ -216,6 +216,7 @@ export default function Inicio() {
   /* const [date, setDate] = useState<Date | undefined>(new Date()) */
   const [events, setEvents] = useState<Event[]>([])
   const [eventTitle, setEventTitle] = useState<string>('')
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
 
   const addEvent = () => {
     if (date && eventTitle) {
@@ -225,6 +226,7 @@ export default function Inicio() {
   }
 
   // musica
+
   const { setSelectedMusic } = useMusic()
 
   const handleMusicSelection = (music: {
@@ -332,31 +334,64 @@ export default function Inicio() {
                   />
 
                   <div className='mt-4'>
-                    <Button onClick={addEvent}>Agregar</Button>
+                    <Button onClick={addEvent} variant={'accent'}>Agregar</Button>
                   </div>
+                  <hr className='my-4' />
                   <div className='mt-4'>
-                    <h2>Eventos:</h2>
-                    <ul>
+                    <h2 className='text-xl font-bold'>Eventos programados:</h2>
+                    <ul className='list-inside list-disc space-y-2 text-base text-black'>
                       {events.map((event, index) => (
-                        <li key={index}>
-                          {event.date.toLocaleDateString('es-ES', {
-                            weekday: 'short',
-                            month: 'numeric',
-                            day: 'numeric'
-                          })}
-                          - {event.title}
+                        <li key={index} className="flex items-center justify-between">
+                          <span 
+                            onClick={() => setSelectedEvent(event)} 
+                            className="cursor-pointer hover:text-accent"
+                          >
+                            {event.date.toLocaleDateString('es-ES', {
+                              weekday: 'short',
+                              month: 'numeric',
+                              day: 'numeric'
+                            })}
+                            - {event.title}
+                          </span>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => {
+                              setEvents(events.filter((_, i) => i !== index));
+                              if (selectedEvent === event) {
+                                setSelectedEvent(null);
+                              }
+                            }}
+                          >
+                            <Trash size={16} />
+                          </Button>
                         </li>
                       ))}
                     </ul>
+                    <h2 className='text-xl font-bold mt-4'>Evento seleccionado:</h2>
+                    {selectedEvent ? (
+                      <div>
+                        <p>Título: {selectedEvent.title}</p>
+                        <p>Fecha: {selectedEvent.date.toLocaleDateString('es-ES', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}</p>
+                      </div>
+                    ) : (
+                      <p>Ningún evento seleccionado</p>
+                    )}
                   </div>
                 </div>
               </div>
-              <SheetFooter>
+              <SheetFooter className='flex w-full justify-between'>
                 <SheetClose asChild>
-                  <Button variant={'accent'} onClick={() => handleVolver()}>
+                  <Button variant={'accent'} className='absolute left-4' onClick={() => handleVolver()}>
                     Volver
                   </Button>
                 </SheetClose>
+                <Button variant={'secondary'} className='absolute right-4'>Aceptar</Button>
               </SheetFooter>
             </SheetContent>
           </Sheet>
@@ -545,103 +580,6 @@ export default function Inicio() {
               </SelectContent>
             </Select>
           </div>
-          {/* Musica */}
-          {/* <div className='flex items-center justify-center'>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant='outline' className='border-none'>
-                  Presiona aqui para elegir la musica
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    Elige la musica para la sesion
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    <Carousel className='w-full max-w-md' opts={{ loop: true }}>
-                      <CarouselContent>
-                        {[
-                          {
-                            key: 1,
-                            src: './CapyChill.png',
-                            alt: 'CapyChill',
-                            title: 'Capy Chill',
-                            description:
-                              'Música relajante para estudiar con tranquilidad',
-                            spotifyUri: '7u6QwhygZJJqqGWMMMINhR'
-                          },
-                          {
-                            key: 2,
-                            src: './CapyAmbiente.png',
-                            alt: 'CapyAmbiente',
-                            title: 'Capy Ambiente',
-                            description:
-                              'Sonidos ambientales para mejorar la concentración',
-                              spotifyUri: '4Pi6DScPJfg1RTGVZuxTZV'
-                          },
-                          {
-                            key: 3,
-                            src: './CapySinthwave.png',
-                            alt: 'CapySinthwave',
-                            title: 'Capy Sinthwave',
-                            description:
-                              'Música electrónica retro para un estudio energético',
-                              spotifyUri: '6xYhxczmfgi6L6knoEHktx'
-                          },
-                          {
-                            key: 4,
-                            src: './CapyEpic.png',
-                            alt: 'CapyEpic',
-                            title: 'Capy Epic',
-                            description:
-                              'Música épica para momentos de máxima concentración',
-                              spotifyUri: '5GnSqO293GdPWaJhD6iz8E'
-                          }
-                          // {
-                          //   key: 5,
-                          //   src: './NoCapyMusic.png',
-                          //   alt: 'NoCapyMusic',
-                          //   title: 'Sin Musica',
-                          //   description:
-                          //     'Reproduce tu propia musica'
-                          // }
-                        ].map(item => (
-                          <CarouselItem key={item.key}>
-                            <div className='p-1'>
-                              <Card className='group relative h-48 w-full overflow-hidden'>
-                                <CardContent className='p-0'>
-                                  <img
-                                    src={item.src}
-                                    className='h-full w-full object-cover transition-transform duration-300 group-hover:scale-110'
-                                    alt={item.alt}
-                                  />
-                                  <div className='absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
-                                    <h3 className='mb-2 text-lg font-bold text-white'>
-                                      {item.title}
-                                    </h3>
-                                    <p className='px-4 text-center text-sm text-white'>
-                                      {item.description}
-                                    </p>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            </div>
-                          </CarouselItem>
-                        ))}
-                      </CarouselContent>
-                      <CarouselPrevious className='left-0' />
-                      <CarouselNext className='right-0' />
-                    </Carousel>
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction>Continue</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div> */}
 
           <div className='mt-4'>
             {selectedMotivation !== -1 && (
