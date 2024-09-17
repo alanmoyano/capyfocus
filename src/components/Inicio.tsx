@@ -142,7 +142,7 @@ export default function Inicio() {
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [inputValue, setInputValue] = useState('')
   const [index, setIndex] = useState<number | null>(null)
-  const [selectedMotivation, setSelectedMotivation] = useState(-1)
+  const [selectedPlaylist, setSelectedPlaylist] = useState(-1)
 
   const { objetivos, setObjetivos, objetivosFav, setObjetivosFav } =
     useObjetivos()
@@ -653,12 +653,12 @@ export default function Inicio() {
           </div>
 
           <div className='mt-4'>
-            {selectedMotivation !== -1 && (
+            {selectedPlaylist !== -1 && (
               <div className='rounded-lg bg-accent p-2'>
                 <h2>
                   Playlist seleccionada:{' '}
                   <span className='font-semibold text-accent-foreground'>
-                    {playlists[selectedMotivation - 1].title}
+                    {playlists[selectedPlaylist - 1].title}
                   </span>
                 </h2>
               </div>
@@ -674,7 +674,7 @@ export default function Inicio() {
                         title: item.title,
                         spotifyUri: item.spotifyUri
                       })
-                      setSelectedMotivation(prev =>
+                      setSelectedPlaylist(prev =>
                         prev === item.key ? -1 : item.key
                       )
                     }}
@@ -689,7 +689,7 @@ export default function Inicio() {
                           />
                           <div className='absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
                             <h3
-                              className={`mb-2 text-lg font-bold ${selectedMotivation === item.key ? 'text-xl text-accent' : 'text-white'}`}
+                              className={`mb-2 text-lg font-bold ${selectedPlaylist === item.key ? 'text-xl text-accent' : 'text-white'}`}
                             >
                               {item.title}
                             </h3>
