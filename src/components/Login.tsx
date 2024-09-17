@@ -36,12 +36,12 @@ export default function Login() {
   const [month, setMonth] = React.useState<number>(new Date().getMonth())
   const [year, setYear] = React.useState<number>(new Date().getFullYear())
   return (
-    <section className='flex h-full mt-4 w-[80vw] items-center justify-center rounded-[10rem] bg-secondary/60 p-4 text-current md:h-[90vh]'>
+    <section className='mt-4 flex h-full w-[80vw] items-center justify-center rounded-[10rem] bg-secondary/60 p-4 text-current md:h-[90vh]'>
       <div className='xl:gap-30 flex flex-col p-10 sm:gap-10 md:flex-row lg:gap-20 2xl:gap-40'>
         <div className='m-auto w-full max-w-[300px] md:max-w-[366px]'>
           <img
             src='/girando.gif'
-            className='w-full h-auto aspect-[366/301] object-contain'
+            className='aspect-[366/301] h-auto w-full object-contain'
             alt='capybara animation'
           />
         </div>
@@ -56,9 +56,12 @@ export default function Login() {
               <TabsContent value='account'>
                 <Card className='h-auto sm:h-[550px]'>
                   <CardHeader>
-                    <CardTitle className='mt-8 sm:mt-16'>Inicie Sesión</CardTitle>
+                    <CardTitle className='mt-8 sm:mt-16'>
+                      Inicie Sesión
+                    </CardTitle>
                     <CardDescription>
-                      Bienvenido de vuelta, ingresa tus datos para iniciar sesión.
+                      Bienvenido de vuelta, ingresa tus datos para iniciar
+                      sesión.
                     </CardDescription>
                   </CardHeader>
                   <CardContent className='space-y-2'>
@@ -81,7 +84,7 @@ export default function Login() {
                     <Label>¿Olvidaste tu contraseña?</Label>
                     <Button
                       variant={'link'}
-                      className='text-sm border-none font-normal'
+                      className='border-none text-sm font-normal'
                     >
                       Recuperar
                     </Button>

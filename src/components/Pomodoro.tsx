@@ -48,7 +48,7 @@ export default function Pomodoro() {
   const [capySound] = useSound(CapySound)
   const [ObjStudyTime, setObjStudyTime] = useState(0)
   const { selectedMusic } = useMusic()
-  const {motivationType} = useMotivation()
+  const { motivationType } = useMotivation()
 
   //Revisar el funcionamiento de esta cosa!!!
 
