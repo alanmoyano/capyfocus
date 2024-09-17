@@ -306,13 +306,25 @@ export default function Inicio() {
                     <Calendar
                       mode='single'
                       selected={date}
-                      onSelect={setDate}
+                      onSelect={(selectedDate) => {
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        if (selectedDate && selectedDate >= today) {
+                          setDate(selectedDate);
+                        } 
+                      }}
                       className='flex w-full justify-center rounded-md border'
                       modifiers={{
-                        eventDay: events.map(event => event.date)
+                        eventDay: events.map(event => event.date),
+                        disabled: (date) => {
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+                          return date < today;
+                        }
                       }}
                       modifiersClassNames={{
-                        eventDay: 'bg-secondary' // Estilo para días con eventos
+                        eventDay: 'bg-secondary', 
+                        disabled: 'opacity-50 cursor-not-allowed'
                       }}
                       locale={es}
                       onDayClick={(day: Date) => {
