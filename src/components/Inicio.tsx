@@ -365,7 +365,10 @@ export default function Inicio() {
                     </div>
                     <hr className='my-4' />
                     <div className='mt-4'>
-                      <h1 className='text-xl sm:text-2xl text-accent font-bold'>Información de eventos:</h1>
+                      <p className='text-sm text-muted-foreground'>
+                        Selecciona el evento para agregar objetivos de sesión:
+                      </p>
+                      <h1 className='text-xl sm:text-2xl text-sky-800 border-b-2 font-bold mt-2'>Información de eventos:</h1>
                       <h2 className='text-lg sm:text-xl font-bold'>Eventos programados:</h2>
                       <ul className='list-inside list-disc space-y-2 text-sm sm:text-base text-black'>
                         {events.map((event, index) => (
