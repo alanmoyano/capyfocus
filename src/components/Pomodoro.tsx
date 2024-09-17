@@ -8,6 +8,7 @@ import CapySound from '../assets/Sonido_de_caripincho.mp3'
 import Confetti from 'react-confetti-boom'
 import useSound from 'use-sound'
 import { useMusic } from './MusicContext'
+import { useMotivation } from './MotivationContext'
 
 type Mode = 'Estudiando' | 'Descansando'
 
@@ -47,6 +48,7 @@ export default function Pomodoro() {
   const [capySound] = useSound(CapySound)
   const [ObjStudyTime, setObjStudyTime] = useState(0)
   const { selectedMusic } = useMusic()
+  const {motivationType} = useMotivation()
 
   //Revisar el funcionamiento de esta cosa!!!
 
@@ -125,6 +127,10 @@ export default function Pomodoro() {
       <div className='grid grid-cols-2 gap-12'>
         <div className=''>
           <img src='/idle.gif' />
+          <div className='mb-4 rounded-lg bg-primary p-2'>
+            Tu tipo de motivación es:{' '}
+            <span className='font-semibold'>{motivationType}</span>
+          </div>
           <div>
             {selectedMusic && (
               <iframe

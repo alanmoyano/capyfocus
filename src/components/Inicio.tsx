@@ -74,11 +74,11 @@ import {
   CarouselNext,
   CarouselPrevious
 } from '@/components/ui/carousel'
-//import { useMotivation } from './MotivationContext'
+import { useMotivation } from './MotivationContext'
 
 import { useMusic } from './MusicContext'
 
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
@@ -151,7 +151,7 @@ export default function Inicio() {
 
   const [, setLocation] = useLocation()
 
-  //const [, setMotivationType] = useMotivation()
+  const { setMotivationType } = useMotivation()
 
   const handleAccept = () => {
     if (description === 'Capydoro') {
@@ -168,7 +168,7 @@ export default function Inicio() {
   const handleSelect = (value: string) => {
     console.log(value)
 
-    //setMotivationType(value)
+    setMotivationType(value)
   }
 
   const handleAdd = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -271,20 +271,32 @@ export default function Inicio() {
           {/* Agregar evento  */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant='secondary' className='mt-6 bg-secondary w-full sm:w-auto'>
+              <Button
+                variant='secondary'
+                className='mt-6 w-full bg-secondary sm:w-auto'
+              >
                 Eventos
               </Button>
             </SheetTrigger>
-            <SheetContent className="w-full sm:max-w-md">
-              <ScrollArea className="h-[80vh] pr-4">
+            <SheetContent className='w-full sm:max-w-md'>
+              <ScrollArea className='h-[80vh] pr-4'>
                 <SheetHeader>
-                  <SheetTitle className='text-xl sm:text-2xl font-bold'>Agregar evento</SheetTitle>
-                  <SheetDescription className='text-lg sm:text-xl text-black'>Agrega eventos desde aquí.</SheetDescription>
+                  <SheetTitle className='text-xl font-bold sm:text-2xl'>
+                    Agregar evento
+                  </SheetTitle>
+                  <SheetDescription className='text-lg text-black sm:text-xl'>
+                    Agrega eventos desde aquí.
+                  </SheetDescription>
                 </SheetHeader>
-                <p className='text-sm text-muted-foreground mt-2'>¿Cual es el evento?</p>
+                <p className='mt-2 text-sm text-muted-foreground'>
+                  ¿Cual es el evento?
+                </p>
                 <div className='grid gap-4 py-4'>
-                  <div className='grid grid-cols-1 sm:grid-cols-4 items-center gap-4'>
-                    <Label htmlFor='name' className='text-sm sm:text-base font-bold sm:text-right'>
+                  <div className='grid grid-cols-1 items-center gap-4 sm:grid-cols-4'>
+                    <Label
+                      htmlFor='name'
+                      className='text-sm font-bold sm:text-right sm:text-base'
+                    >
                       Nombre
                     </Label>
                     <Input
@@ -296,9 +308,13 @@ export default function Inicio() {
                       className='col-span-1 sm:col-span-3'
                     />
                   </div>
-                  <p className='text-sm text-muted-foreground'>Selecciona una fecha para el evento.</p>
-                  <div className='grid grid-cols-1 sm:grid-cols-4 items-center gap-4'>
-                    <Label className='text-sm sm:text-base font-bold sm:text-right'>Calendario</Label>
+                  <p className='text-sm text-muted-foreground'>
+                    Selecciona una fecha para el evento.
+                  </p>
+                  <div className='grid grid-cols-1 items-center gap-4 sm:grid-cols-4'>
+                    <Label className='text-sm font-bold sm:text-right sm:text-base'>
+                      Calendario
+                    </Label>
                   </div>
                   {/* Calendario */}
 
@@ -306,30 +322,31 @@ export default function Inicio() {
                     <Calendar
                       mode='single'
                       selected={date}
-                      onSelect={(selectedDate) => {
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
+                      onSelect={selectedDate => {
+                        const today = new Date()
+                        today.setHours(0, 0, 0, 0)
                         if (selectedDate && selectedDate >= today) {
-                          setDate(selectedDate);
-                        } 
+                          setDate(selectedDate)
+                        }
                       }}
-                      className='w-full sm:w-auto flex justify-center rounded-md border'
+                      className='flex w-full justify-center rounded-md border sm:w-auto'
                       modifiers={{
                         eventDay: events.map(event => event.date),
-                        disabled: (date) => {
-                          const today = new Date();
-                          today.setHours(0, 0, 0, 0);
-                          return date < today;
+                        disabled: date => {
+                          const today = new Date()
+                          today.setHours(0, 0, 0, 0)
+                          return date < today
                         }
                       }}
                       modifiersClassNames={{
-                        eventDay: 'bg-secondary', 
+                        eventDay: 'bg-secondary',
                         disabled: 'opacity-50 cursor-not-allowed'
                       }}
                       locale={es}
                       onDayClick={(day: Date) => {
                         const clickedEvent = events.find(
-                          event => event.date.toDateString() === day.toDateString()
+                          event =>
+                            event.date.toDateString() === day.toDateString()
                         )
                         setSelectedEvent(clickedEvent ?? null)
                       }}
@@ -359,15 +376,23 @@ export default function Inicio() {
                     />
 
                     <div className='mt-4'>
-                      <Button onClick={addEvent} variant={'accent'} className='w-full sm:w-auto'>
+                      <Button
+                        onClick={addEvent}
+                        variant={'accent'}
+                        className='w-full sm:w-auto'
+                      >
                         Agregar
                       </Button>
                     </div>
                     <hr className='my-4' />
                     <div className='mt-4'>
-                      <h1 className='text-xl sm:text-2xl text-accent font-bold'>Información de eventos:</h1>
-                      <h2 className='text-lg sm:text-xl font-bold'>Eventos programados:</h2>
-                      <ul className='list-inside list-disc space-y-2 text-sm sm:text-base text-black'>
+                      <h1 className='text-xl font-bold text-accent sm:text-2xl'>
+                        Información de eventos:
+                      </h1>
+                      <h2 className='text-lg font-bold sm:text-xl'>
+                        Eventos programados:
+                      </h2>
+                      <ul className='list-inside list-disc space-y-2 text-sm text-black sm:text-base'>
                         {events.map((event, index) => (
                           <li
                             key={index}
@@ -403,7 +428,7 @@ export default function Inicio() {
                           </li>
                         ))}
                       </ul>
-                      <h2 className='mt-4 text-lg sm:text-xl font-bold'>
+                      <h2 className='mt-4 text-lg font-bold sm:text-xl'>
                         Evento seleccionado:
                       </h2>
                       {selectedEvent ? (
@@ -433,10 +458,10 @@ export default function Inicio() {
               </ScrollArea>
               <SheetFooter className='flex w-full justify-between'>
                 <SheetClose asChild>
-                  <div className='w-full flex justify-between'>
+                  <div className='flex w-full justify-between'>
                     <Button
                       variant={'accent'}
-                      className='w-full sm:w-auto sm:mr-2'
+                      className='w-full sm:mr-2 sm:w-auto'
                       onClick={() => {
                         handleVolver()
                         setSelectedEvent(null)
@@ -446,7 +471,7 @@ export default function Inicio() {
                     </Button>
                     <Button
                       variant={'secondary'}
-                      className='w-full sm:w-auto sm:ml-2'
+                      className='w-full sm:ml-2 sm:w-auto'
                       onClick={() => {
                         handleVolver()
                       }}

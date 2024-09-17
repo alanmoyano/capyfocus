@@ -7,6 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 //import { navigationMenuTriggerStyle } from './ui/navigit pull gation-menu'
 import { useMusic } from './MusicContext'
+import { useMotivation } from './MotivationContext'
 
 //import Confetti from 'react-confetti-boom'
 
@@ -45,7 +46,7 @@ export default function Timer() {
   const [isActive, setIsActive] = useState<boolean | null>(true)
   const [mode, setMode] = useState<Mode>('Sesión')
   const timer = useRef<NodeJS.Timeout>()
-
+  const { motivationType } = useMotivation()
   function finalizarSesion() {
     clearInterval(timer.current)
     console.log(`Has estudiado durante ${formatTime(Sessioncountup)} `)
@@ -122,6 +123,8 @@ export default function Timer() {
   }
   const { selectedMusic } = useMusic()
 
+  console.log(' El tipo de motivacion seleccionada es: ', motivationType)
+
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyMetro!</h1>
@@ -130,6 +133,10 @@ export default function Timer() {
         {/* Columna 1:  */}
         <div className='col-span-1 p-4'>
           <img src='/idle.gif' className='h-auto w-full' alt='Idle animation' />
+          <div className='mb-4 rounded-lg bg-primary p-2'>
+            Tu tipo de motivación es:{' '}
+            <span className='font-semibold'>{motivationType}</span>
+          </div>
           <div>
             {selectedMusic && (
               <iframe
