@@ -78,6 +78,8 @@ import {
 
 import { useMusic } from './MusicContext'
 
+import { ScrollArea } from "@/components/ui/scroll-area"
+
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
 const descriptions: Record<CapyMetodos, string> = {
@@ -274,144 +276,149 @@ export default function Inicio() {
               </Button>
             </SheetTrigger>
             <SheetContent>
-              <SheetHeader>
-                <SheetTitle>Agrega evento</SheetTitle>
-                <SheetDescription>Agrega eventos desde aqui.</SheetDescription>
-              </SheetHeader>
-              <div className='grid gap-4 py-4'>
-                <div className='grid grid-cols-4 items-center gap-4'>
-                  <Label htmlFor='name' className='text-right'>
-                    Nombre
-                  </Label>
-                  <Input
-                    id='name'
-                    type='text'
-                    value={eventTitle}
-                    onChange={e => setEventTitle(e.target.value)}
-                    placeholder='Evento'
-                    className='col-span-3'
-                  />
-                </div>
-                <div className='grid grid-cols-4 items-center gap-4'>
-                  <Label className='text-right'>Calendario</Label>
-                </div>
-                {/* Calendario */}
-
-                <div>
-                  <Calendar
-                    mode='single'
-                    selected={date}
-                    onSelect={setDate}
-                    className='flex w-full justify-center rounded-md border'
-                    modifiers={{
-                      eventDay: events.map(event => event.date)
-                    }}
-                    modifiersClassNames={{
-                      eventDay: 'bg-secondary' // Estilo para días con eventos
-                    }}
-                    locale={es}
-                    onDayClick={(day: Date) => {
-                      const clickedEvent = events.find(
-                        event => event.date.toDateString() === day.toDateString()
-                      )
-                      setSelectedEvent(clickedEvent ?? null)
-                    }}
-                    components={{
-                      DayContent: ({ date }) => {
-                        const event = events.find(
-                          e => e.date.toDateString() === date.toDateString()
-                        )
-                        return (
-                          <div>
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <div>{date.getDate()}</div>
-                                </TooltipTrigger>
-                                {event && (
-                                  <TooltipContent>
-                                    <p>{event.title}</p>
-                                  </TooltipContent>
-                                )}
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
-                        )
-                      }
-                    }}
-                  />
-
-                  <div className='mt-4'>
-                    <Button onClick={addEvent} variant={'accent'}>
-                      Agregar
-                    </Button>
+              <ScrollArea className="h-[80vh] pr-4">
+                <SheetHeader>
+                  <SheetTitle className='text-2xl font-bold'>Agregar evento</SheetTitle>
+                  <SheetDescription className='text-xl text-black'>Agrega eventos desde aquí.</SheetDescription>
+                </SheetHeader>
+                <p className='text-sm text-muted-foreground mt-2'>¿Cual es el evento?</p>
+                <div className='grid gap-4 py-4'>
+                  <div className='grid grid-cols-4 items-center gap-4'>
+                    <Label htmlFor='name' className='text font-bold'>
+                      Nombre
+                    </Label>
+                    <Input
+                      id='name'
+                      type='text'
+                      value={eventTitle}
+                      onChange={e => setEventTitle(e.target.value)}
+                      placeholder='Evento'
+                      className='col-span-3'
+                    />
                   </div>
-                  <hr className='my-4' />
-                  <div className='mt-4'>
-                    <h2 className='text-xl font-bold'>Eventos programados:</h2>
-                    <ul className='list-inside list-disc space-y-2 text-base text-black'>
-                      {events.map((event, index) => (
-                        <li
-                          key={index}
-                          className='flex items-center justify-between'
-                        >
-                          <span
-                            onClick={() => setSelectedEvent(event)}
-                            className={`cursor-pointer ${
-                              selectedEvent === event
-                                ? 'text-primary'
-                                : 'hover:text-primary'
-                            }`}
+                  <p className='text-sm text-muted-foreground'>Selecciona una fecha para el evento.</p>
+                  <div className='grid grid-cols-4 items-center gap-4'>
+                    <Label className='text-right text-xl font-bold'>Calendario</Label>
+                  </div>
+                  {/* Calendario */}
+
+                  <div>
+                    <Calendar
+                      mode='single'
+                      selected={date}
+                      onSelect={setDate}
+                      className='flex w-full justify-center rounded-md border'
+                      modifiers={{
+                        eventDay: events.map(event => event.date)
+                      }}
+                      modifiersClassNames={{
+                        eventDay: 'bg-secondary' // Estilo para días con eventos
+                      }}
+                      locale={es}
+                      onDayClick={(day: Date) => {
+                        const clickedEvent = events.find(
+                          event => event.date.toDateString() === day.toDateString()
+                        )
+                        setSelectedEvent(clickedEvent ?? null)
+                      }}
+                      components={{
+                        DayContent: ({ date }) => {
+                          const event = events.find(
+                            e => e.date.toDateString() === date.toDateString()
+                          )
+                          return (
+                            <div>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <div>{date.getDate()}</div>
+                                  </TooltipTrigger>
+                                  {event && (
+                                    <TooltipContent>
+                                      <p>{event.title}</p>
+                                    </TooltipContent>
+                                  )}
+                                </Tooltip>
+                              </TooltipProvider>
+                            </div>
+                          )
+                        }
+                      }}
+                    />
+
+                    <div className='mt-4'>
+                      <Button onClick={addEvent} variant={'accent'}>
+                        Agregar
+                      </Button>
+                    </div>
+                    <hr className='my-4' />
+                    <div className='mt-4'>
+                      <h1 className='text-2xl text-accent font-bold'>Información de eventos:</h1>
+                      <h2 className='text-xl font-bold'>Eventos programados:</h2>
+                      <ul className='list-inside list-disc space-y-2 text-base text-black'>
+                        {events.map((event, index) => (
+                          <li
+                            key={index}
+                            className='flex items-center justify-between'
                           >
-                            {event.date.toLocaleDateString('es-ES', {
-                              weekday: 'short',
-                              month: 'numeric',
+                            <span
+                              onClick={() => setSelectedEvent(event)}
+                              className={`cursor-pointer ${
+                                selectedEvent === event
+                                  ? 'text-primary'
+                                  : 'hover:text-primary'
+                              }`}
+                            >
+                              {event.date.toLocaleDateString('es-ES', {
+                                weekday: 'short',
+                                month: 'numeric',
+                                day: 'numeric'
+                              })}
+                              - {event.title}
+                            </span>
+                            <Button
+                              variant='ghost'
+                              size='sm'
+                              onClick={() => {
+                                setEvents(events.filter((_, i) => i !== index))
+                                if (selectedEvent === event) {
+                                  setSelectedEvent(null)
+                                }
+                              }}
+                            >
+                              <Trash size={16} />
+                            </Button>
+                          </li>
+                        ))}
+                      </ul>
+                      <h2 className='mt-4 text-xl font-bold'>
+                        Evento seleccionado:
+                      </h2>
+                      {selectedEvent ? (
+                        <div className='mt-2'>
+                          <p className='font-bold'>
+                            Evento:{' '}
+                            <span className='font-normal'>
+                              {selectedEvent.title}
+                            </span>
+                          </p>
+                          <p>
+                            Fecha:{' '}
+                            {selectedEvent.date.toLocaleDateString('es-ES', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
                               day: 'numeric'
                             })}
-                            - {event.title}
-                          </span>
-                          <Button
-                            variant='ghost'
-                            size='sm'
-                            onClick={() => {
-                              setEvents(events.filter((_, i) => i !== index))
-                              if (selectedEvent === event) {
-                                setSelectedEvent(null)
-                              }
-                            }}
-                          >
-                            <Trash size={16} />
-                          </Button>
-                        </li>
-                      ))}
-                    </ul>
-                    <h2 className='mt-4 text-xl font-bold'>
-                      Evento seleccionado:
-                    </h2>
-                    {selectedEvent ? (
-                      <div className='mt-2'>
-                        <p className='font-bold'>
-                          Evento:{' '}
-                          <span className='font-normal'>
-                            {selectedEvent.title}
-                          </span>
-                        </p>
-                        <p>
-                          Fecha:{' '}
-                          {selectedEvent.date.toLocaleDateString('es-ES', {
-                            weekday: 'long',
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                          })}
-                        </p>
-                      </div>
-                    ) : (
-                      <p>Ningún evento seleccionado</p>
-                    )}
+                          </p>
+                        </div>
+                      ) : (
+                        <p>Ningún evento seleccionado</p>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
+              </ScrollArea>
               <SheetFooter className='flex w-full justify-between'>
                 <SheetClose asChild>
                   <div>
