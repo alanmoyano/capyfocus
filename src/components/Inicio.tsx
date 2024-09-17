@@ -271,20 +271,20 @@ export default function Inicio() {
           {/* Agregar evento  */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant='secondary' className='mt-6 bg-secondary'>
+              <Button variant='secondary' className='mt-6 bg-secondary w-full sm:w-auto'>
                 Eventos
               </Button>
             </SheetTrigger>
-            <SheetContent>
+            <SheetContent className="w-full sm:max-w-md">
               <ScrollArea className="h-[80vh] pr-4">
                 <SheetHeader>
-                  <SheetTitle className='text-2xl font-bold'>Agregar evento</SheetTitle>
-                  <SheetDescription className='text-xl text-black'>Agrega eventos desde aquí.</SheetDescription>
+                  <SheetTitle className='text-xl sm:text-2xl font-bold'>Agregar evento</SheetTitle>
+                  <SheetDescription className='text-lg sm:text-xl text-black'>Agrega eventos desde aquí.</SheetDescription>
                 </SheetHeader>
                 <p className='text-sm text-muted-foreground mt-2'>¿Cual es el evento?</p>
                 <div className='grid gap-4 py-4'>
-                  <div className='grid grid-cols-4 items-center gap-4'>
-                    <Label htmlFor='name' className='text font-bold'>
+                  <div className='grid grid-cols-1 sm:grid-cols-4 items-center gap-4'>
+                    <Label htmlFor='name' className='text-sm sm:text-base font-bold sm:text-right'>
                       Nombre
                     </Label>
                     <Input
@@ -293,16 +293,16 @@ export default function Inicio() {
                       value={eventTitle}
                       onChange={e => setEventTitle(e.target.value)}
                       placeholder='Evento'
-                      className='col-span-3'
+                      className='col-span-1 sm:col-span-3'
                     />
                   </div>
                   <p className='text-sm text-muted-foreground'>Selecciona una fecha para el evento.</p>
-                  <div className='grid grid-cols-4 items-center gap-4'>
-                    <Label className='text-right text-xl font-bold'>Calendario</Label>
+                  <div className='grid grid-cols-1 sm:grid-cols-4 items-center gap-4'>
+                    <Label className='text-sm sm:text-base font-bold sm:text-right'>Calendario</Label>
                   </div>
                   {/* Calendario */}
 
-                  <div>
+                  <div className='w-full sm:w-auto'>
                     <Calendar
                       mode='single'
                       selected={date}
@@ -313,7 +313,7 @@ export default function Inicio() {
                           setDate(selectedDate);
                         } 
                       }}
-                      className='flex w-full justify-center rounded-md border'
+                      className='w-full sm:w-auto flex justify-center rounded-md border'
                       modifiers={{
                         eventDay: events.map(event => event.date),
                         disabled: (date) => {
@@ -359,15 +359,15 @@ export default function Inicio() {
                     />
 
                     <div className='mt-4'>
-                      <Button onClick={addEvent} variant={'accent'}>
+                      <Button onClick={addEvent} variant={'accent'} className='w-full sm:w-auto'>
                         Agregar
                       </Button>
                     </div>
                     <hr className='my-4' />
                     <div className='mt-4'>
-                      <h1 className='text-2xl text-accent font-bold'>Información de eventos:</h1>
-                      <h2 className='text-xl font-bold'>Eventos programados:</h2>
-                      <ul className='list-inside list-disc space-y-2 text-base text-black'>
+                      <h1 className='text-xl sm:text-2xl text-accent font-bold'>Información de eventos:</h1>
+                      <h2 className='text-lg sm:text-xl font-bold'>Eventos programados:</h2>
+                      <ul className='list-inside list-disc space-y-2 text-sm sm:text-base text-black'>
                         {events.map((event, index) => (
                           <li
                             key={index}
@@ -403,7 +403,7 @@ export default function Inicio() {
                           </li>
                         ))}
                       </ul>
-                      <h2 className='mt-4 text-xl font-bold'>
+                      <h2 className='mt-4 text-lg sm:text-xl font-bold'>
                         Evento seleccionado:
                       </h2>
                       {selectedEvent ? (
@@ -433,20 +433,20 @@ export default function Inicio() {
               </ScrollArea>
               <SheetFooter className='flex w-full justify-between'>
                 <SheetClose asChild>
-                  <div>
+                  <div className='w-full flex justify-between'>
                     <Button
                       variant={'accent'}
-                      className='absolute left-4'
+                      className='w-full sm:w-auto sm:mr-2'
                       onClick={() => {
                         handleVolver()
                         setSelectedEvent(null)
                       }}
                     >
-                      Volver
+                      Cancelar
                     </Button>
                     <Button
                       variant={'secondary'}
-                      className='absolute right-4'
+                      className='w-full sm:w-auto sm:ml-2'
                       onClick={() => {
                         handleVolver()
                       }}
