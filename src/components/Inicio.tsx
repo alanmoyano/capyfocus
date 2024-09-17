@@ -334,17 +334,24 @@ export default function Inicio() {
                   />
 
                   <div className='mt-4'>
-                    <Button onClick={addEvent} variant={'accent'}>Agregar</Button>
+                    <Button onClick={addEvent} variant={'accent'}>
+                      Agregar
+                    </Button>
                   </div>
                   <hr className='my-4' />
                   <div className='mt-4'>
                     <h2 className='text-xl font-bold'>Eventos programados:</h2>
                     <ul className='list-inside list-disc space-y-2 text-base text-black'>
                       {events.map((event, index) => (
-                        <li key={index} className="flex items-center justify-between">
-                          <span 
-                            onClick={() => setSelectedEvent(event)} 
-                            className="cursor-pointer hover:text-accent"
+                        <li
+                          key={index}
+                          className='flex items-center justify-between'
+                        >
+                          <span
+                            onClick={() => setSelectedEvent(event)}
+                            className={`cursor-pointer ${
+                              selectedEvent === event ? 'text-primary' : 'hover:text-primary'
+                            }`}
                           >
                             {event.date.toLocaleDateString('es-ES', {
                               weekday: 'short',
@@ -353,13 +360,13 @@ export default function Inicio() {
                             })}
                             - {event.title}
                           </span>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
+                          <Button
+                            variant='ghost'
+                            size='sm'
                             onClick={() => {
-                              setEvents(events.filter((_, i) => i !== index));
+                              setEvents(events.filter((_, i) => i !== index))
                               if (selectedEvent === event) {
-                                setSelectedEvent(null);
+                                setSelectedEvent(null)
                               }
                             }}
                           >
@@ -368,16 +375,26 @@ export default function Inicio() {
                         </li>
                       ))}
                     </ul>
-                    <h2 className='text-xl font-bold mt-4'>Evento seleccionado:</h2>
+                    <h2 className='mt-4 text-xl font-bold'>
+                      Evento seleccionado:
+                    </h2>
                     {selectedEvent ? (
-                      <div>
-                        <p>Título: {selectedEvent.title}</p>
-                        <p>Fecha: {selectedEvent.date.toLocaleDateString('es-ES', {
-                          weekday: 'long',
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })}</p>
+                      <div className='mt-2'>
+                        <p className='font-bold'>
+                          Evento:{' '}
+                          <span className='font-normal'>
+                            {selectedEvent.title}
+                          </span>
+                        </p>
+                        <p>
+                          Fecha:{' '}
+                          {selectedEvent.date.toLocaleDateString('es-ES', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </p>
                       </div>
                     ) : (
                       <p>Ningún evento seleccionado</p>
@@ -387,17 +404,44 @@ export default function Inicio() {
               </div>
               <SheetFooter className='flex w-full justify-between'>
                 <SheetClose asChild>
-                  <Button variant={'accent'} className='absolute left-4' onClick={() => handleVolver()}>
-                    Volver
-                  </Button>
+                  <div>
+                    <Button
+                      variant={'accent'}
+                      className='absolute left-4'
+                      onClick={() => {
+                        handleVolver()
+                        setSelectedEvent(null)
+                      }}
+                    >
+                      Volver
+                    </Button>
+                    <Button
+                      variant={'secondary'}
+                      className='absolute right-4'
+                      onClick={() => {
+                        handleVolver()
+                      }}
+                    >
+                      Aceptar
+                    </Button>
+                  </div>
                 </SheetClose>
-                <Button variant={'secondary'} className='absolute right-4'>Aceptar</Button>
               </SheetFooter>
             </SheetContent>
           </Sheet>
           {/* Objetivos */}
-          <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
-            <div className='flex items-center gap-2'>
+          <div className='mt-4  rounded-xl bg-secondary/60 p-4'>
+            {selectedEvent ? (
+                        <p className='font-bold'>
+                        Evento:{' '}
+                        <span className='font-normal'>
+                          {selectedEvent.title}
+                        </span>
+                      </p>
+            ) : (
+              <p></p>
+            )}
+            <div className='mt-2 flex items-center gap-2'>
               <Input
                 type='text'
                 placeholder='Ingrese el objetivo'
