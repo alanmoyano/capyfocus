@@ -310,24 +310,32 @@ export default function Inicio() {
                       eventDay: 'bg-secondary' // Estilo para días con eventos
                     }}
                     locale={es}
+                    onDayClick={(day: Date) => {
+                      const clickedEvent = events.find(
+                        event => event.date.toDateString() === day.toDateString()
+                      )
+                      setSelectedEvent(clickedEvent ?? null)
+                    }}
                     components={{
                       DayContent: ({ date }) => {
                         const event = events.find(
                           e => e.date.toDateString() === date.toDateString()
                         )
                         return (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <div>{date.getDate()}</div>
-                              </TooltipTrigger>
-                              {event && (
-                                <TooltipContent>
-                                  <p>{event.title}</p>
-                                </TooltipContent>
-                              )}
-                            </Tooltip>
-                          </TooltipProvider>
+                          <div>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <div>{date.getDate()}</div>
+                                </TooltipTrigger>
+                                {event && (
+                                  <TooltipContent>
+                                    <p>{event.title}</p>
+                                  </TooltipContent>
+                                )}
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
                         )
                       }
                     }}
@@ -350,7 +358,9 @@ export default function Inicio() {
                           <span
                             onClick={() => setSelectedEvent(event)}
                             className={`cursor-pointer ${
-                              selectedEvent === event ? 'text-primary' : 'hover:text-primary'
+                              selectedEvent === event
+                                ? 'text-primary'
+                                : 'hover:text-primary'
                             }`}
                           >
                             {event.date.toLocaleDateString('es-ES', {
@@ -430,14 +440,12 @@ export default function Inicio() {
             </SheetContent>
           </Sheet>
           {/* Objetivos */}
-          <div className='mt-4  rounded-xl bg-secondary/60 p-4'>
+          <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
             {selectedEvent ? (
-                        <p className='font-bold'>
-                        Evento:{' '}
-                        <span className='font-normal'>
-                          {selectedEvent.title}
-                        </span>
-                      </p>
+              <p className='font-bold'>
+                Evento:{' '}
+                <span className='font-normal'>{selectedEvent.title}</span>
+              </p>
             ) : (
               <p></p>
             )}
