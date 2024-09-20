@@ -47,8 +47,6 @@ import { RadialBar, RadialBarChart } from 'recharts'
 
 import { useObjetivos } from './ObjetivosContext'
 
-
-
 const chartData = [
   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
   { browser: 'BasedeDatos', visitors: 200, fill: 'var(--color-safari)' },
@@ -151,20 +149,23 @@ export default function CapyEstadisticas() {
   }
 
   const { objetivos, tiempo } = useObjetivos()
-  
+
   return (
     <>
       <p className='text-2xl font-bold'>CapyEstadisticas</p>
       {/* Seleccion de tiempo */}
       <div className='flex'>
-        <Select onValueChange={value => handleSelect(value)} defaultValue='sesion'>
-          <SelectTrigger className='ml-4 w-[280px]' >
-            <SelectValue placeholder='Selecciona un periodo'  />
+        <Select
+          onValueChange={value => handleSelect(value)}
+          defaultValue='sesion'
+        >
+          <SelectTrigger className='ml-4 w-[280px]'>
+            <SelectValue placeholder='Selecciona un periodo' />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Periodo de tiempo</SelectLabel>
-              <SelectItem key={0} value='sesion' >
+              <SelectItem key={0} value='sesion'>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -250,7 +251,9 @@ export default function CapyEstadisticas() {
         <>
           {/* Tabla de objetivos de la sesión */}
           <Table>
-            <TableCaption>Información de los objetivos de la sesión</TableCaption>
+            <TableCaption>
+              Información de los objetivos de la sesión
+            </TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead className='w-[100px]'>Objetivo</TableHead>
@@ -262,18 +265,20 @@ export default function CapyEstadisticas() {
               {objetivos.map((objetivo, index) => (
                 <TableRow key={index}>
                   <TableCell className='font-medium'>{objetivo}</TableCell>
-                  <TableCell>{tiempo[objetivo] === 0 ? 'Pendiente' : 'Cumplido'}</TableCell>
+                  <TableCell>
+                    {tiempo[objetivo] === 0 ? 'Pendiente' : 'Cumplido'}
+                  </TableCell>
                   <TableCell className='text-right'>
                     {(() => {
-                      const time = tiempo[objetivo] || 0;
-                      const hours = Math.floor(time / 3600);
-                      const minutes = Math.floor((time % 3600) / 60);
-                      const seconds = time % 60;
-                      
+                      const time = tiempo[objetivo] || 0
+                      const hours = Math.floor(time / 3600)
+                      const minutes = Math.floor((time % 3600) / 60)
+                      const seconds = time % 60
+
                       if (hours > 0) {
-                        return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                        return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
                       } else {
-                        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                        return `${minutes}:${seconds.toString().padStart(2, '0')}`
                       }
                     })()}
                   </TableCell>
@@ -285,7 +290,9 @@ export default function CapyEstadisticas() {
           {/* Gráfico de sesión (por ejemplo, un gráfico de barras) */}
           <Card>
             <CardHeader>
-              <CardTitle>Tiempo dedicado a objetivos en la sesión actual</CardTitle>
+              <CardTitle>
+                Tiempo dedicado a objetivos en la sesión actual
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <ChartContainer config={chartConfig}>
@@ -354,7 +361,9 @@ export default function CapyEstadisticas() {
               >
                 <PieChart>
                   <ChartTooltip
-                    content={<ChartTooltipContent nameKey='visitors' hideLabel />}
+                    content={
+                      <ChartTooltipContent nameKey='visitors' hideLabel />
+                    }
                   />
                   <Pie data={chartData} dataKey='visitors'>
                     <LabelList
@@ -430,7 +439,11 @@ export default function CapyEstadisticas() {
                     cursor={false}
                     content={<ChartTooltipContent indicator='dashed' />}
                   />
-                  <Bar dataKey='desktop' fill='var(--color-desktop)' radius={4} />
+                  <Bar
+                    dataKey='desktop'
+                    fill='var(--color-desktop)'
+                    radius={4}
+                  />
                   <Bar dataKey='mobile' fill='var(--color-mobile)' radius={4} />
                 </BarChart>
               </ChartContainer>
