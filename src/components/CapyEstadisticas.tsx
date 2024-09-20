@@ -7,7 +7,8 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { TrendingUp } from 'lucide-react'
+
+
 import { Bar, BarChart, LabelList, YAxis } from 'recharts'
 import {
   Card,
@@ -24,7 +25,7 @@ import {
   ChartTooltipContent
 } from '@/components/ui/chart'
 import * as React from 'react'
-import { Pie, PieChart, CartesianGrid, XAxis } from 'recharts'
+import { Pie, PieChart, CartesianGrid, XAxis, Cell } from 'recharts'
 
 import {
   Select,
@@ -43,10 +44,13 @@ import {
   TooltipTrigger
 } from '@/components/ui/tooltip'
 
-import { RadialBar, RadialBarChart } from 'recharts'
+
 
 import { useObjetivos } from './ObjetivosContext'
 
+import { ChartLegend, ChartLegendContent } from '@/components/ui/chart'
+
+import { ResponsiveContainer } from 'recharts'
 
 
 const chartData = [
@@ -59,26 +63,26 @@ const chartData = [
 
 const chartConfig1: ChartConfig = {
   visitors: {
-    label: 'Visitors'
+    label: 'Objetivos'
   },
   chrome: {
-    label: 'ParcialDSI',
+    label: 'Objetivo1',
     color: 'hsl(var(--chart-1))'
   },
   safari: {
-    label: 'Base de Datos',
+    label: 'Objetivo2',
     color: 'hsl(var(--chart-2))'
   },
   firefox: {
-    label: 'Analisis Numerico',
+    label: 'Objetivo3',
     color: 'hsl(var(--chart-3))'
   },
   edge: {
-    label: 'ParcialASI',
+    label: 'Objetivo4',
     color: 'hsl(var(--chart-4))'
   },
   other: {
-    label: 'FisicaII',
+    label: 'Objetivo5',
     color: 'hsl(var(--chart-5))'
   }
 }
@@ -154,9 +158,9 @@ export default function CapyEstadisticas() {
   
   return (
     <>
-      <p className='text-2xl font-bold'>CapyEstadisticas</p>
+      <h1 className='mt-4 text-4xl font-bold'>CapyEstadisticas!</h1>
       {/* Seleccion de tiempo */}
-      <div className='flex'>
+      <div className='flex w-full mt-8'>
         <Select onValueChange={value => handleSelect(value)} defaultValue='sesion'>
           <SelectTrigger className='ml-4 w-[280px]' >
             <SelectValue placeholder='Selecciona un periodo'  />
@@ -282,58 +286,36 @@ export default function CapyEstadisticas() {
             </TableBody>
           </Table>
 
-          {/* Gráfico de sesión (por ejemplo, un gráfico de barras) */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Tiempo dedicado a objetivos en la sesión actual</CardTitle>
+          {/* Gráfico de sesión */}
+          <Card className="shadow-lg rounded-lg overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-orange-500 to-blue-600 text-white">
+              <CardTitle className="text-2xl font-bold">Tiempo dedicado a objetivos en la sesión actual</CardTitle>
             </CardHeader>
-            <CardContent>
-              <ChartContainer config={chartConfig}>
-                <BarChart
-                  accessibilityLayer
-                  data={objetivos.map(objetivo => ({
-                    objetivo,
-                    tiempo: tiempo[objetivo] || 0
-                  }))}
-                  layout='vertical'
-                >
-                  <CartesianGrid horizontal={false} />
-                  <YAxis
-                    dataKey='objetivo'
-                    type='category'
-                    tickLine={false}
-                    tickMargin={10}
-                    axisLine={false}
-                    tickFormatter={(value: string) => value.slice(0, 3)}
-                    hide
-                  />
-                  <XAxis dataKey='tiempo' type='number' hide />
-                  <ChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent indicator='line' />}
-                  />
-                  <Bar
-                    dataKey='tiempo'
-                    layout='vertical'
-                    fill='var(--color-desktop)'
-                    radius={4}
-                  >
-                    <LabelList
-                      dataKey='objetivo'
-                      position='insideLeft'
-                      offset={8}
-                      className='fill-[--color-label]'
-                      fontSize={12}
-                    />
-                    <LabelList
-                      dataKey='tiempo'
-                      position='right'
-                      offset={8}
-                      className='fill-foreground'
-                      fontSize={12}
-                    />
-                  </Bar>
-                </BarChart>
+            <CardContent className="p-4">
+              <ChartContainer config={chartConfig1}>
+                <ResponsiveContainer width="100%" height={400}>
+                  <PieChart>
+                    <Pie
+                      data={objetivos.map(objetivo => ({
+                        name: objetivo,
+                        value: tiempo[objetivo] || 0
+                      }))}
+                      labelLine={false}
+                      outerRadius="80%"
+                      dataKey="value"
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    >
+                      {objetivos.map((objetivo, index) => (
+                        <Cell 
+                          key={`cell-${index}`} 
+                          fill={chartConfig1[Object.keys(chartConfig1)[index + 1]]?.color || `hsl(${index * 90}, 70%, 60%)`}
+                        />
+                      ))}
+                    </Pie>
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <ChartLegend content={<ChartLegendContent />} />
+                  </PieChart>
+                </ResponsiveContainer>
               </ChartContainer>
             </CardContent>
           </Card>
