@@ -70,6 +70,7 @@ function SignupForm() {
   const [isOpen, setIsOpen] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
+    // eslint-disable-next-line
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
