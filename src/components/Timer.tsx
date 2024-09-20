@@ -41,14 +41,30 @@ export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
   )
 }
 
+
+
+
+
+
+
 export default function Timer() {
   const [Sessioncountup, setSessionCountup] = useState(0)
   const [Breakcountup, setBreakCountup] = useState(0)
   const [tiempoAcumulado, setTiempoAcumulado] = useState(0)
+  const [objCumplidos, setObjCumplidos] = useState(0)
   const [isActive, setIsActive] = useState<boolean | null>(true)
   const [mode, setMode] = useState<Mode>('Sesión')
   const timer = useRef<NodeJS.Timeout>()
   const { motivationType } = useMotivation()
+  // // @ts-expect-error vamos a usar la descripción después, no te enojes typescript!!! 🥺
+  const [, setDescription] = useState<Accion>('Estudiar')
+  const [, setLocation] = useLocation()
+  const [lastCheckedObj, setLastCheckedObj] = useState<number | null>(null)
+  const { objetivos, setObjetivos, objetivosFav, setTiempo} =
+    useObjetivos()
+  const [marked, setMarked] = useState<string[]>([])
+  const { selectedMusic } = useMusic()
+
   const finalizarSesion = () => {
     clearInterval(timer.current)
     console.log(`Has estudiado durante ${formatTime(Sessioncountup)} `)
@@ -57,9 +73,6 @@ export default function Timer() {
     setSessionCountup(0)
     setLocation('/capyEstadisticas')
   }
-
-  // // @ts-expect-error vamos a usar la descripción después, no te enojes typescript!!! 🥺
-  const [, setDescription] = useState<Accion>('Estudiar')
 
   useEffect(() => {
     if (!isActive) {
@@ -90,12 +103,7 @@ export default function Timer() {
   //   setCountdown(mode === 'Session' ? sessionSeconds : breakSeconds)
   // }, [mode, sessionSeconds, breakSeconds])
 
-  const [, setLocation] = useLocation()
 
-  const [lastCheckedObj, setLastCheckedObj] = useState<number | null>(null)
-  const { objetivos, setObjetivos, objetivosFav, setTiempo} =
-    useObjetivos()
-  const [marked, setMarked] = useState<string[]>([])
 
   const handleAccept = () => {
     setLocation('/')
@@ -113,6 +121,7 @@ export default function Timer() {
     /*console.log('Checkbox activado para objetivo:', objetivo, ', Key:', key, 'Tiempo:', Sessioncountup)
     if (lastCheckedObj !==null) {console.log('lastCheckedKey:', lastCheckedObj, 'tiempo: ',  Math.abs(tiempo[objetivos[lastCheckedObj]]), 'Resta:', Sessioncountup - tiempo[objetivos[lastCheckedObj]])}
     */
+    setObjCumplidos(prev => prev + 1)
     setTiempoAcumulado((prev) => prev + (Sessioncountup - prev))
 
     if (lastCheckedObj === null) {
@@ -123,16 +132,19 @@ export default function Timer() {
         ...prev,
         [objetivo]: Sessioncountup - tiempoAcumulado
       }))
+      console.log(objCumplidos)
+      if(objetivos.length === objCumplidos){
+        finalizarSesion()
+      }
     }
     setLastCheckedObj(key)
-    if(objetivos.length === 0){
-      finalizarSesion()
-    }
+
+
   }
-  const { selectedMusic } = useMusic()
+
 
   //console.log(' El tipo de motivacion seleccionada es: ', motivationType)
-  console.log('Cantidad de objetivos', objetivos.length)
+  console.log('Cantidad de objetivos cumplidos', objCumplidos)
 
   return (
     <>
@@ -209,7 +221,10 @@ export default function Timer() {
                   <span className='flex-grow'>
                     <Checkbox
                       checked={marked.includes(objetivo)}
-                      onClick={() => handleCheckbox(objetivo, key)}
+                      onClick={() => {
+                        setObjCumplidos(prev => prev + 1)
+                        handleCheckbox(objetivo, key)
+                      }}
                       className='mr-2'
                     />
                     {objetivo}
