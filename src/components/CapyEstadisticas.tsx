@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/table'
 
 
-import { Bar, BarChart, LabelList, YAxis } from 'recharts'
+import { Bar, BarChart, LabelList } from 'recharts'
 import {
   Card,
   CardContent,
@@ -96,19 +96,7 @@ const chartData1 = [
   { month: 'Junio', desktop: 214, mobile: 140 }
 ]
 
-const chartConfig: ChartConfig = {
-  desktop: {
-    label: 'Desktop',
-    color: 'hsl(var(--chart-1))'
-  },
-  mobile: {
-    label: 'Mobile',
-    color: 'hsl(var(--chart-2))'
-  },
-  label: {
-    color: 'hsl(var(--background))'
-  }
-}
+
 
 const chartConfig4 = {
   desktop: {
@@ -121,31 +109,7 @@ const chartConfig4 = {
   }
 } satisfies ChartConfig
 
-const chartConfig3 = {
-  visitors: {
-    label: 'Visitors'
-  },
-  chrome: {
-    label: 'Chrome',
-    color: 'hsl(var(--chart-1))'
-  },
-  safari: {
-    label: 'Safari',
-    color: 'hsl(var(--chart-2))'
-  },
-  firefox: {
-    label: 'Firefox',
-    color: 'hsl(var(--chart-3))'
-  },
-  edge: {
-    label: 'Edge',
-    color: 'hsl(var(--chart-4))'
-  },
-  other: {
-    label: 'Other',
-    color: 'hsl(var(--chart-5))'
-  }
-} satisfies ChartConfig
+
 
 export default function CapyEstadisticas() {
   const [selectedPeriod, setSelectedPeriod] = React.useState('sesion')
@@ -249,11 +213,11 @@ export default function CapyEstadisticas() {
           </SelectContent>
         </Select>
       </div>
-
+      {/* Pagina se sesion */}
       {selectedPeriod === 'sesion' && (
         <>
           {/* Tabla de objetivos de la sesión */}
-          <Table>
+          <Table className='mt-4'>
             <TableCaption>Información de los objetivos de la sesión</TableCaption>
             <TableHeader>
               <TableRow>
@@ -285,6 +249,11 @@ export default function CapyEstadisticas() {
               ))}
             </TableBody>
           </Table>
+
+          <div>
+            <h2>Informacion de la sesion</h2>
+            
+          </div>
 
           {/* Gráfico de sesión */}
           <Card className="shadow-lg rounded-lg overflow-hidden">
