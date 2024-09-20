@@ -264,9 +264,16 @@ export default function CapyEstadisticas() {
                   className='fill-background'
                   stroke='none'
                   fontSize={12}
+<<<<<<< HEAD
                   formatter={(value: keyof typeof chartConfig1) =>
                     chartConfig1[value]?.label
                   }
+=======
+                  formatter={(value: keyof typeof chartConfig1) => {
+                    // eslint-disable-next-line
+                    return chartConfig1[value]?.label
+                  }}
+>>>>>>> ab33426032afcd12a9279730f748924033593c06
                 />
               </Pie>
             </PieChart>
@@ -326,6 +333,43 @@ export default function CapyEstadisticas() {
       </CardFooter>
     </Card>
 
+<<<<<<< HEAD
+=======
+      <Card>
+        <CardHeader>
+          <CardTitle>Objetivos Cumplidos VS Pendientes</CardTitle>
+          <CardDescription>January - June 2024</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ChartContainer config={chartConfig4}>
+            <BarChart accessibilityLayer data={chartData1}>
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey='month'
+                tickLine={false}
+                tickMargin={10}
+                axisLine={false}
+                tickFormatter={(value: string) => value.slice(0, 3)}
+              />
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent indicator='dashed' />}
+              />
+              <Bar dataKey='desktop' fill='var(--color-desktop)' radius={4} />
+              <Bar dataKey='mobile' fill='var(--color-mobile)' radius={4} />
+            </BarChart>
+          </ChartContainer>
+        </CardContent>
+        <CardFooter className='flex-col items-start gap-2 text-sm'>
+          <div className='flex gap-2 font-medium leading-none'>
+            Trending up by 5.2% this month <TrendingUp className='h-4 w-4' />
+          </div>
+          <div className='leading-none text-muted-foreground'>
+            Showing total visitors for the last 6 months
+          </div>
+        </CardFooter>
+      </Card>
+>>>>>>> ab33426032afcd12a9279730f748924033593c06
 
 {/* Objetivos Cumplidos VS Pendientes cada 6 meses */}
     <Card>
