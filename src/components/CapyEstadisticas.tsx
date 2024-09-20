@@ -7,8 +7,8 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { TrendingUp } from 'lucide-react'
-import { Bar, BarChart, LabelList, YAxis } from 'recharts'
+import { TrendingUp, TrendingUpDown } from 'lucide-react'
+import { Bar, BarChart,  LabelList, YAxis } from 'recharts'
 import {
   Card,
   CardContent,
@@ -23,13 +23,8 @@ import {
   ChartTooltip,
   ChartTooltipContent
 } from '@/components/ui/chart'
-import {
-  //  Label,
-  Pie,
-  PieChart,
-  CartesianGrid,
-  XAxis
-} from 'recharts'
+import * as React from 'react'
+import { Label, Pie, PieChart, CartesianGrid, XAxis } from 'recharts'
 
 import {
   Select,
@@ -48,7 +43,8 @@ import {
   TooltipTrigger
 } from '@/components/ui/tooltip'
 
-import { RadialBar, RadialBarChart } from 'recharts'
+
+import { RadialBar, RadialBarChart } from "recharts"
 
 const chartData = [
   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -107,47 +103,48 @@ const chartConfig: ChartConfig = {
   }
 }
 
+
 const chartConfig4 = {
   desktop: {
-    label: 'Desktop',
-    color: 'hsl(var(--chart-1))'
+    label: "Desktop",
+    color: "hsl(var(--chart-1))",
   },
   mobile: {
-    label: 'Mobile',
-    color: 'hsl(var(--chart-2))'
-  }
+    label: "Mobile",
+    color: "hsl(var(--chart-2))",
+  },
 } satisfies ChartConfig
 
 const chartConfig3 = {
   visitors: {
-    label: 'Visitors'
+    label: "Visitors",
   },
   chrome: {
-    label: 'Chrome',
-    color: 'hsl(var(--chart-1))'
+    label: "Chrome",
+    color: "hsl(var(--chart-1))",
   },
   safari: {
-    label: 'Safari',
-    color: 'hsl(var(--chart-2))'
+    label: "Safari",
+    color: "hsl(var(--chart-2))",
   },
   firefox: {
-    label: 'Firefox',
-    color: 'hsl(var(--chart-3))'
+    label: "Firefox",
+    color: "hsl(var(--chart-3))",
   },
   edge: {
-    label: 'Edge',
-    color: 'hsl(var(--chart-4))'
+    label: "Edge",
+    color: "hsl(var(--chart-4))",
   },
   other: {
-    label: 'Other',
-    color: 'hsl(var(--chart-5))'
-  }
+    label: "Other",
+    color: "hsl(var(--chart-5))",
+  },
 } satisfies ChartConfig
 
 export default function CapyEstadisticas() {
-  // const totalVisitors = useMemo(() => {
-  //   return chartData1.reduce((acc, curr) => acc + curr.visitors, 0)
-  // }, [])
+  const totalVisitors = React.useMemo(() => {
+    return chartData1.reduce((acc, curr) => acc + curr.visitors, 0)
+  }, [])
 
   const handleSelect = (value: string) => {
     console.log(value)
@@ -217,6 +214,19 @@ export default function CapyEstadisticas() {
                 </TooltipProvider>
               </SelectItem>
 
+              <SelectItem key={3} value='Bimestral'>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <p>6 Meses</p>
+                    </TooltipTrigger>
+                    <TooltipContent className='ml-16'>
+                      <p></p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </SelectItem>
+
               <SelectItem key={4} value='Evento'>
                 <TooltipProvider>
                   <Tooltip>
@@ -233,7 +243,7 @@ export default function CapyEstadisticas() {
           </SelectContent>
         </Select>
       </div>
-
+    {/* Eventos el último mes esto se podría mostrar en mes o semana o bimestre */}
       <Card className='flex flex-col'>
         <CardHeader className='items-center pb-0'>
           <CardTitle>Eventos</CardTitle>
@@ -255,7 +265,7 @@ export default function CapyEstadisticas() {
                   stroke='none'
                   fontSize={12}
                   formatter={(value: keyof typeof chartConfig1) =>
-                    chartConfig1[value].label
+                    chartConfig1[value]?.label
                   }
                 />
               </Pie>
@@ -267,88 +277,92 @@ export default function CapyEstadisticas() {
             Trending up by 5.2% this month <TrendingUp className='h-4 w-4' />
           </div>
           <div className='leading-none text-muted-foreground'>
-            Showing total visitors for the last 6 months
+            Mostrando cantidad de tiempo dedicado a los eventos del último mes
           </div>
         </CardFooter>
       </Card>
-      <hr />
-      <Card className='flex flex-col'>
-        <CardHeader className='items-center pb-0'>
-          <CardTitle>Top 5 de objetivos frecuentes</CardTitle>
-          <CardDescription>January - June 2024</CardDescription>
-        </CardHeader>
-        <CardContent className='flex-1 pb-0'>
-          <ChartContainer
-            config={chartConfig3}
-            className='mx-auto aspect-square max-h-[250px]'
+
+      {/* Top 5 de objetivos frecuentes se mostraria como sesión diaria */}
+<hr />
+<Card className="flex flex-col">
+      <CardHeader className="items-center pb-0">
+        <CardTitle>Cantidad de tiempo dedicado a los objetivos</CardTitle>
+        <CardDescription>January - June 2024</CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1 pb-0">
+        <ChartContainer
+          config={chartConfig3}
+          className="mx-auto aspect-square max-h-[250px]"
+        >
+          <RadialBarChart
+            data={chartData}
+            startAngle={-90}
+            endAngle={380}
+            innerRadius={30}
+            outerRadius={110}
           >
-            <RadialBarChart
-              data={chartData}
-              startAngle={-90}
-              endAngle={380}
-              innerRadius={30}
-              outerRadius={110}
-            >
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel nameKey='browser' />}
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel nameKey="browser" />}
+            />
+            <RadialBar dataKey="visitors" background>
+              <LabelList
+                position="insideStart"
+                dataKey="browser"
+                className="fill-white capitalize mix-blend-luminosity"
+                fontSize={11}
               />
-              <RadialBar dataKey='visitors' background>
-                <LabelList
-                  position='insideStart'
-                  dataKey='browser'
-                  className='fill-white capitalize mix-blend-luminosity'
-                  fontSize={11}
-                />
-              </RadialBar>
-            </RadialBarChart>
-          </ChartContainer>
-        </CardContent>
-        <CardFooter className='flex-col gap-2 text-sm'>
-          <div className='flex items-center gap-2 font-medium leading-none'>
-            Trending up by 5.2% this month <TrendingUp className='h-4 w-4' />
-          </div>
-          <div className='leading-none text-muted-foreground'>
-            Showing total visitors for the last 6 months
-          </div>
-        </CardFooter>
-      </Card>
+            </RadialBar>
+          </RadialBarChart>
+        </ChartContainer>
+      </CardContent>
+      <CardFooter className="flex-col gap-2 text-sm">
+        <div className="flex items-center gap-2 font-medium leading-none">
+          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+        </div>
+        <div className="leading-none text-muted-foreground">
+          Showing total visitors for the last 6 months
+        </div>
+      </CardFooter>
+    </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Objetivos Cumplidos VS Pendientes</CardTitle>
-          <CardDescription>January - June 2024</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ChartContainer config={chartConfig4}>
-            <BarChart accessibilityLayer data={chartData1}>
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey='month'
-                tickLine={false}
-                tickMargin={10}
-                axisLine={false}
-                tickFormatter={value => value.slice(0, 3)}
-              />
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent indicator='dashed' />}
-              />
-              <Bar dataKey='desktop' fill='var(--color-desktop)' radius={4} />
-              <Bar dataKey='mobile' fill='var(--color-mobile)' radius={4} />
-            </BarChart>
-          </ChartContainer>
-        </CardContent>
-        <CardFooter className='flex-col items-start gap-2 text-sm'>
-          <div className='flex gap-2 font-medium leading-none'>
-            Trending up by 5.2% this month <TrendingUp className='h-4 w-4' />
-          </div>
-          <div className='leading-none text-muted-foreground'>
-            Showing total visitors for the last 6 months
-          </div>
-        </CardFooter>
-      </Card>
 
+{/* Objetivos Cumplidos VS Pendientes cada 6 meses */}
+    <Card>
+      <CardHeader>
+        <CardTitle>Objetivos Cumplidos VS Pendientes</CardTitle>
+        <CardDescription>January - June 2024</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={chartConfig4}>
+          <BarChart accessibilityLayer data={chartData1}>
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="month"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              tickFormatter={(value: string) => value.slice(0, 3)}
+            />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent indicator="dashed" />}
+            />
+            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
+            <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+      <CardFooter className="flex-col items-start gap-2 text-sm">
+        <div className="flex gap-2 font-medium leading-none">
+          Trending up by 5.2% this month 
+        </div>
+        <div className="leading-none text-muted-foreground">
+          Showing total visitors for the last 6 months
+        </div>
+      </CardFooter>
+    </Card>
+{/* De tres a 6 meses */}
       <Card>
         <CardHeader>
           <CardTitle>Sesiones de estudio realizadas</CardTitle>
@@ -410,7 +424,7 @@ export default function CapyEstadisticas() {
           </div>
         </CardFooter>
       </Card>
-
+{/* Esta tabla va a estar es sesión y semanal */}
       <Table className='flex w-1/2 flex-col items-center justify-center'>
         <TableCaption>Tiempo total de estudio: 1:25:13</TableCaption>
         <TableHeader>
