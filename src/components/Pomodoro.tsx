@@ -67,7 +67,7 @@ export default function Pomodoro() {
 
     if (countdown >= 0) {
       timer.current = setInterval(() => {
-        console.log(`Hola! actualizando, tiempo: ${formatTime(countdown)}`)
+        //console.log(`Hola! actualizando, tiempo: ${formatTime(countdown)}`)
         setCountdown(prev => prev - 1)
         if (mode === 'Estudiando') {
           setObjStudyTime(prev => prev + 1)

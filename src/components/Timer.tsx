@@ -43,6 +43,7 @@ export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
 export default function Timer() {
   const [Sessioncountup, setSessionCountup] = useState(0)
   const [Breakcountup, setBreakCountup] = useState(0)
+  const [tiempoAcumulado, setTiempoAcumulado] = useState(0)
   const [isActive, setIsActive] = useState<boolean | null>(true)
   const [mode, setMode] = useState<Mode>('Sesión')
   const timer = useRef<NodeJS.Timeout>()
@@ -62,6 +63,7 @@ export default function Timer() {
     if (!isActive) {
       setMode('Descanso')
       clearInterval(timer.current)
+      console.log('hola')
       timer.current = setInterval(() => {
         setBreakCountup(prev => prev + 1)
       }, 1000)
@@ -69,6 +71,7 @@ export default function Timer() {
       setMode('Sesión')
       timer.current = setInterval(() => {
         setSessionCountup(prev => prev + 1)
+        //console.log('Hola, este es tu tiempo de estudio', Sessioncountup)
       }, 1000)
     }
     return () => clearInterval(timer.current)
@@ -88,7 +91,7 @@ export default function Timer() {
   const [, setLocation] = useLocation()
 
   const [lastCheckedObj, setLastCheckedObj] = useState<number | null>(null)
-  const { objetivos, setObjetivos, objetivosFav, setTiempo, tiempo } =
+  const { objetivos, setObjetivos, objetivosFav, setTiempo} =
     useObjetivos()
   const [marked, setMarked] = useState<string[]>([])
 
@@ -108,22 +111,23 @@ export default function Timer() {
     /*console.log('Checkbox activado para objetivo:', objetivo, ', Key:', key, 'Tiempo:', Sessioncountup)
     if (lastCheckedObj !==null) {console.log('lastCheckedKey:', lastCheckedObj, 'tiempo: ',  Math.abs(tiempo[objetivos[lastCheckedObj]]), 'Resta:', Sessioncountup - tiempo[objetivos[lastCheckedObj]])}
     */
+    setTiempoAcumulado((prev) => prev + (Sessioncountup - prev))
+
     if (lastCheckedObj === null) {
+      // clearInterval(timer.current)
       setTiempo(prev => ({ ...prev, [objetivo]: Sessioncountup }))
     } else {
-      const tiempoObjAnterior = tiempo[objetivos[lastCheckedObj]]
-      if (tiempoObjAnterior) {
-        setTiempo(prev => ({
-          ...prev,
-          [objetivo]: Sessioncountup - tiempoObjAnterior
-        }))
-      }
+      setTiempo(prev => ({
+        ...prev,
+        [objetivo]: Sessioncountup - tiempoAcumulado
+      }))
     }
     setLastCheckedObj(key)
   }
   const { selectedMusic } = useMusic()
 
-  console.log(' El tipo de motivacion seleccionada es: ', motivationType)
+  //console.log(' El tipo de motivacion seleccionada es: ', motivationType)
+  console.log('Tiempo de sesion', Sessioncountup)
 
   return (
     <>
