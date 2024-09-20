@@ -93,7 +93,7 @@ function SignupForm() {
       <CardContent>
         <Form {...form}>
           <form
-            //ignorar lo de abajo...
+            // eslint-disable-next-line
             onSubmit={form.handleSubmit(onSubmit)}
             id='signUp'
             className='flex flex-col gap-2'
