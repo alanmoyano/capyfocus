@@ -254,10 +254,10 @@ export default function CapyEstadisticas() {
                   className='fill-background'
                   stroke='none'
                   fontSize={12}
-                  formatter={(value: keyof typeof chartConfig1) =>
-                    // ignorar lo de abajo! sin el ?. no anda ja
-                    chartConfig1[value].label
-                  }
+                  formatter={(value: keyof typeof chartConfig1) => {
+                    /* eslint-disable-next-line */
+                    return chartConfig1[value]?.label
+                  }}
                 />
               </Pie>
             </PieChart>
