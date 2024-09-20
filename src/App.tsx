@@ -3,7 +3,7 @@ import { Analytics } from '@vercel/analytics/react'
 
 import { Route, Switch } from 'wouter'
 
-import Login from './components/Login'
+import Login from './components/AuthForm'
 import Pomodoro from './components/Pomodoro'
 import Timer from './components/Timer'
 import Badges from './components/Badges'

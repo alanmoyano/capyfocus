@@ -34,7 +34,6 @@ export default function Usuario() {
         <AvatarFallback>CN</AvatarFallback>
       </Avatar>
       <p>Nombre</p>
-      
 
       <Dialog>
         <DialogTrigger asChild>
