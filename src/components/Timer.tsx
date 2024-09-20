@@ -9,6 +9,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { useMusic } from './MusicContext'
 import { useMotivation } from './MotivationContext'
 
+
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Sesión' | 'Descanso'
@@ -48,12 +49,13 @@ export default function Timer() {
   const [mode, setMode] = useState<Mode>('Sesión')
   const timer = useRef<NodeJS.Timeout>()
   const { motivationType } = useMotivation()
-  function finalizarSesion() {
+  const finalizarSesion = () => {
     clearInterval(timer.current)
     console.log(`Has estudiado durante ${formatTime(Sessioncountup)} `)
     console.log(`Has descansado durante ${formatTime(Breakcountup)}`)
     setBreakCountup(0)
     setSessionCountup(0)
+    setLocation('/capyEstadisticas')
   }
 
   // // @ts-expect-error vamos a usar la descripción después, no te enojes typescript!!! 🥺
@@ -123,11 +125,14 @@ export default function Timer() {
       }))
     }
     setLastCheckedObj(key)
+    if(objetivos.length === 0){
+      finalizarSesion()
+    }
   }
   const { selectedMusic } = useMusic()
 
   //console.log(' El tipo de motivacion seleccionada es: ', motivationType)
-  console.log('Tiempo de sesion', Sessioncountup)
+  console.log('Cantidad de objetivos', objetivos.length)
 
   return (
     <>
