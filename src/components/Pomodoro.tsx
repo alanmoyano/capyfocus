@@ -9,6 +9,7 @@ import Confetti from 'react-confetti-boom'
 import useSound from 'use-sound'
 import { useMusic } from './MusicContext'
 import { useMotivation } from './MotivationContext'
+import { GripVertical } from 'lucide-react'
 
 type Mode = 'Estudiando' | 'Descansando'
 
@@ -220,6 +221,7 @@ export default function Pomodoro() {
               {objetivos.map((objetivo, key) => (
                 <li key={key} className='flex items-center space-x-2'>
                   <span>
+                    <GripVertical size={20} />
                     <Checkbox
                       checked={marked.includes(objetivo)}
                       disabled={mode === 'Descansando' || !isActive}

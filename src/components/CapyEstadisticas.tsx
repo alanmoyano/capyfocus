@@ -7,8 +7,8 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { TrendingUp, TrendingUpDown } from 'lucide-react'
-import { Bar, BarChart,  LabelList, YAxis } from 'recharts'
+import { TrendingUp } from 'lucide-react'
+import { Bar, BarChart, LabelList, YAxis } from 'recharts'
 import {
   Card,
   CardContent,
@@ -24,7 +24,7 @@ import {
   ChartTooltipContent
 } from '@/components/ui/chart'
 import * as React from 'react'
-import { Label, Pie, PieChart, CartesianGrid, XAxis } from 'recharts'
+import { Pie, PieChart, CartesianGrid, XAxis } from 'recharts'
 
 import {
   Select,
@@ -42,7 +42,6 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@/components/ui/tooltip'
-
 
 import { RadialBar, RadialBarChart } from "recharts"
 
@@ -103,7 +102,6 @@ const chartConfig: ChartConfig = {
   }
 }
 
-
 const chartConfig4 = {
   desktop: {
     label: "Desktop",
@@ -143,7 +141,7 @@ const chartConfig3 = {
 
 export default function CapyEstadisticas() {
   const totalVisitors = React.useMemo(() => {
-    return chartData1.reduce((acc, curr) => acc + curr.visitors, 0)
+    return chartData1.reduce((acc, curr) => acc + curr.desktop + curr.mobile, 0)
   }, [])
 
   const handleSelect = (value: string) => {
@@ -214,7 +212,7 @@ export default function CapyEstadisticas() {
                 </TooltipProvider>
               </SelectItem>
 
-              <SelectItem key={3} value='Bimestral'>
+              <SelectItem key={4} value='6 Meses'>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -227,7 +225,7 @@ export default function CapyEstadisticas() {
                 </TooltipProvider>
               </SelectItem>
 
-              <SelectItem key={4} value='Evento'>
+              <SelectItem key={5} value='Evento'>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -264,16 +262,7 @@ export default function CapyEstadisticas() {
                   className='fill-background'
                   stroke='none'
                   fontSize={12}
-<<<<<<< HEAD
-                  formatter={(value: keyof typeof chartConfig1) =>
-                    chartConfig1[value]?.label
-                  }
-=======
-                  formatter={(value: keyof typeof chartConfig1) => {
-                    // eslint-disable-next-line
-                    return chartConfig1[value]?.label
-                  }}
->>>>>>> ab33426032afcd12a9279730f748924033593c06
+                  formatter={(value: keyof typeof chartConfig1) => chartConfig1[value]?.label}
                 />
               </Pie>
             </PieChart>
@@ -333,8 +322,6 @@ export default function CapyEstadisticas() {
       </CardFooter>
     </Card>
 
-<<<<<<< HEAD
-=======
       <Card>
         <CardHeader>
           <CardTitle>Objetivos Cumplidos VS Pendientes</CardTitle>
@@ -369,7 +356,6 @@ export default function CapyEstadisticas() {
           </div>
         </CardFooter>
       </Card>
->>>>>>> ab33426032afcd12a9279730f748924033593c06
 
 {/* Objetivos Cumplidos VS Pendientes cada 6 meses */}
     <Card>
