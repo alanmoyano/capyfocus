@@ -43,7 +43,11 @@ import {
   TooltipTrigger
 } from '@/components/ui/tooltip'
 
-import { RadialBar, RadialBarChart } from "recharts"
+import { RadialBar, RadialBarChart } from 'recharts'
+
+import { useObjetivos } from './ObjetivosContext'
+
+
 
 const chartData = [
   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -104,50 +108,52 @@ const chartConfig: ChartConfig = {
 
 const chartConfig4 = {
   desktop: {
-    label: "Desktop",
-    color: "hsl(var(--chart-1))",
+    label: 'Desktop',
+    color: 'hsl(var(--chart-1))'
   },
   mobile: {
-    label: "Mobile",
-    color: "hsl(var(--chart-2))",
-  },
+    label: 'Mobile',
+    color: 'hsl(var(--chart-2))'
+  }
 } satisfies ChartConfig
 
 const chartConfig3 = {
   visitors: {
-    label: "Visitors",
+    label: 'Visitors'
   },
   chrome: {
-    label: "Chrome",
-    color: "hsl(var(--chart-1))",
+    label: 'Chrome',
+    color: 'hsl(var(--chart-1))'
   },
   safari: {
-    label: "Safari",
-    color: "hsl(var(--chart-2))",
+    label: 'Safari',
+    color: 'hsl(var(--chart-2))'
   },
   firefox: {
-    label: "Firefox",
-    color: "hsl(var(--chart-3))",
+    label: 'Firefox',
+    color: 'hsl(var(--chart-3))'
   },
   edge: {
-    label: "Edge",
-    color: "hsl(var(--chart-4))",
+    label: 'Edge',
+    color: 'hsl(var(--chart-4))'
   },
   other: {
-    label: "Other",
-    color: "hsl(var(--chart-5))",
-  },
+    label: 'Other',
+    color: 'hsl(var(--chart-5))'
+  }
 } satisfies ChartConfig
 
 export default function CapyEstadisticas() {
   const totalVisitors = React.useMemo(() => {
     return chartData1.reduce((acc, curr) => acc + curr.desktop + curr.mobile, 0)
   }, [])
-
+  
   const handleSelect = (value: string) => {
     console.log(value)
   }
 
+  const { objetivos, tiempo } = useObjetivos()
+  
   return (
     <>
       <p className='text-2xl font-bold'>CapyEstadisticas</p>
@@ -166,8 +172,8 @@ export default function CapyEstadisticas() {
                     <TooltipTrigger asChild>
                       <p>Sesion</p>
                     </TooltipTrigger>
-                    <TooltipContent className='ml-16'>
-                      <p>hola</p>
+                    <TooltipContent className='ml-40'>
+                      <p>Estadísticas de la sesión actual</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -179,8 +185,8 @@ export default function CapyEstadisticas() {
                     <TooltipTrigger asChild>
                       <p>Semana</p>
                     </TooltipTrigger>
-                    <TooltipContent className='ml-16'>
-                      <p></p>
+                    <TooltipContent className='ml-40'>
+                      <p>Estadísticas de la última semana</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -192,8 +198,8 @@ export default function CapyEstadisticas() {
                     <TooltipTrigger asChild>
                       <p>Mensual</p>
                     </TooltipTrigger>
-                    <TooltipContent className='ml-16'>
-                      <p></p>
+                    <TooltipContent className='ml-40'>
+                      <p>Estadísticas del último mes</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -205,8 +211,8 @@ export default function CapyEstadisticas() {
                     <TooltipTrigger asChild>
                       <p>Bimestral</p>
                     </TooltipTrigger>
-                    <TooltipContent className='ml-16'>
-                      <p></p>
+                    <TooltipContent className='ml-40'>
+                      <p>Estadísticas de los últimos dos meses</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -218,8 +224,8 @@ export default function CapyEstadisticas() {
                     <TooltipTrigger asChild>
                       <p>6 Meses</p>
                     </TooltipTrigger>
-                    <TooltipContent className='ml-16'>
-                      <p></p>
+                    <TooltipContent className='ml-40'>
+                      <p>Estadísticas de los últimos seis meses</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -231,8 +237,8 @@ export default function CapyEstadisticas() {
                     <TooltipTrigger asChild>
                       <p>Evento</p>
                     </TooltipTrigger>
-                    <TooltipContent className='ml-16'>
-                      <p></p>
+                    <TooltipContent className='ml-40'>
+                      <p>Estadísticas de un evento específico</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -241,7 +247,7 @@ export default function CapyEstadisticas() {
           </SelectContent>
         </Select>
       </div>
-    {/* Eventos el último mes esto se podría mostrar en mes o semana o bimestre */}
+      {/* Eventos el último mes esto se podría mostrar en mes o semana o bimestre */}
       <Card className='flex flex-col'>
         <CardHeader className='items-center pb-0'>
           <CardTitle>Eventos</CardTitle>
@@ -262,7 +268,9 @@ export default function CapyEstadisticas() {
                   className='fill-background'
                   stroke='none'
                   fontSize={12}
-                  formatter={(value: keyof typeof chartConfig1) => chartConfig1[value]?.label}
+                  formatter={(value: keyof typeof chartConfig1) =>
+                    chartConfig1[value]?.label
+                  }
                 />
               </Pie>
             </PieChart>
@@ -279,49 +287,50 @@ export default function CapyEstadisticas() {
       </Card>
 
       {/* Top 5 de objetivos frecuentes se mostraria como sesión diaria */}
-<hr />
-<Card className="flex flex-col">
-      <CardHeader className="items-center pb-0">
-        <CardTitle>Cantidad de tiempo dedicado a los objetivos</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
-      </CardHeader>
-      <CardContent className="flex-1 pb-0">
-        <ChartContainer
-          config={chartConfig3}
-          className="mx-auto aspect-square max-h-[250px]"
-        >
-          <RadialBarChart
-            data={chartData}
-            startAngle={-90}
-            endAngle={380}
-            innerRadius={30}
-            outerRadius={110}
+      <hr />
+      <Card className='flex flex-col'>
+        <CardHeader className='items-center pb-0'>
+          <CardTitle>Cantidad de tiempo dedicado a los objetivos</CardTitle>
+          <CardDescription>January - June 2024</CardDescription>
+        </CardHeader>
+        <CardContent className='flex-1 pb-0'>
+          <ChartContainer
+            config={chartConfig3}
+            className='mx-auto aspect-square max-h-[250px]'
           >
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel nameKey="browser" />}
-            />
-            <RadialBar dataKey="visitors" background>
-              <LabelList
-                position="insideStart"
-                dataKey="browser"
-                className="fill-white capitalize mix-blend-luminosity"
-                fontSize={11}
+            <RadialBarChart
+              data={chartData}
+              startAngle={-90}
+              endAngle={380}
+              innerRadius={30}
+              outerRadius={110}
+            >
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel nameKey='browser' />}
               />
-            </RadialBar>
-          </RadialBarChart>
-        </ChartContainer>
-      </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
-        </div>
-      </CardFooter>
-    </Card>
+              <RadialBar dataKey='visitors' background>
+                <LabelList
+                  position='insideStart'
+                  dataKey='browser'
+                  className='fill-white capitalize mix-blend-luminosity'
+                  fontSize={11}
+                />
+              </RadialBar>
+            </RadialBarChart>
+          </ChartContainer>
+        </CardContent>
+        <CardFooter className='flex-col gap-2 text-sm'>
+          <div className='flex items-center gap-2 font-medium leading-none'>
+            Trending up by 5.2% this month <TrendingUp className='h-4 w-4' />
+          </div>
+          <div className='leading-none text-muted-foreground'>
+            Showing total visitors for the last 6 months
+          </div>
+        </CardFooter>
+      </Card>
 
+      {/* Objetivos Cumplidos VS Pendientes cada 6 meses */}
       <Card>
         <CardHeader>
           <CardTitle>Objetivos Cumplidos VS Pendientes</CardTitle>
@@ -349,50 +358,14 @@ export default function CapyEstadisticas() {
         </CardContent>
         <CardFooter className='flex-col items-start gap-2 text-sm'>
           <div className='flex gap-2 font-medium leading-none'>
-            Trending up by 5.2% this month <TrendingUp className='h-4 w-4' />
+            Trending up by 5.2% this month
           </div>
           <div className='leading-none text-muted-foreground'>
             Showing total visitors for the last 6 months
           </div>
         </CardFooter>
       </Card>
-
-{/* Objetivos Cumplidos VS Pendientes cada 6 meses */}
-    <Card>
-      <CardHeader>
-        <CardTitle>Objetivos Cumplidos VS Pendientes</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig4}>
-          <BarChart accessibilityLayer data={chartData1}>
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="month"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              tickFormatter={(value: string) => value.slice(0, 3)}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="dashed" />}
-            />
-            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
-            <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
-          </BarChart>
-        </ChartContainer>
-      </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month 
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
-        </div>
-      </CardFooter>
-    </Card>
-{/* De tres a 6 meses */}
+      {/* De tres a 6 meses */}
       <Card>
         <CardHeader>
           <CardTitle>Sesiones de estudio realizadas</CardTitle>
@@ -454,14 +427,14 @@ export default function CapyEstadisticas() {
           </div>
         </CardFooter>
       </Card>
-{/* Esta tabla va a estar es sesión y semanal */}
-      <Table className='flex w-1/2 flex-col items-center justify-center'>
+      {/* Esta tabla va a estar es sesión y semanal */}
+      <Table className='flex w-full flex-col items-center justify-center'>
         <TableCaption>Tiempo total de estudio: 1:25:13</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className='w-[100px]'>Objetivos</TableHead>
             <TableHead>Estado</TableHead>
-            <TableHead>Metodo</TableHead>
+
             <TableHead className='text-right'>Tiempo (Minutos)</TableHead>
           </TableRow>
         </TableHeader>
@@ -469,23 +442,71 @@ export default function CapyEstadisticas() {
           <TableRow>
             <TableCell className='font-medium'>Objetivo 1</TableCell>
             <TableCell>Cumplido</TableCell>
-            <TableCell>CapyDoro</TableCell>
+
             <TableCell className='text-right'>12:00</TableCell>
           </TableRow>
           <TableRow>
             <TableCell className='font-medium'>Objetivo 2</TableCell>
             <TableCell>Pospuesto</TableCell>
-            <TableCell>CapyDoro</TableCell>
+
             <TableCell className='text-right'>58:10</TableCell>
           </TableRow>
           <TableRow>
             <TableCell className='font-medium'>Objetivo 3</TableCell>
             <TableCell>Cumplido</TableCell>
-            <TableCell>CapyMetro</TableCell>
+
             <TableCell className='text-right'>15:03</TableCell>
           </TableRow>
         </TableBody>
       </Table>
+
+      <p>Cantidad de pomodoros realizados: 3</p>
+      <p>Cantidad de pausas realizadas: 3</p>
+      <p>Tipo de motivo motivacion: postiva</p>
+      <hr />
+     
+      <Table>
+        <TableCaption>Información de los objetivos de la sesión</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead className='w-[100px]'>Objetivo</TableHead>
+            <TableHead>Estado</TableHead>
+            <TableHead className='text-right'>Tiempo</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {objetivos.map((objetivo, index) => (
+            <TableRow key={index}>
+              <TableCell className='font-medium'>{objetivo}</TableCell>
+              <TableCell>{tiempo[objetivo] === 0 ? 'Pendiente' : 'Cumplido'}</TableCell>
+              <TableCell className='text-right'>{tiempo[objetivo] || 0}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      <Table>
+        <TableCaption>Información de los objetivos de sesiones anteriores</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead className='w-[100px]'>Objetivo</TableHead>
+            <TableHead>Estado</TableHead>
+            <TableHead>Tiempo</TableHead>
+            <TableHead>Tipo Motivacion</TableHead>
+            <TableHead className='text-right'>Evento</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow>
+            <TableCell className='font-medium'>Conquistar el mundo</TableCell>
+            <TableCell>Cumplida</TableCell>
+            <TableCell>12:13</TableCell>
+            <TableCell>CapyMetro</TableCell>
+            <TableCell className='text-right'>$250.00</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+      
     </>
   )
 }
