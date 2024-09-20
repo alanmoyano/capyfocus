@@ -504,6 +504,7 @@ export default function Inicio() {
                 onKeyDown={handleAdd}
                 onChange={e => setInputValue(e.target.value)}
                 className='rounded-md border border-secondary bg-white p-3 shadow-md transition-shadow duration-200 ease-in-out hover:shadow-lg focus:outline-none focus:ring-2'
+                disabled={objetivos.length >= 10}
               />
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
@@ -512,6 +513,7 @@ export default function Inicio() {
                     role='combobox'
                     aria-expanded={open}
                     className='justify-between'
+                    disabled={objetivos.length >= 10}
                   >
                     {value ? (
                       objetivosFav.find(objetivoFav => objetivoFav === value)
@@ -532,10 +534,9 @@ export default function Inicio() {
                             key={objetivoFav}
                             value={objetivoFav}
                             onSelect={currentValue => {
-                              // setValue(currentValue === value ? '' : currentValue)
                               setOpen(false)
                               setInputValue('')
-                              if (!objetivos.includes(currentValue))
+                              if (!objetivos.includes(currentValue) && objetivos.length < 10)
                                 setObjetivos([...objetivos, currentValue])
                             }}
                           >
@@ -641,6 +642,9 @@ export default function Inicio() {
                 ))}
               </ul>
             </div>
+            {objetivos.length >= 10 && (
+              <p className="text-red-500 mt-2">Has alcanzado el límite de 10 objetivos.</p>
+            )}
           </div>
           <div className='mt-6 flex items-center justify-center'>
             {/* Motivación */}
