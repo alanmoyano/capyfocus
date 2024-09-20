@@ -6,7 +6,7 @@ import { Route, Switch } from 'wouter'
 import Login from './components/AuthForm'
 import Pomodoro from './components/Pomodoro'
 import Timer from './components/Timer'
-import Badges from './components/Badges'
+import CapyInsignias from './components/CapyInsignias'
 import Navbar from './components/Navbar'
 import { ThemeProvider } from './components/providers/ThemeProvider'
 import { ObjetivosProvider } from './components/ObjetivosContext'
@@ -43,7 +43,7 @@ function App() {
                   <Timer />
                 </Route>
 
-                <Route path='/capyInsignias' component={Badges} />
+                <Route path='/capyInsignias' component={CapyInsignias} />
                 <Route path='/capyEstadisticas' component={CapyEstadisticas} />
 
                 <Route path='/usuario' component={Usuario} />
