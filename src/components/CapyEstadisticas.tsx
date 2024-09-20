@@ -255,6 +255,7 @@ export default function CapyEstadisticas() {
                   stroke='none'
                   fontSize={12}
                   formatter={(value: keyof typeof chartConfig1) =>
+                    // ignorar lo de abajo! sin el ?. no anda ja
                     chartConfig1[value].label
                   }
                 />
