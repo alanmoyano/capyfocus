@@ -17,6 +17,7 @@ import { Calendar } from '@/components/ui/calendar'
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -52,6 +53,7 @@ const formSchema = z.object({
   email: z.string().email('El correo no es válido'),
   birthdate: z
     .date()
+    .min(new Date(now.getFullYear() - 100))
     .max(
       new Date(now.getFullYear() - 10, now.getMonth(), now.getDate()),
       'Debes tener al menos 10 años'
@@ -131,7 +133,7 @@ function SignupForm() {
             <FormField
               control={form.control}
               name='birthdate'
-              render={() => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Fecha de nacimiento</FormLabel>
                   <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -179,42 +181,50 @@ function SignupForm() {
                             {Array.from({ length: 100 }, (_, i) => (
                               <SelectItem
                                 key={i}
-                                value={(year - 99 + i).toString()}
+                                value={(now.getFullYear() - 99 + i).toString()}
                               >
-                                {year - 99 + i}
+                                {now.getFullYear() - 99 + i}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
                       </div>
-                      <Calendar
-                        mode='single'
-                        selected={date}
-                        onSelect={setDate}
-                        month={new Date(year, month, now.getDate())}
-                        onMonthChange={newMonth => {
-                          setMonth(newMonth.getMonth())
-                          setYear(newMonth.getFullYear())
-                        }}
-                        initialFocus
-                        onDayClick={date => {
-                          setIsOpen(false)
-                          setMonth(date.getMonth())
-                          setYear(date.getFullYear())
-                        }}
-                        locale={es}
-                        toYear={now.getFullYear() - 10}
-                        disabled={date =>
-                          date >
-                          new Date(
-                            now.getFullYear() - 10,
-                            now.getMonth(),
-                            now.getDate()
-                          )
-                        }
-                      />
+                      <FormControl>
+                        <Calendar
+                          mode='single'
+                          selected={date}
+                          onSelect={newDate => {
+                            setDate(newDate)
+                            field.onChange(newDate)
+                          }}
+                          month={new Date(year, month, now.getDate())}
+                          onMonthChange={newMonth => {
+                            setMonth(newMonth.getMonth())
+                            setYear(newMonth.getFullYear())
+                          }}
+                          initialFocus
+                          onDayClick={date => {
+                            setIsOpen(false)
+                            setMonth(date.getMonth())
+                            setYear(date.getFullYear())
+                          }}
+                          locale={es}
+                          toYear={now.getFullYear() - 10}
+                          disabled={date =>
+                            date >
+                            new Date(
+                              now.getFullYear() - 10,
+                              now.getMonth(),
+                              now.getDate()
+                            )
+                          }
+                        />
+                      </FormControl>
                     </PopoverContent>
                   </Popover>
+                  <FormDescription>
+                    Debes tener al menos 10 años para crear una capyCuenta
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
