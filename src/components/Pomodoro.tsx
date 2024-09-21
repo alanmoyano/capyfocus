@@ -57,8 +57,7 @@ export default function Pomodoro() {
 
   const finalizarSesion = () => {
     clearInterval(timer.current)
-    setSessionSeconds(0)
-    setBreakSeconds(0)
+
     objetivos.forEach(objetivo => {
       if (!tiempo[objetivo]) {
         setTiempo(prev => ({
@@ -67,7 +66,7 @@ export default function Pomodoro() {
         }))
       }
     })
-    //setLocation('/capyEstadisticas')
+    setLocation('/capyEstadisticas')
   }
 
   //Revisar el funcionamiento de esta cosa!!!
@@ -127,7 +126,6 @@ export default function Pomodoro() {
   }
 
   const handleCheckbox = (objetivo: string, key: number) => {
-    // Ver cómo hacer para contabilizar el tiempo entre sesiones de un obj.
     if (marked.includes(objetivo)) {
       return
     }

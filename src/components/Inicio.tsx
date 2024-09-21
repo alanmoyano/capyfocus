@@ -79,12 +79,14 @@ import { useMotivation } from '../hooks/MotivationContext'
 import { useMusic } from '../hooks/MusicContext'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useSesion } from '@/hooks/SesionContext'
 
-type CapyMetodos = 'Capydoro' | 'Capymetro'
+type CapyMetodos = 'Capydoro' | 'Capymetro' | ''
 
 const descriptions: Record<CapyMetodos, string> = {
   Capydoro: 'Estudia con el método Pomodoro',
-  Capymetro: 'Estudia con un cronómetro'
+  Capymetro: 'Estudia con un cronómetro',
+  '': ''
 }
 
 /* Evento */
@@ -147,17 +149,30 @@ export default function Inicio() {
   const { objetivos, setObjetivos, objetivosFav, setObjetivosFav } =
     useObjetivos()
 
-  const [description, setDescription] = useState<CapyMetodos>('Capydoro')
+  const [description, setDescription] = useState<CapyMetodos>('')
 
   const [, setLocation] = useLocation()
 
   const { setMotivationType } = useMotivation()
 
+  const { setSelectedMusic } = useMusic()
+
+  const [events, setEvents] = useState<Event[]>([])
+  const [eventTitle, setEventTitle] = useState<string>('')
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
+
+  const { setTecnicaEstudio } = useSesion()
+
   const handleAccept = () => {
-    if (description === 'Capydoro') {
-      setLocation('/capydoro')
-    } else {
-      setLocation('/capymetro')
+    switch (description) {
+      case 'Capydoro':
+        setLocation('/capydoro')
+        setTecnicaEstudio(description)
+        break
+      case 'Capymetro':
+        setLocation('capymetro')
+        setTecnicaEstudio(description)
+        break
     }
   }
 
@@ -216,9 +231,6 @@ export default function Inicio() {
   /* Evento */
 
   /* const [date, setDate] = useState<Date | undefined>(new Date()) */
-  const [events, setEvents] = useState<Event[]>([])
-  const [eventTitle, setEventTitle] = useState<string>('')
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
 
   const addEvent = () => {
     if (date && eventTitle) {
@@ -228,8 +240,6 @@ export default function Inicio() {
   }
 
   // musica
-
-  const { setSelectedMusic } = useMusic()
 
   const handleMusicSelection = (
     music: {
