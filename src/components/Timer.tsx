@@ -46,7 +46,6 @@ export default function Timer() {
   const [tiempoObjAcumulado, setTiempoObjAcumulado] = useState(0)
   const [objCumplidos, setObjCumplidos] = useState(0)
   const [isActive, setIsActive] = useState<boolean | null>(true)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [mode, setMode] = useState<Mode>('Sesión')
   const timer = useRef<NodeJS.Timeout>()
   const { motivationType } = useMotivation()
@@ -81,7 +80,7 @@ export default function Timer() {
         setTiempoSesion(prev => ({ ...prev, [objetivo]: 0 }))
       }
     })
-    //setLocation('/capyEstadisticas')
+    setLocation('/capyEstadisticas')
   }
 
   useEffect(() => {
