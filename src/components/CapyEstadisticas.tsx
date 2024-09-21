@@ -226,29 +226,18 @@ export default function CapyEstadisticas() {
             <CardContent className='grid grid-cols-1 gap-4 md:grid-cols-2'>
               <div className='flex flex-col space-y-2'>
                 <p className='text-lg font-semibold'>
-                  Tiempo total: <span className='font-normal'>00:00:00</span>
+                  Tiempo total de estudio: <span className='font-normal'>Modificar</span>
                 </p>
                 <p className='text-lg font-semibold'>
                   Tiempo total de descanso:{' '}
                   <span className='font-normal'>00:00:00</span>
                 </p>
                 <p className='text-lg font-semibold'>
+                  Cantidad de pausas: <span className='font-normal'>0</span>
+                </p>
+                <p className='text-lg font-semibold'>
                   Tipo de motivación:{' '}
                   <span className='font-normal'>{motivationType}</span>
-                </p>
-                <p className='text-lg font-semibold'>
-                  Cantidad total de objetivos:{' '}
-                  <span className='font-normal'>{objetivos.length}</span>
-                </p>
-              </div>
-              <div className='flex flex-col space-y-2'>
-                <p className='text-lg font-semibold'>
-                  Objetivos cumplidos:{' '}
-                  <span className='font-normal'>{objetivos.length}</span>
-                </p>
-                <p className='text-lg font-semibold'>
-                  Objetivos pendientes:{' '}
-                  <span className='font-normal'>{objetivos.length}</span>
                 </p>
                 <p className='text-lg font-semibold'>
                   Musica:{' '}
@@ -256,8 +245,23 @@ export default function CapyEstadisticas() {
                     {selectedMusic?.title || 'sin musica'}
                   </span>
                 </p>
+              </div>
+              <div className='flex flex-col space-y-2'>
                 <p className='text-lg font-semibold'>
-                  Cantidad de pausas: <span className='font-normal'>0</span>
+                  Tecnica de estudio:{' '}
+                  <span className='font-normal'>Modificar</span>
+                </p>
+                <p className='text-lg font-semibold'>
+                  Cantidad total de objetivos:{' '}
+                  <span className='font-normal'>{objetivos.length}</span>
+                </p>
+                <p className='text-lg font-semibold'>
+                  Objetivos cumplidos:{' '}
+                  <span className='font-normal'>{objetivos.length}</span>
+                </p>
+                <p className='text-lg font-semibold'>
+                  Objetivos pendientes:{' '}
+                  <span className='font-normal'>{objetivos.length}</span>
                 </p>
               </div>
             </CardContent>
@@ -271,6 +275,7 @@ export default function CapyEstadisticas() {
                   <TableHead className='w-[100px]'>Objetivo</TableHead>
                   <TableHead>Estado</TableHead>
                   <TableHead className='text-right'>Tiempo</TableHead>
+                  <TableHead className='text-right'>Tiempo acumulado</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -287,6 +292,20 @@ export default function CapyEstadisticas() {
                           Cumplido
                         </span>
                       )}
+                    </TableCell>
+                    <TableCell className='text-right'>
+                      {(() => {
+                        const time = tiempo[objetivo] || 0
+                        const hours = Math.floor(time / 3600)
+                        const minutes = Math.floor((time % 3600) / 60)
+                        const seconds = time % 60
+
+                        if (hours > 0) {
+                          return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+                        } else {
+                          return `${minutes}:${seconds.toString().padStart(2, '0')}`
+                        }
+                      })()}
                     </TableCell>
                     <TableCell className='text-right'>
                       {(() => {

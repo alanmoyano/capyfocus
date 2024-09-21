@@ -8,7 +8,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 //import { navigationMenuTriggerStyle } from './ui/navigit pull gation-menu'
 import { useMusic } from './MusicContext'
 import { useMotivation } from './MotivationContext'
-
+import { useSesion } from './SesionContext'
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Sesión' | 'Descanso'
@@ -58,10 +58,10 @@ export default function Timer() {
   const [marked, setMarked] = useState<string[]>([])
   const { selectedMusic } = useMusic()
 
+
+  
   const finalizarSesion = () => {
     clearInterval(timer.current)
-    setBreakCountup(0)
-    setSessionCountup(0)
     objetivos.forEach(objetivo => {
       if (!tiempo[objetivo]) {
         setTiempo(prev => ({
@@ -82,9 +82,10 @@ export default function Timer() {
       }, 1000)
     } else {
       setMode('Sesión')
-      timer.current = setInterval(() => {
+      timer.current = setInterval(() => {   
         setSessionCountup(prev => prev + 1)
       }, 1000)
+      
     }
     if (objetivos.length === objCumplidos && objetivos.length > 0) {
       finalizarSesion()

@@ -4,10 +4,12 @@ type ObjetivosContextData = {
   objetivos: string[]
   objetivosFav: string[]
   tiempo: Record<string, number>
+
   // funcion que despacha una accion de tipo state con un string[]
   setObjetivos: React.Dispatch<React.SetStateAction<string[]>>
   setObjetivosFav: React.Dispatch<React.SetStateAction<string[]>>
   setTiempo: React.Dispatch<React.SetStateAction<Record<string, number>>>
+
 }
 
 // datos que va a manejar, valor predeterminado x si no hay provider
@@ -27,6 +29,7 @@ export const ObjetivosProvider = ({ children }: { children: ReactNode }) => {
 
   const [tiempo, setTiempo] = useState<Record<string, number>>({})
 
+
   return (
     <ObjetivosContext.Provider
       value={{
@@ -38,7 +41,8 @@ export const ObjetivosProvider = ({ children }: { children: ReactNode }) => {
         setObjetivosFav: newObjetivosFav => {
           localStorage.setItem('objetivosFav', JSON.stringify(newObjetivosFav))
           setObjetivosFav(newObjetivosFav)
-        }
+        },
+
       }}
     >
       {children}
