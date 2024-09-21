@@ -222,7 +222,7 @@ export default function CapyEstadisticas() {
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col space-y-2">
-                <p className="text-lg font-semibold">Tiempo total: <span className="font-normal">00:00:00</span></p>
+                <p className="text-lg font-semibold">Tiempo total de estudio: <span className="font-normal">00:00:00</span></p>
                 <p className="text-lg font-semibold">Tiempo total de descanso: <span className="font-normal">00:00:00</span></p>
                 <p className="text-lg font-semibold">Tipo de motivación: <span className="font-normal">{motivationType}</span></p>
                 <p className="text-lg font-semibold">Cantidad total de objetivos: <span className="font-normal">{objetivos.length}</span></p>
