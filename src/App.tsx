@@ -9,13 +9,14 @@ import Timer from './components/Timer'
 import CapyInsignias from './components/CapyInsignias'
 import Navbar from './components/Navbar'
 import { ThemeProvider } from './components/providers/ThemeProvider'
-import { ObjetivosProvider } from './components/ObjetivosContext'
+import { ObjetivosProvider } from './hooks/ObjetivosContext'
 import Inicio from './components/Inicio'
 import CapyEstadisticas from './components/CapyEstadisticas'
 import Usuario from './components/Usuario'
-import { MotivationProvider } from './components/MotivationContext'
-import { MusicProvider } from './components/MusicContext'
+import { MotivationProvider } from './hooks/MotivationContext'
+import { MusicProvider } from './hooks/MusicContext'
 import PruebaTabla from './components/PruebaTabla'
+import { SesionProvider } from './hooks/SesionContext'
 
 function App() {
   return (
@@ -24,34 +25,39 @@ function App() {
       <Analytics />
       <ObjetivosProvider>
         <MotivationProvider>
-          <MusicProvider>
-            <Navbar />
+          <SesionProvider>
+            <MusicProvider>
+              <Navbar />
 
-            <main>
-              <Switch>
-                <Route path='/'>
-                  <Inicio />
-                </Route>
+              <main>
+                <Switch>
+                  <Route path='/'>
+                    <Inicio />
+                  </Route>
 
-                <Route path='/tablas' component={PruebaTabla} />
-                <Route path='/login' component={Login} />
+                  <Route path='/tablas' component={PruebaTabla} />
+                  <Route path='/login' component={Login} />
 
-                <Route path='/capydoro'>
-                  <Pomodoro />
-                </Route>
-                <Route path='/capymetro'>
-                  <Timer />
-                </Route>
+                  <Route path='/capydoro'>
+                    <Pomodoro />
+                  </Route>
+                  <Route path='/capymetro'>
+                    <Timer />
+                  </Route>
 
-                <Route path='/capyInsignias' component={CapyInsignias} />
-                <Route path='/capyEstadisticas' component={CapyEstadisticas} />
+                  <Route path='/capyInsignias' component={CapyInsignias} />
+                  <Route
+                    path='/capyEstadisticas'
+                    component={CapyEstadisticas}
+                  />
 
-                <Route path='/usuario' component={Usuario} />
+                  <Route path='/usuario' component={Usuario} />
 
-                <Route>404!</Route>
-              </Switch>
-            </main>
-          </MusicProvider>
+                  <Route>404!</Route>
+                </Switch>
+              </main>
+            </MusicProvider>
+          </SesionProvider>
         </MotivationProvider>
       </ObjetivosProvider>
     </ThemeProvider>

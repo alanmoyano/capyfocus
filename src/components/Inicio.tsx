@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 
 import { Input } from '@/components/ui/input'
-import { useObjetivos } from './ObjetivosContext'
+import { useObjetivos } from '../hooks/ObjetivosContext'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import {
   Tooltip,
@@ -74,9 +74,9 @@ import {
   CarouselNext,
   CarouselPrevious
 } from '@/components/ui/carousel'
-import { useMotivation } from './MotivationContext'
+import { useMotivation } from '../hooks/MotivationContext'
 
-import { useMusic } from './MusicContext'
+import { useMusic } from '../hooks/MusicContext'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
 

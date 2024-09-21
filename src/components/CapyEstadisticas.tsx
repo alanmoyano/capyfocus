@@ -44,14 +44,14 @@ import {
   TooltipTrigger
 } from '@/components/ui/tooltip'
 
-import { useObjetivos } from './ObjetivosContext'
+import { useObjetivos } from '../hooks/ObjetivosContext'
 
 import { ChartLegend, ChartLegendContent } from '@/components/ui/chart'
 
 import { ResponsiveContainer } from 'recharts'
 
-import { useMotivation } from './MotivationContext'
-import { useMusic } from './MusicContext'
+import { useMotivation } from '../hooks/MotivationContext'
+import { useMusic } from '../hooks/MusicContext'
 
 const chartData = [
   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -114,7 +114,7 @@ export default function CapyEstadisticas() {
     setSelectedPeriod(value)
   }
 
-  const { objetivos, tiempo } = useObjetivos()
+  const { objetivos, tiempo, tiempoSesion } = useObjetivos()
   const { motivationType } = useMotivation()
   const { selectedMusic } = useMusic()
   return (
@@ -226,7 +226,8 @@ export default function CapyEstadisticas() {
             <CardContent className='grid grid-cols-1 gap-4 md:grid-cols-2'>
               <div className='flex flex-col space-y-2'>
                 <p className='text-lg font-semibold'>
-                  Tiempo total de estudio: <span className='font-normal'>Modificar</span>
+                  Tiempo total de estudio:{' '}
+                  <span className='font-normal'>Modificar</span>
                 </p>
                 <p className='text-lg font-semibold'>
                   Tiempo total de descanso:{' '}
@@ -309,7 +310,7 @@ export default function CapyEstadisticas() {
                     </TableCell>
                     <TableCell className='text-right'>
                       {(() => {
-                        const time = tiempo[objetivo] || 0
+                        const time = tiempoSesion[objetivo] || 0
                         const hours = Math.floor(time / 3600)
                         const minutes = Math.floor((time % 3600) / 60)
                         const seconds = time % 60
@@ -357,7 +358,7 @@ export default function CapyEstadisticas() {
                           key={`cell-${index}`}
                           fill={
                             chartConfig1[Object.keys(chartConfig1)[index + 1]]
-                              ?.color || `hsl(${index * 90}, 70%, 60%)`
+                              .color || `hsl(${index * 90}, 70%, 60%)`
                           }
                           name={objetivo}
                         />
@@ -398,7 +399,7 @@ export default function CapyEstadisticas() {
                       stroke='none'
                       fontSize={12}
                       formatter={(value: keyof typeof chartConfig1) =>
-                        chartConfig1[value]?.label
+                        chartConfig1[value].label
                       }
                     />
                   </Pie>

@@ -2,13 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button'
 import { Checkbox } from './ui/checkbox'
 import { useLocation } from 'wouter'
-import { useObjetivos } from './ObjetivosContext'
+import { useObjetivos } from '../hooks/ObjetivosContext'
 import { Star } from 'lucide-react'
 import CapySound from '../assets/Sonido_de_caripincho.mp3'
 import Confetti from 'react-confetti-boom'
 import useSound from 'use-sound'
-import { useMusic } from './MusicContext'
-import { useMotivation } from './MotivationContext'
+import { useMusic } from '../hooks/MusicContext'
+import { useMotivation } from '../hooks/MotivationContext'
 
 type Mode = 'Estudiando' | 'Descansando'
 
@@ -67,7 +67,7 @@ export default function Pomodoro() {
         }))
       }
     })
-    setLocation('/capyEstadisticas')
+    //setLocation('/capyEstadisticas')
   }
 
   //Revisar el funcionamiento de esta cosa!!!

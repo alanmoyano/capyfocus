@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button'
 import { useLocation } from 'wouter'
-import { useObjetivos } from './ObjetivosContext'
+import { useObjetivos } from '../hooks/ObjetivosContext'
 import { Star, NotebookPen, Moon } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 //import { navigationMenuTriggerStyle } from './ui/navigit pull gation-menu'
-import { useMusic } from './MusicContext'
-import { useMotivation } from './MotivationContext'
-import { useSesion } from './SesionContext'
+import { useMusic } from '../hooks/MusicContext'
+import { useMotivation } from '../hooks/MotivationContext'
+import { useSesion } from '../hooks/SesionContext'
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Sesión' | 'Descanso'
@@ -43,7 +43,7 @@ export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
 export default function Timer() {
   const [Sessioncountup, setSessionCountup] = useState(0)
   const [Breakcountup, setBreakCountup] = useState(0)
-  const [tiempoAcumulado, setTiempoAcumulado] = useState(0)
+  const [tiempoObjAcumulado, setTiempoObjAcumulado] = useState(0)
   const [objCumplidos, setObjCumplidos] = useState(0)
   const [isActive, setIsActive] = useState<boolean | null>(true)
   const [mode, setMode] = useState<Mode>('Sesión')
@@ -53,24 +53,31 @@ export default function Timer() {
   const [, setDescription] = useState<Accion>('Estudiar')
   const [, setLocation] = useLocation()
   const [lastCheckedObj, setLastCheckedObj] = useState<number | null>(null)
-  const { objetivos, setObjetivos, objetivosFav, setTiempo, tiempo } =
-    useObjetivos()
+  const {
+    objetivos,
+    setObjetivos,
+    objetivosFav,
+    setTiempo,
+    tiempo,
+    setTiempoSesion
+  } = useObjetivos()
   const [marked, setMarked] = useState<string[]>([])
   const { selectedMusic } = useMusic()
+  const { setTiempoTotal } = useSesion()
 
-
-  
   const finalizarSesion = () => {
     clearInterval(timer.current)
+    setTiempoTotal(Sessioncountup)
     objetivos.forEach(objetivo => {
       if (!tiempo[objetivo]) {
         setTiempo(prev => ({
           ...prev,
           [objetivo]: 0
         }))
+        setTiempoSesion(prev => ({ ...prev, [objetivo]: 0 }))
       }
     })
-    setLocation('/capyEstadisticas')
+    //setLocation('/capyEstadisticas')
   }
 
   useEffect(() => {
@@ -82,10 +89,9 @@ export default function Timer() {
       }, 1000)
     } else {
       setMode('Sesión')
-      timer.current = setInterval(() => {   
+      timer.current = setInterval(() => {
         setSessionCountup(prev => prev + 1)
       }, 1000)
-      
     }
     if (objetivos.length === objCumplidos && objetivos.length > 0) {
       finalizarSesion()
@@ -118,16 +124,18 @@ export default function Timer() {
     }
     setMarked([...marked, objetivo])
     setObjCumplidos(prev => prev + 1)
-    setTiempoAcumulado(prev => prev + (Sessioncountup - prev))
+    setTiempoObjAcumulado(prev => prev + (Sessioncountup - prev))
 
     if (lastCheckedObj === null) {
       // clearInterval(timer.current)
       setTiempo(prev => ({ ...prev, [objetivo]: Sessioncountup }))
+      setTiempoSesion(prev => ({ ...prev, [objetivo]: Sessioncountup }))
     } else {
       setTiempo(prev => ({
         ...prev,
-        [objetivo]: Sessioncountup - tiempoAcumulado
+        [objetivo]: Sessioncountup - tiempoObjAcumulado
       }))
+      setTiempoSesion(prev => ({ ...prev, [objetivo]: Sessioncountup }))
     }
     setLastCheckedObj(key)
   }
