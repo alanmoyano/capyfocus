@@ -8,7 +8,8 @@ import {
   TableRow
 } from '@/components/ui/table'
 
-import { Bar, BarChart, LabelList, YAxis } from 'recharts'
+import { Bar, BarChart, LabelList } from 'recharts'
+
 import {
   Card,
   CardContent,
@@ -48,6 +49,8 @@ import { useObjetivos } from './ObjetivosContext'
 import { ChartLegend, ChartLegendContent } from '@/components/ui/chart'
 
 import { ResponsiveContainer } from 'recharts'
+
+import { useMotivation } from './MotivationContext'
 
 const chartData = [
   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -92,20 +95,6 @@ const chartData1 = [
   { month: 'Junio', desktop: 214, mobile: 140 }
 ]
 
-const chartConfig: ChartConfig = {
-  desktop: {
-    label: 'Desktop',
-    color: 'hsl(var(--chart-1))'
-  },
-  mobile: {
-    label: 'Mobile',
-    color: 'hsl(var(--chart-2))'
-  },
-  label: {
-    color: 'hsl(var(--background))'
-  }
-}
-
 const chartConfig4 = {
   desktop: {
     label: 'Desktop',
@@ -117,32 +106,6 @@ const chartConfig4 = {
   }
 } satisfies ChartConfig
 
-const chartConfig3 = {
-  visitors: {
-    label: 'Visitors'
-  },
-  chrome: {
-    label: 'Chrome',
-    color: 'hsl(var(--chart-1))'
-  },
-  safari: {
-    label: 'Safari',
-    color: 'hsl(var(--chart-2))'
-  },
-  firefox: {
-    label: 'Firefox',
-    color: 'hsl(var(--chart-3))'
-  },
-  edge: {
-    label: 'Edge',
-    color: 'hsl(var(--chart-4))'
-  },
-  other: {
-    label: 'Other',
-    color: 'hsl(var(--chart-5))'
-  }
-} satisfies ChartConfig
-
 export default function CapyEstadisticas() {
   const [selectedPeriod, setSelectedPeriod] = React.useState('sesion')
 
@@ -151,7 +114,7 @@ export default function CapyEstadisticas() {
   }
 
   const { objetivos, tiempo } = useObjetivos()
-
+  const { motivationType } = useMotivation()
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyEstadisticas!</h1>
@@ -248,14 +211,34 @@ export default function CapyEstadisticas() {
           </SelectContent>
         </Select>
       </div>
-
+      {/* Pagina se sesion */}
       {selectedPeriod === 'sesion' && (
         <>
-          {/* Tabla de objetivos de la sesión */}
-          <Table>
-            <TableCaption>
-              Información de los objetivos de la sesión
-            </TableCaption>
+          <Card className="container mx-auto mt-4 p-6 shadow-lg rounded-lg bg-gradient-to-br from-orange-100 to-blue-100">
+            <CardHeader>
+              <CardTitle className="text-3xl font-bold text-left mb-4">
+                Información de la Sesión
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex flex-col space-y-2">
+                <p className="text-lg font-semibold">Tiempo total: <span className="font-normal">00:00:00</span></p>
+                <p className="text-lg font-semibold">Tiempo total de descanso: <span className="font-normal">00:00:00</span></p>
+                <p className="text-lg font-semibold">Tipo de motivación: <span className="font-normal">{motivationType}</span></p>
+                <p className="text-lg font-semibold">Cantidad total de objetivos: <span className="font-normal">{objetivos.length}</span></p>
+              </div>
+              <div className="flex flex-col space-y-2">
+                <p className="text-lg font-semibold">Objetivos cumplidos: <span className="font-normal">{objetivos.length}</span></p>
+                <p className="text-lg font-semibold">Objetivos pendientes: <span className="font-normal">{objetivos.length}</span></p>
+                <p className="text-lg font-semibold">Cantidad de pomodoros: <span className="font-normal">0</span></p>
+                <p className="text-lg font-semibold">Cantidad de pausas: <span className="font-normal">0</span></p>
+              </div>
+              </CardContent>
+          <h2 className='ml-4 mt-4 flex w-full justify-start text-2xl font-bold'>
+            Objetivos de la sesion
+          </h2>
+          <Table className='mt-4'>
+            <TableCaption></TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead className='w-[100px]'>Objetivo</TableHead>
@@ -268,7 +251,10 @@ export default function CapyEstadisticas() {
                 <TableRow key={index}>
                   <TableCell className='font-medium'>{objetivo}</TableCell>
                   <TableCell>
-                    {tiempo[objetivo] === 0 ? 'Pendiente' : 'Cumplido'}
+                  {tiempo[objetivo] === 0 ? 
+                      <span className='text-yellow-600 font-semibold'>Pendiente</span> : 
+                      <span className='text-green-600 font-semibold'>Cumplido</span>
+                    }
                   </TableCell>
                   <TableCell className='text-right'>
                     {(() => {
@@ -289,8 +275,13 @@ export default function CapyEstadisticas() {
             </TableBody>
           </Table>
 
+
+          </Card>
+          {/* Tabla de objetivos de la sesión */}
+<hr />
+<hr />
           {/* Gráfico de sesión */}
-          <Card className='overflow-hidden rounded-lg shadow-lg'>
+          <Card className='mt-4 overflow-hidden rounded-lg shadow-lg'>
             <CardHeader className='bg-gradient-to-r from-orange-500 to-blue-600 text-white'>
               <CardTitle className='text-2xl font-bold'>
                 Tiempo dedicado a objetivos en la sesión actual
@@ -445,12 +436,8 @@ export default function CapyEstadisticas() {
         </>
       )}
 
-      {/* Agregar más condiciones para otros períodos (Bimestral, 6 Meses, Evento) */}
+    
 
-      {/* Información general que se muestra siempre */}
-      <p>Cantidad de pomodoros realizados: 3</p>
-      <p>Cantidad de pausas realizadas: 3</p>
-      <p>Tipo de motivo motivacion: positiva</p>
     </>
   )
 }
