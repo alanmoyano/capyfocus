@@ -1,12 +1,23 @@
 import { Button } from '@/components/ui/button'
 import { useLocation } from 'wouter'
+import { Progress } from "@/components/ui/progress"
+import {useEffect, useState} from 'react'
 
 export default function CapyInsignias() {
   const [, setLocation] = useLocation()
+  const [progress, setProgress] = useState(13)
 
   const handleVolver = () => {
     setLocation('/')
   }
+
+  useEffect(() => {
+    const timer = setTimeout(() => setProgress(66), 500)
+    return () => clearTimeout(timer)
+  }, [])
+
+
+
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyInsiginias!</h1>
@@ -38,12 +49,14 @@ export default function CapyInsignias() {
             </div>
             <div className='flip-card-back backface-hidden rotate-y-180 absolute flex h-full w-full flex-col items-center justify-center bg-gray-100 p-4'>
               <h3 className='mb-4 text-2xl font-bold'>CapyCard!</h3>
-              <h5 className='mb-4 text-xl font-bold'>
-                Para desbloquear esta insignia
-              </h5>
+
+              <p className=''>Prgreso: </p>
+              <Progress value={progress} className="w-3/4" />
               <p className='text-center'>
                 Selecciona 25 veces estudiar con motivación positiva
               </p>
+              
+              <Button >Desbloquear</Button>
             </div>
           </div>
         </div>
@@ -53,7 +66,7 @@ export default function CapyInsignias() {
         <Button className='mt-4' onClick={handleVolver}>
           Volver
         </Button>
-        <Button variant='secondary'> Desbloquear Insignia</Button>
+
       </div>
     </>
   )
