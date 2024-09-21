@@ -100,7 +100,7 @@ export default function Pomodoro() {
       pomodoroCount.current += 0.5
     }
 
-    if (objetivos.length === objCumplidos) {
+    if (objetivos.length === objCumplidos && objetivos.length > 0) {
       finalizarSesion()
     }
 

@@ -86,7 +86,7 @@ export default function Timer() {
         setSessionCountup(prev => prev + 1)
       }, 1000)
     }
-    if (objetivos.length === objCumplidos) {
+    if (objetivos.length === objCumplidos && objetivos.length > 0) {
       finalizarSesion()
     }
     return () => clearInterval(timer.current)
