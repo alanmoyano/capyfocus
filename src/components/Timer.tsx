@@ -46,6 +46,7 @@ export default function Timer() {
   const [tiempoObjAcumulado, setTiempoObjAcumulado] = useState(0)
   const [objCumplidos, setObjCumplidos] = useState(0)
   const [isActive, setIsActive] = useState<boolean | null>(true)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [mode, setMode] = useState<Mode>('Sesión')
   const timer = useRef<NodeJS.Timeout>()
   const { motivationType } = useMotivation()
@@ -59,15 +60,18 @@ export default function Timer() {
     objetivosFav,
     setTiempo,
     tiempo,
-    setTiempoSesion
+    setTiempoSesion,
+    setObjetivosPend
   } = useObjetivos()
   const [marked, setMarked] = useState<string[]>([])
   const { selectedMusic } = useMusic()
-  const { setTiempoTotal } = useSesion()
+  const { setTiempoTotal, setAcumuladorTiempoPausa, setCantidadPausas } =
+    useSesion()
 
   const finalizarSesion = () => {
     clearInterval(timer.current)
     setTiempoTotal(Sessioncountup)
+    setAcumuladorTiempoPausa(Breakcountup)
     objetivos.forEach(objetivo => {
       if (!tiempo[objetivo]) {
         setTiempo(prev => ({
@@ -81,8 +85,16 @@ export default function Timer() {
   }
 
   useEffect(() => {
+    setObjetivosPend(objetivos)
+  }, [])
+
+  useEffect(() => {
     if (!isActive) {
       setMode('Descanso')
+      // Esto esta hecho para que ts no joda pero es una barbaridad y debe ser cambiado lo antes posible
+      console.log(mode)
+      setCantidadPausas(prev => prev + 1)
+      console.log('pausaste')
       clearInterval(timer.current)
       timer.current = setInterval(() => {
         setBreakCountup(prev => prev + 1)
@@ -97,7 +109,7 @@ export default function Timer() {
       finalizarSesion()
     }
     return () => clearInterval(timer.current)
-  }, [isActive, mode, objetivos, objCumplidos])
+  }, [isActive])
 
   /* Esto es para que los botones si los tocas mas de una vez no hagan nada */
   const handleToggle = (value: boolean) => {
@@ -125,6 +137,9 @@ export default function Timer() {
     setMarked([...marked, objetivo])
     setObjCumplidos(prev => prev + 1)
     setTiempoObjAcumulado(prev => prev + (Sessioncountup - prev))
+    setObjetivosPend(prevObjetivosPend =>
+      prevObjetivosPend.filter(item => item !== objetivo)
+    )
 
     if (lastCheckedObj === null) {
       // clearInterval(timer.current)

@@ -52,6 +52,7 @@ import { ResponsiveContainer } from 'recharts'
 
 import { useMotivation } from '../hooks/MotivationContext'
 import { useMusic } from '../hooks/MusicContext'
+import { useSesion } from '@/hooks/SesionContext'
 
 const chartData = [
   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -114,9 +115,11 @@ export default function CapyEstadisticas() {
     setSelectedPeriod(value)
   }
 
-  const { objetivos, tiempo, tiempoSesion } = useObjetivos()
+  const { objetivos, objetivosPend, tiempo, tiempoSesion } = useObjetivos()
   const { motivationType } = useMotivation()
   const { selectedMusic } = useMusic()
+  const { tecnicaEstudio, tiempoTotal, acumuladorTiempoPausa, cantidadPausas } =
+    useSesion()
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyEstadisticas!</h1>
@@ -227,14 +230,15 @@ export default function CapyEstadisticas() {
               <div className='flex flex-col space-y-2'>
                 <p className='text-lg font-semibold'>
                   Tiempo total de estudio:{' '}
-                  <span className='font-normal'>Modificar</span>
+                  <span className='font-normal'>{tiempoTotal}</span>
                 </p>
                 <p className='text-lg font-semibold'>
                   Tiempo total de descanso:{' '}
-                  <span className='font-normal'>00:00:00</span>
+                  <span className='font-normal'>{acumuladorTiempoPausa}</span>
                 </p>
                 <p className='text-lg font-semibold'>
-                  Cantidad de pausas: <span className='font-normal'>0</span>
+                  Cantidad de pausas:{' '}
+                  <span className='font-normal'>{cantidadPausas}</span>
                 </p>
                 <p className='text-lg font-semibold'>
                   Tipo de motivación:{' '}
@@ -250,7 +254,7 @@ export default function CapyEstadisticas() {
               <div className='flex flex-col space-y-2'>
                 <p className='text-lg font-semibold'>
                   Tecnica de estudio:{' '}
-                  <span className='font-normal'>Modificar</span>
+                  <span className='font-normal'>{tecnicaEstudio}</span>
                 </p>
                 <p className='text-lg font-semibold'>
                   Cantidad total de objetivos:{' '}
@@ -258,11 +262,13 @@ export default function CapyEstadisticas() {
                 </p>
                 <p className='text-lg font-semibold'>
                   Objetivos cumplidos:{' '}
-                  <span className='font-normal'>{objetivos.length}</span>
+                  <span className='font-normal'>
+                    {objetivos.length - objetivosPend.length}
+                  </span>
                 </p>
                 <p className='text-lg font-semibold'>
                   Objetivos pendientes:{' '}
-                  <span className='font-normal'>{objetivos.length}</span>
+                  <span className='font-normal'>{objetivosPend.length}</span>
                 </p>
               </div>
             </CardContent>
