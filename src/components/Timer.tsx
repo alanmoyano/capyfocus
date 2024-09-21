@@ -131,8 +131,6 @@ export default function Timer() {
     setLastCheckedObj(key)
   }
 
-  console.log('hola')
-
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyMetro!</h1>
