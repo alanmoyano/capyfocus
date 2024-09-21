@@ -12,7 +12,7 @@ export const MotivationContext = createContext<MotivationData | undefined>(
 
 export const MotivationProvider = ({ children }: { children: ReactNode }) => {
   const [motivationType, setMotivationType] = useState('Positiva')
-
+  
   return (
     <MotivationContext.Provider value={{ motivationType, setMotivationType }}>
       {children}

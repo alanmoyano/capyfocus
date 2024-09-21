@@ -40,6 +40,7 @@ export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
 export default function Pomodoro() {
   const [sessionSeconds, setSessionSeconds] = useState(25 * 60)
   const [breakSeconds, setBreakSeconds] = useState(5 * 60)
+  const [objCumplidos, setObjCumplidos] = useState(0)
   const [countdown, setCountdown] = useState(sessionSeconds)
   const [isActive, setIsActive] = useState(false)
   const [mode, setMode] = useState<Mode>('Estudiando')
@@ -49,6 +50,25 @@ export default function Pomodoro() {
   const [ObjStudyTime, setObjStudyTime] = useState(0)
   const { selectedMusic } = useMusic()
   const { motivationType } = useMotivation()
+  const { objetivos, setObjetivos, objetivosFav, setTiempo, tiempo } =
+    useObjetivos()
+  const [marked, setMarked] = useState<string[]>([])
+  const [, setLocation] = useLocation()
+
+  const finalizarSesion = () => {
+    clearInterval(timer.current)
+    setSessionSeconds(0)
+    setBreakSeconds(0)
+    objetivos.forEach(objetivo => {
+      if (!tiempo[objetivo]) {
+        setTiempo(prev => ({
+          ...prev,
+          [objetivo]: 0
+        }))
+      }
+    })
+    setLocation('/capyEstadisticas')
+  }
 
   //Revisar el funcionamiento de esta cosa!!!
 
@@ -80,16 +100,25 @@ export default function Pomodoro() {
       pomodoroCount.current += 0.5
     }
 
+    if (objetivos.length === objCumplidos) {
+      finalizarSesion()
+    }
+
     return () => clearInterval(timer.current)
-  }, [isActive, countdown, sessionSeconds, breakSeconds, mode, capySound])
+  }, [
+    isActive,
+    countdown,
+    sessionSeconds,
+    breakSeconds,
+    mode,
+    capySound,
+    objCumplidos
+  ])
 
   useEffect(() => {
     setCountdown(mode === 'Estudiando' ? sessionSeconds : breakSeconds)
   }, [mode, sessionSeconds, breakSeconds])
 
-  const { objetivos, setObjetivos, objetivosFav, setTiempo } = useObjetivos()
-  const [marked, setMarked] = useState<string[]>([])
-  const [, setLocation] = useLocation()
   const handleAccept = () => {
     setLocation('/')
     setObjetivos(prevObjetivos =>
@@ -103,7 +132,7 @@ export default function Pomodoro() {
       return
     }
     setMarked([...marked, objetivo])
-    //const timeSinceActive = sessionSeconds - countdown
+    setObjCumplidos(prev => prev + 1)
     console.log(
       'Checkbox activado para objetivo:',
       objetivo,
@@ -240,7 +269,11 @@ export default function Pomodoro() {
               <Button onClick={handleAccept}>Volver</Button>
             </div>
             <div className='flex justify-end'>
-              <Button className='' variant={'destructive'}>
+              <Button
+                className=''
+                variant={'destructive'}
+                onClick={finalizarSesion}
+              >
                 Finalizar Sesion
               </Button>
             </div>

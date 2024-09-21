@@ -51,6 +51,8 @@ import { ChartLegend, ChartLegendContent } from '@/components/ui/chart'
 import { ResponsiveContainer } from 'recharts'
 
 import { useMotivation } from './MotivationContext'
+import { useMusic } from './MusicContext'
+
 
 const chartData = [
   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -115,6 +117,7 @@ export default function CapyEstadisticas() {
 
   const { objetivos, tiempo } = useObjetivos()
   const { motivationType } = useMotivation()
+  const { selectedMusic } = useMusic()
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyEstadisticas!</h1>
@@ -214,72 +217,98 @@ export default function CapyEstadisticas() {
       {/* Pagina se sesion */}
       {selectedPeriod === 'sesion' && (
         <>
-          <Card className="container mx-auto mt-4 p-6 shadow-lg rounded-lg bg-gradient-to-br from-orange-100 to-blue-100">
+          <Card className='container mx-auto mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 p-6 shadow-lg'>
             <CardHeader>
-              <CardTitle className="text-3xl font-bold text-left mb-4">
+              <CardTitle className='mb-4 text-left text-3xl font-bold'>
                 Información de la Sesión
               </CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex flex-col space-y-2">
-                <p className="text-lg font-semibold">Tiempo total de estudio: <span className="font-normal">00:00:00</span></p>
-                <p className="text-lg font-semibold">Tiempo total de descanso: <span className="font-normal">00:00:00</span></p>
-                <p className="text-lg font-semibold">Tipo de motivación: <span className="font-normal">{motivationType}</span></p>
-                <p className="text-lg font-semibold">Cantidad total de objetivos: <span className="font-normal">{objetivos.length}</span></p>
-              </div>
-              <div className="flex flex-col space-y-2">
-                <p className="text-lg font-semibold">Objetivos cumplidos: <span className="font-normal">{objetivos.length}</span></p>
-                <p className="text-lg font-semibold">Objetivos pendientes: <span className="font-normal">{objetivos.length}</span></p>
-                <p className="text-lg font-semibold">Cantidad de pomodoros: <span className="font-normal">0</span></p>
-                <p className="text-lg font-semibold">Cantidad de pausas: <span className="font-normal">0</span></p>
-              </div>
-              </CardContent>
-          <h2 className='ml-4 mt-4 flex w-full justify-start text-2xl font-bold'>
-            Objetivos de la sesion
-          </h2>
-          <Table className='mt-4'>
-            <TableCaption></TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className='w-[100px]'>Objetivo</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead className='text-right'>Tiempo</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {objetivos.map((objetivo, index) => (
-                <TableRow key={index}>
-                  <TableCell className='font-medium'>{objetivo}</TableCell>
-                  <TableCell>
-                  {tiempo[objetivo] === 0 ? 
-                      <span className='text-yellow-600 font-semibold'>Pendiente</span> : 
-                      <span className='text-green-600 font-semibold'>Cumplido</span>
-                    }
-                  </TableCell>
-                  <TableCell className='text-right'>
-                    {(() => {
-                      const time = tiempo[objetivo] || 0
-                      const hours = Math.floor(time / 3600)
-                      const minutes = Math.floor((time % 3600) / 60)
-                      const seconds = time % 60
 
-                      if (hours > 0) {
-                        return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-                      } else {
-                        return `${minutes}:${seconds.toString().padStart(2, '0')}`
-                      }
-                    })()}
-                  </TableCell>
+            <CardContent className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+              <div className='flex flex-col space-y-2'>
+                <p className='text-lg font-semibold'>
+                  Tiempo total: <span className='font-normal'>00:00:00</span>
+                </p>
+                <p className='text-lg font-semibold'>
+                  Tiempo total de descanso:{' '}
+                  <span className='font-normal'>00:00:00</span>
+                </p>
+                <p className='text-lg font-semibold'>
+                  Tipo de motivación:{' '}
+                  <span className='font-normal'>{motivationType}</span>
+                </p>
+                <p className='text-lg font-semibold'>
+                  Cantidad total de objetivos:{' '}
+                  <span className='font-normal'>{objetivos.length}</span>
+                </p>
+
+              </div>
+              <div className='flex flex-col space-y-2'>
+                <p className='text-lg font-semibold'>
+                  Objetivos cumplidos:{' '}
+                  <span className='font-normal'>{objetivos.length}</span>
+                </p>
+                <p className='text-lg font-semibold'>
+                  Objetivos pendientes:{' '}
+                  <span className='font-normal'>{objetivos.length}</span>
+                </p>
+                <p className='text-lg font-semibold'>
+                  Musica: <span className='font-normal'>{selectedMusic?.title || 'sin musica'}</span>
+                </p>
+                <p className='text-lg font-semibold'>
+                  Cantidad de pausas: <span className='font-normal'>0</span>
+                </p>
+              </div>
+            </CardContent>
+            <h2 className='ml-4 mt-4 flex w-full justify-start text-2xl font-bold'>
+              Objetivos de la sesion
+            </h2>
+            <Table className='mt-4'>
+              <TableCaption></TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className='w-[100px]'>Objetivo</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead className='text-right'>Tiempo</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {objetivos.map((objetivo, index) => (
+                  <TableRow key={index}>
+                    <TableCell className='font-medium'>{objetivo}</TableCell>
+                    <TableCell>
+                      {tiempo[objetivo] === 0 ? (
+                        <span className='font-semibold text-yellow-600'>
+                          Pendiente
+                        </span>
+                      ) : (
+                        <span className='font-semibold text-green-600'>
+                          Cumplido
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell className='text-right'>
+                      {(() => {
+                        const time = tiempo[objetivo] || 0
+                        const hours = Math.floor(time / 3600)
+                        const minutes = Math.floor((time % 3600) / 60)
+                        const seconds = time % 60
 
-
+                        if (hours > 0) {
+                          return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+                        } else {
+                          return `${minutes}:${seconds.toString().padStart(2, '0')}`
+                        }
+                      })()}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </Card>
           {/* Tabla de objetivos de la sesión */}
-<hr />
-<hr />
+          <hr />
+          <hr />
           {/* Gráfico de sesión */}
           <Card className='mt-4 overflow-hidden rounded-lg shadow-lg'>
             <CardHeader className='bg-gradient-to-r from-orange-500 to-blue-600 text-white'>
@@ -310,6 +339,7 @@ export default function CapyEstadisticas() {
                             chartConfig1[Object.keys(chartConfig1)[index + 1]]
                               ?.color || `hsl(${index * 90}, 70%, 60%)`
                           }
+                          name={objetivo}
                         />
                       ))}
                     </Pie>
@@ -435,9 +465,6 @@ export default function CapyEstadisticas() {
           </Card>
         </>
       )}
-
-    
-
     </>
   )
 }
