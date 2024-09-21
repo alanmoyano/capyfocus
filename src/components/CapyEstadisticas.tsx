@@ -294,6 +294,7 @@ export default function CapyEstadisticas() {
                 </p>
               </div>
             </CardContent>
+                {/* Tabla de objetivos de la sesión */}
             <h2 className='ml-4 mt-4 flex w-full justify-start text-2xl font-bold'>
               Objetivos de la sesion
             </h2>
@@ -355,7 +356,6 @@ export default function CapyEstadisticas() {
               </TableBody>
             </Table>
           </Card>
-          {/* Tabla de objetivos de la sesión */}
           <hr />
           <hr />
           {/* Gráfico de sesión */}
