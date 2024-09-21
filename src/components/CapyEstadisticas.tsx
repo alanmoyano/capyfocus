@@ -230,11 +230,33 @@ export default function CapyEstadisticas() {
               <div className='flex flex-col space-y-2'>
                 <p className='text-lg font-semibold'>
                   Tiempo total de estudio:{' '}
-                  <span className='font-normal'>{tiempoTotal}</span>
+                  {(() => {
+                    const time = tiempoTotal || 0
+                    const hours = Math.floor(time / 3600)
+                    const minutes = Math.floor((time % 3600) / 60)
+                    const seconds = time % 60
+
+                    if (hours > 0) {
+                      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+                    } else {
+                      return `${minutes}:${seconds.toString().padStart(2, '0')}`
+                    }
+                  })()}{' '}
                 </p>
                 <p className='text-lg font-semibold'>
                   Tiempo total de descanso:{' '}
-                  <span className='font-normal'>{acumuladorTiempoPausa}</span>
+                  {(() => {
+                    const time = acumuladorTiempoPausa || 0
+                    const hours = Math.floor(time / 3600)
+                    const minutes = Math.floor((time % 3600) / 60)
+                    const seconds = time % 60
+
+                    if (hours > 0) {
+                      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+                    } else {
+                      return `${minutes}:${seconds.toString().padStart(2, '0')}`
+                    }
+                  })()}
                 </p>
                 <p className='text-lg font-semibold'>
                   Cantidad de pausas:{' '}
