@@ -53,7 +53,6 @@ import { ResponsiveContainer } from 'recharts'
 import { useMotivation } from './MotivationContext'
 import { useMusic } from './MusicContext'
 
-
 const chartData = [
   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
   { browser: 'BasedeDatos', visitors: 200, fill: 'var(--color-safari)' },
@@ -241,7 +240,6 @@ export default function CapyEstadisticas() {
                   Cantidad total de objetivos:{' '}
                   <span className='font-normal'>{objetivos.length}</span>
                 </p>
-
               </div>
               <div className='flex flex-col space-y-2'>
                 <p className='text-lg font-semibold'>
@@ -253,7 +251,10 @@ export default function CapyEstadisticas() {
                   <span className='font-normal'>{objetivos.length}</span>
                 </p>
                 <p className='text-lg font-semibold'>
-                  Musica: <span className='font-normal'>{selectedMusic?.title || 'sin musica'}</span>
+                  Musica:{' '}
+                  <span className='font-normal'>
+                    {selectedMusic?.title || 'sin musica'}
+                  </span>
                 </p>
                 <p className='text-lg font-semibold'>
                   Cantidad de pausas: <span className='font-normal'>0</span>
