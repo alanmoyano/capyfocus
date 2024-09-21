@@ -8,6 +8,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 //import { navigationMenuTriggerStyle } from './ui/navigit pull gation-menu'
 import { useMusic } from './MusicContext'
 import { useMotivation } from './MotivationContext'
+import { parseScale } from 'recharts/types/util/ChartUtils'
 
 //import Confetti from 'react-confetti-boom'
 
@@ -53,16 +54,23 @@ export default function Timer() {
   const [, setDescription] = useState<Accion>('Estudiar')
   const [, setLocation] = useLocation()
   const [lastCheckedObj, setLastCheckedObj] = useState<number | null>(null)
-  const { objetivos, setObjetivos, objetivosFav, setTiempo } = useObjetivos()
+  const { objetivos, setObjetivos, objetivosFav, setTiempo, tiempo } = useObjetivos()
   const [marked, setMarked] = useState<string[]>([])
   const { selectedMusic } = useMusic()
 
   const finalizarSesion = () => {
     clearInterval(timer.current)
-    console.log(`Has estudiado durante ${formatTime(Sessioncountup)} `)
-    console.log(`Has descansado durante ${formatTime(Breakcountup)}`)
     setBreakCountup(0)
     setSessionCountup(0)
+    objetivos.forEach((objetivo) => {
+      if (!tiempo[objetivo]){
+        setTiempo(prev => ({
+          ...prev,
+          [objetivo]: 0
+        }))
+      }
+  }
+  )
     setLocation('/capyEstadisticas')
   }
 
@@ -70,7 +78,6 @@ export default function Timer() {
     if (!isActive) {
       setMode('Descanso')
       clearInterval(timer.current)
-      console.log('hola')
       timer.current = setInterval(() => {
         setBreakCountup(prev => prev + 1)
       }, 1000)
@@ -78,7 +85,6 @@ export default function Timer() {
       setMode('Sesión')
       timer.current = setInterval(() => {
         setSessionCountup(prev => prev + 1)
-        //console.log('Hola, este es tu tiempo de estudio', Sessioncountup)
       }, 1000)
     }
     if (objetivos.length === objCumplidos) {
@@ -111,10 +117,7 @@ export default function Timer() {
       return
     }
     setMarked([...marked, objetivo])
-    /*console.log('Checkbox activado para objetivo:', objetivo, ', Key:', key, 'Tiempo:', Sessioncountup)
-    if (lastCheckedObj !==null) {console.log('lastCheckedKey:', lastCheckedObj, 'tiempo: ',  Math.abs(tiempo[objetivos[lastCheckedObj]]), 'Resta:', Sessioncountup - tiempo[objetivos[lastCheckedObj]])}
-    */
-    //setObjCumplidos(prev => prev + 1)
+    setObjCumplidos(prev => prev + 1)
     setTiempoAcumulado(prev => prev + (Sessioncountup - prev))
 
     if (lastCheckedObj === null) {
@@ -125,13 +128,9 @@ export default function Timer() {
         ...prev,
         [objetivo]: Sessioncountup - tiempoAcumulado
       }))
-      console.log(objCumplidos)
     }
     setLastCheckedObj(key)
   }
-
-  //console.log(' El tipo de motivacion seleccionada es: ', motivationType)
-  console.log('Cantidad de objetivos cumplidos', objCumplidos)
 
   return (
     <>
@@ -209,7 +208,6 @@ export default function Timer() {
                     <Checkbox
                       checked={marked.includes(objetivo)}
                       onClick={() => {
-                        setObjCumplidos(prev => prev + 1)
                         handleCheckbox(objetivo, key)
                       }}
                       className='mr-2'
