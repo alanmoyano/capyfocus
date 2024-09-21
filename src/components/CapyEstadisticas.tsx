@@ -51,6 +51,8 @@ import { ChartLegend, ChartLegendContent } from '@/components/ui/chart'
 import { ResponsiveContainer } from 'recharts'
 
 import { useMotivation } from './MotivationContext'
+import { useMusic } from './MusicContext'
+
 
 const chartData = [
   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -115,6 +117,7 @@ export default function CapyEstadisticas() {
 
   const { objetivos, tiempo } = useObjetivos()
   const { motivationType } = useMotivation()
+  const { selectedMusic } = useMusic()
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyEstadisticas!</h1>
@@ -220,6 +223,7 @@ export default function CapyEstadisticas() {
                 Información de la Sesión
               </CardTitle>
             </CardHeader>
+
             <CardContent className='grid grid-cols-1 gap-4 md:grid-cols-2'>
               <div className='flex flex-col space-y-2'>
                 <p className='text-lg font-semibold'>
@@ -237,6 +241,7 @@ export default function CapyEstadisticas() {
                   Cantidad total de objetivos:{' '}
                   <span className='font-normal'>{objetivos.length}</span>
                 </p>
+
               </div>
               <div className='flex flex-col space-y-2'>
                 <p className='text-lg font-semibold'>
@@ -248,7 +253,7 @@ export default function CapyEstadisticas() {
                   <span className='font-normal'>{objetivos.length}</span>
                 </p>
                 <p className='text-lg font-semibold'>
-                  Cantidad de pomodoros: <span className='font-normal'>0</span>
+                  Musica: <span className='font-normal'>{selectedMusic?.title || 'sin musica'}</span>
                 </p>
                 <p className='text-lg font-semibold'>
                   Cantidad de pausas: <span className='font-normal'>0</span>
