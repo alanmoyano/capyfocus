@@ -9,7 +9,6 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { useMusic } from './MusicContext'
 import { useMotivation } from './MotivationContext'
 
-
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Sesión' | 'Descanso'
@@ -41,12 +40,6 @@ export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
   )
 }
 
-
-
-
-
-
-
 export default function Timer() {
   const [Sessioncountup, setSessionCountup] = useState(0)
   const [Breakcountup, setBreakCountup] = useState(0)
@@ -60,8 +53,7 @@ export default function Timer() {
   const [, setDescription] = useState<Accion>('Estudiar')
   const [, setLocation] = useLocation()
   const [lastCheckedObj, setLastCheckedObj] = useState<number | null>(null)
-  const { objetivos, setObjetivos, objetivosFav, setTiempo} =
-    useObjetivos()
+  const { objetivos, setObjetivos, objetivosFav, setTiempo } = useObjetivos()
   const [marked, setMarked] = useState<string[]>([])
   const { selectedMusic } = useMusic()
 
@@ -89,8 +81,11 @@ export default function Timer() {
         //console.log('Hola, este es tu tiempo de estudio', Sessioncountup)
       }, 1000)
     }
+    if (objetivos.length === objCumplidos) {
+      finalizarSesion()
+    }
     return () => clearInterval(timer.current)
-  }, [isActive, mode])
+  }, [isActive, mode, objetivos, objCumplidos])
 
   /* Esto es para que los botones si los tocas mas de una vez no hagan nada */
   const handleToggle = (value: boolean) => {
@@ -102,8 +97,6 @@ export default function Timer() {
   // useEffect(() => {
   //   setCountdown(mode === 'Session' ? sessionSeconds : breakSeconds)
   // }, [mode, sessionSeconds, breakSeconds])
-
-
 
   const handleAccept = () => {
     setLocation('/')
@@ -121,8 +114,8 @@ export default function Timer() {
     /*console.log('Checkbox activado para objetivo:', objetivo, ', Key:', key, 'Tiempo:', Sessioncountup)
     if (lastCheckedObj !==null) {console.log('lastCheckedKey:', lastCheckedObj, 'tiempo: ',  Math.abs(tiempo[objetivos[lastCheckedObj]]), 'Resta:', Sessioncountup - tiempo[objetivos[lastCheckedObj]])}
     */
-    setObjCumplidos(prev => prev + 1)
-    setTiempoAcumulado((prev) => prev + (Sessioncountup - prev))
+    //setObjCumplidos(prev => prev + 1)
+    setTiempoAcumulado(prev => prev + (Sessioncountup - prev))
 
     if (lastCheckedObj === null) {
       // clearInterval(timer.current)
@@ -133,15 +126,9 @@ export default function Timer() {
         [objetivo]: Sessioncountup - tiempoAcumulado
       }))
       console.log(objCumplidos)
-      if(objetivos.length === objCumplidos){
-        finalizarSesion()
-      }
     }
     setLastCheckedObj(key)
-
-
   }
-
 
   //console.log(' El tipo de motivacion seleccionada es: ', motivationType)
   console.log('Cantidad de objetivos cumplidos', objCumplidos)

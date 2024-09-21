@@ -536,7 +536,10 @@ export default function Inicio() {
                             onSelect={currentValue => {
                               setOpen(false)
                               setInputValue('')
-                              if (!objetivos.includes(currentValue) && objetivos.length < 10)
+                              if (
+                                !objetivos.includes(currentValue) &&
+                                objetivos.length < 10
+                              )
                                 setObjetivos([...objetivos, currentValue])
                             }}
                           >
@@ -643,7 +646,9 @@ export default function Inicio() {
               </ul>
             </div>
             {objetivos.length >= 10 && (
-              <p className="text-red-500 mt-2">Has alcanzado el límite de 10 objetivos.</p>
+              <p className='mt-2 text-red-500'>
+                Has alcanzado el límite de 10 objetivos.
+              </p>
             )}
           </div>
           <div className='mt-6 flex items-center justify-center'>

@@ -10,7 +10,6 @@ import useSound from 'use-sound'
 import { useMusic } from './MusicContext'
 import { useMotivation } from './MotivationContext'
 
-
 type Mode = 'Estudiando' | 'Descansando'
 
 function addZeroIfNeeded(value: number) {
@@ -220,8 +219,7 @@ export default function Pomodoro() {
             <ul className='list-inside list-disc space-y-2 text-black'>
               {objetivos.map((objetivo, key) => (
                 <li key={key} className='flex items-center space-x-2'>
-                  <span className="flex items-center">
-
+                  <span className='flex items-center'>
                     <Checkbox
                       checked={marked.includes(objetivo)}
                       disabled={mode === 'Descansando' || !isActive}

@@ -8,8 +8,8 @@ import {
   TableRow
 } from '@/components/ui/table'
 
-
 import { Bar, BarChart, LabelList } from 'recharts'
+
 import {
   Card,
   CardContent,
@@ -44,14 +44,13 @@ import {
   TooltipTrigger
 } from '@/components/ui/tooltip'
 
-
-
 import { useObjetivos } from './ObjetivosContext'
 
 import { ChartLegend, ChartLegendContent } from '@/components/ui/chart'
 
 import { ResponsiveContainer } from 'recharts'
 
+import { useMotivation } from './MotivationContext'
 
 const chartData = [
   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -96,8 +95,6 @@ const chartData1 = [
   { month: 'Junio', desktop: 214, mobile: 140 }
 ]
 
-
-
 const chartConfig4 = {
   desktop: {
     label: 'Desktop',
@@ -109,8 +106,6 @@ const chartConfig4 = {
   }
 } satisfies ChartConfig
 
-
-
 export default function CapyEstadisticas() {
   const [selectedPeriod, setSelectedPeriod] = React.useState('sesion')
 
@@ -119,20 +114,23 @@ export default function CapyEstadisticas() {
   }
 
   const { objetivos, tiempo } = useObjetivos()
-  
+  const { motivationType } = useMotivation()
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyEstadisticas!</h1>
       {/* Seleccion de tiempo */}
-      <div className='flex w-full mt-8'>
-        <Select onValueChange={value => handleSelect(value)} defaultValue='sesion'>
-          <SelectTrigger className='ml-4 w-[280px]' >
-            <SelectValue placeholder='Selecciona un periodo'  />
+      <div className='mt-8 flex w-full'>
+        <Select
+          onValueChange={value => handleSelect(value)}
+          defaultValue='sesion'
+        >
+          <SelectTrigger className='ml-4 w-[280px]'>
+            <SelectValue placeholder='Selecciona un periodo' />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Periodo de tiempo</SelectLabel>
-              <SelectItem key={0} value='sesion' >
+              <SelectItem key={0} value='sesion'>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -216,9 +214,31 @@ export default function CapyEstadisticas() {
       {/* Pagina se sesion */}
       {selectedPeriod === 'sesion' && (
         <>
-          {/* Tabla de objetivos de la sesión */}
+          <Card className="container mx-auto mt-4 p-6 shadow-lg rounded-lg bg-gradient-to-br from-orange-100 to-blue-100">
+            <CardHeader>
+              <CardTitle className="text-3xl font-bold text-left mb-4">
+                Información de la Sesión
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex flex-col space-y-2">
+                <p className="text-lg font-semibold">Tiempo total: <span className="font-normal">00:00:00</span></p>
+                <p className="text-lg font-semibold">Tiempo total de descanso: <span className="font-normal">00:00:00</span></p>
+                <p className="text-lg font-semibold">Tipo de motivación: <span className="font-normal">{motivationType}</span></p>
+                <p className="text-lg font-semibold">Cantidad total de objetivos: <span className="font-normal">{objetivos.length}</span></p>
+              </div>
+              <div className="flex flex-col space-y-2">
+                <p className="text-lg font-semibold">Objetivos cumplidos: <span className="font-normal">{objetivos.length}</span></p>
+                <p className="text-lg font-semibold">Objetivos pendientes: <span className="font-normal">{objetivos.length}</span></p>
+                <p className="text-lg font-semibold">Cantidad de pomodoros: <span className="font-normal">0</span></p>
+                <p className="text-lg font-semibold">Cantidad de pausas: <span className="font-normal">0</span></p>
+              </div>
+              </CardContent>
+          <h2 className='ml-4 mt-4 flex w-full justify-start text-2xl font-bold'>
+            Objetivos de la sesion
+          </h2>
           <Table className='mt-4'>
-            <TableCaption>Información de los objetivos de la sesión</TableCaption>
+            <TableCaption></TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead className='w-[100px]'>Objetivo</TableHead>
@@ -230,18 +250,23 @@ export default function CapyEstadisticas() {
               {objetivos.map((objetivo, index) => (
                 <TableRow key={index}>
                   <TableCell className='font-medium'>{objetivo}</TableCell>
-                  <TableCell>{tiempo[objetivo] === 0 ? 'Pendiente' : 'Cumplido'}</TableCell>
+                  <TableCell>
+                  {tiempo[objetivo] === 0 ? 
+                      <span className='text-yellow-600 font-semibold'>Pendiente</span> : 
+                      <span className='text-green-600 font-semibold'>Cumplido</span>
+                    }
+                  </TableCell>
                   <TableCell className='text-right'>
                     {(() => {
-                      const time = tiempo[objetivo] || 0;
-                      const hours = Math.floor(time / 3600);
-                      const minutes = Math.floor((time % 3600) / 60);
-                      const seconds = time % 60;
-                      
+                      const time = tiempo[objetivo] || 0
+                      const hours = Math.floor(time / 3600)
+                      const minutes = Math.floor((time % 3600) / 60)
+                      const seconds = time % 60
+
                       if (hours > 0) {
-                        return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                        return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
                       } else {
-                        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                        return `${minutes}:${seconds.toString().padStart(2, '0')}`
                       }
                     })()}
                   </TableCell>
@@ -250,19 +275,21 @@ export default function CapyEstadisticas() {
             </TableBody>
           </Table>
 
-          <div>
-            <h2>Informacion de la sesion</h2>
-            
-          </div>
 
+          </Card>
+          {/* Tabla de objetivos de la sesión */}
+<hr />
+<hr />
           {/* Gráfico de sesión */}
-          <Card className="shadow-lg rounded-lg overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-orange-500 to-blue-600 text-white">
-              <CardTitle className="text-2xl font-bold">Tiempo dedicado a objetivos en la sesión actual</CardTitle>
+          <Card className='mt-4 overflow-hidden rounded-lg shadow-lg'>
+            <CardHeader className='bg-gradient-to-r from-orange-500 to-blue-600 text-white'>
+              <CardTitle className='text-2xl font-bold'>
+                Tiempo dedicado a objetivos en la sesión actual
+              </CardTitle>
             </CardHeader>
-            <CardContent className="p-4">
+            <CardContent className='p-4'>
               <ChartContainer config={chartConfig1}>
-                <ResponsiveContainer width="100%" height={400}>
+                <ResponsiveContainer width='100%' height={400}>
                   <PieChart>
                     <Pie
                       data={objetivos.map(objetivo => ({
@@ -270,14 +297,19 @@ export default function CapyEstadisticas() {
                         value: tiempo[objetivo] || 0
                       }))}
                       labelLine={false}
-                      outerRadius="80%"
-                      dataKey="value"
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      outerRadius='80%'
+                      dataKey='value'
+                      label={({ name, percent }) =>
+                        `${name} ${(percent * 100).toFixed(0)}%`
+                      }
                     >
                       {objetivos.map((objetivo, index) => (
-                        <Cell 
-                          key={`cell-${index}`} 
-                          fill={chartConfig1[Object.keys(chartConfig1)[index + 1]]?.color || `hsl(${index * 90}, 70%, 60%)`}
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={
+                            chartConfig1[Object.keys(chartConfig1)[index + 1]]
+                              ?.color || `hsl(${index * 90}, 70%, 60%)`
+                          }
                         />
                       ))}
                     </Pie>
@@ -305,7 +337,9 @@ export default function CapyEstadisticas() {
               >
                 <PieChart>
                   <ChartTooltip
-                    content={<ChartTooltipContent nameKey='visitors' hideLabel />}
+                    content={
+                      <ChartTooltipContent nameKey='visitors' hideLabel />
+                    }
                   />
                   <Pie data={chartData} dataKey='visitors'>
                     <LabelList
@@ -381,7 +415,11 @@ export default function CapyEstadisticas() {
                     cursor={false}
                     content={<ChartTooltipContent indicator='dashed' />}
                   />
-                  <Bar dataKey='desktop' fill='var(--color-desktop)' radius={4} />
+                  <Bar
+                    dataKey='desktop'
+                    fill='var(--color-desktop)'
+                    radius={4}
+                  />
                   <Bar dataKey='mobile' fill='var(--color-mobile)' radius={4} />
                 </BarChart>
               </ChartContainer>
@@ -398,12 +436,8 @@ export default function CapyEstadisticas() {
         </>
       )}
 
-      {/* Agregar más condiciones para otros períodos (Bimestral, 6 Meses, Evento) */}
+    
 
-      {/* Información general que se muestra siempre */}
-      <p>Cantidad de pomodoros realizados: 3</p>
-      <p>Cantidad de pausas realizadas: 3</p>
-      <p>Tipo de motivo motivacion: positiva</p>
     </>
   )
 }
