@@ -8,7 +8,6 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 //import { navigationMenuTriggerStyle } from './ui/navigit pull gation-menu'
 import { useMusic } from './MusicContext'
 import { useMotivation } from './MotivationContext'
-import { parseScale } from 'recharts/types/util/ChartUtils'
 
 //import Confetti from 'react-confetti-boom'
 
@@ -54,7 +53,8 @@ export default function Timer() {
   const [, setDescription] = useState<Accion>('Estudiar')
   const [, setLocation] = useLocation()
   const [lastCheckedObj, setLastCheckedObj] = useState<number | null>(null)
-  const { objetivos, setObjetivos, objetivosFav, setTiempo, tiempo } = useObjetivos()
+  const { objetivos, setObjetivos, objetivosFav, setTiempo, tiempo } =
+    useObjetivos()
   const [marked, setMarked] = useState<string[]>([])
   const { selectedMusic } = useMusic()
 
@@ -62,15 +62,14 @@ export default function Timer() {
     clearInterval(timer.current)
     setBreakCountup(0)
     setSessionCountup(0)
-    objetivos.forEach((objetivo) => {
-      if (!tiempo[objetivo]){
+    objetivos.forEach(objetivo => {
+      if (!tiempo[objetivo]) {
         setTiempo(prev => ({
           ...prev,
           [objetivo]: 0
         }))
       }
-  }
-  )
+    })
     setLocation('/capyEstadisticas')
   }
 
