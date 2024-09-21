@@ -1,4 +1,4 @@
-import { KeyboardEvent, useState } from 'react'
+import { KeyboardEvent, useEffect, useState } from 'react'
 
 import { useLocation } from 'wouter'
 
@@ -231,12 +231,23 @@ export default function Inicio() {
 
   const { setSelectedMusic } = useMusic()
 
-  const handleMusicSelection = (music: {
-    title: string
-    spotifyUri: string
-  }) => {
-    setSelectedMusic(music)
+  const handleMusicSelection = (
+    music: {
+      title: string
+      spotifyUri: string
+    },
+    idPlaylist: number
+  ) => {
+    if (idPlaylist === selectedPlaylist) {
+      setSelectedMusic(null)
+    } else {
+      setSelectedMusic(music)
+    }
   }
+
+  useEffect(() => {
+    setSelectedMusic(null)
+  }, [])
 
   return (
     <>
@@ -707,10 +718,13 @@ export default function Inicio() {
                     key={item.key}
                     className='cursor-pointer'
                     onClick={() => {
-                      handleMusicSelection({
-                        title: item.title,
-                        spotifyUri: item.spotifyUri
-                      })
+                      handleMusicSelection(
+                        {
+                          title: item.title,
+                          spotifyUri: item.spotifyUri
+                        },
+                        item.key
+                      )
                       setSelectedPlaylist(prev =>
                         prev === item.key ? -1 : item.key
                       )
