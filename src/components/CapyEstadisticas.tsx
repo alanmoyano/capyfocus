@@ -516,7 +516,7 @@ export default function CapyEstadisticas() {
       )}
       {selectedPeriod === 'bimestral' && (
         <>
-          <Card className='container mx-auto mt-4 rounded-lg bg-secondary p-6 shadow-lg flex-col overflow-y-auto'>
+          <Card className='container mx-auto mt-4 rounded-lg bg-orange-100 p-6 shadow-lg flex-col overflow-y-auto'>
               <CardHeader>
                 <CardTitle className='mb-4 text-left text-3xl font-bold py-4'>
                   Tu progreso en los últimos dos meses
@@ -590,7 +590,18 @@ export default function CapyEstadisticas() {
                   </div>
               </div>
               <div className='w-1/3 pr-6 ml-2'>
-                  <Card className='w-full'>
+              <Card className='w-auto '>
+                  {/* Por ahora me ganó el borde del calendario. Ver si mostramos las sesiones en el cal*/}
+                    <div className='text-center'>
+                      <Calendar
+                          mode='single'
+                          selected={date}
+                          onSelect={setDate}
+                          className='rounded-lg shadow-sm border p-4 inline-block'
+                        />
+                     </div>
+                  </Card>
+                  <Card className='w-full mt-8 shadow-md rounded-lg'>
                     <CardHeader>
                       <CardTitle className='text-center p-2'>Objetivos Cumplidos vs Pendientes</CardTitle>
                       <CardDescription className='text-center'>Últimos dos meses</CardDescription>
@@ -625,17 +636,7 @@ export default function CapyEstadisticas() {
                       </div>
                     </CardFooter>
                   </Card>
-                  <Card className='w-auto mt-8'>
-                    <p> Me gano el borde este del calendario! ver si vamos a mostrar las sesiones en el cal</p>
-                    <div className='text-center'>
-                      <Calendar
-                          mode='single'
-                          selected={date}
-                          onSelect={setDate}
-                          className='rounded-md border p-4 inline-block'
-                        />
-                     </div>
-                  </Card>
+                  
               </div>
               </CardContent>
           </Card>
@@ -719,6 +720,7 @@ export default function CapyEstadisticas() {
               <div className='w-1/3 pr-6 ml-2'>
                   <Card className='w-full'>
                     <CardHeader>
+                       {/* Si bien es redundante considerando los titulos, esta bueno tener algo visual tambien!! ver <3 */}
                       <CardTitle className='text-center p-2'>Objetivos Cumplidos vs Pendientes</CardTitle>
                       <CardDescription className='text-center'>Últimos seis meses</CardDescription>
                     </CardHeader>
@@ -753,7 +755,7 @@ export default function CapyEstadisticas() {
                     </CardFooter>
                   </Card>
                   <Card className='w-auto mt-8'>
-                    <p> Me gano el borde este del calendario! ver si vamos a mostrar las sesiones en el cal</p>
+                     {/* Por ahora me ganó el borde del calendario. Ver si mostramos las sesiones en el cal*/}
                     <div className='text-center'>
                       <Calendar
                           mode='single'
