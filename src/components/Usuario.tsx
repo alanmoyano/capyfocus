@@ -59,7 +59,6 @@ export default function Usuario() {
             <CardDescription className='text-center'>
               <TooltipProvider>
                 <Tooltip>
-                  {/* Arreglar tooltip! */}
                   <TooltipTrigger asChild>
                     <div className='relative'>
                       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -105,7 +104,8 @@ export default function Usuario() {
                       </Dialog>
                     </div>
                   </TooltipTrigger>
-                  <TooltipContent>
+                  {/* Arreglar tooltip para que salga a la derecha! */}
+                  <TooltipContent className='absolute left-full top-1/2 transform -translate-y-1/2 ml-2'>
                     <p>Modificar datos del perfil</p>
                   </TooltipContent>
                 </Tooltip>
