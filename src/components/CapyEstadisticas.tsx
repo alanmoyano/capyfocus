@@ -21,7 +21,7 @@ import {
 import {
   ChartConfig,
   ChartContainer,
-  ChartTooltip,
+
   ChartTooltipContent
 } from '@/components/ui/chart'
 import * as React from 'react'
@@ -54,6 +54,8 @@ import { useMotivation } from '../hooks/MotivationContext'
 import { useMusic } from '../hooks/MusicContext'
 import { useSesion } from '@/hooks/SesionContext'
 import { Calendar } from './ui/calendar'
+import { formatTime } from '@/lib/utils'
+import { Tooltip as ChartTooltip } from 'recharts'
 
 const chartData = [
   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -108,6 +110,8 @@ const chartConfig4 = {
     color: 'hsl(var(--chart-2))'
   }
 } satisfies ChartConfig
+
+
 
 export default function CapyEstadisticas() {
   const [selectedPeriod, setSelectedPeriod] = React.useState('sesion')
@@ -246,18 +250,7 @@ export default function CapyEstadisticas() {
                 </p>
                 <p className='text-lg font-semibold'>
                   Tiempo total de descanso:{' '}
-                  {(() => {
-                    const time = acumuladorTiempoPausa || 0
-                    const hours = Math.floor(time / 3600)
-                    const minutes = Math.floor((time % 3600) / 60)
-                    const seconds = time % 60
-
-                    if (hours > 0) {
-                      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-                    } else {
-                      return `${minutes}:${seconds.toString().padStart(2, '0')}`
-                    }
-                  })()}
+                  {formatTime(acumuladorTiempoPausa || 0)}
                 </p>
                 <p className='text-lg font-semibold'>
                   Cantidad de pausas:{' '}
@@ -325,32 +318,10 @@ export default function CapyEstadisticas() {
                       )}
                     </TableCell>
                     <TableCell className='text-right'>
-                      {(() => {
-                        const time = tiempo[objetivo] || 0
-                        const hours = Math.floor(time / 3600)
-                        const minutes = Math.floor((time % 3600) / 60)
-                        const seconds = time % 60
-
-                        if (hours > 0) {
-                          return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-                        } else {
-                          return `${minutes}:${seconds.toString().padStart(2, '0')}`
-                        }
-                      })()}
+                      {formatTime(tiempo[objetivo] || 0)}
                     </TableCell>
                     <TableCell className='text-right'>
-                      {(() => {
-                        const time = tiempoSesion[objetivo] || 0
-                        const hours = Math.floor(time / 3600)
-                        const minutes = Math.floor((time % 3600) / 60)
-                        const seconds = time % 60
-
-                        if (hours > 0) {
-                          return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-                        } else {
-                          return `${minutes}:${seconds.toString().padStart(2, '0')}`
-                        }
-                      })()}
+                      {formatTime(tiempoSesion[objetivo] || 0)}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -370,8 +341,11 @@ export default function CapyEstadisticas() {
               <ChartContainer config={chartConfig1}>
                 <ResponsiveContainer width='100%' height={400}>
                   <PieChart>
+                    {/* Agregue un filtro para que no se muestren los objetivos que no se han cumplido */}
                     <Pie
-                      data={objetivos.map(objetivo => ({
+                      data={objetivos
+                        .filter(objetivo => tiempo[objetivo] > 0)
+                        .map(objetivo => ({
                         name: objetivo,
                         value: tiempo[objetivo] || 0
                       }))}
@@ -382,7 +356,9 @@ export default function CapyEstadisticas() {
                         `${name} ${(percent * 100).toFixed(0)}%`
                       }
                     >
-                      {objetivos.map((objetivo, index) => (
+                       {objetivos
+                        .filter(objetivo => tiempo[objetivo] > 0)
+                        .map((objetivo, index) => (
                         <Cell
                           key={`cell-${index}`}
                           fill={
@@ -393,7 +369,7 @@ export default function CapyEstadisticas() {
                         />
                       ))}
                     </Pie>
-                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <ChartTooltip content={<ChartTooltipContent indicator='dot' formatType='time' />} />
                     <ChartLegend content={<ChartLegendContent />} />
                   </PieChart>
                 </ResponsiveContainer>
@@ -528,31 +504,13 @@ export default function CapyEstadisticas() {
                     <div>
                       <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Tiempo total de estudio:</p>
                       <p className='text-lg font-normal text-center mt-2'>
-                        {(() => {
-                          const time = tiempoTotal || 0;
-                          const hours = Math.floor(time / 3600);
-                          const minutes = Math.floor((time % 3600) / 60);
-                          const seconds = time % 60;
-
-                          return hours > 0
-                            ? `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-                            : `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                        })()}
+                        {formatTime(tiempoTotal || 0)}
                       </p>
                     </div>
                     <div>
                       <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Tiempo total de descanso:</p>
                       <p className='text-lg font-normal text-center mt-2'>
-                        {(() => {
-                          const time = acumuladorTiempoPausa || 0;
-                          const hours = Math.floor(time / 3600);
-                          const minutes = Math.floor((time % 3600) / 60);
-                          const seconds = time % 60;
-
-                          return hours > 0
-                            ? `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-                            : `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                        })()}
+                        {formatTime(acumuladorTiempoPausa || 0)}
                       </p>
                     </div>
                     <div>

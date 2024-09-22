@@ -2,9 +2,11 @@ import * as React from 'react'
 import * as RechartsPrimitive from 'recharts'
 
 import { cn } from '@/lib/utils'
+import { formatTime, formatPercentage, formatDecimal, formatInteger } from '@/lib/utils'
 
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: '', dark: '.dark' } as const
+type FormatType = 'time' | 'percentage' | 'decimal' | 'integer';
 
 export type ChartConfig = {
   [k in string]: {
@@ -42,7 +44,7 @@ const ChartContainer = React.forwardRef<
   }
 >(({ id, className, children, config, ...props }, ref) => {
   const uniqueId = React.useId()
-  const chartId = `chart-${id || uniqueId.replace(/:/g, '')}`
+  const chartId = `chart-${id ?? uniqueId.replace(/:/g, '')}`
 
   return (
     <ChartContext.Provider value={{ config }}>
@@ -67,7 +69,7 @@ ChartContainer.displayName = 'Chart'
 
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
-    ([_, config]) => config.theme || config.color
+    ([, itemConfig]) => itemConfig.theme ?? itemConfig.color
   )
 
   if (!colorConfig.length) {
@@ -84,10 +86,11 @@ ${prefix} [data-chart=${id}] {
 ${colorConfig
   .map(([key, itemConfig]) => {
     const color =
-      itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
+      itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ??
       itemConfig.color
     return color ? `  --color-${key}: ${color};` : null
   })
+  .filter(Boolean)
   .join('\n')}
 }
 `
@@ -109,27 +112,45 @@ const ChartTooltipContent = React.forwardRef<
       indicator?: 'line' | 'dot' | 'dashed'
       nameKey?: string
       labelKey?: string
+      formatType?: FormatType;
+      labelFormatter?: (value: React.ReactNode, payload: any[]) => React.ReactNode;
+      labelClassName?: string;
     }
 >(
   (
     {
       active,
       payload,
-      className,
-      indicator = 'dot',
-      hideLabel = false,
-      hideIndicator = false,
       label,
+      hideLabel,
+      hideIndicator,
+      indicator = 'dot',
+      nameKey = 'name',
+      labelKey = 'value',
+      formatType = 'time',
       labelFormatter,
       labelClassName,
-      formatter,
-      color,
-      nameKey,
-      labelKey
+      className,
+      ...props
     },
     ref
   ) => {
     const { config } = useChart()
+
+    const formatValue = (value: number, type: FormatType) => {
+      switch (type) {
+        case 'time':
+          return formatTime(value);
+        case 'percentage':
+          return formatPercentage(value);
+        case 'decimal':
+          return formatDecimal(value);
+        case 'integer':
+          return formatInteger(value);
+        default:
+          return value.toString();
+      }
+    }
 
     const tooltipLabel = React.useMemo(() => {
       if (hideLabel || !payload?.length) {
@@ -137,11 +158,11 @@ const ChartTooltipContent = React.forwardRef<
       }
 
       const [item] = payload
-      const key = `${labelKey || item.dataKey || item.name || 'value'}`
+      const key = `${labelKey ?? item.dataKey ?? item.name ?? 'value'}`
       const itemConfig = getPayloadConfigFromPayload(config, item, key)
       const value =
         !labelKey && typeof label === 'string'
-          ? config[label as keyof typeof config]?.label || label
+          ? config[label]?.label ?? label
           : itemConfig?.label
 
       if (labelFormatter) {
@@ -180,13 +201,14 @@ const ChartTooltipContent = React.forwardRef<
           'grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl',
           className
         )}
+        {...props}
       >
         {!nestLabel ? tooltipLabel : null}
         <div className='grid gap-1.5'>
           {payload.map((item, index) => {
-            const key = `${nameKey || item.name || item.dataKey || 'value'}`
+            const key = `${nameKey ?? item.name ?? item.dataKey ?? 'value'}`
             const itemConfig = getPayloadConfigFromPayload(config, item, key)
-            const indicatorColor = color || item.payload.fill || item.color
+            const indicatorColor = item.color ?? item.payload?.fill ?? item.payload?.color
 
             return (
               <div
@@ -196,54 +218,51 @@ const ChartTooltipContent = React.forwardRef<
                   indicator === 'dot' && 'items-center'
                 )}
               >
-                {formatter && item?.value !== undefined && item.name ? (
-                  formatter(item.value, item.name, item, index, item.payload)
+                {itemConfig?.icon ? (
+                  <itemConfig.icon />
                 ) : (
-                  <>
-                    {itemConfig?.icon ? (
-                      <itemConfig.icon />
-                    ) : (
-                      !hideIndicator && (
-                        <div
-                          className={cn(
-                            'shrink-0 rounded-[2px] border-[--color-border] bg-[--color-bg]',
-                            {
-                              'h-2.5 w-2.5': indicator === 'dot',
-                              'w-1': indicator === 'line',
-                              'w-0 border-[1.5px] border-dashed bg-transparent':
-                                indicator === 'dashed',
-                              'my-0.5': nestLabel && indicator === 'dashed'
-                            }
-                          )}
-                          style={
-                            {
-                              '--color-bg': indicatorColor,
-                              '--color-border': indicatorColor
-                            } as React.CSSProperties
-                          }
-                        />
-                      )
-                    )}
+                  !hideIndicator && (
                     <div
                       className={cn(
-                        'flex flex-1 justify-between leading-none',
-                        nestLabel ? 'items-end' : 'items-center'
+                        'shrink-0 rounded-[2px] border-[--color-border] bg-[--color-bg]',
+                        {
+                          'h-2.5 w-2.5': indicator === 'dot',
+                          'w-1': indicator === 'line',
+                          'w-0 border-[1.5px] border-dashed bg-transparent':
+                            indicator === 'dashed',
+                          'my-0.5': nestLabel && indicator === 'dashed'
+                        }
                       )}
-                    >
-                      <div className='grid gap-1.5'>
-                        {nestLabel ? tooltipLabel : null}
-                        <span className='text-muted-foreground'>
-                          {itemConfig?.label || item.name}
-                        </span>
-                      </div>
-                      {item.value && (
-                        <span className='font-mono font-medium tabular-nums text-foreground'>
-                          {item.value.toLocaleString()}
-                        </span>
-                      )}
-                    </div>
-                  </>
+                      style={
+                        {
+                          '--color-bg': indicatorColor,
+                          '--color-border': indicatorColor
+                        } as React.CSSProperties
+                      }
+                    />
+                  )
                 )}
+                <div
+                  className={cn(
+                    'flex flex-1 justify-between leading-none',
+                    nestLabel ? 'items-end' : 'items-center'
+                  )}
+                >
+                  <div className='grid gap-1.5'>
+                    {nestLabel ? tooltipLabel : null}
+                    <span className='text-muted-foreground'>
+                      {itemConfig?.label ?? item.name}
+                    </span>
+                  </div>
+                  {(() => {
+                    const formattedValue = formatValue(Number(item.value), formatType);
+                    return formattedValue && (
+                      <span className="text-xs text-muted-foreground">
+                        {formattedValue}
+                      </span>
+                    );
+                  })()}
+                </div>
               </div>
             )
           })}
@@ -284,7 +303,7 @@ const ChartLegendContent = React.forwardRef<
         )}
       >
         {payload.map(item => {
-          const key = `${nameKey || item.dataKey || 'value'}`
+          const key = `${nameKey ?? item.dataKey ?? 'value'}`
           const itemConfig = getPayloadConfigFromPayload(config, item, key)
 
           return (
@@ -319,7 +338,7 @@ function getPayloadConfigFromPayload(
   config: ChartConfig,
   payload: unknown,
   key: string
-) {
+): ChartConfig[string] | undefined {
   if (typeof payload !== 'object' || payload === null) {
     return undefined
   }
@@ -348,9 +367,7 @@ function getPayloadConfigFromPayload(
     ] as string
   }
 
-  return configLabelKey in config
-    ? config[configLabelKey]
-    : config[key as keyof typeof config]
+  return config[configLabelKey] ?? config[key]
 }
 
 export {
