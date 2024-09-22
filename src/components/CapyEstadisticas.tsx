@@ -516,17 +516,17 @@ export default function CapyEstadisticas() {
       )}
       {selectedPeriod === 'bimestral' && (
         <>
-          <Card className='container mx-auto mt-4 rounded-lg bg-orange-100 p-6 shadow-lg flex-col overflow-y-auto'>
+          <Card className='container mx-auto mt-4 rounded-lg bg-secondary p-6 shadow-lg flex-col overflow-y-auto'>
               <CardHeader>
                 <CardTitle className='mb-4 text-left text-3xl font-bold py-4'>
                   Tu progreso en los últimos dos meses
                 </CardTitle>
               </CardHeader>
-              <CardContent className='flex justify-between'>
-              <div className='justify-content-center w-1/2 pr-4'>
+              <CardContent className='flex justify-between gap-4'>
+              <div className='w-1/2 pl-4'>
                   <div className='grid grid-cols-2 gap-14'>
                     <div>
-                      <p className='text-md font-semibold text-center bg-orange-200 p-1 rounded-lg shadow-md'>Tiempo total de estudio:</p>
+                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Tiempo total de estudio:</p>
                       <p className='text-lg font-normal text-center mt-2'>
                         {(() => {
                           const time = tiempoTotal || 0;
@@ -541,7 +541,7 @@ export default function CapyEstadisticas() {
                       </p>
                     </div>
                     <div>
-                      <p className='text-md font-semibold text-center bg-orange-200 p-1 rounded-lg shadow-md'>Tiempo total de descanso:</p>
+                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Tiempo total de descanso:</p>
                       <p className='text-lg font-normal text-center mt-2'>
                         {(() => {
                           const time = acumuladorTiempoPausa || 0;
@@ -556,36 +556,40 @@ export default function CapyEstadisticas() {
                       </p>
                     </div>
                     <div>
-                      <p className='text-md font-semibold text-center bg-orange-200 p-1 rounded-lg shadow-md'>Cantidad de pausas:</p>
+                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Cantidad de pausas:</p>
                       <p className='text-lg font-normal text-center mt-2'>{cantidadPausas}</p>
                     </div>
                     <div>
-                      <p className='text-md font-semibold text-center bg-orange-200 p-1 rounded-lg shadow-md'>Tipo de motivación:</p>
+                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Tipo de motivación:</p>
                       <p className='text-lg font-normal text-center mt-2'>{motivationType}</p>
                     </div>
                     <div>
-                      <p className='text-md font-semibold text-center bg-orange-200 p-1 rounded-lg shadow-md'>Música:</p>
+                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Música:</p>
                       <p className='text-lg font-normal text-center mt-2'>{selectedMusic?.title || 'sin música'}</p>
                     </div>
                     <div>
-                      <p className='text-md font-semibold text-center bg-orange-200 p-1 rounded-lg shadow-md'>Técnica de estudio:</p>
+                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Técnica de estudio:</p>
                       <p className='text-lg font-normal text-center mt-2'>{tecnicaEstudio}</p>
                     </div>
                     <div>
-                      <p className='text-md font-semibold text-center bg-orange-200 p-1 rounded-lg shadow-md'>Cantidad total de objetivos:</p>
+                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Cantidad total de objetivos:</p>
                       <p className='text-lg font-normal text-center mt-2'>{objetivos.length}</p>
                     </div>
                     <div>
-                      <p className='text-md font-semibold text-center bg-orange-200 p-1 rounded-lg shadow-md'>Objetivos cumplidos:</p>
+                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Objetivos cumplidos:</p>
                       <p className='text-lg font-normal text-center mt-2'>{objetivos.length - objetivosPend.length}</p>
                     </div>
                     <div>
-                      <p className='text-md font-semibold text-center bg-orange-200 p-1 rounded-lg shadow-md'>Objetivos pendientes:</p>
+                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Objetivos pendientes:</p>
                       <p className='text-lg font-normal text-center mt-2'>{objetivosPend.length}</p>
                     </div>
                   </div>
+                  <div className='w-auto mt-8'>
+                    <p>Hola soy Agus y opino que acá pódria spawnear un Chicho salvaje!!!
+                    </p>
+                  </div>
               </div>
-              <div className='w-1/3'>
+              <div className='w-1/3 pr-6 ml-2'>
                   <Card className='w-full'>
                     <CardHeader>
                       <CardTitle className='text-center p-2'>Objetivos Cumplidos vs Pendientes</CardTitle>
@@ -612,22 +616,32 @@ export default function CapyEstadisticas() {
                         </BarChart>
                       </ChartContainer>
                     </CardContent>
+                    <CardFooter className='flex-col items-start gap-2 text-sm'>
+                      <div className='flex gap-2 font-medium leading-none'>
+                        Trending up by 5.2% this month
+                      </div>
+                      <div className='leading-none text-muted-foreground'>
+                        Showing total visitors for the last 6 months
+                      </div>
+                    </CardFooter>
                   </Card>
-                  <Card className='w-full mt-8'>
-                    <p>Calendario acá! ??</p>
-                    <Calendar
-                        mode="single"
-                        selected={date}
-                        onSelect={setDate}
-                        className="rounded-md border"
-                      />
+                  <Card className='w-auto mt-8'>
+                    <p> Me gano el borde este del calendario! ver si vamos a mostrar las sesiones en el cal</p>
+                    <div className='text-center'>
+                      <Calendar
+                          mode='single'
+                          selected={date}
+                          onSelect={setDate}
+                          className='rounded-md border p-4 inline-block'
+                        />
+                     </div>
                   </Card>
               </div>
               </CardContent>
-              <CardFooter className='mt-auto'></CardFooter>
           </Card>
         </>
       )}
+      
     </>
   )
 }
