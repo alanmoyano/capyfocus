@@ -47,15 +47,12 @@ export default function Usuario() {
     <>
      <h1 className='text-4xl font-bold mb-4'>Capy Datos</h1>
      <div className='mt-10 flex flex-col gap-20 p-10 md:flex-row'>
-     <div className='grid grid-cols-2 gap-8'>
-        <Card className='h-full w-full'>
-        <CardHeader>
-            <CardTitle>Agus!</CardTitle>
-            </CardHeader>
-            <div className='m-auto'>
-                <img src='/idle.gif' />
-            </div>
-        </Card>
+     <div className='grid grid-cols-2 gap-10'>
+        <div className='h-full w-full flex items-center justify-center'>
+          <div className='m-auto'>
+              <img src='/idle.gif'/>
+          </div>
+        </div>
         <Card className='h-full w-full shadow-md bg-secondary'>
           <CardHeader className='text-center'>
             <CardTitle className='text-xl py-4'>Hola, @capyUsuario!</CardTitle>
