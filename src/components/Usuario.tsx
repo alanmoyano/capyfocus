@@ -10,8 +10,17 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
 
 import { useLocation } from 'wouter'
 
@@ -24,59 +33,41 @@ export default function Usuario() {
 
   return (
     <>
-      <h1 className='text-4xl font-bold'>Capy Datos</h1>
-      <Avatar className='m-8 size-20'>
-        <AvatarImage
-          className=''
-          src='https://github.com/shadcn.png'
-          alt='@shadcn'
-        />
-        <AvatarFallback>CN</AvatarFallback>
-      </Avatar>
-      <p>Nombre</p>
-
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant='outline'>Edit Profile</Button>
-        </DialogTrigger>
-        <DialogContent className='sm:max-w-[425px]'>
-          <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
-            <DialogDescription>
-              Make changes to your profile here. Click save when you&apos;re
-              done.
-            </DialogDescription>
-          </DialogHeader>
-          <div className='grid gap-4 py-4'>
-            <div className='grid grid-cols-4 items-center gap-4'>
-              <Label htmlFor='name' className='text-right'>
-                Name
-              </Label>
-              <Input
-                id='name'
-                defaultValue='Pedro Duarte'
-                className='col-span-3'
-              />
+     <h1 className='text-4xl font-bold mb-4'>Capy Datos</h1>
+     <div className='mt-10 flex flex-col gap-20 p-10 md:flex-row'>
+     <div className='grid grid-cols-2 gap-8'>
+        <Card className='h-full w-full'>
+        <CardHeader>
+            <CardTitle>Agus!</CardTitle>
+            </CardHeader>
+            <div className='m-auto'>
+                <img src='/idle.gif' />
             </div>
-            <div className='grid grid-cols-4 items-center gap-4'>
-              <Label htmlFor='username' className='text-right'>
-                Username
-              </Label>
-              <Input
-                id='username'
-                defaultValue='@peduarte'
-                className='col-span-3'
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type='submit'>Save changes</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      <Button onClick={() => handleLogin()} className='mt-4'>
-        Inciar sesion
-      </Button>
+        </Card>
+        <Card className='h-full w-full'>
+          <CardHeader className='text-center'>
+            <CardTitle className='text-xl'>Hola, @capyUsuario!</CardTitle>
+            <CardDescription className='text-center'>
+            <Avatar className='mx-auto w-32 h-32'>
+              <AvatarImage src='/capyPic.png' className='w-full h-full' />
+              <AvatarFallback className='text-2xl'>CN</AvatarFallback>
+            </Avatar>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className='text-center'>
+            <p className='text-lg'>Card Content</p>
+          </CardContent>
+          <CardFooter className='text-center'>
+            <p>Card Footer</p>
+          </CardFooter>
+          <Button onClick={() => handleLogin()} className='mt-4'>
+              Inciar sesion
+            </Button>
+        </Card>
+      </div>
+     </div>
+     
+      
     </>
   )
 }
