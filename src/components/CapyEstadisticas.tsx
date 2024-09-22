@@ -148,7 +148,7 @@ export default function CapyEstadisticas() {
                 </TooltipProvider>
               </SelectItem>
 
-              <SelectItem key={1} value='Semana'>
+              <SelectItem key={1} value='semanal'>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -161,7 +161,7 @@ export default function CapyEstadisticas() {
                 </TooltipProvider>
               </SelectItem>
 
-              <SelectItem key={2} value='Mensual'>
+              <SelectItem key={2} value='mensual'>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -174,7 +174,7 @@ export default function CapyEstadisticas() {
                 </TooltipProvider>
               </SelectItem>
 
-              <SelectItem key={3} value='Bimestral'>
+              <SelectItem key={3} value='bimestral'>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -187,7 +187,7 @@ export default function CapyEstadisticas() {
                 </TooltipProvider>
               </SelectItem>
 
-              <SelectItem key={4} value='6 Meses'>
+              <SelectItem key={4} value='seisMeses'>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -200,7 +200,7 @@ export default function CapyEstadisticas() {
                 </TooltipProvider>
               </SelectItem>
 
-              <SelectItem key={5} value='Evento'>
+              <SelectItem key={5} value='evento'>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -225,7 +225,6 @@ export default function CapyEstadisticas() {
                 Información de la Sesión
               </CardTitle>
             </CardHeader>
-
             <CardContent className='grid grid-cols-1 gap-4 md:grid-cols-2'>
               <div className='flex flex-col space-y-2'>
                 <p className='text-lg font-semibold'>
@@ -402,7 +401,7 @@ export default function CapyEstadisticas() {
         </>
       )}
 
-      {selectedPeriod === 'Semana' && (
+      {selectedPeriod === 'semanal' && (
         <>
           {/* Gráfico semanal */}
           <Card className='flex flex-col'>
@@ -471,9 +470,8 @@ export default function CapyEstadisticas() {
         </>
       )}
 
-      {selectedPeriod === 'Mensual' && (
+      {selectedPeriod === 'mensual' && (
         <>
-          {/* Gráfico mensual */}
           <Card>
             <CardHeader>
               <CardTitle>Objetivos Cumplidos VS Pendientes</CardTitle>
@@ -511,6 +509,114 @@ export default function CapyEstadisticas() {
                 Showing total visitors for the last 6 months
               </div>
             </CardFooter>
+          </Card>
+        </>
+      )}
+      {selectedPeriod === 'bimestral' && (
+        <>
+          <Card className='container mx-auto mt-4 rounded-lg bg-orange-100 p-6 shadow-lg flex-col overflow-y-auto'>
+              <CardHeader>
+                <CardTitle className='mb-4 text-left text-3xl font-bold py-4'>
+                  Tu progreso en los últimos dos meses
+                </CardTitle>
+              </CardHeader>
+              <CardContent className='flex justify-between'>
+              <div className='justify-content-center w-1/2 pr-4'>
+                  <div className='grid grid-cols-2 gap-14'>
+                    <div>
+                      <p className='text-md font-semibold text-center bg-orange-200 p-1 rounded-lg shadow-md'>Tiempo total de estudio:</p>
+                      <p className='text-lg font-normal text-center mt-2'>
+                        {(() => {
+                          const time = tiempoTotal || 0;
+                          const hours = Math.floor(time / 3600);
+                          const minutes = Math.floor((time % 3600) / 60);
+                          const seconds = time % 60;
+
+                          return hours > 0
+                            ? `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+                            : `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                        })()}
+                      </p>
+                    </div>
+                    <div>
+                      <p className='text-md font-semibold text-center bg-orange-200 p-1 rounded-lg shadow-md'>Tiempo total de descanso:</p>
+                      <p className='text-lg font-normal text-center mt-2'>
+                        {(() => {
+                          const time = acumuladorTiempoPausa || 0;
+                          const hours = Math.floor(time / 3600);
+                          const minutes = Math.floor((time % 3600) / 60);
+                          const seconds = time % 60;
+
+                          return hours > 0
+                            ? `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+                            : `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                        })()}
+                      </p>
+                    </div>
+                    <div>
+                      <p className='text-md font-semibold text-center bg-orange-200 p-1 rounded-lg shadow-md'>Cantidad de pausas:</p>
+                      <p className='text-lg font-normal text-center mt-2'>{cantidadPausas}</p>
+                    </div>
+                    <div>
+                      <p className='text-md font-semibold text-center bg-orange-200 p-1 rounded-lg shadow-md'>Tipo de motivación:</p>
+                      <p className='text-lg font-normal text-center mt-2'>{motivationType}</p>
+                    </div>
+                    <div>
+                      <p className='text-md font-semibold text-center bg-orange-200 p-1 rounded-lg shadow-md'>Música:</p>
+                      <p className='text-lg font-normal text-center mt-2'>{selectedMusic?.title || 'sin música'}</p>
+                    </div>
+                    <div>
+                      <p className='text-md font-semibold text-center bg-orange-200 p-1 rounded-lg shadow-md'>Técnica de estudio:</p>
+                      <p className='text-lg font-normal text-center mt-2'>{tecnicaEstudio}</p>
+                    </div>
+                    <div>
+                      <p className='text-md font-semibold text-center bg-orange-200 p-1 rounded-lg shadow-md'>Cantidad total de objetivos:</p>
+                      <p className='text-lg font-normal text-center mt-2'>{objetivos.length}</p>
+                    </div>
+                    <div>
+                      <p className='text-md font-semibold text-center bg-orange-200 p-1 rounded-lg shadow-md'>Objetivos cumplidos:</p>
+                      <p className='text-lg font-normal text-center mt-2'>{objetivos.length - objetivosPend.length}</p>
+                    </div>
+                    <div>
+                      <p className='text-md font-semibold text-center bg-orange-200 p-1 rounded-lg shadow-md'>Objetivos pendientes:</p>
+                      <p className='text-lg font-normal text-center mt-2'>{objetivosPend.length}</p>
+                    </div>
+                  </div>
+              </div>
+              <div className='w-1/3'>
+                  <Card className='w-full'>
+                    <CardHeader>
+                      <CardTitle className='text-center p-2'>Objetivos Cumplidos vs Pendientes</CardTitle>
+                      <CardDescription className='text-center'>Últimos dos meses</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <ChartContainer config={chartConfig4}>
+                        {/*Obviamente ver la logica de los meses */}
+                        <BarChart accessibilityLayer data={chartData1.slice(-2)}>
+                          <CartesianGrid vertical={false} />
+                          <XAxis
+                            dataKey='month'
+                            tickLine={false}
+                            tickMargin={10}
+                            axisLine={false}
+                            tickFormatter={(value: string) => value.slice(0, 3)}
+                          />
+                          <ChartTooltip
+                            cursor={false}
+                            content={<ChartTooltipContent indicator='dashed' />}
+                          />
+                          <Bar dataKey='desktop' fill='var(--color-desktop)' radius={4} />
+                          <Bar dataKey='mobile' fill='var(--color-mobile)' radius={4} />
+                        </BarChart>
+                      </ChartContainer>
+                    </CardContent>
+                  </Card>
+                  <Card className='w-full'>
+                    <p>Calendario acá! ??</p>
+                  </Card>
+              </div>
+              </CardContent>
+              <CardFooter className='mt-auto'></CardFooter>
           </Card>
         </>
       )}
