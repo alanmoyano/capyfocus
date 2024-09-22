@@ -53,6 +53,7 @@ import { ResponsiveContainer } from 'recharts'
 import { useMotivation } from '../hooks/MotivationContext'
 import { useMusic } from '../hooks/MusicContext'
 import { useSesion } from '@/hooks/SesionContext'
+import { Calendar } from './ui/calendar'
 
 const chartData = [
   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -118,6 +119,7 @@ export default function CapyEstadisticas() {
   const { objetivos, objetivosPend, tiempo, tiempoSesion } = useObjetivos()
   const { motivationType } = useMotivation()
   const { selectedMusic } = useMusic()
+  const [date, setDate] = React.useState<Date | undefined>(new Date())
   const { tecnicaEstudio, tiempoTotal, acumuladorTiempoPausa, cantidadPausas } =
     useSesion()
   return (
@@ -611,8 +613,14 @@ export default function CapyEstadisticas() {
                       </ChartContainer>
                     </CardContent>
                   </Card>
-                  <Card className='w-full'>
+                  <Card className='w-full mt-8'>
                     <p>Calendario acá! ??</p>
+                    <Calendar
+                        mode="single"
+                        selected={date}
+                        onSelect={setDate}
+                        className="rounded-md border"
+                      />
                   </Card>
               </div>
               </CardContent>
