@@ -1,5 +1,5 @@
+import { useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -37,6 +37,12 @@ export default function Usuario() {
     setLocation('/login')
   }
 
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleConfirm = () => {
+    setDialogOpen(false);
+  };
+
   return (
     <>
      <h1 className='text-4xl font-bold mb-4'>Capy Datos</h1>
@@ -56,21 +62,23 @@ export default function Usuario() {
             <CardDescription className='text-center'>
               <TooltipProvider>
                 <Tooltip>
+                  {/* Arreglar tooltip! */}
                   <TooltipTrigger asChild>
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Avatar className='mx-auto w-32 h-32'>
-                          <AvatarImage src='/capyPic.png' className='w-full h-full' />
-                            <AvatarFallback className='text-2xl'>CN</AvatarFallback>
-                        </Avatar>
-                      </DialogTrigger>
-                      <DialogContent className="sm:max-w-[425px]">
-                        <DialogHeader>
-                          <DialogTitle>Datos del perfil</DialogTitle>
-                          <DialogDescription>
-                            Make changes to your profile here. Click save when you're done.
-                          </DialogDescription>
-                        </DialogHeader>
+                    <div className='relative'>
+                      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                        <DialogTrigger asChild>
+                          <Avatar className='mx-auto w-32 h-32'>
+                            <AvatarImage src='/capyPic.png' className='w-full h-full' />
+                              <AvatarFallback className='text-2xl'>CN</AvatarFallback>
+                          </Avatar>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                          <DialogHeader>
+                            <DialogTitle>Datos del perfil</DialogTitle>
+                            <DialogDescription>
+                              Make changes to your profile here. Click save when you're done.
+                            </DialogDescription>
+                          </DialogHeader>
                           <div className="grid gap-4 py-4">
                             <div className="grid grid-cols-4 items-center gap-4">
                               <Label htmlFor="username" className="text-right">
@@ -94,10 +102,11 @@ export default function Usuario() {
                             </div>
                           </div>
                           <DialogFooter>
-                            <Button type="submit">Confirmar</Button>
+                            <Button onClick={() => handleConfirm()}>Confirmar</Button>
                           </DialogFooter>
                         </DialogContent>
                       </Dialog>
+                    </div>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Modificar datos del perfil</p>
@@ -121,7 +130,7 @@ export default function Usuario() {
           </CardContent>
           <CardFooter className='flex justify-end'>
             <Button onClick={() => handleLogin()} className='mt-4'>
-              Inciar sesion
+              Inciar sesion?
             </Button>
           </CardFooter>
         </Card>
