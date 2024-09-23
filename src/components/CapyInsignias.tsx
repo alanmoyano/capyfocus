@@ -94,9 +94,7 @@ export default function CapyInsignias() {
             </div>
           </div>
 
-          <p>
-            Haz selecciona 25 veces estudiar con motivación positiva
-          </p>
+          <p>Haz selecciona 25 veces estudiar con motivación positiva</p>
         </div>
       </div>
 

@@ -21,7 +21,6 @@ import {
 import {
   ChartConfig,
   ChartContainer,
-
   ChartTooltipContent
 } from '@/components/ui/chart'
 import * as React from 'react'
@@ -110,8 +109,6 @@ const chartConfig4 = {
     color: 'hsl(var(--chart-2))'
   }
 } satisfies ChartConfig
-
-
 
 export default function CapyEstadisticas() {
   const [selectedPeriod, setSelectedPeriod] = React.useState('sesion')
@@ -288,7 +285,7 @@ export default function CapyEstadisticas() {
                 </p>
               </div>
             </CardContent>
-                {/* Tabla de objetivos de la sesión */}
+            {/* Tabla de objetivos de la sesión */}
             <h2 className='ml-4 mt-4 flex w-full justify-start text-2xl font-bold'>
               Objetivos de la sesion
             </h2>
@@ -346,9 +343,9 @@ export default function CapyEstadisticas() {
                       data={objetivos
                         .filter(objetivo => tiempo[objetivo] > 0)
                         .map(objetivo => ({
-                        name: objetivo,
-                        value: tiempo[objetivo] || 0
-                      }))}
+                          name: objetivo,
+                          value: tiempo[objetivo] || 0
+                        }))}
                       labelLine={false}
                       outerRadius='80%'
                       dataKey='value'
@@ -356,20 +353,27 @@ export default function CapyEstadisticas() {
                         `${name} ${(percent * 100).toFixed(0)}%`
                       }
                     >
-                       {objetivos
+                      {objetivos
                         .filter(objetivo => tiempo[objetivo] > 0)
                         .map((objetivo, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={
-                            chartConfig1[Object.keys(chartConfig1)[index + 1]]
-                              .color || `hsl(${index * 90}, 70%, 60%)`
-                          }
-                          name={objetivo}
-                        />
-                      ))}
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={
+                              chartConfig1[Object.keys(chartConfig1)[index + 1]]
+                                .color || `hsl(${index * 90}, 70%, 60%)`
+                            }
+                            name={objetivo}
+                          />
+                        ))}
                     </Pie>
-                    <ChartTooltip content={<ChartTooltipContent indicator='dot' formatType='time' />} />
+                    <ChartTooltip
+                      content={
+                        <ChartTooltipContent
+                          indicator='dot'
+                          formatType='time'
+                        />
+                      }
+                    />
                     <ChartLegend content={<ChartLegendContent />} />
                   </PieChart>
                 </ResponsiveContainer>
@@ -492,239 +496,330 @@ export default function CapyEstadisticas() {
       )}
       {selectedPeriod === 'bimestral' && (
         <>
-          <Card className='container mx-auto mt-4 rounded-lg bg-orange-100 p-6 shadow-lg flex-col overflow-y-auto'>
-              <CardHeader>
-                <CardTitle className='mb-4 text-left text-3xl font-bold py-4'>
-                  Tu progreso en los últimos dos meses
-                </CardTitle>
-              </CardHeader>
-              <CardContent className='flex justify-between gap-4'>
+          <Card className='container mx-auto mt-4 flex-col overflow-y-auto rounded-lg bg-orange-100 p-6 shadow-lg'>
+            <CardHeader>
+              <CardTitle className='mb-4 py-4 text-left text-3xl font-bold'>
+                Tu progreso en los últimos dos meses
+              </CardTitle>
+            </CardHeader>
+            <CardContent className='flex justify-between gap-4'>
               <div className='w-1/2 pl-4'>
-                  <div className='grid grid-cols-2 gap-14'>
-                    <div>
-                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Tiempo total de estudio:</p>
-                      <p className='text-lg font-normal text-center mt-2'>
-                        {formatTime(tiempoTotal || 0)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Tiempo total de descanso:</p>
-                      <p className='text-lg font-normal text-center mt-2'>
-                        {formatTime(acumuladorTiempoPausa || 0)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Cantidad de pausas:</p>
-                      <p className='text-lg font-normal text-center mt-2'>{cantidadPausas}</p>
-                    </div>
-                    <div>
-                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Tipo de motivación:</p>
-                      <p className='text-lg font-normal text-center mt-2'>{motivationType}</p>
-                    </div>
-                    <div>
-                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Música:</p>
-                      <p className='text-lg font-normal text-center mt-2'>{selectedMusic?.title || 'sin música'}</p>
-                    </div>
-                    <div>
-                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Técnica de estudio:</p>
-                      <p className='text-lg font-normal text-center mt-2'>{tecnicaEstudio}</p>
-                    </div>
-                    <div>
-                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Cantidad total de objetivos:</p>
-                      <p className='text-lg font-normal text-center mt-2'>{objetivos.length}</p>
-                    </div>
-                    <div>
-                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Objetivos cumplidos:</p>
-                      <p className='text-lg font-normal text-center mt-2'>{objetivos.length - objetivosPend.length}</p>
-                    </div>
-                    <div>
-                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Objetivos pendientes:</p>
-                      <p className='text-lg font-normal text-center mt-2'>{objetivosPend.length}</p>
-                    </div>
-                  </div>
-                  <div className='w-auto mt-8'>
-                    <p>Hola soy Agus y opino que acá pódria spawnear un Chicho salvaje!!!
+                <div className='grid grid-cols-2 gap-14'>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Tiempo total de estudio:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {formatTime(tiempoTotal || 0)}
                     </p>
                   </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Tiempo total de descanso:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {formatTime(acumuladorTiempoPausa || 0)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Cantidad de pausas:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {cantidadPausas}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Tipo de motivación:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {motivationType}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Música:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {selectedMusic?.title || 'sin música'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Técnica de estudio:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {tecnicaEstudio}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Cantidad total de objetivos:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {objetivos.length}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Objetivos cumplidos:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {objetivos.length - objetivosPend.length}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Objetivos pendientes:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {objetivosPend.length}
+                    </p>
+                  </div>
+                </div>
+                <div className='mt-8 w-auto'>
+                  <p>
+                    Hola soy Agus y opino que acá pódria spawnear un Chicho
+                    salvaje!!!
+                  </p>
+                </div>
               </div>
-              <div className='w-1/3 pr-6 ml-2'>
-              <Card className='w-auto '>
+              <div className='ml-2 w-1/3 pr-6'>
+                <Card className='w-auto'>
                   {/* Por ahora me ganó el borde del calendario. Ver si mostramos las sesiones en el cal*/}
-                    <div className='text-center'>
-                      <Calendar
-                          mode='single'
-                          selected={date}
-                          onSelect={setDate}
-                          className='rounded-lg shadow-sm border p-4 inline-block'
+                  <div className='text-center'>
+                    <Calendar
+                      mode='single'
+                      selected={date}
+                      onSelect={setDate}
+                      className='inline-block rounded-lg border p-4 shadow-sm'
+                    />
+                  </div>
+                </Card>
+                <Card className='mt-8 w-full rounded-lg shadow-md'>
+                  <CardHeader>
+                    <CardTitle className='p-2 text-center'>
+                      Objetivos Cumplidos vs Pendientes
+                    </CardTitle>
+                    <CardDescription className='text-center'>
+                      Últimos dos meses
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer config={chartConfig4}>
+                      {/*Obviamente ver la logica de los meses */}
+                      <BarChart accessibilityLayer data={chartData1.slice(-2)}>
+                        <CartesianGrid vertical={false} />
+                        <XAxis
+                          dataKey='month'
+                          tickLine={false}
+                          tickMargin={10}
+                          axisLine={false}
+                          tickFormatter={(value: string) => value.slice(0, 3)}
                         />
-                     </div>
-                  </Card>
-                  <Card className='w-full mt-8 shadow-md rounded-lg'>
-                    <CardHeader>
-                      <CardTitle className='text-center p-2'>Objetivos Cumplidos vs Pendientes</CardTitle>
-                      <CardDescription className='text-center'>Últimos dos meses</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <ChartContainer config={chartConfig4}>
-                        {/*Obviamente ver la logica de los meses */}
-                        <BarChart accessibilityLayer data={chartData1.slice(-2)}>
-                          <CartesianGrid vertical={false} />
-                          <XAxis
-                            dataKey='month'
-                            tickLine={false}
-                            tickMargin={10}
-                            axisLine={false}
-                            tickFormatter={(value: string) => value.slice(0, 3)}
-                          />
-                          <ChartTooltip
-                            cursor={false}
-                            content={<ChartTooltipContent indicator='dashed' />}
-                          />
-                          <Bar dataKey='desktop' fill='var(--color-desktop)' radius={4} />
-                          <Bar dataKey='mobile' fill='var(--color-mobile)' radius={4} />
-                        </BarChart>
-                      </ChartContainer>
-                    </CardContent>
-                    <CardFooter className='flex-col items-start gap-2 text-sm'>
-                      <div className='flex gap-2 font-medium leading-none'>
-                        Trending up by 5.2% this month
-                      </div>
-                      <div className='leading-none text-muted-foreground'>
-                        Showing total visitors for the last 6 months
-                      </div>
-                    </CardFooter>
-                  </Card>
-                  
+                        <ChartTooltip
+                          cursor={false}
+                          content={<ChartTooltipContent indicator='dashed' />}
+                        />
+                        <Bar
+                          dataKey='desktop'
+                          fill='var(--color-desktop)'
+                          radius={4}
+                        />
+                        <Bar
+                          dataKey='mobile'
+                          fill='var(--color-mobile)'
+                          radius={4}
+                        />
+                      </BarChart>
+                    </ChartContainer>
+                  </CardContent>
+                  <CardFooter className='flex-col items-start gap-2 text-sm'>
+                    <div className='flex gap-2 font-medium leading-none'>
+                      Trending up by 5.2% this month
+                    </div>
+                    <div className='leading-none text-muted-foreground'>
+                      Showing total visitors for the last 6 months
+                    </div>
+                  </CardFooter>
+                </Card>
               </div>
-              </CardContent>
+            </CardContent>
           </Card>
         </>
       )}
       {selectedPeriod === 'seisMeses' && (
         <>
-          <Card className='container mx-auto mt-4 rounded-lg bg-orange-100 p-6 shadow-lg flex-col overflow-y-auto'>
-              <CardHeader>
-                <CardTitle className='mb-4 text-left text-3xl font-bold py-4'>
-                  Tu progreso en los últimos seis meses
-                </CardTitle>
-              </CardHeader>
-              <CardContent className='flex justify-between gap-4'>
+          <Card className='container mx-auto mt-4 flex-col overflow-y-auto rounded-lg bg-orange-100 p-6 shadow-lg'>
+            <CardHeader>
+              <CardTitle className='mb-4 py-4 text-left text-3xl font-bold'>
+                Tu progreso en los últimos seis meses
+              </CardTitle>
+            </CardHeader>
+            <CardContent className='flex justify-between gap-4'>
               <div className='w-1/2 pl-4'>
-                  <div className='grid grid-cols-2 gap-14'>
-                    <div>
-                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Tiempo total de estudio:</p>
-                      <p className='text-lg font-normal text-center mt-2'>
-                        {(() => {
-                          const time = tiempoTotal || 0;
-                          const hours = Math.floor(time / 3600);
-                          const minutes = Math.floor((time % 3600) / 60);
-                          const seconds = time % 60;
+                <div className='grid grid-cols-2 gap-14'>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Tiempo total de estudio:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {(() => {
+                        const time = tiempoTotal || 0
+                        const hours = Math.floor(time / 3600)
+                        const minutes = Math.floor((time % 3600) / 60)
+                        const seconds = time % 60
 
-                          return hours > 0
-                            ? `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-                            : `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                        })()}
-                      </p>
-                    </div>
-                    <div>
-                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Tiempo total de descanso:</p>
-                      <p className='text-lg font-normal text-center mt-2'>
-                        {(() => {
-                          const time = acumuladorTiempoPausa || 0;
-                          const hours = Math.floor(time / 3600);
-                          const minutes = Math.floor((time % 3600) / 60);
-                          const seconds = time % 60;
-
-                          return hours > 0
-                            ? `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-                            : `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                        })()}
-                      </p>
-                    </div>
-                    <div>
-                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Cantidad de pausas:</p>
-                      <p className='text-lg font-normal text-center mt-2'>{cantidadPausas}</p>
-                    </div>
-                    <div>
-                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Tipo de motivación:</p>
-                      <p className='text-lg font-normal text-center mt-2'>{motivationType}</p>
-                    </div>
-                    <div>
-                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Música:</p>
-                      <p className='text-lg font-normal text-center mt-2'>{selectedMusic?.title || 'sin música'}</p>
-                    </div>
-                    <div>
-                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Técnica de estudio:</p>
-                      <p className='text-lg font-normal text-center mt-2'>{tecnicaEstudio}</p>
-                    </div>
-                    <div>
-                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Cantidad total de objetivos:</p>
-                      <p className='text-lg font-normal text-center mt-2'>{objetivos.length}</p>
-                    </div>
-                    <div>
-                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Objetivos cumplidos:</p>
-                      <p className='text-lg font-normal text-center mt-2'>{objetivos.length - objetivosPend.length}</p>
-                    </div>
-                    <div>
-                      <p className='text-md font-semibold text-center bg-primary p-1 rounded-lg shadow-md'>Objetivos pendientes:</p>
-                      <p className='text-lg font-normal text-center mt-2'>{objetivosPend.length}</p>
-                    </div>
-                  </div>
-                  <div className='w-auto mt-8'>
-                    <p>Hola soy Agus y opino que acá pódria spawnear un Chicho salvaje!!!
+                        return hours > 0
+                          ? `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+                          : `${minutes}:${seconds.toString().padStart(2, '0')}`
+                      })()}
                     </p>
                   </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Tiempo total de descanso:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {(() => {
+                        const time = acumuladorTiempoPausa || 0
+                        const hours = Math.floor(time / 3600)
+                        const minutes = Math.floor((time % 3600) / 60)
+                        const seconds = time % 60
+
+                        return hours > 0
+                          ? `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+                          : `${minutes}:${seconds.toString().padStart(2, '0')}`
+                      })()}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Cantidad de pausas:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {cantidadPausas}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Tipo de motivación:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {motivationType}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Música:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {selectedMusic?.title || 'sin música'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Técnica de estudio:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {tecnicaEstudio}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Cantidad total de objetivos:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {objetivos.length}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Objetivos cumplidos:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {objetivos.length - objetivosPend.length}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Objetivos pendientes:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {objetivosPend.length}
+                    </p>
+                  </div>
+                </div>
+                <div className='mt-8 w-auto'>
+                  <p>
+                    Hola soy Agus y opino que acá pódria spawnear un Chicho
+                    salvaje!!!
+                  </p>
+                </div>
               </div>
-              <div className='w-1/3 pr-6 ml-2'>
-                  <Card className='w-full'>
-                    <CardHeader>
-                       {/* Si bien es redundante considerando los titulos, esta bueno tener algo visual tambien!! ver <3 */}
-                      <CardTitle className='text-center p-2'>Objetivos Cumplidos vs Pendientes</CardTitle>
-                      <CardDescription className='text-center'>Últimos seis meses</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <ChartContainer config={chartConfig4}>
-                        {/*Obviamente ver la logica de los meses */}
-                        <BarChart accessibilityLayer data={chartData1}>
-                          <CartesianGrid vertical={false} />
-                          <XAxis
-                            dataKey='month'
-                            tickLine={false}
-                            tickMargin={10}
-                            axisLine={false}
-                            tickFormatter={(value: string) => value.slice(0, 3)}
-                          />
-                          <ChartTooltip
-                            cursor={false}
-                            content={<ChartTooltipContent indicator='dashed' />}
-                          />
-                          <Bar dataKey='desktop' fill='var(--color-desktop)' radius={4} />
-                          <Bar dataKey='mobile' fill='var(--color-mobile)' radius={4} />
-                        </BarChart>
-                      </ChartContainer>
-                    </CardContent>
-                    <CardFooter className='flex-col items-start gap-2 text-sm'>
-                      <div className='flex gap-2 font-medium leading-none'>
-                        Trending up by 5.2% this month
-                      </div>
-                      <div className='leading-none text-muted-foreground'>
-                        Showing total visitors for the last 6 months
-                      </div>
-                    </CardFooter>
-                  </Card>
-                  <Card className='w-auto mt-8'>
-                     {/* Por ahora me ganó el borde del calendario. Ver si mostramos las sesiones en el cal*/}
-                    <div className='text-center'>
-                      <Calendar
-                          mode='single'
-                          selected={date}
-                          onSelect={setDate}
-                          className='rounded-md border p-4 inline-block'
+              <div className='ml-2 w-1/3 pr-6'>
+                <Card className='w-full'>
+                  <CardHeader>
+                    {/* Si bien es redundante considerando los titulos, esta bueno tener algo visual tambien!! ver <3 */}
+                    <CardTitle className='p-2 text-center'>
+                      Objetivos Cumplidos vs Pendientes
+                    </CardTitle>
+                    <CardDescription className='text-center'>
+                      Últimos seis meses
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer config={chartConfig4}>
+                      {/*Obviamente ver la logica de los meses */}
+                      <BarChart accessibilityLayer data={chartData1}>
+                        <CartesianGrid vertical={false} />
+                        <XAxis
+                          dataKey='month'
+                          tickLine={false}
+                          tickMargin={10}
+                          axisLine={false}
+                          tickFormatter={(value: string) => value.slice(0, 3)}
                         />
-                     </div>
-                  </Card>
+                        <ChartTooltip
+                          cursor={false}
+                          content={<ChartTooltipContent indicator='dashed' />}
+                        />
+                        <Bar
+                          dataKey='desktop'
+                          fill='var(--color-desktop)'
+                          radius={4}
+                        />
+                        <Bar
+                          dataKey='mobile'
+                          fill='var(--color-mobile)'
+                          radius={4}
+                        />
+                      </BarChart>
+                    </ChartContainer>
+                  </CardContent>
+                  <CardFooter className='flex-col items-start gap-2 text-sm'>
+                    <div className='flex gap-2 font-medium leading-none'>
+                      Trending up by 5.2% this month
+                    </div>
+                    <div className='leading-none text-muted-foreground'>
+                      Showing total visitors for the last 6 months
+                    </div>
+                  </CardFooter>
+                </Card>
+                <Card className='mt-8 w-auto'>
+                  {/* Por ahora me ganó el borde del calendario. Ver si mostramos las sesiones en el cal*/}
+                  <div className='text-center'>
+                    <Calendar
+                      mode='single'
+                      selected={date}
+                      onSelect={setDate}
+                      className='inline-block rounded-md border p-4'
+                    />
+                  </div>
+                </Card>
               </div>
-              </CardContent>
+            </CardContent>
           </Card>
           {/* Ver fin de tarjeta, para que se termine antes y no con la pagina*/}
         </>

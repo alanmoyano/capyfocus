@@ -50,7 +50,8 @@ export default tseslint.config(
       '@typescript-eslint/restrict-template-expressions': [
         'error',
         { allowNumber: true }
-      ]
+      ],
+      '@typescript-eslint/no-unused-vars': 'warn'
     }
   }
 )

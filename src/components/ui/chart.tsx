@@ -2,11 +2,16 @@ import * as React from 'react'
 import * as RechartsPrimitive from 'recharts'
 
 import { cn } from '@/lib/utils'
-import { formatTime, formatPercentage, formatDecimal, formatInteger } from '@/lib/utils'
+import {
+  formatTime,
+  formatPercentage,
+  formatDecimal,
+  formatInteger
+} from '@/lib/utils'
 
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: '', dark: '.dark' } as const
-type FormatType = 'time' | 'percentage' | 'decimal' | 'integer';
+type FormatType = 'time' | 'percentage' | 'decimal' | 'integer'
 
 export type ChartConfig = {
   [k in string]: {
@@ -112,9 +117,12 @@ const ChartTooltipContent = React.forwardRef<
       indicator?: 'line' | 'dot' | 'dashed'
       nameKey?: string
       labelKey?: string
-      formatType?: FormatType;
-      labelFormatter?: (value: React.ReactNode, payload: any[]) => React.ReactNode;
-      labelClassName?: string;
+      formatType?: FormatType
+      labelFormatter?: (
+        value: React.ReactNode,
+        payload: any[]
+      ) => React.ReactNode
+      labelClassName?: string
     }
 >(
   (
@@ -140,15 +148,15 @@ const ChartTooltipContent = React.forwardRef<
     const formatValue = (value: number, type: FormatType) => {
       switch (type) {
         case 'time':
-          return formatTime(value);
+          return formatTime(value)
         case 'percentage':
-          return formatPercentage(value);
+          return formatPercentage(value)
         case 'decimal':
-          return formatDecimal(value);
+          return formatDecimal(value)
         case 'integer':
-          return formatInteger(value);
+          return formatInteger(value)
         default:
-          return value.toString();
+          return value.toString()
       }
     }
 
@@ -162,7 +170,7 @@ const ChartTooltipContent = React.forwardRef<
       const itemConfig = getPayloadConfigFromPayload(config, item, key)
       const value =
         !labelKey && typeof label === 'string'
-          ? config[label]?.label ?? label
+          ? (config[label]?.label ?? label)
           : itemConfig?.label
 
       if (labelFormatter) {
@@ -208,7 +216,8 @@ const ChartTooltipContent = React.forwardRef<
           {payload.map((item, index) => {
             const key = `${nameKey ?? item.name ?? item.dataKey ?? 'value'}`
             const itemConfig = getPayloadConfigFromPayload(config, item, key)
-            const indicatorColor = item.color ?? item.payload?.fill ?? item.payload?.color
+            const indicatorColor =
+              item.color ?? item.payload?.fill ?? item.payload?.color
 
             return (
               <div
@@ -255,12 +264,17 @@ const ChartTooltipContent = React.forwardRef<
                     </span>
                   </div>
                   {(() => {
-                    const formattedValue = formatValue(Number(item.value), formatType);
-                    return formattedValue && (
-                      <span className="text-xs text-muted-foreground">
-                        {formattedValue}
-                      </span>
-                    );
+                    const formattedValue = formatValue(
+                      Number(item.value),
+                      formatType
+                    )
+                    return (
+                      formattedValue && (
+                        <span className='text-xs text-muted-foreground'>
+                          {formattedValue}
+                        </span>
+                      )
+                    )
                   })()}
                 </div>
               </div>
