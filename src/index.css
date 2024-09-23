@@ -114,98 +114,32 @@ main {
 /* Defino clase flip-card para dar vuelta la tarjeta */
 
 .flip-card {
-  width: 200px;
-  height: 350px;
+  width: 180px;
+  height: 330px;
   perspective: 2000px;
   transition: transform 0.6s;
   perspective: 2000px;
   &:hover {
     transform: scale(1.05);
   }
-}
 
-.flip-card-inner {
-  transition: transform 1s;
-  transform-style: preserve-3d;
-  position: relative;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  border-radius: 28px;
-  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.15);
-}
-
-.flip-card:hover .flip-card-inner {
-  transform: rotateY(180deg);
-}
-
-.flip-card-front,
-.flip-card-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  border-radius: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  backface-visibility: hidden;
-}
-
-.flip-card-front {
-  background-color: hsl(var(--primary));
-  text-align: center;
-  display: grid;
-  place-items: center;
-}
-
-.flip-card-back {
-  background-color: hsl(var(--accent));
-
-  color: hsl(var(--accent-foreground));
-  transform: rotateY(180deg);
-  text-align: center;
-  display: grid;
-  place-items: center;
-
-  transform: rotateY(180deg);
-}
-
-/* .flip-card {
-  
-  width: 320px;
-  height: 504px;
-  perspective: 1000px;
-  border-radius: 28px;
-  overflow: hidden;
-  transition: transform 0.6s;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  perspective: 2000px;
-
-  &:hover {
-    transform: scale(1.05);
-  }
-
-  &-inner {
+  .flip-card-inner {
+    transition: transform 1s;
+    transform-style: preserve-3d;
     position: relative;
     width: 100%;
     height: 100%;
     text-align: center;
-    transition: transform 0.8s;
-    transform-style: preserve-3d;
     border-radius: 28px;
-    border: 4px solid hsl(var(--border));
-    background-color: hsl(var(--card));
     box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.15);
   }
 
-  &:hover &-inner {
+  .flip-card:hover .flip-card-inner {
     transform: rotateY(180deg);
   }
 
-  &-front,
-  &-back {
+  .flip-card-front,
+  .flip-card-back {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -218,29 +152,74 @@ main {
     backface-visibility: hidden;
   }
 
-  &-front {
+  .flip-card-front {
     background-color: hsl(var(--primary));
-    font-family: 'Jomolhari';
-    color: hsl(var(--accent-foreground));
     text-align: center;
     display: grid;
     place-items: center;
-    font-size: 2rem;
   }
 
-  &-back {
+  .flip-card-back {
     background-color: hsl(var(--accent));
-    font-family: 'Jomolhari';
     color: hsl(var(--accent-foreground));
     transform: rotateY(180deg);
     text-align: center;
     display: grid;
     place-items: center;
-    font-size: 2rem;
+
     transform: rotateY(180deg);
   }
 
-  &:hover .flip-card {
-    transform: rotateY(-180deg);
+  .card {
+    width: 180px;
+    height: 330px;
+    perspective: 2000px;
+    transition: transform 0.6s;
+    perspective: 2000px;
+    text-align: center;
+    border-radius: 28px;
+    box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.15);
+    &:hover {
+      transform: scale(1.05);
+    }
   }
-} */
+
+  .card-front {
+    background-color: hsl(var(--primary));
+    text-align: center;
+    display: grid;
+    place-items: center;
+  }
+}
+
+.static-card {
+  width: 180px;
+  height: 330px;
+  transition: transform 0.6s;
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.static-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  border-radius: 28px;
+  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.15);
+}
+
+.static-card-content {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  text-align: center;
+}

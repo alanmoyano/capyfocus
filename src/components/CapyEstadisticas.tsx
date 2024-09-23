@@ -21,7 +21,6 @@ import {
 import {
   ChartConfig,
   ChartContainer,
-  ChartTooltip,
   ChartTooltipContent
 } from '@/components/ui/chart'
 import * as React from 'react'
@@ -53,6 +52,9 @@ import { ResponsiveContainer } from 'recharts'
 import { useMotivation } from '../hooks/MotivationContext'
 import { useMusic } from '../hooks/MusicContext'
 import { useSesion } from '@/hooks/SesionContext'
+import { Calendar } from './ui/calendar'
+import { formatTime } from '@/lib/utils'
+import { Tooltip as ChartTooltip } from 'recharts'
 
 const chartData = [
   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -118,6 +120,7 @@ export default function CapyEstadisticas() {
   const { objetivos, objetivosPend, tiempo, tiempoSesion } = useObjetivos()
   const { motivationType } = useMotivation()
   const { selectedMusic } = useMusic()
+  const [date, setDate] = React.useState<Date | undefined>(new Date())
   const { tecnicaEstudio, tiempoTotal, acumuladorTiempoPausa, cantidadPausas } =
     useSesion()
   return (
@@ -148,7 +151,7 @@ export default function CapyEstadisticas() {
                 </TooltipProvider>
               </SelectItem>
 
-              <SelectItem key={1} value='Semana'>
+              <SelectItem key={1} value='semanal'>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -161,7 +164,7 @@ export default function CapyEstadisticas() {
                 </TooltipProvider>
               </SelectItem>
 
-              <SelectItem key={2} value='Mensual'>
+              <SelectItem key={2} value='mensual'>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -174,7 +177,7 @@ export default function CapyEstadisticas() {
                 </TooltipProvider>
               </SelectItem>
 
-              <SelectItem key={3} value='Bimestral'>
+              <SelectItem key={3} value='bimestral'>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -187,7 +190,7 @@ export default function CapyEstadisticas() {
                 </TooltipProvider>
               </SelectItem>
 
-              <SelectItem key={4} value='6 Meses'>
+              <SelectItem key={4} value='seisMeses'>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -200,7 +203,7 @@ export default function CapyEstadisticas() {
                 </TooltipProvider>
               </SelectItem>
 
-              <SelectItem key={5} value='Evento'>
+              <SelectItem key={5} value='evento'>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -225,16 +228,26 @@ export default function CapyEstadisticas() {
                 Información de la Sesión
               </CardTitle>
             </CardHeader>
-
             <CardContent className='grid grid-cols-1 gap-4 md:grid-cols-2'>
               <div className='flex flex-col space-y-2'>
                 <p className='text-lg font-semibold'>
                   Tiempo total de estudio:{' '}
-                  <span className='font-normal'>{tiempoTotal}</span>
+                  {(() => {
+                    const time = tiempoTotal || 0
+                    const hours = Math.floor(time / 3600)
+                    const minutes = Math.floor((time % 3600) / 60)
+                    const seconds = time % 60
+
+                    if (hours > 0) {
+                      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+                    } else {
+                      return `${minutes}:${seconds.toString().padStart(2, '0')}`
+                    }
+                  })()}{' '}
                 </p>
                 <p className='text-lg font-semibold'>
                   Tiempo total de descanso:{' '}
-                  <span className='font-normal'>{acumuladorTiempoPausa}</span>
+                  {formatTime(acumuladorTiempoPausa || 0)}
                 </p>
                 <p className='text-lg font-semibold'>
                   Cantidad de pausas:{' '}
@@ -272,6 +285,7 @@ export default function CapyEstadisticas() {
                 </p>
               </div>
             </CardContent>
+            {/* Tabla de objetivos de la sesión */}
             <h2 className='ml-4 mt-4 flex w-full justify-start text-2xl font-bold'>
               Objetivos de la sesion
             </h2>
@@ -301,39 +315,16 @@ export default function CapyEstadisticas() {
                       )}
                     </TableCell>
                     <TableCell className='text-right'>
-                      {(() => {
-                        const time = tiempo[objetivo] || 0
-                        const hours = Math.floor(time / 3600)
-                        const minutes = Math.floor((time % 3600) / 60)
-                        const seconds = time % 60
-
-                        if (hours > 0) {
-                          return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-                        } else {
-                          return `${minutes}:${seconds.toString().padStart(2, '0')}`
-                        }
-                      })()}
+                      {formatTime(tiempo[objetivo] || 0)}
                     </TableCell>
                     <TableCell className='text-right'>
-                      {(() => {
-                        const time = tiempoSesion[objetivo] || 0
-                        const hours = Math.floor(time / 3600)
-                        const minutes = Math.floor((time % 3600) / 60)
-                        const seconds = time % 60
-
-                        if (hours > 0) {
-                          return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-                        } else {
-                          return `${minutes}:${seconds.toString().padStart(2, '0')}`
-                        }
-                      })()}
+                      {formatTime(tiempoSesion[objetivo] || 0)}
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </Card>
-          {/* Tabla de objetivos de la sesión */}
           <hr />
           <hr />
           {/* Gráfico de sesión */}
@@ -347,11 +338,14 @@ export default function CapyEstadisticas() {
               <ChartContainer config={chartConfig1}>
                 <ResponsiveContainer width='100%' height={400}>
                   <PieChart>
+                    {/* Agregue un filtro para que no se muestren los objetivos que no se han cumplido */}
                     <Pie
-                      data={objetivos.map(objetivo => ({
-                        name: objetivo,
-                        value: tiempo[objetivo] || 0
-                      }))}
+                      data={objetivos
+                        .filter(objetivo => tiempo[objetivo] > 0)
+                        .map(objetivo => ({
+                          name: objetivo,
+                          value: tiempo[objetivo] || 0
+                        }))}
                       labelLine={false}
                       outerRadius='80%'
                       dataKey='value'
@@ -359,18 +353,27 @@ export default function CapyEstadisticas() {
                         `${name} ${(percent * 100).toFixed(0)}%`
                       }
                     >
-                      {objetivos.map((objetivo, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={
-                            chartConfig1[Object.keys(chartConfig1)[index + 1]]
-                              .color || `hsl(${index * 90}, 70%, 60%)`
-                          }
-                          name={objetivo}
-                        />
-                      ))}
+                      {objetivos
+                        .filter(objetivo => tiempo[objetivo] > 0)
+                        .map((objetivo, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={
+                              chartConfig1[Object.keys(chartConfig1)[index + 1]]
+                                .color || `hsl(${index * 90}, 70%, 60%)`
+                            }
+                            name={objetivo}
+                          />
+                        ))}
                     </Pie>
-                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <ChartTooltip
+                      content={
+                        <ChartTooltipContent
+                          indicator='dot'
+                          formatType='time'
+                        />
+                      }
+                    />
                     <ChartLegend content={<ChartLegendContent />} />
                   </PieChart>
                 </ResponsiveContainer>
@@ -380,7 +383,7 @@ export default function CapyEstadisticas() {
         </>
       )}
 
-      {selectedPeriod === 'Semana' && (
+      {selectedPeriod === 'semanal' && (
         <>
           {/* Gráfico semanal */}
           <Card className='flex flex-col'>
@@ -449,9 +452,8 @@ export default function CapyEstadisticas() {
         </>
       )}
 
-      {selectedPeriod === 'Mensual' && (
+      {selectedPeriod === 'mensual' && (
         <>
-          {/* Gráfico mensual */}
           <Card>
             <CardHeader>
               <CardTitle>Objetivos Cumplidos VS Pendientes</CardTitle>
@@ -490,6 +492,336 @@ export default function CapyEstadisticas() {
               </div>
             </CardFooter>
           </Card>
+        </>
+      )}
+      {selectedPeriod === 'bimestral' && (
+        <>
+          <Card className='container mx-auto mt-4 flex-col overflow-y-auto rounded-lg bg-orange-100 p-6 shadow-lg'>
+            <CardHeader>
+              <CardTitle className='mb-4 py-4 text-left text-3xl font-bold'>
+                Tu progreso en los últimos dos meses
+              </CardTitle>
+            </CardHeader>
+            <CardContent className='flex justify-between gap-4'>
+              <div className='w-1/2 pl-4'>
+                <div className='grid grid-cols-2 gap-14'>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Tiempo total de estudio:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {formatTime(tiempoTotal || 0)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Tiempo total de descanso:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {formatTime(acumuladorTiempoPausa || 0)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Cantidad de pausas:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {cantidadPausas}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Tipo de motivación:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {motivationType}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Música:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {selectedMusic?.title || 'sin música'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Técnica de estudio:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {tecnicaEstudio}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Cantidad total de objetivos:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {objetivos.length}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Objetivos cumplidos:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {objetivos.length - objetivosPend.length}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Objetivos pendientes:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {objetivosPend.length}
+                    </p>
+                  </div>
+                </div>
+                <div className='mt-8 w-auto'>
+                  <p>
+                    Hola soy Agus y opino que acá pódria spawnear un Chicho
+                    salvaje!!!
+                  </p>
+                </div>
+              </div>
+              <div className='ml-2 w-1/3 pr-6'>
+                <Card className='w-auto'>
+                  {/* Por ahora me ganó el borde del calendario. Ver si mostramos las sesiones en el cal*/}
+                  <div className='text-center'>
+                    <Calendar
+                      mode='single'
+                      selected={date}
+                      onSelect={setDate}
+                      className='inline-block rounded-lg border p-4 shadow-sm'
+                    />
+                  </div>
+                </Card>
+                <Card className='mt-8 w-full rounded-lg shadow-md'>
+                  <CardHeader>
+                    <CardTitle className='p-2 text-center'>
+                      Objetivos Cumplidos vs Pendientes
+                    </CardTitle>
+                    <CardDescription className='text-center'>
+                      Últimos dos meses
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer config={chartConfig4}>
+                      {/*Obviamente ver la logica de los meses */}
+                      <BarChart accessibilityLayer data={chartData1.slice(-2)}>
+                        <CartesianGrid vertical={false} />
+                        <XAxis
+                          dataKey='month'
+                          tickLine={false}
+                          tickMargin={10}
+                          axisLine={false}
+                          tickFormatter={(value: string) => value.slice(0, 3)}
+                        />
+                        <ChartTooltip
+                          cursor={false}
+                          content={<ChartTooltipContent indicator='dashed' />}
+                        />
+                        <Bar
+                          dataKey='desktop'
+                          fill='var(--color-desktop)'
+                          radius={4}
+                        />
+                        <Bar
+                          dataKey='mobile'
+                          fill='var(--color-mobile)'
+                          radius={4}
+                        />
+                      </BarChart>
+                    </ChartContainer>
+                  </CardContent>
+                  <CardFooter className='flex-col items-start gap-2 text-sm'>
+                    <div className='flex gap-2 font-medium leading-none'>
+                      Trending up by 5.2% this month
+                    </div>
+                    <div className='leading-none text-muted-foreground'>
+                      Showing total visitors for the last 6 months
+                    </div>
+                  </CardFooter>
+                </Card>
+              </div>
+            </CardContent>
+          </Card>
+        </>
+      )}
+      {selectedPeriod === 'seisMeses' && (
+        <>
+          <Card className='container mx-auto mt-4 flex-col overflow-y-auto rounded-lg bg-orange-100 p-6 shadow-lg'>
+            <CardHeader>
+              <CardTitle className='mb-4 py-4 text-left text-3xl font-bold'>
+                Tu progreso en los últimos seis meses
+              </CardTitle>
+            </CardHeader>
+            <CardContent className='flex justify-between gap-4'>
+              <div className='w-1/2 pl-4'>
+                <div className='grid grid-cols-2 gap-14'>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Tiempo total de estudio:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {(() => {
+                        const time = tiempoTotal || 0
+                        const hours = Math.floor(time / 3600)
+                        const minutes = Math.floor((time % 3600) / 60)
+                        const seconds = time % 60
+
+                        return hours > 0
+                          ? `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+                          : `${minutes}:${seconds.toString().padStart(2, '0')}`
+                      })()}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Tiempo total de descanso:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {(() => {
+                        const time = acumuladorTiempoPausa || 0
+                        const hours = Math.floor(time / 3600)
+                        const minutes = Math.floor((time % 3600) / 60)
+                        const seconds = time % 60
+
+                        return hours > 0
+                          ? `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+                          : `${minutes}:${seconds.toString().padStart(2, '0')}`
+                      })()}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Cantidad de pausas:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {cantidadPausas}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Tipo de motivación:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {motivationType}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Música:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {selectedMusic?.title || 'sin música'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Técnica de estudio:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {tecnicaEstudio}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Cantidad total de objetivos:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {objetivos.length}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Objetivos cumplidos:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {objetivos.length - objetivosPend.length}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Objetivos pendientes:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {objetivosPend.length}
+                    </p>
+                  </div>
+                </div>
+                <div className='mt-8 w-auto'>
+                  <p>
+                    Hola soy Agus y opino que acá pódria spawnear un Chicho
+                    salvaje!!!
+                  </p>
+                </div>
+              </div>
+              <div className='ml-2 w-1/3 pr-6'>
+                <Card className='w-full'>
+                  <CardHeader>
+                    {/* Si bien es redundante considerando los titulos, esta bueno tener algo visual tambien!! ver <3 */}
+                    <CardTitle className='p-2 text-center'>
+                      Objetivos Cumplidos vs Pendientes
+                    </CardTitle>
+                    <CardDescription className='text-center'>
+                      Últimos seis meses
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer config={chartConfig4}>
+                      {/*Obviamente ver la logica de los meses */}
+                      <BarChart accessibilityLayer data={chartData1}>
+                        <CartesianGrid vertical={false} />
+                        <XAxis
+                          dataKey='month'
+                          tickLine={false}
+                          tickMargin={10}
+                          axisLine={false}
+                          tickFormatter={(value: string) => value.slice(0, 3)}
+                        />
+                        <ChartTooltip
+                          cursor={false}
+                          content={<ChartTooltipContent indicator='dashed' />}
+                        />
+                        <Bar
+                          dataKey='desktop'
+                          fill='var(--color-desktop)'
+                          radius={4}
+                        />
+                        <Bar
+                          dataKey='mobile'
+                          fill='var(--color-mobile)'
+                          radius={4}
+                        />
+                      </BarChart>
+                    </ChartContainer>
+                  </CardContent>
+                  <CardFooter className='flex-col items-start gap-2 text-sm'>
+                    <div className='flex gap-2 font-medium leading-none'>
+                      Trending up by 5.2% this month
+                    </div>
+                    <div className='leading-none text-muted-foreground'>
+                      Showing total visitors for the last 6 months
+                    </div>
+                  </CardFooter>
+                </Card>
+                <Card className='mt-8 w-auto'>
+                  {/* Por ahora me ganó el borde del calendario. Ver si mostramos las sesiones en el cal*/}
+                  <div className='text-center'>
+                    <Calendar
+                      mode='single'
+                      selected={date}
+                      onSelect={setDate}
+                      className='inline-block rounded-md border p-4'
+                    />
+                  </div>
+                </Card>
+              </div>
+            </CardContent>
+          </Card>
+          {/* Ver fin de tarjeta, para que se termine antes y no con la pagina*/}
         </>
       )}
     </>
