@@ -64,7 +64,7 @@ export default function Usuario() {
                       <div className='relative'>
                         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                           <DialogTrigger asChild>
-                            <Avatar className='mx-auto h-32 w-32'>
+                            <Avatar className='mx-auto h-32 w-32 hover:cursor-pointer'>
                               <AvatarImage
                                 src='/capyPic.png'
                                 className='h-full w-full'
@@ -78,8 +78,7 @@ export default function Usuario() {
                             <DialogHeader>
                               <DialogTitle>Datos del perfil</DialogTitle>
                               <DialogDescription>
-                                Make changes to your profile here. Click save
-                                when you're done.
+                                Haz los cambios de tu CapyPerfil aquí.
                               </DialogDescription>
                             </DialogHeader>
                             <div className='grid gap-4 py-4'>
@@ -149,7 +148,7 @@ export default function Usuario() {
             </CardContent>
             <CardFooter className='flex justify-end'>
               <Button onClick={() => handleLogin()} className='mt-4'>
-                Inciar sesion?
+                Cerrar sesión
               </Button>
             </CardFooter>
           </Card>

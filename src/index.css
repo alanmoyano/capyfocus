@@ -116,15 +116,16 @@ main {
 .flip-card {
   width: 180px;
   height: 330px;
-  perspective: 2000px;
+  perspective: 1000px;
   transition: transform 0.6s;
   perspective: 2000px;
+  cursor: pointer;
   &:hover {
     transform: scale(1.05);
   }
 
   .flip-card-inner {
-    transition: transform 1s;
+    transition: transform 0.6s;
     transform-style: preserve-3d;
     position: relative;
     width: 100%;
@@ -196,9 +197,8 @@ main {
   width: 180px;
   height: 330px;
   transition: transform 0.6s;
-  &:hover {
-    transform: scale(1.05);
-  }
+  cursor: pointer;
+
 }
 
 .static-card-inner {
@@ -222,4 +222,8 @@ main {
   background-color: hsl(var(--primary));
   color: hsl(var(--primary-foreground));
   text-align: center;
+}
+
+.flip-card.is-flipped .flip-card-inner {
+  transform: rotateY(180deg);
 }
