@@ -2,12 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button'
 import { Checkbox } from './ui/checkbox'
 import { useLocation } from 'wouter'
-import { useObjetivos } from './ObjetivosContext'
+import { useObjetivos } from '../hooks/ObjetivosContext'
 import { Star } from 'lucide-react'
 import CapySound from '../assets/Sonido_de_caripincho.mp3'
 import Confetti from 'react-confetti-boom'
 import useSound from 'use-sound'
-import { useMusic } from './MusicContext'
+import { useMusic } from '../hooks/MusicContext'
+import { useMotivation } from '../hooks/MotivationContext'
 
 type Mode = 'Estudiando' | 'Descansando'
 
@@ -39,6 +40,7 @@ export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
 export default function Pomodoro() {
   const [sessionSeconds, setSessionSeconds] = useState(25 * 60)
   const [breakSeconds, setBreakSeconds] = useState(5 * 60)
+  const [objCumplidos, setObjCumplidos] = useState(0)
   const [countdown, setCountdown] = useState(sessionSeconds)
   const [isActive, setIsActive] = useState(false)
   const [mode, setMode] = useState<Mode>('Estudiando')
@@ -47,6 +49,25 @@ export default function Pomodoro() {
   const [capySound] = useSound(CapySound)
   const [ObjStudyTime, setObjStudyTime] = useState(0)
   const { selectedMusic } = useMusic()
+  const { motivationType } = useMotivation()
+  const { objetivos, setObjetivos, objetivosFav, setTiempo, tiempo } =
+    useObjetivos()
+  const [marked, setMarked] = useState<string[]>([])
+  const [, setLocation] = useLocation()
+
+  const finalizarSesion = () => {
+    clearInterval(timer.current)
+
+    objetivos.forEach(objetivo => {
+      if (!tiempo[objetivo]) {
+        setTiempo(prev => ({
+          ...prev,
+          [objetivo]: 0
+        }))
+      }
+    })
+    setLocation('/capyEstadisticas')
+  }
 
   //Revisar el funcionamiento de esta cosa!!!
 
@@ -64,7 +85,7 @@ export default function Pomodoro() {
 
     if (countdown >= 0) {
       timer.current = setInterval(() => {
-        console.log(`Hola! actualizando, tiempo: ${formatTime(countdown)}`)
+        //console.log(`Hola! actualizando, tiempo: ${formatTime(countdown)}`)
         setCountdown(prev => prev - 1)
         if (mode === 'Estudiando') {
           setObjStudyTime(prev => prev + 1)
@@ -78,16 +99,25 @@ export default function Pomodoro() {
       pomodoroCount.current += 0.5
     }
 
+    if (objetivos.length === objCumplidos && objetivos.length > 0) {
+      finalizarSesion()
+    }
+
     return () => clearInterval(timer.current)
-  }, [isActive, countdown, sessionSeconds, breakSeconds, mode, capySound])
+  }, [
+    isActive,
+    countdown,
+    sessionSeconds,
+    breakSeconds,
+    mode,
+    capySound,
+    objCumplidos
+  ])
 
   useEffect(() => {
     setCountdown(mode === 'Estudiando' ? sessionSeconds : breakSeconds)
   }, [mode, sessionSeconds, breakSeconds])
 
-  const { objetivos, setObjetivos, objetivosFav, setTiempo } = useObjetivos()
-  const [marked, setMarked] = useState<string[]>([])
-  const [, setLocation] = useLocation()
   const handleAccept = () => {
     setLocation('/')
     setObjetivos(prevObjetivos =>
@@ -96,12 +126,11 @@ export default function Pomodoro() {
   }
 
   const handleCheckbox = (objetivo: string, key: number) => {
-    // Ver cómo hacer para contabilizar el tiempo entre sesiones de un obj.
     if (marked.includes(objetivo)) {
       return
     }
     setMarked([...marked, objetivo])
-    //const timeSinceActive = sessionSeconds - countdown
+    setObjCumplidos(prev => prev + 1)
     console.log(
       'Checkbox activado para objetivo:',
       objetivo,
@@ -125,6 +154,10 @@ export default function Pomodoro() {
       <div className='grid grid-cols-2 gap-12'>
         <div className=''>
           <img src='/idle.gif' />
+          <div className='mb-4 rounded-lg bg-primary p-2'>
+            Tu tipo de motivación es:{' '}
+            <span className='font-semibold'>{motivationType}</span>
+          </div>
           <div>
             {selectedMusic && (
               <iframe
@@ -213,14 +246,14 @@ export default function Pomodoro() {
             <ul className='list-inside list-disc space-y-2 text-black'>
               {objetivos.map((objetivo, key) => (
                 <li key={key} className='flex items-center space-x-2'>
-                  <span>
+                  <span className='flex items-center'>
                     <Checkbox
                       checked={marked.includes(objetivo)}
                       disabled={mode === 'Descansando' || !isActive}
                       onClick={() => handleCheckbox(objetivo, key)}
                       className='mr-2'
                     />
-                    {objetivo}
+                    <span>{objetivo}</span>
                   </span>
                   {objetivosFav.includes(objetivo) && (
                     <Star size={20} style={{ color: '#ffbc05' }} />
@@ -234,7 +267,11 @@ export default function Pomodoro() {
               <Button onClick={handleAccept}>Volver</Button>
             </div>
             <div className='flex justify-end'>
-              <Button className='' variant={'destructive'}>
+              <Button
+                className=''
+                variant={'destructive'}
+                onClick={finalizarSesion}
+              >
                 Finalizar Sesion
               </Button>
             </div>

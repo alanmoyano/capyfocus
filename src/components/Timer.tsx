@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button'
 import { useLocation } from 'wouter'
-import { useObjetivos } from './ObjetivosContext'
+import { useObjetivos } from '../hooks/ObjetivosContext'
 import { Star, NotebookPen, Moon } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 //import { navigationMenuTriggerStyle } from './ui/navigit pull gation-menu'
-import { useMusic } from './MusicContext'
-
+import { useMusic } from '../hooks/MusicContext'
+import { useMotivation } from '../hooks/MotivationContext'
+import { useSesion } from '../hooks/SesionContext'
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Sesión' | 'Descanso'
@@ -42,24 +43,57 @@ export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
 export default function Timer() {
   const [Sessioncountup, setSessionCountup] = useState(0)
   const [Breakcountup, setBreakCountup] = useState(0)
+  const [tiempoObjAcumulado, setTiempoObjAcumulado] = useState(0)
+  const [objCumplidos, setObjCumplidos] = useState(0)
   const [isActive, setIsActive] = useState<boolean | null>(true)
   const [mode, setMode] = useState<Mode>('Sesión')
   const timer = useRef<NodeJS.Timeout>()
-
-  function finalizarSesion() {
-    clearInterval(timer.current)
-    console.log(`Has estudiado durante ${formatTime(Sessioncountup)} `)
-    console.log(`Has descansado durante ${formatTime(Breakcountup)}`)
-    setBreakCountup(0)
-    setSessionCountup(0)
-  }
-
+  const { motivationType } = useMotivation()
   // // @ts-expect-error vamos a usar la descripción después, no te enojes typescript!!! 🥺
   const [, setDescription] = useState<Accion>('Estudiar')
+  const [, setLocation] = useLocation()
+  const [lastCheckedObj, setLastCheckedObj] = useState<number | null>(null)
+  const {
+    objetivos,
+    setObjetivos,
+    objetivosFav,
+    setTiempo,
+    tiempo,
+    setTiempoSesion,
+    setObjetivosPend
+  } = useObjetivos()
+  const [marked, setMarked] = useState<string[]>([])
+  const { selectedMusic } = useMusic()
+  const { setTiempoTotal, setAcumuladorTiempoPausa, setCantidadPausas } =
+    useSesion()
+
+  const finalizarSesion = () => {
+    clearInterval(timer.current)
+    setTiempoTotal(Sessioncountup)
+    setAcumuladorTiempoPausa(Breakcountup)
+    objetivos.forEach(objetivo => {
+      if (!tiempo[objetivo]) {
+        setTiempo(prev => ({
+          ...prev,
+          [objetivo]: 0
+        }))
+        setTiempoSesion(prev => ({ ...prev, [objetivo]: 0 }))
+      }
+    })
+    setLocation('/capyEstadisticas')
+  }
+
+  useEffect(() => {
+    setObjetivosPend(objetivos)
+  }, [])
 
   useEffect(() => {
     if (!isActive) {
       setMode('Descanso')
+      // Esto esta hecho para que ts no joda pero es una barbaridad y debe ser cambiado lo antes posible
+      console.log(mode)
+      setCantidadPausas(prev => prev + 1)
+      console.log('pausaste')
       clearInterval(timer.current)
       timer.current = setInterval(() => {
         setBreakCountup(prev => prev + 1)
@@ -70,8 +104,11 @@ export default function Timer() {
         setSessionCountup(prev => prev + 1)
       }, 1000)
     }
+    if (objetivos.length === objCumplidos && objetivos.length > 0) {
+      finalizarSesion()
+    }
     return () => clearInterval(timer.current)
-  }, [isActive, mode])
+  }, [isActive])
 
   /* Esto es para que los botones si los tocas mas de una vez no hagan nada */
   const handleToggle = (value: boolean) => {
@@ -83,13 +120,6 @@ export default function Timer() {
   // useEffect(() => {
   //   setCountdown(mode === 'Session' ? sessionSeconds : breakSeconds)
   // }, [mode, sessionSeconds, breakSeconds])
-
-  const [, setLocation] = useLocation()
-
-  const [lastCheckedObj, setLastCheckedObj] = useState<number | null>(null)
-  const { objetivos, setObjetivos, objetivosFav, setTiempo, tiempo } =
-    useObjetivos()
-  const [marked, setMarked] = useState<string[]>([])
 
   const handleAccept = () => {
     setLocation('/')
@@ -104,23 +134,25 @@ export default function Timer() {
       return
     }
     setMarked([...marked, objetivo])
-    /*console.log('Checkbox activado para objetivo:', objetivo, ', Key:', key, 'Tiempo:', Sessioncountup)
-    if (lastCheckedObj !==null) {console.log('lastCheckedKey:', lastCheckedObj, 'tiempo: ',  Math.abs(tiempo[objetivos[lastCheckedObj]]), 'Resta:', Sessioncountup - tiempo[objetivos[lastCheckedObj]])}
-    */
+    setObjCumplidos(prev => prev + 1)
+    setTiempoObjAcumulado(prev => prev + (Sessioncountup - prev))
+    setObjetivosPend(prevObjetivosPend =>
+      prevObjetivosPend.filter(item => item !== objetivo)
+    )
+
     if (lastCheckedObj === null) {
+      // clearInterval(timer.current)
       setTiempo(prev => ({ ...prev, [objetivo]: Sessioncountup }))
+      setTiempoSesion(prev => ({ ...prev, [objetivo]: Sessioncountup }))
     } else {
-      const tiempoObjAnterior = tiempo[objetivos[lastCheckedObj]]
-      if (tiempoObjAnterior) {
-        setTiempo(prev => ({
-          ...prev,
-          [objetivo]: Sessioncountup - tiempoObjAnterior
-        }))
-      }
+      setTiempo(prev => ({
+        ...prev,
+        [objetivo]: Sessioncountup - tiempoObjAcumulado
+      }))
+      setTiempoSesion(prev => ({ ...prev, [objetivo]: Sessioncountup }))
     }
     setLastCheckedObj(key)
   }
-  const { selectedMusic } = useMusic()
 
   return (
     <>
@@ -130,6 +162,10 @@ export default function Timer() {
         {/* Columna 1:  */}
         <div className='col-span-1 p-4'>
           <img src='/idle.gif' className='h-auto w-full' alt='Idle animation' />
+          <div className='mb-4 rounded-lg bg-primary p-2'>
+            Tu tipo de motivación es:{' '}
+            <span className='font-semibold'>{motivationType}</span>
+          </div>
           <div>
             {selectedMusic && (
               <iframe
@@ -193,7 +229,9 @@ export default function Timer() {
                   <span className='flex-grow'>
                     <Checkbox
                       checked={marked.includes(objetivo)}
-                      onClick={() => handleCheckbox(objetivo, key)}
+                      onClick={() => {
+                        handleCheckbox(objetivo, key)
+                      }}
                       className='mr-2'
                     />
                     {objetivo}

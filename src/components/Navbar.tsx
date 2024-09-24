@@ -57,6 +57,8 @@ function NavItems() {
       <NavbarLink to='/capyInsignias'>CapyInsiginas</NavbarLink>
 
       <NavbarLink to='/capyEstadisticas'>CapyEstadisticas</NavbarLink>
+
+      <NavbarLink to='/usuario'>CapyDatos</NavbarLink>
     </>
   )
 }

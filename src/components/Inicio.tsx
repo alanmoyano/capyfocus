@@ -1,4 +1,4 @@
-import { KeyboardEvent, useState } from 'react'
+import { KeyboardEvent, useEffect, useState } from 'react'
 
 import { useLocation } from 'wouter'
 
@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 
 import { Input } from '@/components/ui/input'
-import { useObjetivos } from './ObjetivosContext'
+import { useObjetivos } from '../hooks/ObjetivosContext'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import {
   Tooltip,
@@ -74,15 +74,19 @@ import {
   CarouselNext,
   CarouselPrevious
 } from '@/components/ui/carousel'
-//import { useMotivation } from './MotivationContext'
+import { useMotivation } from '../hooks/MotivationContext'
 
-import { useMusic } from './MusicContext'
+import { useMusic } from '../hooks/MusicContext'
 
-type CapyMetodos = 'Capydoro' | 'Capymetro'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { useSesion } from '@/hooks/SesionContext'
+
+type CapyMetodos = 'Capydoro' | 'Capymetro' | ''
 
 const descriptions: Record<CapyMetodos, string> = {
   Capydoro: 'Estudia con el método Pomodoro',
-  Capymetro: 'Estudia con un cronómetro'
+  Capymetro: 'Estudia con un cronómetro',
+  '': ''
 }
 
 /* Evento */
@@ -140,22 +144,35 @@ export default function Inicio() {
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [inputValue, setInputValue] = useState('')
   const [index, setIndex] = useState<number | null>(null)
-  const [selectedMotivation, setSelectedMotivation] = useState(-1)
+  const [selectedPlaylist, setSelectedPlaylist] = useState(-1)
 
   const { objetivos, setObjetivos, objetivosFav, setObjetivosFav } =
     useObjetivos()
 
-  const [description, setDescription] = useState<CapyMetodos>('Capydoro')
+  const [description, setDescription] = useState<CapyMetodos>('')
 
   const [, setLocation] = useLocation()
 
-  //const [, setMotivationType] = useMotivation()
+  const { setMotivationType } = useMotivation()
+
+  const { setSelectedMusic } = useMusic()
+
+  const [events, setEvents] = useState<Event[]>([])
+  const [eventTitle, setEventTitle] = useState<string>('')
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
+
+  const { setTecnicaEstudio } = useSesion()
 
   const handleAccept = () => {
-    if (description === 'Capydoro') {
-      setLocation('/capydoro')
-    } else {
-      setLocation('/capymetro')
+    switch (description) {
+      case 'Capydoro':
+        setLocation('/capydoro')
+        setTecnicaEstudio(description)
+        break
+      case 'Capymetro':
+        setLocation('capymetro')
+        setTecnicaEstudio(description)
+        break
     }
   }
 
@@ -166,7 +183,7 @@ export default function Inicio() {
   const handleSelect = (value: string) => {
     console.log(value)
 
-    //setMotivationType(value)
+    setMotivationType(value)
   }
 
   const handleAdd = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -214,8 +231,6 @@ export default function Inicio() {
   /* Evento */
 
   /* const [date, setDate] = useState<Date | undefined>(new Date()) */
-  const [events, setEvents] = useState<Event[]>([])
-  const [eventTitle, setEventTitle] = useState<string>('')
 
   const addEvent = () => {
     if (date && eventTitle) {
@@ -225,14 +240,24 @@ export default function Inicio() {
   }
 
   // musica
-  const { setSelectedMusic } = useMusic()
 
-  const handleMusicSelection = (music: {
-    title: string
-    spotifyUri: string
-  }) => {
-    setSelectedMusic(music)
+  const handleMusicSelection = (
+    music: {
+      title: string
+      spotifyUri: string
+    },
+    idPlaylist: number
+  ) => {
+    if (idPlaylist === selectedPlaylist) {
+      setSelectedMusic(null)
+    } else {
+      setSelectedMusic(music)
+    }
   }
+
+  useEffect(() => {
+    setSelectedMusic(null)
+  }, [])
 
   return (
     <>
@@ -267,102 +292,232 @@ export default function Inicio() {
           {/* Agregar evento  */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant='secondary' className='mt-6 bg-secondary'>
+              <Button
+                variant='secondary'
+                className='mt-6 w-full bg-secondary sm:w-auto'
+              >
                 Eventos
               </Button>
             </SheetTrigger>
-            <SheetContent>
-              <SheetHeader>
-                <SheetTitle>Agrega evento</SheetTitle>
-                <SheetDescription>Agrega eventos desde aqui.</SheetDescription>
-              </SheetHeader>
-              <div className='grid gap-4 py-4'>
-                <div className='grid grid-cols-4 items-center gap-4'>
-                  <Label htmlFor='name' className='text-right'>
-                    Nombre
-                  </Label>
-                  <Input
-                    id='name'
-                    type='text'
-                    value={eventTitle}
-                    onChange={e => setEventTitle(e.target.value)}
-                    placeholder='Evento'
-                    className='col-span-3'
-                  />
-                </div>
-                <div className='grid grid-cols-4 items-center gap-4'>
-                  <Label className='text-right'>Calendario</Label>
-                </div>
-                {/* Calendario */}
-
-                <div>
-                  <Calendar
-                    mode='single'
-                    selected={date}
-                    onSelect={setDate}
-                    className='flex w-full justify-center rounded-md border'
-                    modifiers={{
-                      eventDay: events.map(event => event.date)
-                    }}
-                    modifiersClassNames={{
-                      eventDay: 'bg-secondary' // Estilo para días con eventos
-                    }}
-                    locale={es}
-                    components={{
-                      DayContent: ({ date }) => {
-                        const event = events.find(
-                          e => e.date.toDateString() === date.toDateString()
-                        )
-                        return (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <div>{date.getDate()}</div>
-                              </TooltipTrigger>
-                              {event && (
-                                <TooltipContent>
-                                  <p>{event.title}</p>
-                                </TooltipContent>
-                              )}
-                            </Tooltip>
-                          </TooltipProvider>
-                        )
-                      }
-                    }}
-                  />
-
-                  <div className='mt-4'>
-                    <Button onClick={addEvent}>Agregar</Button>
+            <SheetContent className='w-full sm:max-w-md'>
+              <ScrollArea className='h-[80vh] pr-4'>
+                <SheetHeader>
+                  <SheetTitle className='text-xl font-bold sm:text-2xl'>
+                    Agregar evento
+                  </SheetTitle>
+                  <SheetDescription className='text-lg text-black sm:text-xl'>
+                    Agrega eventos desde aquí.
+                  </SheetDescription>
+                </SheetHeader>
+                <p className='mt-2 text-sm text-muted-foreground'>
+                  ¿Cual es el evento?
+                </p>
+                <div className='grid gap-4 py-4'>
+                  <div className='grid grid-cols-1 items-center gap-4 sm:grid-cols-4'>
+                    <Label
+                      htmlFor='name'
+                      className='text-sm font-bold sm:text-right sm:text-base'
+                    >
+                      Nombre
+                    </Label>
+                    <Input
+                      id='name'
+                      type='text'
+                      value={eventTitle}
+                      onChange={e => setEventTitle(e.target.value)}
+                      placeholder='Evento'
+                      className='col-span-1 sm:col-span-3'
+                    />
                   </div>
-                  <div className='mt-4'>
-                    <h2>Eventos:</h2>
-                    <ul>
-                      {events.map((event, index) => (
-                        <li key={index}>
-                          {event.date.toLocaleDateString('es-ES', {
-                            weekday: 'short',
-                            month: 'numeric',
-                            day: 'numeric'
-                          })}
-                          - {event.title}
-                        </li>
-                      ))}
-                    </ul>
+                  <p className='text-sm text-muted-foreground'>
+                    Selecciona una fecha para el evento.
+                  </p>
+                  <div className='grid grid-cols-1 items-center gap-4 sm:grid-cols-4'>
+                    <Label className='text-sm font-bold sm:text-right sm:text-base'>
+                      Calendario
+                    </Label>
+                  </div>
+                  {/* Calendario */}
+
+                  <div className='w-full sm:w-auto'>
+                    <Calendar
+                      mode='single'
+                      selected={date}
+                      onSelect={selectedDate => {
+                        const today = new Date()
+                        today.setHours(0, 0, 0, 0)
+                        if (selectedDate && selectedDate >= today) {
+                          setDate(selectedDate)
+                        }
+                      }}
+                      className='flex w-full justify-center rounded-md border sm:w-auto'
+                      modifiers={{
+                        eventDay: events.map(event => event.date),
+                        disabled: date => {
+                          const today = new Date()
+                          today.setHours(0, 0, 0, 0)
+                          return date < today
+                        }
+                      }}
+                      modifiersClassNames={{
+                        eventDay: 'bg-secondary',
+                        disabled: 'opacity-50 cursor-not-allowed'
+                      }}
+                      locale={es}
+                      onDayClick={(day: Date) => {
+                        const clickedEvent = events.find(
+                          event =>
+                            event.date.toDateString() === day.toDateString()
+                        )
+                        setSelectedEvent(clickedEvent ?? null)
+                      }}
+                      components={{
+                        DayContent: ({ date }) => {
+                          const event = events.find(
+                            e => e.date.toDateString() === date.toDateString()
+                          )
+                          return (
+                            <div>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <div>{date.getDate()}</div>
+                                  </TooltipTrigger>
+                                  {event && (
+                                    <TooltipContent>
+                                      <p>{event.title}</p>
+                                    </TooltipContent>
+                                  )}
+                                </Tooltip>
+                              </TooltipProvider>
+                            </div>
+                          )
+                        }
+                      }}
+                    />
+
+                    <div className='mt-4'>
+                      <Button
+                        onClick={addEvent}
+                        variant={'accent'}
+                        className='w-full sm:w-auto'
+                      >
+                        Agregar
+                      </Button>
+                    </div>
+                    <hr className='my-4' />
+                    <div className='mt-4'>
+                      <p className='text-sm text-muted-foreground'>
+                        Selecciona el evento para agregar objetivos de sesión:
+                      </p>
+                      <h1 className='mt-2 border-b-2 text-xl font-bold text-sky-800 sm:text-2xl'>
+                        Información de eventos:
+                      </h1>
+                      <h2 className='text-lg font-bold sm:text-xl'>
+                        Eventos programados:
+                      </h2>
+                      <ul className='list-inside list-disc space-y-2 text-sm text-black sm:text-base'>
+                        {events.map((event, index) => (
+                          <li
+                            key={index}
+                            className='flex items-center justify-between'
+                          >
+                            <span
+                              onClick={() => setSelectedEvent(event)}
+                              className={`cursor-pointer ${
+                                selectedEvent === event
+                                  ? 'text-primary'
+                                  : 'hover:text-primary'
+                              }`}
+                            >
+                              {event.date.toLocaleDateString('es-ES', {
+                                weekday: 'short',
+                                month: 'numeric',
+                                day: 'numeric'
+                              })}
+                              - {event.title}
+                            </span>
+                            <Button
+                              variant='ghost'
+                              size='sm'
+                              onClick={() => {
+                                setEvents(events.filter((_, i) => i !== index))
+                                if (selectedEvent === event) {
+                                  setSelectedEvent(null)
+                                }
+                              }}
+                            >
+                              <Trash size={16} />
+                            </Button>
+                          </li>
+                        ))}
+                      </ul>
+                      <h2 className='mt-4 text-lg font-bold sm:text-xl'>
+                        Evento seleccionado:
+                      </h2>
+                      {selectedEvent ? (
+                        <div className='mt-2'>
+                          <p className='font-bold'>
+                            Evento:{' '}
+                            <span className='font-normal'>
+                              {selectedEvent.title}
+                            </span>
+                          </p>
+                          <p>
+                            Fecha:{' '}
+                            {selectedEvent.date.toLocaleDateString('es-ES', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </p>
+                        </div>
+                      ) : (
+                        <p>Ningún evento seleccionado</p>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <SheetFooter>
+              </ScrollArea>
+              <SheetFooter className='flex w-full justify-between'>
                 <SheetClose asChild>
-                  <Button variant={'accent'} onClick={() => handleVolver()}>
-                    Volver
-                  </Button>
+                  <div className='flex w-full justify-between'>
+                    <Button
+                      variant={'accent'}
+                      className='w-full sm:mr-2 sm:w-auto'
+                      onClick={() => {
+                        handleVolver()
+                        setSelectedEvent(null)
+                      }}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      variant={'secondary'}
+                      className='w-full sm:ml-2 sm:w-auto'
+                      onClick={() => {
+                        handleVolver()
+                      }}
+                    >
+                      Aceptar
+                    </Button>
+                  </div>
                 </SheetClose>
               </SheetFooter>
             </SheetContent>
           </Sheet>
           {/* Objetivos */}
           <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
-            <div className='flex items-center gap-2'>
+            {selectedEvent ? (
+              <p className='font-bold'>
+                Evento:{' '}
+                <span className='font-normal'>{selectedEvent.title}</span>
+              </p>
+            ) : (
+              <p></p>
+            )}
+            <div className='mt-2 flex items-center gap-2'>
               <Input
                 type='text'
                 placeholder='Ingrese el objetivo'
@@ -370,6 +525,7 @@ export default function Inicio() {
                 onKeyDown={handleAdd}
                 onChange={e => setInputValue(e.target.value)}
                 className='rounded-md border border-secondary bg-white p-3 shadow-md transition-shadow duration-200 ease-in-out hover:shadow-lg focus:outline-none focus:ring-2'
+                disabled={objetivos.length >= 10}
               />
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
@@ -378,6 +534,7 @@ export default function Inicio() {
                     role='combobox'
                     aria-expanded={open}
                     className='justify-between'
+                    disabled={objetivos.length >= 10}
                   >
                     {value ? (
                       objetivosFav.find(objetivoFav => objetivoFav === value)
@@ -398,10 +555,12 @@ export default function Inicio() {
                             key={objetivoFav}
                             value={objetivoFav}
                             onSelect={currentValue => {
-                              // setValue(currentValue === value ? '' : currentValue)
                               setOpen(false)
                               setInputValue('')
-                              if (!objetivos.includes(currentValue))
+                              if (
+                                !objetivos.includes(currentValue) &&
+                                objetivos.length < 10
+                              )
                                 setObjetivos([...objetivos, currentValue])
                             }}
                           >
@@ -507,6 +666,11 @@ export default function Inicio() {
                 ))}
               </ul>
             </div>
+            {objetivos.length >= 10 && (
+              <p className='mt-2 text-red-500'>
+                Has alcanzado el límite de 10 objetivos.
+              </p>
+            )}
           </div>
           <div className='mt-6 flex items-center justify-center'>
             {/* Motivación */}
@@ -517,7 +681,7 @@ export default function Inicio() {
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>Tipo de motivación</SelectLabel>
-                  <SelectItem key={0} value='positiva'>
+                  <SelectItem key={0} value='Positiva'>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -529,7 +693,7 @@ export default function Inicio() {
                       </Tooltip>
                     </TooltipProvider>
                   </SelectItem>
-                  <SelectItem key={1} value='pasivoAgresiva'>
+                  <SelectItem key={1} value='PasivoAgresiva'>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -545,111 +709,14 @@ export default function Inicio() {
               </SelectContent>
             </Select>
           </div>
-          {/* Musica */}
-          {/* <div className='flex items-center justify-center'>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant='outline' className='border-none'>
-                  Presiona aqui para elegir la musica
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    Elige la musica para la sesion
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    <Carousel className='w-full max-w-md' opts={{ loop: true }}>
-                      <CarouselContent>
-                        {[
-                          {
-                            key: 1,
-                            src: './CapyChill.png',
-                            alt: 'CapyChill',
-                            title: 'Capy Chill',
-                            description:
-                              'Música relajante para estudiar con tranquilidad',
-                            spotifyUri: '7u6QwhygZJJqqGWMMMINhR'
-                          },
-                          {
-                            key: 2,
-                            src: './CapyAmbiente.png',
-                            alt: 'CapyAmbiente',
-                            title: 'Capy Ambiente',
-                            description:
-                              'Sonidos ambientales para mejorar la concentración',
-                              spotifyUri: '4Pi6DScPJfg1RTGVZuxTZV'
-                          },
-                          {
-                            key: 3,
-                            src: './CapySinthwave.png',
-                            alt: 'CapySinthwave',
-                            title: 'Capy Sinthwave',
-                            description:
-                              'Música electrónica retro para un estudio energético',
-                              spotifyUri: '6xYhxczmfgi6L6knoEHktx'
-                          },
-                          {
-                            key: 4,
-                            src: './CapyEpic.png',
-                            alt: 'CapyEpic',
-                            title: 'Capy Epic',
-                            description:
-                              'Música épica para momentos de máxima concentración',
-                              spotifyUri: '5GnSqO293GdPWaJhD6iz8E'
-                          }
-                          // {
-                          //   key: 5,
-                          //   src: './NoCapyMusic.png',
-                          //   alt: 'NoCapyMusic',
-                          //   title: 'Sin Musica',
-                          //   description:
-                          //     'Reproduce tu propia musica'
-                          // }
-                        ].map(item => (
-                          <CarouselItem key={item.key}>
-                            <div className='p-1'>
-                              <Card className='group relative h-48 w-full overflow-hidden'>
-                                <CardContent className='p-0'>
-                                  <img
-                                    src={item.src}
-                                    className='h-full w-full object-cover transition-transform duration-300 group-hover:scale-110'
-                                    alt={item.alt}
-                                  />
-                                  <div className='absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
-                                    <h3 className='mb-2 text-lg font-bold text-white'>
-                                      {item.title}
-                                    </h3>
-                                    <p className='px-4 text-center text-sm text-white'>
-                                      {item.description}
-                                    </p>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            </div>
-                          </CarouselItem>
-                        ))}
-                      </CarouselContent>
-                      <CarouselPrevious className='left-0' />
-                      <CarouselNext className='right-0' />
-                    </Carousel>
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction>Continue</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div> */}
 
           <div className='mt-4'>
-            {selectedMotivation !== -1 && (
+            {selectedPlaylist !== -1 && (
               <div className='rounded-lg bg-accent p-2'>
                 <h2>
                   Playlist seleccionada:{' '}
                   <span className='font-semibold text-accent-foreground'>
-                    {playlists[selectedMotivation - 1].title}
+                    {playlists[selectedPlaylist - 1].title}
                   </span>
                 </h2>
               </div>
@@ -661,11 +728,14 @@ export default function Inicio() {
                     key={item.key}
                     className='cursor-pointer'
                     onClick={() => {
-                      handleMusicSelection({
-                        title: item.title,
-                        spotifyUri: item.spotifyUri
-                      })
-                      setSelectedMotivation(prev =>
+                      handleMusicSelection(
+                        {
+                          title: item.title,
+                          spotifyUri: item.spotifyUri
+                        },
+                        item.key
+                      )
+                      setSelectedPlaylist(prev =>
                         prev === item.key ? -1 : item.key
                       )
                     }}
@@ -680,7 +750,7 @@ export default function Inicio() {
                           />
                           <div className='absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
                             <h3
-                              className={`mb-2 text-lg font-bold ${selectedMotivation === item.key ? 'text-xl text-accent' : 'text-white'}`}
+                              className={`mb-2 text-lg font-bold ${selectedPlaylist === item.key ? 'text-xl text-accent' : 'text-white'}`}
                             >
                               {item.title}
                             </h3>
