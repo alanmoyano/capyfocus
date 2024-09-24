@@ -51,7 +51,7 @@ export default function CapyInsignias() {
       <h1 className='mt-4 text-4xl font-bold'>CapyInsiginias!</h1>
 
 
-      <div className='flex justify-center gap-4 space-x-4'>
+      <div className='flex justify-center gap-4 space-x-4 mt-4'>
         <Dialog>
           <DialogTrigger asChild>
             <div className='card-squere cursor-pointer bg-primary/80 hover:scale-105'>
