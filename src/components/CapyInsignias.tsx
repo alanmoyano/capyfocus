@@ -2,6 +2,17 @@ import { Button } from '@/components/ui/button'
 import { useLocation } from 'wouter'
 import { Progress } from '@/components/ui/progress'
 import { useEffect, useState } from 'react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 export default function CapyInsignias() {
   const [, setLocation] = useLocation()
@@ -33,7 +44,7 @@ export default function CapyInsignias() {
     setIsFlipped(!isFlipped)
   }
 
-  // la carta hay que clickearla para que se de vuelta y despues, una vez desbloequeda ya no se da mas vuelta. 
+  // la carta hay que clickearla para que se de vuelta y despues, una vez desbloequeda ya no se da mas vuelta.
 
   return (
     <>
@@ -84,11 +95,12 @@ export default function CapyInsignias() {
 
         {/* Insignia desbloqueada */}
 
-        <div 
-          className='static-card h-96 w-64 transition-all duration-300 cursor-pointer'
+        <div
+          className='static-card h-96 w-64 cursor-pointer transition-all duration-300'
           onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-            const card = e.currentTarget;
-            card.style.transform = card.style.transform === 'scale(1.5)' ? 'scale(1)' : 'scale(1.5)';
+            const card = e.currentTarget
+            card.style.transform =
+              card.style.transform === 'scale(1.5)' ? 'scale(1)' : 'scale(1.5)'
           }}
         >
           <div className='static-card-inner'>
@@ -118,6 +130,101 @@ export default function CapyInsignias() {
           </div>
         </div>
       </div>
+
+      <p>Opcion 3</p>
+
+      <div className='flex justify-center space-x-4'>
+        <div className='card-squere bg-primary/80 cursor-pointer'>
+          <div className='card-squere-inner'>
+            <div className='card-squere-content'>
+              <div className=''>
+                <div className='mx-auto mt-4 aspect-[3/4] overflow-hidden border-2 border-gray-700 bg-accent'>
+                  <img
+                    src='./CapyInsigniasImagenes/CapyGandalf.png'
+                    alt='HidenInsignia'
+                    className='absolute inset-0 h-full w-full object-contain p-4'
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        <Dialog>
+        <DialogTrigger asChild>
+          <Button variant='accent'>Ver mas</Button>
+        </DialogTrigger>
+        <DialogContent className='sm:max-w-[425px]'>
+          <DialogHeader>
+            <DialogTitle>CapyInsignias</DialogTitle>
+            <DialogDescription></DialogDescription>
+          </DialogHeader>
+          <div className='flex flex-col items-center'>
+            <div className='relative w-full h-80 bg-accent rounded-lg overflow-hidden'>
+              <img
+                src='./CapyInsigniasImagenes/CapyGandalf.png'
+                alt='HidenInsignia'
+                className='absolute inset-0 w-full h-full object-contain p-4'
+              />
+            </div>
+            <div className='mt-4 text-center'>
+              <h2 className='text-2xl font-bold'>Desbloqueada </h2>
+              <p>Completa 10 objetivos</p>
+            </div>
+              <Progress value={100} className='w-3/4' />
+          </div>
+          <DialogFooter>
+            <Button type='submit'>Salir</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+        </div>
+
+
+
+        <div className='card-squere bg-primary/80 cursor-pointer'>
+          <div className='card-squere-inner'>
+            <div className='card-squere-content'>
+              <div className=''>
+                <div className='mx-auto mt-4 aspect-[3/4] overflow-hidden border-2 border-gray-700 bg-accent'>
+                  <img
+                    src='./CapyInsigniasImagenes/CapySherlock.png'
+                    alt='HidenInsignia'
+                    className='absolute inset-0 h-full w-full object-contain p-4'
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant='accent'>Info</Button>
+        </DialogTrigger>
+        <DialogContent className='sm:max-w-[425px]'>
+          <DialogHeader>
+            <DialogTitle>CapyInsignias</DialogTitle>
+            <DialogDescription></DialogDescription>
+          </DialogHeader>
+          <div className='flex flex-col items-center'>
+            <div className='relative w-full h-80 bg-accent rounded-lg overflow-hidden'>
+              <img
+                src='./CapyInsigniasImagenes/CapySherlock.png'
+                alt='HidenInsignia'
+                className='absolute inset-0 w-full h-full object-contain p-4'
+              />
+            </div>
+            <div className='mt-4 text-center'>
+              <h2 className='text-2xl font-bold'>Desbloquear: </h2>
+              <p>Completa 25 objetivos</p>
+            </div>
+              <Progress value={progress} className='w-3/4' />
+          </div>
+          <DialogFooter>
+            <Button type='submit'>Salir</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+        </div>
+      </div>
+
 
       <div className='container w-screen'>
         <Button className='mt-4' onClick={handleVolver}>
