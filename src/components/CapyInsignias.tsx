@@ -133,10 +133,10 @@ export default function CapyInsignias() {
 
       <p>Opcion 3</p>
 
-      <div className='flex justify-center space-x-4 gap-4'>
+      <div className='flex justify-center gap-4 space-x-4'>
         <Dialog>
           <DialogTrigger asChild>
-            <div className='card-squere bg-primary/80 cursor-pointer hover:scale-105'>
+            <div className='card-squere cursor-pointer bg-primary/80 hover:scale-105'>
               <div className='card-squere-inner'>
                 <div className='card-squere-content'>
                   <div className=''>
@@ -158,11 +158,11 @@ export default function CapyInsignias() {
               <DialogDescription></DialogDescription>
             </DialogHeader>
             <div className='flex flex-col items-center'>
-              <div className='relative w-full h-80 bg-accent rounded-lg overflow-hidden'>
+              <div className='relative h-80 w-full overflow-hidden rounded-lg bg-accent'>
                 <img
                   src='./CapyInsigniasImagenes/CapyGandalf.png'
                   alt='HidenInsignia'
-                  className='absolute inset-0 w-full h-full object-contain p-4'
+                  className='absolute inset-0 h-full w-full object-contain p-4'
                 />
               </div>
               <div className='mt-4 text-center'>
@@ -179,7 +179,7 @@ export default function CapyInsignias() {
 
         <Dialog>
           <DialogTrigger asChild>
-            <div className='card-squere bg-primary/80 cursor-pointer hover:scale-105 '>
+            <div className='card-squere cursor-pointer bg-primary/80 hover:scale-105'>
               <div className='card-squere-inner'>
                 <div className='card-squere-content'>
                   <div className=''>
@@ -201,11 +201,11 @@ export default function CapyInsignias() {
               <DialogDescription></DialogDescription>
             </DialogHeader>
             <div className='flex flex-col items-center'>
-              <div className='relative w-full h-80 bg-accent rounded-lg overflow-hidden'>
+              <div className='relative h-80 w-full overflow-hidden rounded-lg bg-accent'>
                 <img
                   src='./CapyInsigniasImagenes/CapySherlock.png'
                   alt='HidenInsignia'
-                  className='absolute inset-0 w-full h-full object-contain p-4'
+                  className='absolute inset-0 h-full w-full object-contain p-4'
                 />
               </div>
               <div className='mt-4 text-center'>
@@ -221,12 +221,21 @@ export default function CapyInsignias() {
         </Dialog>
       </div>
 
-
       <div className='container w-screen'>
         <Button className='mt-4' onClick={handleVolver}>
           Volver
         </Button>
       </div>
+
+      <span className='relative inline-flex'>
+        <Button type='button' className=''>
+          Transactions
+        </Button>
+        <span className='absolute right-0 top-0 -mr-1 -mt-1 flex h-3 w-3'>
+          <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-secondary opacity-75'></span>
+          <span className='relative inline-flex h-3 w-3 rounded-full bg-secondary'></span>
+        </span>
+      </span>
     </>
   )
 }
