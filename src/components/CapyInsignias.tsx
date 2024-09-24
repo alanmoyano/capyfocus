@@ -56,7 +56,7 @@ export default function CapyInsignias() {
           onClick={handleCardClick}
         >
           <div className='flip-card-inner'>
-            <div className='flip-card-front'>
+            <div className='flip-carcdd-front'>
               <div className='flex h-full flex-col items-center justify-center'>
                 <h3
                   className='mt-2 text-3xl text-gray-700'
@@ -81,13 +81,11 @@ export default function CapyInsignias() {
             </div>
             <div className='flip-card-back backface-hidden rotate-y-180 absolute flex h-full w-full flex-col items-center justify-center bg-gray-100 p-4'>
               <h3 className='mb-4 text-2xl font-bold'>CapyCard!</h3>|
-
               <p className=''>Prgreso: </p>
               <Progress value={progress} className='w-3/4' />
               <p className='text-center'>
                 Selecciona 25 veces estudiar con motivación positiva
               </p>
-
               <Button>Desbloquear</Button>
             </div>
           </div>
@@ -140,14 +138,19 @@ export default function CapyInsignias() {
               <div className='card-squere-inner'>
                 <div className='card-squere-content'>
                   <div className=''>
-                    <div className=' mx-auto aspect-[3/4] w-11/12'>
+                    <div className='mx-auto aspect-[3/4] w-11/12'>
                       <img
                         src='./CapyInsigniasImagenes/CapyGandalf.png'
                         alt='HidenInsignia'
                         className='absolute inset-0 h-full w-full object-contain p-4'
-                        />
+                      />
                     </div>
-                        <p className='text-xl text-gray-700 font-bold mt-8' style={{ fontFamily: 'Jomolhari, serif' }}>CapyGandalf</p>
+                    <p
+                      className='mt-8 text-xl font-bold text-gray-700'
+                      style={{ fontFamily: 'Jomolhari, serif' }}
+                    >
+                      CapyGandalf
+                    </p>
                   </div>
                 </div>
               </div>
@@ -191,7 +194,12 @@ export default function CapyInsignias() {
                         className='absolute inset-0 h-full w-full object-contain p-4'
                       />
                     </div>
-                    <p className='text-xl text-gray-700 font-bold mt-16  ' style={{ fontFamily: 'Jomolhari, serif' }}>Bloqueada</p>
+                    <p
+                      className='mt-16 text-xl font-bold text-gray-700'
+                      style={{ fontFamily: 'Jomolhari, serif' }}
+                    >
+                      Bloqueada
+                    </p>
                   </div>
                 </div>
               </div>
