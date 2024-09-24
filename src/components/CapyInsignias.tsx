@@ -131,7 +131,7 @@ export default function CapyInsignias() {
         </div>
       </div>
 
-      <p>Opcion 3</p>
+      <p>Opcion 2</p>
 
       <div className='flex justify-center space-x-4 gap-4'>
         <Dialog>
