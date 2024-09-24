@@ -80,7 +80,7 @@ export default function CapyInsignias() {
               </div>
             </div>
             <div className='flip-card-back backface-hidden rotate-y-180 absolute flex h-full w-full flex-col items-center justify-center bg-gray-100 p-4'>
-              <h3 className='mb-4 text-2xl font-bold'>CapyCard!</h3>
+              <h3 className='mb-4 text-2xl font-bold'>CapyCard!</h3>|
 
               <p className=''>Prgreso: </p>
               <Progress value={progress} className='w-3/4' />
@@ -140,13 +140,14 @@ export default function CapyInsignias() {
               <div className='card-squere-inner'>
                 <div className='card-squere-content'>
                   <div className=''>
-                    <div className='mx-auto mt-4 aspect-[3/4] overflow-hidden border-2 border-gray-700 bg-accent'>
+                    <div className=' mx-auto aspect-[3/4] w-11/12'>
                       <img
                         src='./CapyInsigniasImagenes/CapyGandalf.png'
                         alt='HidenInsignia'
                         className='absolute inset-0 h-full w-full object-contain p-4'
-                      />
+                        />
                     </div>
+                        <p className='text-xl text-gray-700 font-bold mt-8' style={{ fontFamily: 'Jomolhari, serif' }}>CapyGandalf</p>
                   </div>
                 </div>
               </div>
@@ -183,13 +184,14 @@ export default function CapyInsignias() {
               <div className='card-squere-inner'>
                 <div className='card-squere-content'>
                   <div className=''>
-                    <div className='mx-auto mt-4 aspect-[3/4] overflow-hidden border-2 border-gray-700 bg-accent'>
+                    <div className='mx-auto aspect-[3/4] w-11/12'>
                       <img
                         src='./CapyInsigniasImagenes/CapySherlock.png'
                         alt='HidenInsignia'
                         className='absolute inset-0 h-full w-full object-contain p-4'
                       />
                     </div>
+                    <p className='text-xl text-gray-700 font-bold mt-16  ' style={{ fontFamily: 'Jomolhari, serif' }}>Bloqueada</p>
                   </div>
                 </div>
               </div>
@@ -197,7 +199,7 @@ export default function CapyInsignias() {
           </DialogTrigger>
           <DialogContent className='sm:max-w-[425px]'>
             <DialogHeader>
-              <DialogTitle>CapyInsignias</DialogTitle>
+              <DialogTitle>Bloqueada</DialogTitle>
               <DialogDescription></DialogDescription>
             </DialogHeader>
             <div className='flex flex-col items-center'>

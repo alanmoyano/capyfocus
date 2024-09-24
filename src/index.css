@@ -231,7 +231,7 @@ main {
 
 .card-squere {
   width: 200px;
-  height: 200px;
+  height: 250px;
   perspective: 2000px;
   transition: transform 0.2s;
   text-align: center;
