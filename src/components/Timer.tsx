@@ -80,7 +80,7 @@ export default function Timer() {
         setTiempoSesion(prev => ({ ...prev, [objetivo]: 0 }))
       }
     })
-    setLocation('/capyEstadisticas')
+    setLocation('/capyEstadisticas?period=sesion')
   }
 
   useEffect(() => {

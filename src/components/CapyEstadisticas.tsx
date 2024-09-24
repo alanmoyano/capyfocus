@@ -55,6 +55,7 @@ import { useSesion } from '@/hooks/SesionContext'
 import { Calendar } from './ui/calendar'
 import { formatTime } from '@/lib/utils'
 import { Tooltip as ChartTooltip } from 'recharts'
+import { useRoute, useSearch } from 'wouter'
 
 const chartData = [
   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -111,7 +112,11 @@ const chartConfig4 = {
 } satisfies ChartConfig
 
 export default function CapyEstadisticas() {
-  const [selectedPeriod, setSelectedPeriod] = React.useState('')
+  const queryParams = useSearch()
+  const period = queryParams.split('&').find(param => param.includes('period'))?.split('=')[1]
+  const [selectedPeriod, setSelectedPeriod] = React.useState(period ?? '')
+
+  console.log(queryParams)
 
   const handleSelect = (value: string) => {
     setSelectedPeriod(value)
@@ -127,11 +132,11 @@ export default function CapyEstadisticas() {
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyEstadisticas!</h1>
       {/* Seleccion de tiempo */}
-      <div className='mt-4 flex flex w-full ml-32 justify-start'>
-      <p className=' flex items-center'>
-        Ingresa el intervalo de tiempo para visualizar las estadisticas:{' '}
-      </p>
-        <Select onValueChange={value => handleSelect(value)} defaultValue=''>
+      <div className='ml-32 mt-4 flex w-full justify-start'>
+        <p className='flex items-center'>
+          Ingresa el intervalo de tiempo para visualizar las estadisticas:{' '}
+        </p>
+        <Select onValueChange={value => handleSelect(value)} defaultValue={selectedPeriod}>
           <SelectTrigger className='ml-4 w-[280px]'>
             <SelectValue placeholder='Selecciona un periodo' />
           </SelectTrigger>
@@ -229,8 +234,8 @@ export default function CapyEstadisticas() {
 
       {selectedPeriod === 'sesion' && tiempoTotal === 0 && (
         <>
-            <img src="./Chicho/CapyDesilucionado.gif" className='' alt="" />
-          <div className=' flex w-1/2 content-center justify-center rounded-lg bg-red-700 p-8 text-white shadow-lg'>
+          <img src='./Chicho/CapyDesilucionado.gif' className='' alt='' />
+          <div className='flex w-1/2 content-center justify-center rounded-lg bg-red-700 p-8 text-white shadow-lg'>
             <p>
               Primero inicia una sesion para tener estadisticas de la sesion!!
             </p>
@@ -239,7 +244,7 @@ export default function CapyEstadisticas() {
       )}
 
       {/* Pagina se sesion */}
-      {tiempoTotal > 0 && (
+      {tiempoTotal > 0 && selectedPeriod === 'sesion' && (
         <>
           <Card className='container mx-auto mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 p-6 shadow-lg'>
             <CardHeader>
@@ -429,7 +434,7 @@ export default function CapyEstadisticas() {
       {selectedPeriod === 'semanal' && (
         <>
           <p className='mt-16'>Aca va la info de la semana</p>
-          </>
+        </>
       )}
 
       {selectedPeriod === 'mensual' && (

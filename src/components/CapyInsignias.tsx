@@ -108,18 +108,51 @@ export default function CapyInsignias() {
                 <div className='card-squere-content'>
                   <div className=''>
                     <div className='mx-auto aspect-[3/4] w-11/12'>
+                    {isUnlocked && (
+                      <>  
+                      <div className=''>
+                      <div className='mx-auto aspect-[3/4] w-11/12'>
+
+                    <img
+                      src='./CapyInsigniasImagenes/CapyGandalf.png'
+                      alt='HidenInsignia'
+                      className='absolute inset-0 h-full w-full object-contain p-4'
+                      />
+                      </div>
+
+                    <p
+                      className='text-xl font-bold text-gray-700'
+                      style={{ fontFamily: 'Jomolhari, serif' }}
+                      >
+                      CapyGandalf
+                    </p>
+                      </div>
+                        </>
+                    )}
+                    
+                  {!isUnlocked && (
+                    <>
+                    <div>
+                    <div className='mx-auto aspect-[3/4] w-11/12'>
+
                       <img
                         src='./CapyInsigniasImagenes/CapySherlock.png'
                         alt='HidenInsignia'
                         className='absolute inset-0 h-full w-full object-contain p-4'
-                      />
-                    </div>
-                    <p
+                        />
+                        </div>
+                        <p
                       className='mt-16 text-xl font-bold text-gray-700'
                       style={{ fontFamily: 'Jomolhari, serif' }}
-                    >
+                      >
                       Bloqueada
                     </p>
+                      </div>
+                      </>
+
+                    )}
+                      
+                    </div>
                   </div>
                 </div>
               </div>
