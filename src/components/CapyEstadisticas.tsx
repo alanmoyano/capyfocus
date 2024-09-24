@@ -127,10 +127,10 @@ export default function CapyEstadisticas() {
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyEstadisticas!</h1>
       {/* Seleccion de tiempo */}
-      <p className='ml-32 flex w-full justify-start'>
+      <div className='mt-4 flex flex w-full ml-32 justify-start'>
+      <p className=' flex items-center'>
         Ingresa el intervalo de tiempo para visualizar las estadisticas:{' '}
       </p>
-      <div className='ml-32 mt-4 flex w-full'>
         <Select onValueChange={value => handleSelect(value)} defaultValue=''>
           <SelectTrigger className='ml-4 w-[280px]'>
             <SelectValue placeholder='Selecciona un periodo' />
@@ -229,7 +229,8 @@ export default function CapyEstadisticas() {
 
       {selectedPeriod === 'sesion' && tiempoTotal === 0 && (
         <>
-          <div className='mt-8 flex w-1/2 content-center justify-center rounded-lg bg-red-700 p-8 text-white shadow-lg'>
+            <img src="./Chicho/CapyDesilucionado.gif" className='' alt="" />
+          <div className=' flex w-1/2 content-center justify-center rounded-lg bg-red-700 p-8 text-white shadow-lg'>
             <p>
               Primero inicia una sesion para tener estadisticas de la sesion!!
             </p>
@@ -427,72 +428,8 @@ export default function CapyEstadisticas() {
 
       {selectedPeriod === 'semanal' && (
         <>
-          {/* Gráfico semanal */}
-          <Card className='flex flex-col'>
-            <CardHeader className='items-center pb-0'>
-              <CardTitle>Eventos de la semana</CardTitle>
-            </CardHeader>
-            <CardContent className='flex-1 pb-0'>
-              <ChartContainer
-                config={chartConfig1}
-                className='mx-auto aspect-square max-h-[250px]'
-              >
-                <PieChart>
-                  <ChartTooltip
-                    content={
-                      <ChartTooltipContent nameKey='visitors' hideLabel />
-                    }
-                  />
-                  <Pie data={chartData} dataKey='visitors'>
-                    <LabelList
-                      dataKey='browser'
-                      className='fill-background'
-                      stroke='none'
-                      fontSize={12}
-                      formatter={(value: keyof typeof chartConfig1) =>
-                        // eslint-disable-next-line
-                        chartConfig1[value]?.label
-                      }
-                    />
-                  </Pie>
-                </PieChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-
-          {/* Tabla semanal */}
-          <Table className='flex w-full flex-col items-center justify-center'>
-            <TableCaption>Resumen semanal</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className='w-[100px]'>Objetivos</TableHead>
-                <TableHead>Estado</TableHead>
-
-                <TableHead className='text-right'>Tiempo (Minutos)</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className='font-medium'>Objetivo 1</TableCell>
-                <TableCell>Cumplido</TableCell>
-
-                <TableCell className='text-right'>12:00</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className='font-medium'>Objetivo 2</TableCell>
-                <TableCell>Pospuesto</TableCell>
-
-                <TableCell className='text-right'>58:10</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className='font-medium'>Objetivo 3</TableCell>
-                <TableCell>Cumplido</TableCell>
-
-                <TableCell className='text-right'>15:03</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </>
+          <p className='mt-16'>Aca va la info de la semana</p>
+          </>
       )}
 
       {selectedPeriod === 'mensual' && (
