@@ -66,7 +66,7 @@ export default function Pomodoro() {
         }))
       }
     })
-    setLocation('/capyEstadisticas')
+    // setLocation('/capyEstadisticas')
   }
 
   //Revisar el funcionamiento de esta cosa!!!
