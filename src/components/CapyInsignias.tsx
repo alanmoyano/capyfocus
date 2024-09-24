@@ -136,7 +136,7 @@ export default function CapyInsignias() {
       <div className='flex justify-center space-x-4 gap-4'>
         <Dialog>
           <DialogTrigger asChild>
-            <div className='card-squere bg-primary/80 cursor-pointer'>
+            <div className='card-squere bg-primary/80 cursor-pointer hover:scale-105'>
               <div className='card-squere-inner'>
                 <div className='card-squere-content'>
                   <div className=''>
@@ -179,7 +179,7 @@ export default function CapyInsignias() {
 
         <Dialog>
           <DialogTrigger asChild>
-            <div className='card-squere bg-primary/80 cursor-pointer'>
+            <div className='card-squere bg-primary/80 cursor-pointer hover:scale-105 '>
               <div className='card-squere-inner'>
                 <div className='card-squere-content'>
                   <div className=''>
