@@ -408,7 +408,8 @@ export default function CapyEstadisticas() {
                       stroke='none'
                       fontSize={12}
                       formatter={(value: keyof typeof chartConfig1) =>
-                        chartConfig1[value].label
+                        // eslint-disable-next-line
+                        chartConfig1[value]?.label
                       }
                     />
                   </Pie>
