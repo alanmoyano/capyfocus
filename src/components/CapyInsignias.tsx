@@ -152,7 +152,7 @@ export default function CapyInsignias() {
                 </div>
               </div>
             </div>
-          </DialogTrigger>
+          </DialogTrigger>          
           <DialogContent className='sm:max-w-[425px]'>
             <DialogHeader>
               <DialogTitle>Bloqueada</DialogTitle>

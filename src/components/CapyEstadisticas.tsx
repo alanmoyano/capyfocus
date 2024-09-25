@@ -631,6 +631,46 @@ export default function CapyEstadisticas() {
                 </Card>
               </div>
             </CardContent>
+            <h2 className='ml-4 flex w-full justify-start text-2xl font-bold'>
+              Objetivos favoritos
+            </h2>
+            <Table className='mt-4'>
+              <TableCaption></TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className='w-[100px]'>Evento</TableHead>
+                  <TableHead>Objetivo</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead className='text-right'>Fecha creado</TableHead>
+                  <TableHead className='text-right'>Evento relacionado</TableHead>
+                  <TableHead className='text-right'>Tiempo acumulado</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {objetivos.map((objetivo, index) => (
+                  <TableRow key={index}>
+                    <TableCell className='font-medium'>{objetivo}</TableCell>
+                    <TableCell>
+                      {tiempo[objetivo] === 0 ? (
+                        <span className='font-semibold text-yellow-600'>
+                          Pendiente
+                        </span>
+                      ) : (
+                        <span className='font-semibold text-green-600'>
+                          Cumplido
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell className='text-right'>
+                      {formatTime(tiempo[objetivo] || 0)}
+                    </TableCell>
+                    <TableCell className='text-right'>
+                      {formatTime(tiempoSesion[objetivo] || 0)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </Card>
         </>
       )}
