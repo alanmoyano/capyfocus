@@ -8,7 +8,7 @@ import {
   TableRow
 } from '@/components/ui/table'
 
-import { Bar, BarChart, LabelList } from 'recharts'
+import { Bar, BarChart } from 'recharts'
 
 import {
   Card,
@@ -55,15 +55,16 @@ import { useSesion } from '@/hooks/SesionContext'
 import { Calendar } from './ui/calendar'
 import { formatTime } from '@/lib/utils'
 import { Tooltip as ChartTooltip } from 'recharts'
-import { useRoute, useSearch } from 'wouter'
+import { useSearch } from 'wouter'
+import { ImageDown } from 'lucide-react'
 
-const chartData = [
-  { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
-  { browser: 'BasedeDatos', visitors: 200, fill: 'var(--color-safari)' },
-  { browser: 'AnalisisNumerico', visitors: 187, fill: 'var(--color-firefox)' },
-  { browser: 'ParcialASI', visitors: 173, fill: 'var(--color-edge)' },
-  { browser: 'FisicaII', visitors: 190, fill: 'var(--color-other)' }
-]
+// const chartData = [
+//   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
+//   { browser: 'BasedeDatos', visitors: 200, fill: 'var(--color-safari)' },
+//   { browser: 'AnalisisNumerico', visitors: 187, fill: 'var(--color-firefox)' },
+//   { browser: 'ParcialASI', visitors: 173, fill: 'var(--color-edge)' },
+//   { browser: 'FisicaII', visitors: 190, fill: 'var(--color-other)' }
+// ]
 
 const chartConfig1: ChartConfig = {
   visitors: {
@@ -230,6 +231,14 @@ export default function CapyEstadisticas() {
           </SelectContent>
         </Select>
       </div>
+      {/* Descargar imagen */}
+      <div className='flex w-9/12 justify-end'>
+        <p className='flex items-center text-left text-sm font-normal hover:cursor-pointer hover:text-primary'>
+          <ImageDown className='mr-1 h-4 w-4' />
+          Descargar
+        </p>
+      </div>
+
 
       {/* Pagina en blanco */}
       {selectedPeriod === '' && tiempoTotal === 0 && (
@@ -252,75 +261,23 @@ export default function CapyEstadisticas() {
       {/* Pagina se sesion */}
       {tiempoTotal > 0 && selectedPeriod === 'sesion' && (
         <>
-          <Card className='container mx-auto mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 p-6 shadow-lg'>
+          <Card className='container mx-auto mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg'>
             <CardHeader>
-              <CardTitle className='mb-4 text-left text-3xl font-bold'>
-                Información de la Sesión
+              <CardTitle className=''>
+                <h1 className='text-left text-3xl font-bold'>
+                  Información de la Sesión
+                </h1>
               </CardTitle>
             </CardHeader>
             <CardContent className='flex justify-between gap-4'>
-              {/* Chart */}
-              <Card className='mt-4 h-1/2 overflow-hidden rounded-lg shadow-lg'>
-                <CardHeader className='bg-gradient-to-r from-orange-500 to-blue-600 text-white'>
-                  <CardTitle className='text-2xl font-bold'>
-                    Tiempo dedicado a objetivos en la sesión actual
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className='p-4'>
-                  <ChartContainer config={chartConfig1}>
-                    <ResponsiveContainer width='100%' height={400}>
-                      <PieChart>
-                        {/* Agregue un filtro para que no se muestren los objetivos que no se han cumplido */}
-                        <Pie
-                          data={objetivos
-                            .filter(objetivo => tiempo[objetivo] > 0)
-                            .map(objetivo => ({
-                              name: objetivo,
-                              value: tiempo[objetivo] || 0
-                            }))}
-                          labelLine={false}
-                          outerRadius='80%'
-                          dataKey='value'
-                          label={({ name, percent }) =>
-                            `${name} ${(percent * 100).toFixed(0)}%`
-                          }
-                        >
-                          {objetivos
-                            .filter(objetivo => tiempo[objetivo] > 0)
-                            .map((objetivo, index) => (
-                              <Cell
-                                key={`cell-${index}`}
-                                fill={
-                                  chartConfig1[
-                                    Object.keys(chartConfig1)[index + 1]
-                                  ].color || `hsl(${index * 90}, 70%, 60%)`
-                                }
-                                name={objetivo}
-                              />
-                            ))}
-                        </Pie>
-                        <ChartTooltip
-                          content={
-                            <ChartTooltipContent
-                              indicator='dot'
-                              formatType='time'
-                            />
-                          }
-                        />
-                        <ChartLegend content={<ChartLegendContent />} />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </ChartContainer>
-                </CardContent>
-              </Card>
-              <div className='w-1/2 pl-4'>
+              <div className='w-1/2 pr-4'>
                 <div className='grid grid-cols-2 gap-14'>
                   <div>
                     <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
                       Tiempo total de estudio:
                     </p>
                     <p className='mt-2 text-center text-lg font-normal'>
-                      {formatTime(tiempoTotal || 0)}
+                      {formatTime(tiempoTotal ?? 0)}
                     </p>
                   </div>
                   <div>
@@ -328,7 +285,7 @@ export default function CapyEstadisticas() {
                       Tiempo total de descanso:
                     </p>
                     <p className='mt-2 text-center text-lg font-normal'>
-                      {formatTime(acumuladorTiempoPausa || 0)}
+                      {formatTime(acumuladorTiempoPausa ?? 0)}
                     </p>
                   </div>
                   <div>
@@ -352,7 +309,7 @@ export default function CapyEstadisticas() {
                       Música:
                     </p>
                     <p className='mt-2 text-center text-lg font-normal'>
-                      {selectedMusic?.title || 'sin música'}
+                      {selectedMusic?.title ?? 'sin música'}
                     </p>
                   </div>
                   <div>
@@ -390,12 +347,67 @@ export default function CapyEstadisticas() {
                 </div>
                 <div className='mt-8 w-auto'></div>
               </div>
+              {/* Chart */}
+              <Card className='mt-4 h-1/2 w-1/2 overflow-hidden rounded-lg shadow-lg'>
+                <CardHeader className='bg-gradient-to-r from-orange-300 to-blue-400 text-gray-900'>
+                  <CardTitle className='text-2xl font-bold'>
+                    Tiempo dedicado a objetivos en la sesión actual
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className='p-4'>
+                  <ChartContainer config={chartConfig1}>
+                    <ResponsiveContainer width='100%' height={400}>
+                      <PieChart>
+                        {/* Agregue un filtro para que no se muestren los objetivos que no se han cumplido */}
+                        <Pie
+                          data={objetivos
+                            .filter(objetivo => tiempo[objetivo] > 0)
+                            .map(objetivo => ({
+                              name: objetivo,
+                              value: tiempo[objetivo] ?? 0
+                            }))}
+                          labelLine={false}
+                          outerRadius='80%'
+                          dataKey='value'
+                          label={({ name, percent }) =>
+                            `${name} ${(percent * 100).toFixed(0)}%`
+                          }
+                        >
+                          {objetivos
+                            .filter(objetivo => tiempo[objetivo] > 0)
+                            .map((objetivo, index) => (
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={
+                                  chartConfig1[
+                                    Object.keys(chartConfig1)[index + 1]
+                                  ].color ?? `hsl(${index * 90}, 70%, 60%)`
+                                }
+                                name={objetivo}
+                              />
+                            ))}
+                        </Pie>
+                        <ChartTooltip
+                          content={
+                            <ChartTooltipContent
+                              indicator='dot'
+                              formatType='time'
+                            />
+                          }
+                        />
+                        <ChartLegend content={<ChartLegendContent />} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
+                </CardContent>
+              </Card>
             </CardContent>
             {/* Tabla de objetivos de la sesión */}
             <h2 className='ml-4 flex w-full justify-start text-2xl font-bold'>
               Objetivos de la sesion
             </h2>
-            <Table className='mt-4'>
+            {/* Aca estaria bueno agregar el nombre del evento si se estudio para uno  */}
+            <Table className=''>
               <TableCaption></TableCaption>
               <TableHeader>
                 <TableRow>
@@ -817,7 +829,7 @@ export default function CapyEstadisticas() {
                         <ChartTooltip
                           cursor={false}
                           content={<ChartTooltipContent indicator='dashed' />}
-                        />
+                    />
                         <Bar
                           dataKey='desktop'
                           fill='var(--color-desktop)'
