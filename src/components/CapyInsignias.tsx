@@ -12,12 +12,10 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 
-
 export default function CapyInsignias() {
   const [, setLocation] = useLocation()
   const [progress, setProgress] = useState(13)
   const [isUnlocked, setIsUnlocked] = useState(false)
-
 
   const handleVolver = () => {
     setLocation('/')
@@ -34,19 +32,15 @@ export default function CapyInsignias() {
     }
   }, [progress])
 
-
-
   // la carta hay que clickearla para que se de vuelta y despues, una vez desbloequeda ya no se da mas vuelta.
 
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyInsiginias!</h1>
 
-
       <p>Opcion 2</p>
 
-      <div className='flex justify-center gap-4 space-x-4 mt-4'>
-
+      <div className='mt-4 flex justify-center gap-4 space-x-4'>
         <Dialog>
           <DialogTrigger asChild>
             <div className='card-squere cursor-pointer bg-primary/80 hover:scale-105'>
@@ -103,56 +97,52 @@ export default function CapyInsignias() {
                 <div className='card-squere-content'>
                   <div className=''>
                     <div className='mx-auto aspect-[3/4] w-11/12'>
-                    {isUnlocked && (
-                      <>  
-                      <div className=''>
-                      <div className='mx-auto aspect-[3/4] w-11/12'>
+                      {isUnlocked && (
+                        <>
+                          <div className=''>
+                            <div className='mx-auto aspect-[3/4] w-11/12'>
+                              <img
+                                src='./CapyInsigniasImagenes/CapyGandalf.png'
+                                alt='HidenInsignia'
+                                className='absolute inset-0 h-full w-full object-contain p-4'
+                              />
+                            </div>
 
-                    <img
-                      src='./CapyInsigniasImagenes/CapyGandalf.png'
-                      alt='HidenInsignia'
-                      className='absolute inset-0 h-full w-full object-contain p-4'
-                      />
-                      </div>
-
-                    <p
-                      className='text-xl font-bold text-gray-700'
-                      style={{ fontFamily: 'Jomolhari, serif' }}
-                      >
-                      CapyGandalf
-                    </p>
-                      </div>
+                            <p
+                              className='text-xl font-bold text-gray-700'
+                              style={{ fontFamily: 'Jomolhari, serif' }}
+                            >
+                              CapyGandalf
+                            </p>
+                          </div>
                         </>
-                    )}
-                    
-                  {!isUnlocked && (
-                    <>
-                    <div>
-                    <div className='mx-auto aspect-[3/4] w-11/12'>
+                      )}
 
-                      <img
-                        src='./CapyInsigniasImagenes/CapySherlock.png'
-                        alt='HidenInsignia'
-                        className='absolute inset-0 h-full w-full object-contain p-4'
-                        />
-                        </div>
-                        <p
-                      className='mt-16 text-xl font-bold text-gray-700'
-                      style={{ fontFamily: 'Jomolhari, serif' }}
-                      >
-                      Bloqueada
-                    </p>
-                      </div>
-                      </>
-
-                    )}
-                      
+                      {!isUnlocked && (
+                        <>
+                          <div>
+                            <div className='mx-auto aspect-[3/4] w-11/12'>
+                              <img
+                                src='./CapyInsigniasImagenes/CapySherlock.png'
+                                alt='HidenInsignia'
+                                className='absolute inset-0 h-full w-full object-contain p-4'
+                              />
+                            </div>
+                            <p
+                              className='mt-16 text-xl font-bold text-gray-700'
+                              style={{ fontFamily: 'Jomolhari, serif' }}
+                            >
+                              Bloqueada
+                            </p>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </DialogTrigger>          
+          </DialogTrigger>
           <DialogContent className='sm:max-w-[425px]'>
             <DialogHeader>
               <DialogTitle>Bloqueada</DialogTitle>

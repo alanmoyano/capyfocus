@@ -113,7 +113,10 @@ const chartConfig4 = {
 
 export default function CapyEstadisticas() {
   const queryParams = useSearch()
-  const period = queryParams.split('&').find(param => param.includes('period'))?.split('=')[1]
+  const period = queryParams
+    .split('&')
+    .find(param => param.includes('period'))
+    ?.split('=')[1]
   const [selectedPeriod, setSelectedPeriod] = React.useState(period ?? '')
 
   console.log(queryParams)
@@ -136,7 +139,10 @@ export default function CapyEstadisticas() {
         <p className='flex items-center'>
           Ingresa el intervalo de tiempo para visualizar las estadisticas:{' '}
         </p>
-        <Select onValueChange={value => handleSelect(value)} defaultValue={selectedPeriod}>
+        <Select
+          onValueChange={value => handleSelect(value)}
+          defaultValue={selectedPeriod}
+        >
           <SelectTrigger className='ml-4 w-[280px]'>
             <SelectValue placeholder='Selecciona un periodo' />
           </SelectTrigger>
@@ -642,7 +648,9 @@ export default function CapyEstadisticas() {
                   <TableHead>Objetivo</TableHead>
                   <TableHead>Estado</TableHead>
                   <TableHead className='text-right'>Fecha creado</TableHead>
-                  <TableHead className='text-right'>Evento relacionado</TableHead>
+                  <TableHead className='text-right'>
+                    Evento relacionado
+                  </TableHead>
                   <TableHead className='text-right'>Tiempo acumulado</TableHead>
                 </TableRow>
               </TableHeader>

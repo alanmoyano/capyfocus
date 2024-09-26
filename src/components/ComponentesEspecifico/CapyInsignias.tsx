@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* import React from 'react';
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@your/dialog-library';
 import{isUnlocked} from '@/components/CapyInsignias'
@@ -62,3 +63,4 @@ function CapyInsiginias({ isUnlocked, UrlImg, desc, progress }) {
 }
 
 export default CapyInsiginias; */
+
