@@ -55,6 +55,7 @@ import { useSesion } from '@/hooks/SesionContext'
 import { Calendar } from './ui/calendar'
 import { formatTime } from '@/lib/utils'
 import { Tooltip as ChartTooltip } from 'recharts'
+import { useRoute, useSearch } from 'wouter'
 
 const chartData = [
   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -111,7 +112,14 @@ const chartConfig4 = {
 } satisfies ChartConfig
 
 export default function CapyEstadisticas() {
-  const [selectedPeriod, setSelectedPeriod] = React.useState('sesion')
+  const queryParams = useSearch()
+  const period = queryParams
+    .split('&')
+    .find(param => param.includes('period'))
+    ?.split('=')[1]
+  const [selectedPeriod, setSelectedPeriod] = React.useState(period ?? '')
+
+  console.log(queryParams)
 
   const handleSelect = (value: string) => {
     setSelectedPeriod(value)
@@ -127,10 +135,13 @@ export default function CapyEstadisticas() {
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyEstadisticas!</h1>
       {/* Seleccion de tiempo */}
-      <div className='mt-8 flex w-full'>
+      <div className='ml-32 mt-4 flex w-full justify-start'>
+        <p className='flex items-center'>
+          Ingresa el intervalo de tiempo para visualizar las estadisticas:{' '}
+        </p>
         <Select
           onValueChange={value => handleSelect(value)}
-          defaultValue='sesion'
+          defaultValue={selectedPeriod}
         >
           <SelectTrigger className='ml-4 w-[280px]'>
             <SelectValue placeholder='Selecciona un periodo' />
@@ -219,8 +230,27 @@ export default function CapyEstadisticas() {
           </SelectContent>
         </Select>
       </div>
+
+      {/* Pagina en blanco */}
+      {selectedPeriod === '' && tiempoTotal === 0 && (
+        <>
+          <img src='./auto.gif' alt='' />
+        </>
+      )}
+
+      {selectedPeriod === 'sesion' && tiempoTotal === 0 && (
+        <>
+          <img src='./Chicho/CapyDesilucionado.gif' className='' alt='' />
+          <div className='flex w-1/2 content-center justify-center rounded-lg bg-red-700 p-8 text-white shadow-lg'>
+            <p>
+              Primero inicia una sesion para tener estadisticas de la sesion!!
+            </p>
+          </div>
+        </>
+      )}
+
       {/* Pagina se sesion */}
-      {selectedPeriod === 'sesion' && (
+      {tiempoTotal > 0 && selectedPeriod === 'sesion' && (
         <>
           <Card className='container mx-auto mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 p-6 shadow-lg'>
             <CardHeader>
@@ -228,65 +258,141 @@ export default function CapyEstadisticas() {
                 Información de la Sesión
               </CardTitle>
             </CardHeader>
-            <CardContent className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-              <div className='flex flex-col space-y-2'>
-                <p className='text-lg font-semibold'>
-                  Tiempo total de estudio:{' '}
-                  {(() => {
-                    const time = tiempoTotal || 0
-                    const hours = Math.floor(time / 3600)
-                    const minutes = Math.floor((time % 3600) / 60)
-                    const seconds = time % 60
-
-                    if (hours > 0) {
-                      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-                    } else {
-                      return `${minutes}:${seconds.toString().padStart(2, '0')}`
-                    }
-                  })()}{' '}
-                </p>
-                <p className='text-lg font-semibold'>
-                  Tiempo total de descanso:{' '}
-                  {formatTime(acumuladorTiempoPausa || 0)}
-                </p>
-                <p className='text-lg font-semibold'>
-                  Cantidad de pausas:{' '}
-                  <span className='font-normal'>{cantidadPausas}</span>
-                </p>
-                <p className='text-lg font-semibold'>
-                  Tipo de motivación:{' '}
-                  <span className='font-normal'>{motivationType}</span>
-                </p>
-                <p className='text-lg font-semibold'>
-                  Musica:{' '}
-                  <span className='font-normal'>
-                    {selectedMusic?.title || 'sin musica'}
-                  </span>
-                </p>
-              </div>
-              <div className='flex flex-col space-y-2'>
-                <p className='text-lg font-semibold'>
-                  Tecnica de estudio:{' '}
-                  <span className='font-normal'>{tecnicaEstudio}</span>
-                </p>
-                <p className='text-lg font-semibold'>
-                  Cantidad total de objetivos:{' '}
-                  <span className='font-normal'>{objetivos.length}</span>
-                </p>
-                <p className='text-lg font-semibold'>
-                  Objetivos cumplidos:{' '}
-                  <span className='font-normal'>
-                    {objetivos.length - objetivosPend.length}
-                  </span>
-                </p>
-                <p className='text-lg font-semibold'>
-                  Objetivos pendientes:{' '}
-                  <span className='font-normal'>{objetivosPend.length}</span>
-                </p>
+            <CardContent className='flex justify-between gap-4'>
+              {/* Chart */}
+              <Card className='mt-4 h-1/2 overflow-hidden rounded-lg shadow-lg'>
+                <CardHeader className='bg-gradient-to-r from-orange-500 to-blue-600 text-white'>
+                  <CardTitle className='text-2xl font-bold'>
+                    Tiempo dedicado a objetivos en la sesión actual
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className='p-4'>
+                  <ChartContainer config={chartConfig1}>
+                    <ResponsiveContainer width='100%' height={400}>
+                      <PieChart>
+                        {/* Agregue un filtro para que no se muestren los objetivos que no se han cumplido */}
+                        <Pie
+                          data={objetivos
+                            .filter(objetivo => tiempo[objetivo] > 0)
+                            .map(objetivo => ({
+                              name: objetivo,
+                              value: tiempo[objetivo] || 0
+                            }))}
+                          labelLine={false}
+                          outerRadius='80%'
+                          dataKey='value'
+                          label={({ name, percent }) =>
+                            `${name} ${(percent * 100).toFixed(0)}%`
+                          }
+                        >
+                          {objetivos
+                            .filter(objetivo => tiempo[objetivo] > 0)
+                            .map((objetivo, index) => (
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={
+                                  chartConfig1[
+                                    Object.keys(chartConfig1)[index + 1]
+                                  ].color || `hsl(${index * 90}, 70%, 60%)`
+                                }
+                                name={objetivo}
+                              />
+                            ))}
+                        </Pie>
+                        <ChartTooltip
+                          content={
+                            <ChartTooltipContent
+                              indicator='dot'
+                              formatType='time'
+                            />
+                          }
+                        />
+                        <ChartLegend content={<ChartLegendContent />} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
+                </CardContent>
+              </Card>
+              <div className='w-1/2 pl-4'>
+                <div className='grid grid-cols-2 gap-14'>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Tiempo total de estudio:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {formatTime(tiempoTotal || 0)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Tiempo total de descanso:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {formatTime(acumuladorTiempoPausa || 0)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Cantidad de pausas:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {cantidadPausas}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Tipo de motivación:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {motivationType}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Música:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {selectedMusic?.title || 'sin música'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Técnica de estudio:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {tecnicaEstudio}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Cantidad total de objetivos:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {objetivos.length}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Objetivos cumplidos:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {objetivos.length - objetivosPend.length}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Objetivos pendientes:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {objetivosPend.length}
+                    </p>
+                  </div>
+                </div>
+                <div className='mt-8 w-auto'></div>
               </div>
             </CardContent>
             {/* Tabla de objetivos de la sesión */}
-            <h2 className='ml-4 mt-4 flex w-full justify-start text-2xl font-bold'>
+            <h2 className='ml-4 flex w-full justify-start text-2xl font-bold'>
               Objetivos de la sesion
             </h2>
             <Table className='mt-4'>
@@ -328,127 +434,12 @@ export default function CapyEstadisticas() {
           <hr />
           <hr />
           {/* Gráfico de sesión */}
-          <Card className='mt-4 overflow-hidden rounded-lg shadow-lg'>
-            <CardHeader className='bg-gradient-to-r from-orange-500 to-blue-600 text-white'>
-              <CardTitle className='text-2xl font-bold'>
-                Tiempo dedicado a objetivos en la sesión actual
-              </CardTitle>
-            </CardHeader>
-            <CardContent className='p-4'>
-              <ChartContainer config={chartConfig1}>
-                <ResponsiveContainer width='100%' height={400}>
-                  <PieChart>
-                    {/* Agregue un filtro para que no se muestren los objetivos que no se han cumplido */}
-                    <Pie
-                      data={objetivos
-                        .filter(objetivo => tiempo[objetivo] > 0)
-                        .map(objetivo => ({
-                          name: objetivo,
-                          value: tiempo[objetivo] || 0
-                        }))}
-                      labelLine={false}
-                      outerRadius='80%'
-                      dataKey='value'
-                      label={({ name, percent }) =>
-                        `${name} ${(percent * 100).toFixed(0)}%`
-                      }
-                    >
-                      {objetivos
-                        .filter(objetivo => tiempo[objetivo] > 0)
-                        .map((objetivo, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={
-                              chartConfig1[Object.keys(chartConfig1)[index + 1]]
-                                .color || `hsl(${index * 90}, 70%, 60%)`
-                            }
-                            name={objetivo}
-                          />
-                        ))}
-                    </Pie>
-                    <ChartTooltip
-                      content={
-                        <ChartTooltipContent
-                          indicator='dot'
-                          formatType='time'
-                        />
-                      }
-                    />
-                    <ChartLegend content={<ChartLegendContent />} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
         </>
       )}
 
       {selectedPeriod === 'semanal' && (
         <>
-          {/* Gráfico semanal */}
-          <Card className='flex flex-col'>
-            <CardHeader className='items-center pb-0'>
-              <CardTitle>Eventos de la semana</CardTitle>
-            </CardHeader>
-            <CardContent className='flex-1 pb-0'>
-              <ChartContainer
-                config={chartConfig1}
-                className='mx-auto aspect-square max-h-[250px]'
-              >
-                <PieChart>
-                  <ChartTooltip
-                    content={
-                      <ChartTooltipContent nameKey='visitors' hideLabel />
-                    }
-                  />
-                  <Pie data={chartData} dataKey='visitors'>
-                    <LabelList
-                      dataKey='browser'
-                      className='fill-background'
-                      stroke='none'
-                      fontSize={12}
-                      formatter={(value: keyof typeof chartConfig1) =>
-                        chartConfig1[value].label
-                      }
-                    />
-                  </Pie>
-                </PieChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-
-          {/* Tabla semanal */}
-          <Table className='flex w-full flex-col items-center justify-center'>
-            <TableCaption>Resumen semanal</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className='w-[100px]'>Objetivos</TableHead>
-                <TableHead>Estado</TableHead>
-
-                <TableHead className='text-right'>Tiempo (Minutos)</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className='font-medium'>Objetivo 1</TableCell>
-                <TableCell>Cumplido</TableCell>
-
-                <TableCell className='text-right'>12:00</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className='font-medium'>Objetivo 2</TableCell>
-                <TableCell>Pospuesto</TableCell>
-
-                <TableCell className='text-right'>58:10</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className='font-medium'>Objetivo 3</TableCell>
-                <TableCell>Cumplido</TableCell>
-
-                <TableCell className='text-right'>15:03</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <p className='mt-16'>Aca va la info de la semana</p>
         </>
       )}
 
@@ -646,6 +637,48 @@ export default function CapyEstadisticas() {
                 </Card>
               </div>
             </CardContent>
+            <h2 className='ml-4 flex w-full justify-start text-2xl font-bold'>
+              Objetivos favoritos
+            </h2>
+            <Table className='mt-4'>
+              <TableCaption></TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className='w-[100px]'>Evento</TableHead>
+                  <TableHead>Objetivo</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead className='text-right'>Fecha creado</TableHead>
+                  <TableHead className='text-right'>
+                    Evento relacionado
+                  </TableHead>
+                  <TableHead className='text-right'>Tiempo acumulado</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {objetivos.map((objetivo, index) => (
+                  <TableRow key={index}>
+                    <TableCell className='font-medium'>{objetivo}</TableCell>
+                    <TableCell>
+                      {tiempo[objetivo] === 0 ? (
+                        <span className='font-semibold text-yellow-600'>
+                          Pendiente
+                        </span>
+                      ) : (
+                        <span className='font-semibold text-green-600'>
+                          Cumplido
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell className='text-right'>
+                      {formatTime(tiempo[objetivo] || 0)}
+                    </TableCell>
+                    <TableCell className='text-right'>
+                      {formatTime(tiempoSesion[objetivo] || 0)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </Card>
         </>
       )}

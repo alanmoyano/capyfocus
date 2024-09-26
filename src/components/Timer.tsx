@@ -80,7 +80,7 @@ export default function Timer() {
         setTiempoSesion(prev => ({ ...prev, [objetivo]: 0 }))
       }
     })
-    setLocation('/capyEstadisticas')
+    setLocation('/capyEstadisticas?period=sesion')
   }
 
   useEffect(() => {
@@ -108,7 +108,7 @@ export default function Timer() {
       finalizarSesion()
     }
     return () => clearInterval(timer.current)
-  }, [isActive])
+  }, [isActive, objCumplidos])
 
   /* Esto es para que los botones si los tocas mas de una vez no hagan nada */
   const handleToggle = (value: boolean) => {
