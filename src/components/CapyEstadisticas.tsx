@@ -64,6 +64,7 @@ import { useSesion } from '@contexts/SesionContext'
 
 import { formatTime } from '@/lib/utils'
 import useSearchParams from '@hooks/useSearchParams'
+import { boolean } from 'zod'
 
 // const chartData = [
 //   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -146,7 +147,7 @@ export default function CapyEstadisticas() {
     seisMeses: useRef(null)
   }
 
-  const captureScreenshot = async period => {
+  const captureScreenshot = async (period: string) => {
     if (cardRefs[period].current) {
       const canvas = await html2canvas(cardRefs[period].current)
       const image = canvas.toDataURL('image/png')
@@ -256,7 +257,6 @@ export default function CapyEstadisticas() {
           </SelectContent>
         </Select>
       </div>
-      {/* Descargar imagen */}
 
       {/* Pagina en blanco */}
       {selectedPeriod === '' && tiempoTotal === 0 && (
