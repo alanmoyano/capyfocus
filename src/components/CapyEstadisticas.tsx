@@ -137,14 +137,6 @@ export default function CapyEstadisticas() {
   const { tecnicaEstudio, tiempoTotal, acumuladorTiempoPausa, cantidadPausas } =
     useSesion()
 
-  const intervalosTiempo = [
-    'semanal',
-    'sesion',
-    'mensual',
-    'bimestral',
-    'evento',
-    'seisMeses'
-  ]
 
   const cardRefs = {
     sesion: useRef(null),
