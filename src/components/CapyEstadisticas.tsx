@@ -57,6 +57,7 @@ import { formatTime } from '@/lib/utils'
 import { Tooltip as ChartTooltip } from 'recharts'
 import { useSearch } from 'wouter'
 import { ImageDown } from 'lucide-react'
+import useSearchParams from '@/hooks/useSearchParams'
 
 // const chartData = [
 //   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -114,10 +115,7 @@ const chartConfig4 = {
 
 export default function CapyEstadisticas() {
   const queryParams = useSearch()
-  const period = queryParams
-    .split('&')
-    .find(param => param.includes('period'))
-    ?.split('=')[1]
+  const { period } = useSearchParams()
   const [selectedPeriod, setSelectedPeriod] = React.useState(period ?? '')
 
   console.log(queryParams)
@@ -238,7 +236,6 @@ export default function CapyEstadisticas() {
           Descargar
         </p>
       </div>
-
 
       {/* Pagina en blanco */}
       {selectedPeriod === '' && tiempoTotal === 0 && (
@@ -760,7 +757,7 @@ export default function CapyEstadisticas() {
                       Música:
                     </p>
                     <p className='mt-2 text-center text-lg font-normal'>
-                      {selectedMusic?.title || 'sin música'}
+                      {selectedMusic?.title ?? 'sin música'}
                     </p>
                   </div>
                   <div>
@@ -829,7 +826,7 @@ export default function CapyEstadisticas() {
                         <ChartTooltip
                           cursor={false}
                           content={<ChartTooltipContent indicator='dashed' />}
-                    />
+                        />
                         <Bar
                           dataKey='desktop'
                           fill='var(--color-desktop)'

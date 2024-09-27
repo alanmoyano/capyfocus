@@ -80,6 +80,7 @@ import { useMusic } from '../hooks/MusicContext'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useSesion } from '@/hooks/SesionContext'
+import useSearchParams from '@/hooks/useSearchParams'
 
 type CapyMetodos = 'Capydoro' | 'Capymetro' | ''
 
@@ -258,6 +259,8 @@ export default function Inicio() {
   useEffect(() => {
     setSelectedMusic(null)
   }, [])
+
+  console.log(useSearchParams())
 
   return (
     <>
