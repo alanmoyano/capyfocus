@@ -540,16 +540,19 @@ export default function CapyEstadisticas() {
                   </div>
                 </div>
                 <div className='mt-8 w-auto'></div>
+                      <div className='w-4/12'>
+                  <img src='./auto.gif' alt='' />
+                </div>
               </div>
 
               {/* Chart */}
-              <div className='h-1/2 w-5/12 overflow-hidden  '>
+              <div className='h-5/12 w-4/12 overflow-hidden  '>
                 <Card className='rounded-lg shadow-lg'>
-                  <CardHeader className='bg-gradient-to-r from-orange-300 to-blue-400 text-gray-900'>
-                    <CardTitle className='text-2xl font-bold'>
-                      Tiempo dedicado a objetivos en las sesiones
+                  
+                    <CardTitle className='text-xl font-bold p-2 bg-gradient-to-r from-orange-300 to-blue-400 text-gray-900 '>
+                      Objetivos favoritos
                     </CardTitle>
-                  </CardHeader>
+                  
                   <CardContent className='p-4'>
                     <ChartContainer config={chartConfig1}>
                       <ResponsiveContainer width='100%' height={400}>
@@ -597,7 +600,16 @@ export default function CapyEstadisticas() {
                     </ChartContainer>
                   </CardContent>
                 </Card>
+
+
+                
+
                 <Card className=''>
+                <CardTitle className='bg-gradient-to-r from-orange-300 to-blue-400  text-gray-900 p-2 font-bold text-xl'>
+                      Días conectado 
+                    </CardTitle>
+                    <CardContent>
+
                   {/* Por ahora me ganó el borde del calendario. Ver si mostramos las sesiones en el cal*/}
                   <div className='text-center mt-2'>
                     <Calendar
@@ -605,10 +617,13 @@ export default function CapyEstadisticas() {
                       selected={date}
                       onSelect={setDate}
                       className='inline-block shadow-sm'
-                    />
+                      />
                   </div>
+                      </CardContent>
                 </Card>
+                      
               </div>
+
             </CardContent>
             {/* Tabla de objetivos de la sesión */}
             <h2 className='ml-4 flex w-full justify-start text-2xl font-bold'>
@@ -659,6 +674,9 @@ export default function CapyEstadisticas() {
         </>
       )}
 
+
+
+
       {selectedPeriod === 'mensual' && (
         <>
           <Card>
@@ -701,6 +719,9 @@ export default function CapyEstadisticas() {
           </Card>
         </>
       )}
+
+
+
       {selectedPeriod === 'bimestral' && (
         <>
           <Card className='container mx-auto mt-4 flex-col overflow-y-auto rounded-lg bg-orange-100 p-6 shadow-lg'>
