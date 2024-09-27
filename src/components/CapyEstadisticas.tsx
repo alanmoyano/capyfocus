@@ -305,92 +305,69 @@ export default function CapyEstadisticas() {
             <CardHeader>
               <CardTitle className=''>
                 <h1 className='text-left text-3xl font-bold'>
-                  Información de la Sesión
+                  Resumen de la Sesión
                 </h1>
               </CardTitle>
             </CardHeader>
             <CardContent className='flex justify-between gap-4'>
-              <div className='w-1/2 pr-4'>
-                <div className='grid grid-cols-2 gap-14'>
-                  <div>
-                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
-                      Tiempo total de estudio:
-                    </p>
-                    <p className='mt-2 text-center text-lg font-normal'>
-                      {formatTime(tiempoTotal ?? 0)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
-                      Tiempo total de descanso:
-                    </p>
-                    <p className='mt-2 text-center text-lg font-normal'>
-                      {formatTime(acumuladorTiempoPausa ?? 0)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
-                      Cantidad de pausas:
-                    </p>
-                    <p className='mt-2 text-center text-lg font-normal'>
-                      {cantidadPausas}
-                    </p>
-                  </div>
-                  <div>
-                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
-                      Tipo de motivación:
-                    </p>
-                    <p className='mt-2 text-center text-lg font-normal'>
-                      {motivationType}
-                    </p>
-                  </div>
-                  <div>
-                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
-                      Música:
-                    </p>
-                    <p className='mt-2 text-center text-lg font-normal'>
-                      {selectedMusic?.title ?? 'sin música'}
-                    </p>
-                  </div>
-                  <div>
-                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
-                      Técnica de estudio:
-                    </p>
-                    <p className='mt-2 text-center text-lg font-normal'>
-                      {tecnicaEstudio}
-                    </p>
-                  </div>
-                  <div>
-                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
-                      Cantidad total de objetivos:
-                    </p>
-                    <p className='mt-2 text-center text-lg font-normal'>
-                      {objetivos.length}
-                    </p>
-                  </div>
-                  <div>
-                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
-                      Objetivos cumplidos:
-                    </p>
-                    <p className='mt-2 text-center text-lg font-normal'>
-                      {objetivos.length - objetivosPend.length}
-                    </p>
-                  </div>
-                  <div>
-                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
-                      Objetivos pendientes:
-                    </p>
-                    <p className='mt-2 text-center text-lg font-normal'>
-                      {objetivosPend.length}
-                    </p>
-                  </div>
+             
+<div className='w-1/2'>
+
+
+                <div className='grid grid-cols-2 gap-6'>
+                  {[
+                    {
+                      label: 'Tiempo total de estudio',
+                      value: formatTime(tiempoTotal ?? 0)
+                    },
+                    {
+                      label: 'Tiempo total de descanso',
+                      value: formatTime(acumuladorTiempoPausa ?? 0)
+                    },
+                    { label: 'Total de objetivos', value: objetivos.length },
+                    {
+                      label: 'Objetivos cumplidos',
+                      value: objetivos.length - objetivosPend.length
+                    },
+                    {
+                      label: 'Objetivos pendientes',
+                      value: objetivosPend.length
+                    },
+                    {
+                      label: 'Cantidad de pausas',
+                      value: cantidadPausas
+                    },
+                    {
+                      label: 'Tipo de motivación',
+                      value: motivationType
+                    },
+                    {
+                      label: 'Música',
+                      value: selectedMusic?.title ?? 'Sin música'
+                    },
+                    {
+                      label: 'Técnica de estudio',
+                      value: tecnicaEstudio
+                    }
+                    
+                  ].map(({ label, value }, index) => (
+                    <div
+                      key={index}
+                      className='rounded-lg bg-white p-2 shadow-md'
+                    >
+                      <p className='mb-2 rounded-lg bg-primary p-2 text-sm font-semibold text-gray-800'>
+                        {label}
+                      </p>
+                      <p className='text-lg font-bold text-gray-800'>{value}</p>
+                    </div>
+                  ))}
                 </div>
-                <div className='mt-8 w-auto'></div>
-              </div>
+                </div>
+             
               {/* Chart */}
-              <Card className='mt-4 h-1/2 w-1/2 overflow-hidden rounded-lg shadow-lg'>
-                <CardHeader className='bg-gradient-to-r from-orange-300 to-blue-400 text-gray-900'>
-                  <CardTitle className='text-2xl font-bold'>
+              <Card className=' h-1/2 overflow-hidden rounded-lg shadow-lg'>
+                <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 text-gray-900'>
+                  <CardTitle className='text-xl font-bold'>
                     Tiempo dedicado a objetivos en la sesión actual
                   </CardTitle>
                 </CardHeader>
@@ -441,6 +418,9 @@ export default function CapyEstadisticas() {
                   </ChartContainer>
                 </CardContent>
               </Card>
+
+
+              
             </CardContent>
             {/* Tabla de objetivos de la sesión */}
             <h2 className='ml-4 flex w-full justify-start text-2xl font-bold'>
@@ -463,11 +443,11 @@ export default function CapyEstadisticas() {
                     <TableCell className='font-medium'>{objetivo}</TableCell>
                     <TableCell>
                       {tiempo[objetivo] === 0 ? (
-                        <span className='font-semibold text-yellow-600'>
+                        <span className='rounded-full bg-orange-200 px-2 py-1 text-xs font-semibold text-yellow-800'>
                           Pendiente
                         </span>
                       ) : (
-                        <span className='font-semibold text-green-600'>
+                        <span className='rounded-full bg-green-200 px-2 py-1 text-xs font-semibold text-green-800'>
                           Cumplido
                         </span>
                       )}
