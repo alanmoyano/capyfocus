@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 
 import { Input } from '@/components/ui/input'
-import { useObjetivos } from '../hooks/ObjetivosContext'
+import { useObjetivos } from './contexts/ObjetivosContext'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import {
   Tooltip,
@@ -74,13 +74,12 @@ import {
   CarouselNext,
   CarouselPrevious
 } from '@/components/ui/carousel'
-import { useMotivation } from '../hooks/MotivationContext'
+import { useMotivation } from './contexts/MotivationContext'
 
-import { useMusic } from '../hooks/MusicContext'
+import { useMusic } from './contexts/MusicContext'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useSesion } from '@/hooks/SesionContext'
-import useSearchParams from '@/hooks/useSearchParams'
+import { useSesion } from '@/components/contexts/SesionContext'
 
 type CapyMetodos = 'Capydoro' | 'Capymetro' | ''
 
@@ -259,8 +258,6 @@ export default function Inicio() {
   useEffect(() => {
     setSelectedMusic(null)
   }, [])
-
-  console.log(useSearchParams())
 
   return (
     <>

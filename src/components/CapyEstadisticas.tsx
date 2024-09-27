@@ -1,3 +1,20 @@
+import { useState } from 'react'
+
+import {
+  Tooltip as ChartTooltip,
+  Bar,
+  BarChart,
+  Pie,
+  PieChart,
+  CartesianGrid,
+  XAxis,
+  Cell,
+  ResponsiveContainer
+} from 'recharts'
+
+import { useSearch } from 'wouter'
+import { ImageDown } from 'lucide-react'
+
 import {
   Table,
   TableBody,
@@ -7,9 +24,6 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-
-import { Bar, BarChart } from 'recharts'
-
 import {
   Card,
   CardContent,
@@ -23,9 +37,6 @@ import {
   ChartContainer,
   ChartTooltipContent
 } from '@/components/ui/chart'
-import * as React from 'react'
-import { Pie, PieChart, CartesianGrid, XAxis, Cell } from 'recharts'
-
 import {
   Select,
   SelectContent,
@@ -35,29 +46,22 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
 } from '@/components/ui/tooltip'
+import { Calendar } from '@components/ui/calendar'
+import { ChartLegend, ChartLegendContent } from '@components/ui/chart'
 
-import { useObjetivos } from '../hooks/ObjetivosContext'
+import { useObjetivos } from '@contexts/ObjetivosContext'
+import { useMotivation } from '@contexts/MotivationContext'
+import { useMusic } from '@contexts/MusicContext'
+import { useSesion } from '@contexts/SesionContext'
 
-import { ChartLegend, ChartLegendContent } from '@/components/ui/chart'
-
-import { ResponsiveContainer } from 'recharts'
-
-import { useMotivation } from '../hooks/MotivationContext'
-import { useMusic } from '../hooks/MusicContext'
-import { useSesion } from '@/hooks/SesionContext'
-import { Calendar } from './ui/calendar'
 import { formatTime } from '@/lib/utils'
-import { Tooltip as ChartTooltip } from 'recharts'
-import { useSearch } from 'wouter'
-import { ImageDown } from 'lucide-react'
-import useSearchParams from '@/hooks/useSearchParams'
+import useSearchParams from '@hooks/useSearchParams'
 
 // const chartData = [
 //   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -116,7 +120,7 @@ const chartConfig4 = {
 export default function CapyEstadisticas() {
   const queryParams = useSearch()
   const { period } = useSearchParams()
-  const [selectedPeriod, setSelectedPeriod] = React.useState(period ?? '')
+  const [selectedPeriod, setSelectedPeriod] = useState(period ?? '')
 
   console.log(queryParams)
 
@@ -127,7 +131,7 @@ export default function CapyEstadisticas() {
   const { objetivos, objetivosPend, tiempo, tiempoSesion } = useObjetivos()
   const { motivationType } = useMotivation()
   const { selectedMusic } = useMusic()
-  const [date, setDate] = React.useState<Date | undefined>(new Date())
+  const [date, setDate] = useState<Date | undefined>(new Date())
   const { tecnicaEstudio, tiempoTotal, acumuladorTiempoPausa, cantidadPausas } =
     useSesion()
   return (
@@ -542,7 +546,7 @@ export default function CapyEstadisticas() {
                       Música:
                     </p>
                     <p className='mt-2 text-center text-lg font-normal'>
-                      {selectedMusic?.title || 'sin música'}
+                      {selectedMusic?.title ?? 'sin música'}
                     </p>
                   </div>
                   <div>

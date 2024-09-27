@@ -1,14 +1,15 @@
-import { useSearch } from "wouter";
+import { useSearch } from 'wouter'
 
-export default function useSearchParams(){
+export default function useSearchParams() {
   const queryString = useSearch()
 
-  const searchParams = queryString.split('&').reduce((acc: Record<string, string | undefined>, searchParam) => {
-    const [key, value] = searchParam.split('=')
-    acc[key] = value
-    return acc
-  }
-  , {})
+  const searchParams = queryString
+    .split('&')
+    .reduce((acc: Record<string, string | undefined>, searchParam) => {
+      const [key, value] = searchParam.split('=')
+      acc[key] = value
+      return acc
+    }, {})
 
   return searchParams
 }
