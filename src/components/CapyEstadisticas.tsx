@@ -71,6 +71,8 @@ import useSearchParams from '@hooks/useSearchParams'
 //   { browser: 'FisicaII', visitors: 190, fill: 'var(--color-other)' }
 // ]
 
+
+
 const chartConfig1: ChartConfig = {
   visitors: {
     label: 'Objetivos'
@@ -234,12 +236,14 @@ export default function CapyEstadisticas() {
         </Select>
       </div>
       {/* Descargar imagen */}
-      <div className='flex w-9/12 justify-end'>
-        <p className='flex items-center text-left text-sm font-normal hover:cursor-pointer hover:text-primary'>
-          <ImageDown className='mr-1 h-4 w-4' />
-          Descargar
-        </p>
-      </div>
+      {selectedPeriod === 'sesion' || selectedPeriod === "semanal" || selectedPeriod === "evento"  && (
+        <div className='flex w-9/12 justify-end'>
+          <p className='flex items-center text-left text-sm font-normal hover:cursor-pointer hover:text-primary'>
+            <ImageDown className='mr-1 h-4 w-4' />
+            Descargar
+          </p>
+        </div>
+      )}
 
       {/* Pagina en blanco */}
       {selectedPeriod === '' && tiempoTotal === 0 && (
