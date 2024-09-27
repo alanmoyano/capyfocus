@@ -71,8 +71,6 @@ import useSearchParams from '@hooks/useSearchParams'
 //   { browser: 'FisicaII', visitors: 190, fill: 'var(--color-other)' }
 // ]
 
-
-
 const chartConfig1: ChartConfig = {
   visitors: {
     label: 'Objetivos'
@@ -136,6 +134,15 @@ export default function CapyEstadisticas() {
   const [date, setDate] = useState<Date | undefined>(new Date())
   const { tecnicaEstudio, tiempoTotal, acumuladorTiempoPausa, cantidadPausas } =
     useSesion()
+
+  const intervalosTiempo = [
+    'semanal',
+    'sesion',
+    'mensual',
+    'bimestral',
+    'evento',
+    'seisMeses'
+  ]
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyEstadisticas!</h1>
@@ -236,7 +243,8 @@ export default function CapyEstadisticas() {
         </Select>
       </div>
       {/* Descargar imagen */}
-      {selectedPeriod === 'sesion' || selectedPeriod === "semanal" || selectedPeriod === "evento"  && (
+
+      {intervalosTiempo.includes(selectedPeriod) && (
         <div className='flex w-9/12 justify-end'>
           <p className='flex items-center text-left text-sm font-normal hover:cursor-pointer hover:text-primary'>
             <ImageDown className='mr-1 h-4 w-4' />
@@ -251,7 +259,7 @@ export default function CapyEstadisticas() {
           <img src='./auto.gif' alt='' />
         </>
       )}
-
+      {/* Pagina de sesion */}
       {selectedPeriod === 'sesion' && tiempoTotal === 0 && (
         <>
           <img src='./Chicho/CapyDesilucionado.gif' className='' alt='' />
@@ -450,13 +458,204 @@ export default function CapyEstadisticas() {
           </Card>
           <hr />
           <hr />
-          {/* Gráfico de sesión */}
         </>
       )}
 
       {selectedPeriod === 'semanal' && (
         <>
-          <p className='mt-16'>Aca va la info de la semana</p>
+          <Card className='container mx-auto mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg'>
+            <CardHeader>
+              <CardTitle className=''>
+                <h1 className='text-left text-3xl font-bold'>
+                  Información de las sesiones en la semana
+                </h1>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className='flex justify-between gap-4'>
+              <div className='w-1/2 pr-4'>
+                <div className='grid grid-cols-2 gap-14'>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Tiempo total de estudio:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {formatTime(tiempoTotal ?? 0)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Cantidad total de objetivos:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {objetivos.length}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Cantidad total de objetivos cumplidos:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {objetivos.length - objetivosPend.length}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Cantidad total de objetivos pendientes:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {objetivosPend.length}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Tipo de motivación preferida:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {motivationType}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Tipo de música preferida:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {selectedMusic?.title ?? 'sin música'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Técnica de estudio mas frecuente:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {tecnicaEstudio}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
+                      Mayor racha de días:
+                    </p>
+                    <p className='mt-2 text-center text-lg font-normal'>
+                      {objetivosPend.length}
+                    </p>
+                  </div>
+                </div>
+                <div className='mt-8 w-auto'></div>
+              </div>
+
+              {/* Chart */}
+              <div className='h-1/2 w-5/12 overflow-hidden  '>
+                <Card className='rounded-lg shadow-lg'>
+                  <CardHeader className='bg-gradient-to-r from-orange-300 to-blue-400 text-gray-900'>
+                    <CardTitle className='text-2xl font-bold'>
+                      Tiempo dedicado a objetivos en las sesiones
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className='p-4'>
+                    <ChartContainer config={chartConfig1}>
+                      <ResponsiveContainer width='100%' height={400}>
+                        <PieChart>
+                          {/* Agregue un filtro para que no se muestren los objetivos que no se han cumplido */}
+                          <Pie
+                            data={objetivos
+                              .filter(objetivo => tiempo[objetivo] > 0)
+                              .map(objetivo => ({
+                                name: objetivo,
+                                value: tiempo[objetivo] ?? 0
+                              }))}
+                            labelLine={false}
+                            outerRadius='80%'
+                            dataKey='value'
+                            label={({ name, percent }) =>
+                              `${name} ${(percent * 100).toFixed(0)}%`
+                            }
+                          >
+                            {objetivos
+                              .filter(objetivo => tiempo[objetivo] > 0)
+                              .map((objetivo, index) => (
+                                <Cell
+                                  key={`cell-${index}`}
+                                  fill={
+                                    chartConfig1[
+                                      Object.keys(chartConfig1)[index + 1]
+                                    ].color ?? `hsl(${index * 90}, 70%, 60%)`
+                                  }
+                                  name={objetivo}
+                                />
+                              ))}
+                          </Pie>
+                          <ChartTooltip
+                            content={
+                              <ChartTooltipContent
+                                indicator='dot'
+                                formatType='time'
+                              />
+                            }
+                          />
+                          <ChartLegend content={<ChartLegendContent />} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+                <Card className=''>
+                  {/* Por ahora me ganó el borde del calendario. Ver si mostramos las sesiones en el cal*/}
+                  <div className='text-center mt-2'>
+                    <Calendar
+                      mode='single'
+                      selected={date}
+                      onSelect={setDate}
+                      className='inline-block shadow-sm'
+                    />
+                  </div>
+                </Card>
+              </div>
+            </CardContent>
+            {/* Tabla de objetivos de la sesión */}
+            <h2 className='ml-4 flex w-full justify-start text-2xl font-bold'>
+              Objetivos de las sesiones
+            </h2>
+            {/* Aca estaria bueno agregar el nombre del evento si se estudio para uno  */}
+            <Table className=''>
+              <TableCaption></TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className='w-[100px]'>Evento</TableHead>
+                  <TableHead>Objetivo</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead className='text-right'>Fecha creado</TableHead>
+
+                  <TableHead className='text-right'>Tiempo acumulado</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {objetivos.map((objetivo, index) => (
+                  <TableRow key={index}>
+                    <TableCell className='font-medium'>{objetivo}</TableCell>
+                    <TableCell>
+                      {tiempo[objetivo] === 0 ? (
+                        <span className='font-semibold text-yellow-600'>
+                          Pendiente
+                        </span>
+                      ) : (
+                        <span className='font-semibold text-green-600'>
+                          Cumplido
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell className='text-blue-600'>Activo</TableCell>
+                    <TableCell className='text-right'>
+                      {formatTime(tiempoSesion[objetivo] || 0)}
+                    </TableCell>
+                    <TableCell className='text-right'>
+                      {formatTime(tiempo[objetivo] || 0)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
+          <hr />
+          <hr />
         </>
       )}
 
