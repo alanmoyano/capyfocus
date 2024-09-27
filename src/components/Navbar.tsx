@@ -40,7 +40,7 @@ function LogoLink() {
   return (
     <Link to='/' className={navigationMenuTriggerStyle()}>
       <div className='flex items-center justify-center gap-2'>
-        <img src='/logo.png' height={30} width={30} />
+        <img src='/logo.webp' height={30} width={30} />
         <p>Capyfocus</p>
       </div>
     </Link>

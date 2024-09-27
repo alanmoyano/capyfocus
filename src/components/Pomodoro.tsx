@@ -153,7 +153,8 @@ export default function Pomodoro() {
       {/* Columna imagen  */}
       <div className='grid grid-cols-2 gap-12'>
         <div className=''>
-          <img src='/idle.gif' />
+          <video src='/idle.webm' autoPlay loop muted playsInline />
+
           <div className='mb-4 rounded-lg bg-primary p-2'>
             Tu tipo de motivación es:{' '}
             <span className='font-semibold'>{motivationType}</span>

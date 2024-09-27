@@ -49,7 +49,7 @@ export default function Usuario() {
         <div className='grid grid-cols-2 gap-10'>
           <div className='flex h-full w-full items-center justify-center'>
             <div className='m-auto'>
-              <img src='/idle.gif' />
+              <video src='/idle.webm' autoPlay loop muted playsInline />
             </div>
           </div>
           <Card className='h-full w-full bg-secondary shadow-md'>
@@ -66,7 +66,7 @@ export default function Usuario() {
                           <DialogTrigger asChild>
                             <Avatar className='mx-auto h-32 w-32 hover:cursor-pointer'>
                               <AvatarImage
-                                src='/capyPic.png'
+                                src='/capyPic.jpg'
                                 className='h-full w-full'
                               />
                               <AvatarFallback className='text-2xl'>

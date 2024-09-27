@@ -161,7 +161,14 @@ export default function Timer() {
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
         {/* Columna 1:  */}
         <div className='col-span-1 p-4'>
-          <img src='/idle.gif' className='h-auto w-full' alt='Idle animation' />
+          <video
+            src='/idle.webm'
+            autoPlay
+            loop
+            muted
+            playsInline
+            className='h-auto w-full'
+          />
           <div className='mb-4 rounded-lg bg-primary p-2'>
             Tu tipo de motivación es:{' '}
             <span className='font-semibold'>{motivationType}</span>
