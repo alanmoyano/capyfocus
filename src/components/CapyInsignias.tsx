@@ -14,7 +14,7 @@ import {
 
 export default function CapyInsignias() {
   const [, setLocation] = useLocation()
-  const [progress, setProgress] = useState(13)
+  const [progress, setProgress] = useState(10)
   const [isUnlocked, setIsUnlocked] = useState(false)
 
   const handleVolver = () => {
@@ -101,15 +101,18 @@ export default function CapyInsignias() {
                         <>
                           <div className=''>
                             <div className='mx-auto aspect-[3/4] w-11/12'>
+                            <div className='imagen'>
+
                               <img
                                 src='./CapyInsigniasImagenes/CapyGandalf.png'
                                 alt='HidenInsignia'
                                 className='absolute inset-0 h-full w-full object-contain p-4'
-                              />
+                                />
+                                </div>
                             </div>
 
                             <p
-                              className='text-xl font-bold text-gray-700'
+                              className='text-xl mt-10 font-bold text-gray-800'
                               style={{ fontFamily: 'Jomolhari, serif' }}
                             >
                               CapyGandalf
@@ -121,19 +124,19 @@ export default function CapyInsignias() {
                       {!isUnlocked && (
                         <>
                           <div>
-                            <div className='mx-auto aspect-[3/4] w-11/12'>
+                            <div className='w-full h-full container text-center flex justify-center'>
                               <img
                                 src='./CapyInsigniasImagenes/CapySherlock.png'
                                 alt='HidenInsignia'
                                 className='absolute inset-0 h-full w-full object-contain p-4'
                               />
-                            </div>
                             <p
-                              className='mt-16 text-xl font-bold text-gray-700'
+                              className=' flex  text-center mt-4  text-xl font-bold  text-gray-700'
                               style={{ fontFamily: 'Jomolhari, serif' }}
                             >
-                              Bloqueada
+                              CapyBloqueada
                             </p>
+                            </div>
                           </div>
                         </>
                       )}
@@ -145,7 +148,7 @@ export default function CapyInsignias() {
           </DialogTrigger>
           <DialogContent className='sm:max-w-[425px]'>
             <DialogHeader>
-              <DialogTitle>Bloqueada</DialogTitle>
+              <DialogTitle>CapyBloqueada</DialogTitle>
               <DialogDescription></DialogDescription>
             </DialogHeader>
             <div className='flex flex-col items-center'>

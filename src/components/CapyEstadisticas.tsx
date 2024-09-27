@@ -549,7 +549,7 @@ export default function CapyEstadisticas() {
               <div className='h-5/12 w-4/12 overflow-hidden  '>
                 <Card className='rounded-lg shadow-lg'>
                   
-                    <CardTitle className='text-xl font-bold p-2 bg-gradient-to-r from-orange-300 to-blue-400 text-gray-900 '>
+                    <CardTitle className='text-xl font-bold p-2 bg-gradient-to-r from-orange-200 to-blue-200 text-gray-900 '>
                       Objetivos favoritos
                     </CardTitle>
                   
@@ -605,7 +605,7 @@ export default function CapyEstadisticas() {
                 
 
                 <Card className=''>
-                <CardTitle className='bg-gradient-to-r from-orange-300 to-blue-400  text-gray-900 p-2 font-bold text-xl'>
+                <CardTitle className='bg-gradient-to-r from-orange-200 to-blue-200 text-gray-900 p-2 font-bold text-xl'>
                       Días conectado 
                     </CardTitle>
                     <CardContent>
