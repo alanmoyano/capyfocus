@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
+import { DialogClose } from '@radix-ui/react-dialog'
 
 export default function CapyInsignias() {
   const [, setLocation] = useLocation()
@@ -19,6 +20,10 @@ export default function CapyInsignias() {
 
   const handleVolver = () => {
     setLocation('/')
+  }
+
+  const salir = () => {
+    setLocation('/capyInsignias')
   }
 
   useEffect(() => {
@@ -37,8 +42,6 @@ export default function CapyInsignias() {
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyInsiginias!</h1>
-
-      <p>Opcion 2</p>
 
       <div className='mt-4 flex justify-center gap-4 space-x-4'>
         <Dialog>
@@ -85,7 +88,11 @@ export default function CapyInsignias() {
               <Progress value={100} className='w-3/4' />
             </div>
             <DialogFooter>
-              <Button type='submit'>Salir</Button>
+                    <DialogClose>
+                      <Button className=''>
+                        Salir
+                      </Button>
+                    </DialogClose>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -166,7 +173,11 @@ export default function CapyInsignias() {
               <Progress value={progress} className='w-3/4' />
             </div>
             <DialogFooter>
-              <Button type='submit'>Salir</Button>
+            <DialogClose>
+                      <Button className=''>
+                        Salir
+                      </Button>
+                    </DialogClose>
             </DialogFooter>
           </DialogContent>
         </Dialog>
