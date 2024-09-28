@@ -37,7 +37,7 @@ export default function Usuario() {
   }
 
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [infoAvatar, setInfoAvatar] = useState(false)
+
 
   const handleConfirm = () => {
     setDialogOpen(false)
@@ -61,8 +61,8 @@ export default function Usuario() {
               </CardTitle>
 
               <CardDescription className='text-center'>
-                <TooltipProvider>
-                  <Tooltip>
+                <TooltipProvider delayDuration={50}>
+                  <Tooltip delayDuration={50}>
                     <TooltipTrigger asChild>
                       <div className='relative'>
                         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -89,8 +89,7 @@ export default function Usuario() {
 
                             <Avatar className='mx-auto h-32 w-32 hover:scale-105 hover:cursor-pointer'>
                               <AvatarImage
-                              onClick={() => setInfoAvatar(true)}
-                              onDoubleClick={() => setInfoAvatar(false)}
+
                                 src='/capyPic.jpg'
                                 className='bg-slate-500'
   

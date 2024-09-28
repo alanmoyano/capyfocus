@@ -378,8 +378,8 @@ export default function Inicio() {
                           )
                           return (
                             <div>
-                              <TooltipProvider>
-                                <Tooltip>
+                              <TooltipProvider delayDuration={50}>
+                                <Tooltip delayDuration={50}>
                                   <TooltipTrigger asChild>
                                     <div>{date.getDate()}</div>
                                   </TooltipTrigger>
@@ -598,8 +598,8 @@ export default function Inicio() {
                       <div className='flex w-full items-center justify-between'>
                         <span>{objetivo}</span>
                         <div className='flex items-center'>
-                          <TooltipProvider>
-                            <Tooltip>
+                          <TooltipProvider delayDuration={50}>
+                            <Tooltip delayDuration={50}>
                               <TooltipTrigger asChild>
                                 <Button
                                   variant='icon'
@@ -616,8 +616,8 @@ export default function Inicio() {
                             </Tooltip>
                           </TooltipProvider>
 
-                          <TooltipProvider>
-                            <Tooltip>
+                          <TooltipProvider delayDuration={50}>
+                            <Tooltip delayDuration={50}>
                               <TooltipTrigger asChild>
                                 <Button
                                   variant='icon'
@@ -633,8 +633,8 @@ export default function Inicio() {
                             </Tooltip>
                           </TooltipProvider>
 
-                          <TooltipProvider>
-                            <Tooltip>
+                          <TooltipProvider delayDuration={50}>
+                            <Tooltip delayDuration={50}>
                               <TooltipTrigger asChild>
                                 <Button
                                   variant='icon'
@@ -682,8 +682,8 @@ export default function Inicio() {
                 <SelectGroup>
                   <SelectLabel>Tipo de motivación</SelectLabel>
                   <SelectItem key={0} value='Positiva'>
-                    <TooltipProvider>
-                      <Tooltip>
+                    <TooltipProvider delayDuration={50}>
+                      <Tooltip delayDuration={50}>
                         <TooltipTrigger asChild>
                           <p>Positiva</p>
                         </TooltipTrigger>
@@ -694,8 +694,8 @@ export default function Inicio() {
                     </TooltipProvider>
                   </SelectItem>
                   <SelectItem key={1} value='PasivoAgresiva'>
-                    <TooltipProvider>
-                      <Tooltip>
+                    <TooltipProvider delayDuration={50}>
+                      <Tooltip delayDuration={50}>
                         <TooltipTrigger asChild>
                           <p>Pasivo/Agresivo</p>
                         </TooltipTrigger>
