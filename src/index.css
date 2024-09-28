@@ -258,3 +258,8 @@ main {
   color: hsl(var(--primary-foreground));
   text-align: center;
 }
+
+.imagen {
+  width: 100px;
+  height: 100px;
+}

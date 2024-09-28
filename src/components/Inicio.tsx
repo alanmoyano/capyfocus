@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 
 import { Input } from '@/components/ui/input'
-import { useObjetivos } from '../hooks/ObjetivosContext'
+import { useObjetivos } from './contexts/ObjetivosContext'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import {
   Tooltip,
@@ -74,12 +74,12 @@ import {
   CarouselNext,
   CarouselPrevious
 } from '@/components/ui/carousel'
-import { useMotivation } from '../hooks/MotivationContext'
+import { useMotivation } from './contexts/MotivationContext'
 
-import { useMusic } from '../hooks/MusicContext'
+import { useMusic } from './contexts/MusicContext'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useSesion } from '@/hooks/SesionContext'
+import { useSesion } from '@/components/contexts/SesionContext'
 
 type CapyMetodos = 'Capydoro' | 'Capymetro' | ''
 
@@ -98,7 +98,7 @@ type Event = {
 const playlists = [
   {
     key: 1,
-    src: './CapyChill.png',
+    src: './CapyChill.jpg',
     alt: 'CapyChill',
     title: 'Capy Chill',
     description: 'Música relajante para estudiar con tranquilidad',
@@ -106,7 +106,7 @@ const playlists = [
   },
   {
     key: 2,
-    src: './CapyAmbiente.png',
+    src: './CapyAmbiente.jpg',
     alt: 'CapyAmbiente',
     title: 'Capy Ambiente',
     description: 'Sonidos ambientales para mejorar la concentración',
@@ -114,7 +114,7 @@ const playlists = [
   },
   {
     key: 3,
-    src: './CapySinthwave.png',
+    src: './CapySinthwave.jpg',
     alt: 'CapySinthwave',
     title: 'Capy Sinthwave',
     description: 'Música electrónica retro para un estudio energético',
@@ -122,7 +122,7 @@ const playlists = [
   },
   {
     key: 4,
-    src: './CapyEpic.png',
+    src: './CapyEpic.jpg',
     alt: 'CapyEpic',
     title: 'Capy Epic',
     description: 'Música épica para momentos de máxima concentración',
@@ -263,7 +263,7 @@ export default function Inicio() {
     <>
       <section className='mt-10 flex flex-col gap-20 p-10 md:flex-row'>
         <div className='m-auto'>
-          <img src='/idle.gif' />
+          <video src='/idle.webm' autoPlay loop muted playsInline />
         </div>
 
         <div className='m-auto'>

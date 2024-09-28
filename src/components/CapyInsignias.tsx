@@ -11,10 +11,11 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
+import { DialogClose } from '@radix-ui/react-dialog'
 
 export default function CapyInsignias() {
   const [, setLocation] = useLocation()
-  const [progress, setProgress] = useState(13)
+  const [progress, setProgress] = useState(10)
   const [isUnlocked, setIsUnlocked] = useState(false)
 
   const handleVolver = () => {
@@ -37,8 +38,6 @@ export default function CapyInsignias() {
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyInsiginias!</h1>
-
-      <p>Opcion 2</p>
 
       <div className='mt-4 flex justify-center gap-4 space-x-4'>
         <Dialog>
@@ -85,7 +84,9 @@ export default function CapyInsignias() {
               <Progress value={100} className='w-3/4' />
             </div>
             <DialogFooter>
-              <Button type='submit'>Salir</Button>
+              <DialogClose>
+                <Button className=''>Salir</Button>
+              </DialogClose>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -101,15 +102,17 @@ export default function CapyInsignias() {
                         <>
                           <div className=''>
                             <div className='mx-auto aspect-[3/4] w-11/12'>
-                              <img
-                                src='./CapyInsigniasImagenes/CapyGandalf.png'
-                                alt='HidenInsignia'
-                                className='absolute inset-0 h-full w-full object-contain p-4'
-                              />
+                              <div className='imagen'>
+                                <img
+                                  src='./CapyInsigniasImagenes/CapyGandalf.png'
+                                  alt='HidenInsignia'
+                                  className='absolute inset-0 h-full w-full object-contain p-4'
+                                />
+                              </div>
                             </div>
 
                             <p
-                              className='text-xl font-bold text-gray-700'
+                              className='mt-10 text-xl font-bold text-gray-800'
                               style={{ fontFamily: 'Jomolhari, serif' }}
                             >
                               CapyGandalf
@@ -121,19 +124,19 @@ export default function CapyInsignias() {
                       {!isUnlocked && (
                         <>
                           <div>
-                            <div className='mx-auto aspect-[3/4] w-11/12'>
+                            <div className='container flex h-full w-full justify-center text-center'>
                               <img
                                 src='./CapyInsigniasImagenes/CapySherlock.png'
                                 alt='HidenInsignia'
                                 className='absolute inset-0 h-full w-full object-contain p-4'
                               />
+                              <p
+                                className='mt-4 flex text-center text-xl font-bold text-gray-700'
+                                style={{ fontFamily: 'Jomolhari, serif' }}
+                              >
+                                CapyBloqueada
+                              </p>
                             </div>
-                            <p
-                              className='mt-16 text-xl font-bold text-gray-700'
-                              style={{ fontFamily: 'Jomolhari, serif' }}
-                            >
-                              Bloqueada
-                            </p>
                           </div>
                         </>
                       )}
@@ -145,7 +148,7 @@ export default function CapyInsignias() {
           </DialogTrigger>
           <DialogContent className='sm:max-w-[425px]'>
             <DialogHeader>
-              <DialogTitle>Bloqueada</DialogTitle>
+              <DialogTitle>CapyBloqueada</DialogTitle>
               <DialogDescription></DialogDescription>
             </DialogHeader>
             <div className='flex flex-col items-center'>
@@ -163,7 +166,9 @@ export default function CapyInsignias() {
               <Progress value={progress} className='w-3/4' />
             </div>
             <DialogFooter>
-              <Button type='submit'>Salir</Button>
+              <DialogClose>
+                <Button className=''>Salir</Button>
+              </DialogClose>
             </DialogFooter>
           </DialogContent>
         </Dialog>

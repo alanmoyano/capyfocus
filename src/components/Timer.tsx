@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button'
 import { useLocation } from 'wouter'
-import { useObjetivos } from '../hooks/ObjetivosContext'
+import { useObjetivos } from './contexts/ObjetivosContext'
 import { Star, NotebookPen, Moon } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 //import { navigationMenuTriggerStyle } from './ui/navigit pull gation-menu'
-import { useMusic } from '../hooks/MusicContext'
-import { useMotivation } from '../hooks/MotivationContext'
-import { useSesion } from '../hooks/SesionContext'
+import { useMusic } from './contexts/MusicContext'
+import { useMotivation } from './contexts/MotivationContext'
+import { useSesion } from './contexts/SesionContext'
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Sesión' | 'Descanso'
@@ -161,7 +161,14 @@ export default function Timer() {
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
         {/* Columna 1:  */}
         <div className='col-span-1 p-4'>
-          <img src='/idle.gif' className='h-auto w-full' alt='Idle animation' />
+          <video
+            src='/idle.webm'
+            autoPlay
+            loop
+            muted
+            playsInline
+            className='h-auto w-full'
+          />
           <div className='mb-4 rounded-lg bg-primary p-2'>
             Tu tipo de motivación es:{' '}
             <span className='font-semibold'>{motivationType}</span>
