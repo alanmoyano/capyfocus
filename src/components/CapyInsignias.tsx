@@ -22,10 +22,6 @@ export default function CapyInsignias() {
     setLocation('/')
   }
 
-  const salir = () => {
-    setLocation('/capyInsignias')
-  }
-
   useEffect(() => {
     const timer = setTimeout(() => setProgress(66), 500)
     return () => clearTimeout(timer)
@@ -88,11 +84,9 @@ export default function CapyInsignias() {
               <Progress value={100} className='w-3/4' />
             </div>
             <DialogFooter>
-                    <DialogClose>
-                      <Button className=''>
-                        Salir
-                      </Button>
-                    </DialogClose>
+              <DialogClose>
+                <Button className=''>Salir</Button>
+              </DialogClose>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -108,18 +102,17 @@ export default function CapyInsignias() {
                         <>
                           <div className=''>
                             <div className='mx-auto aspect-[3/4] w-11/12'>
-                            <div className='imagen'>
-
-                              <img
-                                src='./CapyInsigniasImagenes/CapyGandalf.png'
-                                alt='HidenInsignia'
-                                className='absolute inset-0 h-full w-full object-contain p-4'
+                              <div className='imagen'>
+                                <img
+                                  src='./CapyInsigniasImagenes/CapyGandalf.png'
+                                  alt='HidenInsignia'
+                                  className='absolute inset-0 h-full w-full object-contain p-4'
                                 />
-                                </div>
+                              </div>
                             </div>
 
                             <p
-                              className='text-xl mt-10 font-bold text-gray-800'
+                              className='mt-10 text-xl font-bold text-gray-800'
                               style={{ fontFamily: 'Jomolhari, serif' }}
                             >
                               CapyGandalf
@@ -131,18 +124,18 @@ export default function CapyInsignias() {
                       {!isUnlocked && (
                         <>
                           <div>
-                            <div className='w-full h-full container text-center flex justify-center'>
+                            <div className='container flex h-full w-full justify-center text-center'>
                               <img
                                 src='./CapyInsigniasImagenes/CapySherlock.png'
                                 alt='HidenInsignia'
                                 className='absolute inset-0 h-full w-full object-contain p-4'
                               />
-                            <p
-                              className=' flex  text-center mt-4  text-xl font-bold  text-gray-700'
-                              style={{ fontFamily: 'Jomolhari, serif' }}
-                            >
-                              CapyBloqueada
-                            </p>
+                              <p
+                                className='mt-4 flex text-center text-xl font-bold text-gray-700'
+                                style={{ fontFamily: 'Jomolhari, serif' }}
+                              >
+                                CapyBloqueada
+                              </p>
                             </div>
                           </div>
                         </>
@@ -173,11 +166,9 @@ export default function CapyInsignias() {
               <Progress value={progress} className='w-3/4' />
             </div>
             <DialogFooter>
-            <DialogClose>
-                      <Button className=''>
-                        Salir
-                      </Button>
-                    </DialogClose>
+              <DialogClose>
+                <Button className=''>Salir</Button>
+              </DialogClose>
             </DialogFooter>
           </DialogContent>
         </Dialog>

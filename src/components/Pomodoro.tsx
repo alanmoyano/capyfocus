@@ -176,15 +176,15 @@ export default function Pomodoro() {
         </div>
         {/* Columna 2 */}
         <div className=''>
-          <p className='mt-8 flex w-full text-xl font-semibold items-center justify-center'>
+          <p className='mt-8 flex w-full items-center justify-center text-xl font-semibold'>
             Coloca el tiempo a estudiar y descansar
           </p>
           <div className='flex justify-between gap-4'>
             {/* subit y bajar tiempo de estudio */}
             <div className='w-1/2 p-4 text-center'>
-              <div className='mt-2 items-center justify-center font-semibold gap-2 rounded-xl bg-secondary/60 p-2'>
+              <div className='mt-2 items-center justify-center gap-2 rounded-xl bg-secondary/60 p-2 font-semibold'>
                 <h3>Minutos de Estudio</h3>
-                <div className='flex items-center justify-center text-lg gap-4'>
+                <div className='flex items-center justify-center gap-4 text-lg'>
                   <Button
                     className=''
                     onClick={() => setSessionSeconds(prev => prev - 60)}
@@ -203,9 +203,9 @@ export default function Pomodoro() {
               </div>
             </div>
             <div className='w-1/2 p-4 text-center'>
-              <div className='mt-2 items-center justify-center gap-2 rounded-xl font-semibold bg-secondary/60 p-2'>
+              <div className='mt-2 items-center justify-center gap-2 rounded-xl bg-secondary/60 p-2 font-semibold'>
                 <h3>Minutos de descanso</h3>
-                <div className='flex items-center text-lg justify-center gap-4'>
+                <div className='flex items-center justify-center gap-4 text-lg'>
                   <Button
                     onClick={() => setBreakSeconds(prev => prev - 60)}
                     disabled={breakSeconds <= 60 || isActive}
@@ -224,16 +224,14 @@ export default function Pomodoro() {
             </div>
           </div>
           <div className='mt-8 flex justify-center'>
-            <span className='rounded-xl bg-secondary/90 py-4 px-12'>
+            <span className='rounded-xl bg-secondary/90 px-12 py-4'>
               <ActualTimer mode={mode} time={countdown} />
               {pomodoroCount.current >= 1 && (
                 <Confetti mode='boom' particleCount={150} />
               )}
               {/* <Confetti mode='boom' particleCount={150} /> */}
 
-              <p className=''>
-                Capydoros: {Math.floor(pomodoroCount.current)}
-              </p>
+              <p className=''>Capydoros: {Math.floor(pomodoroCount.current)}</p>
             </span>
           </div>
           <div className='mt-4 flex justify-center'>

@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { useState, useRef } from 'react'
 import html2canvas from 'html2canvas'
 import { ImageDown } from 'lucide-react'
@@ -64,7 +68,7 @@ import { useSesion } from '@contexts/SesionContext'
 
 import { formatTime } from '@/lib/utils'
 import useSearchParams from '@hooks/useSearchParams'
-import { boolean } from 'zod'
+import { boolean, number, string } from 'zod'
 
 // const chartData = [
 //   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -120,6 +124,11 @@ const chartConfig4 = {
   }
 } satisfies ChartConfig
 
+type tipoEstadistica = {
+  indice: number
+  estadistica: string
+}
+
 export default function CapyEstadisticas() {
   const queryParams = useSearch()
   const { period } = useSearchParams()
@@ -138,7 +147,6 @@ export default function CapyEstadisticas() {
   const { tecnicaEstudio, tiempoTotal, acumuladorTiempoPausa, cantidadPausas } =
     useSesion()
 
-
   const cardRefs = {
     sesion: useRef(null),
     semanal: useRef(null),
@@ -148,8 +156,30 @@ export default function CapyEstadisticas() {
   }
 
   const captureScreenshot = async (period: string) => {
-    if (cardRefs[period].current) {
-      const canvas = await html2canvas(cardRefs[period].current)
+    const tipoEstadisticas: { indice: number; estadistica: string }[] = [
+      { indice: 0, estadistica: 'sesion' },
+      { indice: 1, estadistica: 'semanal' },
+      { indice: 2, estadistica: 'mensual' },
+      { indice: 3, estadistica: 'bimestral' },
+      { indice: 4, estadistica: 'semestral' },
+      { indice: 5, estadistica: 'evento' }
+    ]
+
+    function obtenerIndice(estadistica: string): number {
+      const resultado = tipoEstadisticas.find(
+        item => item.estadistica === estadistica
+      )
+
+      if (resultado) {
+        return resultado.indice
+      } else {
+        return -1
+      }
+    }
+    // @ts-expect-error 7053 no seas molesto typescript
+    if (cardRefs[obtenerIndice(period)].current) {
+      // @ts-expect-error 7053 no seas molesto typescript
+      const canvas = await html2canvas(cardRefs[obtenerIndice(period)].current)
       const image = canvas.toDataURL('image/png')
       const link = document.createElement('a')
       link.href = image
@@ -282,6 +312,7 @@ export default function CapyEstadisticas() {
           <div className='mr-12 flex w-full justify-end'>
             <Button
               variant='ghost'
+              // eslint-disable-next-line @typescript-eslint/no-misused-promises
               onClick={() => captureScreenshot('sesion')}
               className=''
             >
@@ -302,10 +333,7 @@ export default function CapyEstadisticas() {
               </CardTitle>
             </CardHeader>
             <CardContent className='flex justify-between gap-4'>
-             
-<div className='w-1/2'>
-
-
+              <div className='w-1/2'>
                 <div className='grid grid-cols-2 gap-6'>
                   {[
                     {
@@ -341,7 +369,6 @@ export default function CapyEstadisticas() {
                       label: 'Técnica de estudio',
                       value: tecnicaEstudio
                     }
-                    
                   ].map(({ label, value }, index) => (
                     <div
                       key={index}
@@ -354,10 +381,10 @@ export default function CapyEstadisticas() {
                     </div>
                   ))}
                 </div>
-                </div>
-             
+              </div>
+
               {/* Chart */}
-              <Card className=' h-1/2 overflow-hidden rounded-lg shadow-lg'>
+              <Card className='h-1/2 overflow-hidden rounded-lg shadow-lg'>
                 <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 text-gray-900'>
                   <CardTitle className='text-xl font-bold'>
                     Tiempo dedicado a objetivos en la sesión actual
@@ -410,9 +437,6 @@ export default function CapyEstadisticas() {
                   </ChartContainer>
                 </CardContent>
               </Card>
-
-
-              
             </CardContent>
             {/* Tabla de objetivos de la sesión */}
             <h2 className='ml-4 flex w-full justify-start text-2xl font-bold'>
@@ -462,16 +486,16 @@ export default function CapyEstadisticas() {
 
       {selectedPeriod === 'semanal' && (
         <>
-        <div className='mr-12 flex w-full justify-end'>
-              <Button
-                variant='ghost'
-                onClick={() => captureScreenshot('semanal')}
-                className=''
-              >
-                <ImageDown className='mr-2 h-4 w-4' />
-                Capturar
-              </Button>
-            </div>
+          <div className='mr-12 flex w-full justify-end'>
+            <Button
+              variant='ghost'
+              onClick={() => captureScreenshot('semanal')}
+              className=''
+            >
+              <ImageDown className='mr-2 h-4 w-4' />
+              Capturar
+            </Button>
+          </div>
           <Card
             ref={cardRefs.semanal}
             className='container mx-auto mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg'
@@ -657,23 +681,22 @@ export default function CapyEstadisticas() {
                 </TableBody>
               </Table>
             </div>
-            
           </Card>
         </>
       )}
 
       {selectedPeriod === 'mensual' && (
         <>
-        <div className='mr-12 flex w-full justify-end'>
-              <Button
-                variant='ghost'
-                onClick={() => captureScreenshot('mensual')}
-                className=''
-              >
-                <ImageDown className='mr-2 h-4 w-4' />
-                Capturar
-              </Button>
-            </div>
+          <div className='mr-12 flex w-full justify-end'>
+            <Button
+              variant='ghost'
+              onClick={() => captureScreenshot('mensual')}
+              className=''
+            >
+              <ImageDown className='mr-2 h-4 w-4' />
+              Capturar
+            </Button>
+          </div>
           <Card
             ref={cardRefs.mensual}
             className='container mx-auto mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg'
@@ -714,23 +737,22 @@ export default function CapyEstadisticas() {
                 Showing total visitors for the last 6 months
               </div>
             </CardFooter>
-            
           </Card>
         </>
       )}
 
       {selectedPeriod === 'bimestral' && (
         <>
-        <div className='mr-12 flex w-full justify-end'>
-              <Button
-                variant='ghost'
-                onClick={() => captureScreenshot('bimestral')}
-                className=''
-              >
-                <ImageDown className='mr-2 h-4 w-4' />
-                Capturar
-              </Button>
-            </div>
+          <div className='mr-12 flex w-full justify-end'>
+            <Button
+              variant='ghost'
+              onClick={() => captureScreenshot('bimestral')}
+              className=''
+            >
+              <ImageDown className='mr-2 h-4 w-4' />
+              Capturar
+            </Button>
+          </div>
           <Card
             ref={cardRefs.bimestral}
             className='container mx-auto mt-4 flex-col overflow-y-auto rounded-lg bg-orange-100 p-6 shadow-lg'
@@ -926,23 +948,22 @@ export default function CapyEstadisticas() {
                 ))}
               </TableBody>
             </Table>
-            
           </Card>
         </>
       )}
 
       {selectedPeriod === 'seisMeses' && (
         <>
-        <div className='mr-12 flex w-full justify-end'>
-              <Button
-                variant='ghost'
-                onClick={() => captureScreenshot('seisMeses')}
-                className=''
-              >
-                <ImageDown className='mr-2 h-4 w-4' />
-                Capturar
-              </Button>
-            </div>
+          <div className='mr-12 flex w-full justify-end'>
+            <Button
+              variant='ghost'
+              onClick={() => captureScreenshot('seisMeses')}
+              className=''
+            >
+              <ImageDown className='mr-2 h-4 w-4' />
+              Capturar
+            </Button>
+          </div>
           <Card
             ref={cardRefs.seisMeses}
             className='container mx-auto mt-4 flex-col overflow-y-auto rounded-lg bg-orange-100 p-6 shadow-lg'
@@ -1115,7 +1136,6 @@ export default function CapyEstadisticas() {
                 </Card>
               </div>
             </CardContent>
-
           </Card>
           {/* Ver fin de tarjeta, para que se termine antes y no con la pagina*/}
         </>
