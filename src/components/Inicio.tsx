@@ -709,7 +709,7 @@ export default function Inicio() {
               </SelectContent>
             </Select>
           </div>
-
+{/* Musica */}
           <div className='mt-4'>
             {selectedPlaylist !== -1 && (
               <div className='rounded-lg bg-accent p-2'>
