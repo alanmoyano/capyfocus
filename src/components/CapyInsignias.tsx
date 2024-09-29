@@ -12,7 +12,7 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 import { DialogClose } from '@radix-ui/react-dialog'
-import { capyInsigniasCards } from '@/components/ComponentesEspecifico/ComponenteInsignias'
+import CapyInsigniasCards from '@/components/ComponentesEspecifico/ComponenteInsignias'
 
 export default function CapyInsignias() {
   const [, setLocation] = useLocation()
@@ -129,12 +129,12 @@ export default function CapyInsignias() {
                           <div>
                             <div className='container flex h-full w-full justify-center text-center'>
                               <img
-                                src= {bloqueada}
+                                src={bloqueada}
                                 alt='HidenInsignia'
                                 className='absolute inset-0 h-full w-full object-contain p-4'
                               />
                               <p
-                                className='bottom mt-4 flex text-center text-xl font-bold text-gray-700'
+                                className='absolute left-0 top-2 w-full bg-transparent text-center text-xl font-semibold text-gray-700'
                                 style={{ fontFamily: 'Jomolhari, serif' }}
                               >
                                 CapyBloqueada
@@ -178,24 +178,23 @@ export default function CapyInsignias() {
       </div>
 
       <div>
-      {CapyInsigniasCards(
+        <CapyInsigniasCards
+          UrlImg='/CapyInsigniasImagenes/WWECapy.png'
+          descLock='bloqueada'
+          descUnlock='Desbloqueada'
+          capyName='CapyWWE'
+          progress={0}
+        />
+        {/* {CapyInsigniasCards(
         './CapyInsigniasImagenes/WWECapy.png',
         'Descripcion desbloqueda',
         'Descripcion bloqueada',
         'CapyWWE',
         100
-      )}
-    </div>
-    
-    <div>
-  <CapyInsigniasCards
-    UrlImg='./CapyInsigniasImagenes/WWECapy.png'
-    descUnlock='Descripcion desbloqueda'
-    descLock='Descripcion bloqueada'
-    capyName='CapyWWE'
-    progress={100}
-  />
-</div>
+      )}*/}
+      </div>
+
+      <div></div>
 
       <div className='container w-screen'>
         <Button className='mt-4' onClick={handleVolver}>
