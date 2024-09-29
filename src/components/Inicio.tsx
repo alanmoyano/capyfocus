@@ -81,6 +81,8 @@ import { useMusic } from './contexts/MusicContext'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useSesion } from '@/components/contexts/SesionContext'
 
+import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
+
 type CapyMetodos = 'Capydoro' | 'Capymetro' | ''
 
 const descriptions: Record<CapyMetodos, string> = {
@@ -263,6 +265,7 @@ export default function Inicio() {
     <>
       <section className='mt-10 flex flex-col gap-20 p-10 md:flex-row'>
         <div className='m-auto'>
+          <DialogoChicho dialogo={descriptions[description]} />
           <video src='/idle.webm' autoPlay loop muted playsInline />
         </div>
 
@@ -778,9 +781,7 @@ export default function Inicio() {
               Aceptar
             </Button>
           </div>
-          <div className='mt-4'>
-            <p>{descriptions[description]}</p>
-          </div>
+
         </div>
       </section>
     </>
