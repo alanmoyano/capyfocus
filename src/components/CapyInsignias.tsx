@@ -12,6 +12,7 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 import { DialogClose } from '@radix-ui/react-dialog'
+import { capyInsigniasCards } from '@/components/ComponentesEspecifico/ComponenteInsignias'
 
 export default function CapyInsignias() {
   const [, setLocation] = useLocation()
@@ -32,6 +33,8 @@ export default function CapyInsignias() {
       setIsUnlocked(true)
     }
   }, [progress])
+
+  const bloqueada = './CapyInsigniasImagenes/CapySherlock.png'
 
   // la carta hay que clickearla para que se de vuelta y despues, una vez desbloequeda ya no se da mas vuelta.
 
@@ -115,7 +118,7 @@ export default function CapyInsignias() {
                               className='mt-10 text-xl font-bold text-gray-800'
                               style={{ fontFamily: 'Jomolhari, serif' }}
                             >
-                              CapyGandalf
+                              CapyExplorador
                             </p>
                           </div>
                         </>
@@ -126,7 +129,7 @@ export default function CapyInsignias() {
                           <div>
                             <div className='container flex h-full w-full justify-center text-center'>
                               <img
-                                src='./CapyInsigniasImagenes/CapySherlock.png'
+                                src= {bloqueada}
                                 alt='HidenInsignia'
                                 className='absolute inset-0 h-full w-full object-contain p-4'
                               />
@@ -173,6 +176,26 @@ export default function CapyInsignias() {
           </DialogContent>
         </Dialog>
       </div>
+
+      <div>
+      {CapyInsigniasCards(
+        './CapyInsigniasImagenes/WWECapy.png',
+        'Descripcion desbloqueda',
+        'Descripcion bloqueada',
+        'CapyWWE',
+        100
+      )}
+    </div>
+    
+    <div>
+  <CapyInsigniasCards
+    UrlImg='./CapyInsigniasImagenes/WWECapy.png'
+    descUnlock='Descripcion desbloqueda'
+    descLock='Descripcion bloqueada'
+    capyName='CapyWWE'
+    progress={100}
+  />
+</div>
 
       <div className='container w-screen'>
         <Button className='mt-4' onClick={handleVolver}>
