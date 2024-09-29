@@ -2,18 +2,18 @@ import React, { useState } from 'react'
 
 const FotoSelector: React.FC<{ onSelect: (picture: string) => void }> = ({ onSelect }) => {
   const profilePictures = [
-    '../../public/FotoPerfil/CapyCute.jpg',
-    '../../public/FotoPerfil/Capyntor.jpg',
-    '../../public/FotoPerfil/CapyCientifico.jpg',
-    '../../public/FotoPerfil/CapyBoss.jpg',
-    '../../public/FotoPerfil/CapyGraduado.jpg',
-    '../../public/FotoPerfil/CapyC.jpg',
-    '../../public/FotoPerfil/CapyFit.jpg',
-    '../../public/FotoPerfil/CapyLimon.jpg',
-    '../../public/FotoPerfil/CapyMaid.jpg',
-    '../../public/FotoPerfil/CapyTomate.jpg',
-    '../../public/FotoPerfil/CapyMoney.jpg',
-    '../../public/FotoPerfil/CapyCow.jpg',
+    './FotoPerfil/CapyCute.jpg',
+    './FotoPerfil/Capyntor.jpg',
+    './FotoPerfil/CapyCientifico.jpg',
+    './FotoPerfil/CapyBoss.jpg',
+    './FotoPerfil/CapyGraduado.jpg',
+    './FotoPerfil/CapyC.jpg',
+    './FotoPerfil/CapyFit.jpg',
+    './FotoPerfil/CapyLimon.jpg',
+    './FotoPerfil/CapyMaid.jpg',
+    './FotoPerfil/CapyTomate.jpg',
+    './FotoPerfil/CapyMoney.jpg',
+    './FotoPerfil/CapyCow.jpg',
   ]
 
   const [selectedPicture, setSelectedPicture] = useState<string | null>(null)
