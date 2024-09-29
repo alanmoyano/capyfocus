@@ -39,9 +39,12 @@ export default function Usuario() {
     setLocation('/login')
   }
 
-  // que los default sean los anteriores
-  const [confirmedUsername, setConfirmedUsername] = useState('Chicho Perez')
-  const [confirmedEmail, setConfirmedEmail] = useState('hola@chicho.com')
+  // que los default sean los anteriores, ver cuando este la DB
+  const currentUsername = 'Chicho'
+  const currentEmail = 'chicho@capymail.com'
+
+  const [confirmedUsername, setConfirmedUsername] = useState(currentUsername)
+  const [confirmedEmail, setConfirmedEmail] = useState(currentEmail)
   const [sheetOpen, setSheetOpen] = useState(false)
 
   const handleConfirm = (data: FormValues) => {
@@ -50,12 +53,11 @@ export default function Usuario() {
     setSheetOpen(false)
   }
 
-
   const { register, handleSubmit, watch, formState: { errors }, } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: confirmedUsername,
-      email: confirmedEmail,
+      username: currentUsername,
+      email: currentEmail,
     }
   })
 
@@ -74,21 +76,18 @@ export default function Usuario() {
               <video src='/idle.webm' autoPlay loop muted playsInline />
             </div>
           </div>
-          <Card className='h-full w-full bg-secondary shadow-md'>
+          <Card className='flex flex-col h-full w-full bg-secondary shadow-md'>
             <CardHeader className='text-center'>
-              <CardTitle className='py-4 text-xl font-medium'>
-                Hola!
-              </CardTitle>
+              <Avatar className='mx-auto h-40 w-40 hover:cursor-pointer'>
+                <AvatarImage
+                  src='/capyPic.jpg'
+                  className='h-full w-full'
+                />
+                <AvatarFallback className='text-2xl'>
+                  CN
+                </AvatarFallback>
+              </Avatar>
               <CardDescription className='text-center'>
-                <Avatar className='mx-auto h-32 w-32 hover:cursor-pointer'>
-                  <AvatarImage
-                    src='/capyPic.jpg'
-                    className='h-full w-full'
-                  />
-                  <AvatarFallback className='text-2xl'>
-                    CN
-                  </AvatarFallback>
-                </Avatar>
                 {/* { infoAvatar && (
                                 <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
                                   <div className='bg-white p-4 rounded-lg'>
@@ -106,76 +105,66 @@ export default function Usuario() {
 
               </CardDescription>
             </CardHeader>
-            {/* Poner email y usuario al medio */}
-            <CardContent className='text-center'>
-              <p className='text-3xl font-semibold'>Chicho Perez</p>
-              <div className='m-4 items-center'>
-                <div className='grid w-full max-w-sm gap-1.5 p-4 text-left'>
-                  <p>{confirmedEmail}</p>
-                </div>
-                <div className='grid w-full max-w-sm gap-1.5 p-4 text-left'>
-                  <p>{confirmedUsername}</p>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className='flex justify-end'>
-              <div className='space-x-4'>
+            <CardContent className='flex flex-col items-center justify-start flex-grow text-center'>
+              <p className='text-3xl font-semibold flex items-center'>
+                {confirmedUsername}
                 <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
                   <SheetTrigger asChild>
-                    <Button variant='outline'>Modificar perfil</Button>
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'  fill='none' stroke='currentColor'
+                      strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' className='lucide lucide-pencil ml-2 hover:cursor-pointer'>
+                      <path d='M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z'/>
+                      <path d='m15 5 4 4'/>
+                    </svg>
                   </SheetTrigger>
                   <SheetContent className='w-full sm:max-w-md'>
                     <SheetHeader className='pb-7'>
                       <SheetTitle className='text-2xl font-bold'>Modificar perfil</SheetTitle>
-                      {/* <SheetDescription>
-                        Make changes to your profile here. Click save when you're done.
-                      </SheetDescription> */}
                     </SheetHeader>
                     <SheetTitle className='text-lg font-semibold'>Datos del perfil</SheetTitle>
                     <hr className='py-2' />
                     <form onSubmit={handleSubmit(handleConfirm)}>
                       <div className='grid gap-7 py-4'>
                         <div className='grid gap-2'>
-                          <Label htmlFor='username' className='text-left'>
-                            Usuario
-                          </Label>
+                          <Label htmlFor='username' className='text-left'>Usuario</Label>
                           <Input id='username' placeholder='Usuario' {...register('username')} className='w-full' />
                           {errors.username && (
-                            <p className='text-red-500 text-sm'>
-                              {errors.username.message}
-                            </p>
+                            <p className='text-red-500 text-sm'>{errors.username.message}</p>
                           )}
                         </div>
                         <div className='grid gap-2'>
-                          <Label htmlFor='email' className='text-left'>
-                            Email
-                          </Label>
+                          <Label htmlFor='email' className='text-left'>Email</Label>
                           <Input id='email' placeholder='Email' {...register('email')} className='w-full' />
                           {errors.email && (
-                            <p className='text-red-500 text-sm'>
-                              {errors.email.message}
-                            </p>
+                            <p className='text-red-500 text-sm'>{errors.email.message}</p>
                           )}
                         </div>
                       </div>
-                    <SheetTitle className='text-lg font-semibold pt-4'>Foto de perfil</SheetTitle>
-                    <hr className='py-2' />
-                    <SheetFooter>
-                      <SheetClose asChild>
-                        <Button type='submit' disabled={Object.keys(errors).length > 0 || !hasChanges}>Confirmar</Button>
-                      </SheetClose>
-                    </SheetFooter>
-                  </form>
-                </SheetContent>
-              </Sheet>
-              <Button onClick={() => handleLogin()} className='mt-4'>
-                Cerrar sesión
-              </Button>
-            </div>
-          </CardFooter>
-        </Card>
-      </div>
-    </div >
+                      <SheetTitle className='text-lg font-semibold pt-4'>Foto de perfil</SheetTitle>
+                      <hr className='py-2' />
+                      <SheetFooter>
+                        <SheetClose asChild>
+                          <Button type='submit' disabled={Object.keys(errors).length > 0 || !hasChanges}>Confirmar</Button>
+                        </SheetClose>
+                      </SheetFooter>
+                    </form>
+                  </SheetContent>
+                </Sheet>
+              </p>
+              <div className='m-2'>
+                <p className='text-lg font-normal'>{confirmedEmail}</p>
+              </div>
+            </CardContent>
+            <CardFooter className='flex justify-end mt-auto'>
+              <div className='space-x-4'>
+                <Button onClick={() => handleLogin()} className='mt-4'>
+                  Cerrar sesión
+                </Button>
+              </div>
+            </CardFooter>
+          </Card>
+        </div>
+      </div >
     </>
   )
 }
