@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import FotoSelector from './FotoSelector'
+import { SetStateAction, useState } from 'react'
 import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -25,6 +26,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useLocation } from 'wouter'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 const formSchema = z.object({
   username: z.string().min(5, 'El nombre de usuario debe tener al menos 5 caracteres').max(15, 'El nombre de usuario no puede tener más de 15 caracteres'),
@@ -65,6 +67,12 @@ export default function Usuario() {
   const watchEmail = watch('email')
 
   const hasChanges = watchUsername !== confirmedUsername || watchEmail !== confirmedEmail
+
+  const [selectedPicture, setSelectedPicture] = useState<string | null>(null);
+
+  const handleProfilePictureSelect = (picture: string) => {
+    setSelectedPicture(picture)
+  }
 
   return (
     <>
@@ -111,43 +119,48 @@ export default function Usuario() {
                 <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
                   <SheetTrigger asChild>
                     <svg
-                      xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'  fill='none' stroke='currentColor'
+                      xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor'
                       strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' className='lucide lucide-pencil ml-2 hover:cursor-pointer'>
-                      <path d='M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z'/>
-                      <path d='m15 5 4 4'/>
+                      <path d='M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z' />
+                      <path d='m15 5 4 4' />
                     </svg>
                   </SheetTrigger>
-                  <SheetContent className='w-full sm:max-w-md'>
-                    <SheetHeader className='pb-7'>
-                      <SheetTitle className='text-2xl font-bold'>Modificar perfil</SheetTitle>
-                    </SheetHeader>
-                    <SheetTitle className='text-lg font-semibold'>Datos del perfil</SheetTitle>
-                    <hr className='py-2' />
-                    <form onSubmit={handleSubmit(handleConfirm)}>
-                      <div className='grid gap-7 py-4'>
-                        <div className='grid gap-2'>
-                          <Label htmlFor='username' className='text-left'>Usuario</Label>
-                          <Input id='username' placeholder='Usuario' {...register('username')} className='w-full' />
-                          {errors.username && (
-                            <p className='text-red-500 text-sm'>{errors.username.message}</p>
-                          )}
-                        </div>
-                        <div className='grid gap-2'>
-                          <Label htmlFor='email' className='text-left'>Email</Label>
-                          <Input id='email' placeholder='Email' {...register('email')} className='w-full' />
-                          {errors.email && (
-                            <p className='text-red-500 text-sm'>{errors.email.message}</p>
-                          )}
-                        </div>
-                      </div>
-                      <SheetTitle className='text-lg font-semibold pt-4'>Foto de perfil</SheetTitle>
+                  <SheetContent className='w-full sm:max-w-md '>
+                    <ScrollArea className='h-[80vh] pr-4'>
+                      <SheetHeader className='pb-7'>
+                        <SheetTitle className='text-2xl font-bold'>Modificar perfil</SheetTitle>
+                      </SheetHeader>
+                      <SheetTitle className='text-lg font-semibold'>Datos del perfil</SheetTitle>
                       <hr className='py-2' />
-                      <SheetFooter>
-                        <SheetClose asChild>
-                          <Button type='submit' disabled={Object.keys(errors).length > 0 || !hasChanges}>Confirmar</Button>
-                        </SheetClose>
-                      </SheetFooter>
-                    </form>
+                      <form onSubmit={handleSubmit(handleConfirm)}>
+                        <div className='grid gap-7 py-4'>
+                          <div className='grid gap-2'>
+                            <Label htmlFor='username' className='text-left'>Usuario</Label>
+                            <Input id='username' placeholder='Usuario' {...register('username')} className='w-full' />
+                            {errors.username && (
+                              <p className='text-red-500 text-sm'>{errors.username.message}</p>
+                            )}
+                          </div>
+                          <div className='grid gap-2'>
+                            <Label htmlFor='email' className='text-left'>Email</Label>
+                            <Input id='email' placeholder='Email' {...register('email')} className='w-full' />
+                            {errors.email && (
+                              <p className='text-red-500 text-sm'>{errors.email.message}</p>
+                            )}
+                          </div>
+                        </div>
+                        <SheetTitle className='text-lg font-semibold pt-4'>Foto de perfil</SheetTitle>
+                        <hr className='py-2'/>
+                        <div>
+                          <FotoSelector onSelect={handleProfilePictureSelect}/>
+                        </div>
+                        <SheetFooter>
+                          <SheetClose asChild>
+                            <Button type='submit' className='mt-4' disabled={Object.keys(errors).length > 0 || !hasChanges}>Confirmar</Button>
+                          </SheetClose>
+                        </SheetFooter>
+                      </form>
+                    </ScrollArea>
                   </SheetContent>
                 </Sheet>
               </p>
