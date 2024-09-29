@@ -45,6 +45,7 @@ export default function Usuario() {
   return (
     <>
       <h1 className='mb-4 text-4xl font-bold'>Capy Datos</h1>
+
       <div className='mt-10 flex flex-col gap-20 p-10 md:flex-row'>
         <div className='grid grid-cols-2 gap-10'>
           <div className='flex h-full w-full items-center justify-center'>
@@ -57,9 +58,10 @@ export default function Usuario() {
               <CardTitle className='py-4 text-xl'>
                 Hola, @capyUsuario!
               </CardTitle>
+
               <CardDescription className='text-center'>
-                <TooltipProvider>
-                  <Tooltip>
+                <TooltipProvider delayDuration={50}>
+                  <Tooltip delayDuration={50}>
                     <TooltipTrigger asChild>
                       <div className='relative'>
                         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -81,6 +83,32 @@ export default function Usuario() {
                                 Haz los cambios de tu CapyPerfil aquí.
                               </DialogDescription>
                             </DialogHeader>
+
+                            <Avatar className='mx-auto h-32 w-32 hover:scale-105 hover:cursor-pointer'>
+                              <AvatarImage
+                                src='/capyPic.jpg'
+                                className='bg-slate-500'
+                              />
+
+                              <AvatarFallback className='text-2xl'>
+                                CN
+                              </AvatarFallback>
+                              {/* { infoAvatar && (
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
+          <div className='bg-white p-4 rounded-lg'>
+            <h2 className='text-xl font-bold'>Descripción del Avatar</h2>
+            <p>Esta es la descripción del avatar.</p>
+            <button
+              className='mt-4 px-4 py-2 bg-primary text-white rounded'
+              onClick={() => setInfoAvatar(false)}
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )} */}
+                            </Avatar>
+
                             <div className='grid gap-4 py-4'>
                               <div className='grid grid-cols-4 items-center gap-4'>
                                 <Label

@@ -9,6 +9,7 @@ import Confetti from 'react-confetti-boom'
 import useSound from 'use-sound'
 import { useMusic } from './contexts/MusicContext'
 import { useMotivation } from './contexts/MotivationContext'
+import { useSesion } from './contexts/SesionContext'
 
 type Mode = 'Estudiando' | 'Descansando'
 
@@ -37,27 +38,55 @@ export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
   )
 }
 
+type Pomodoro = {
+  tiempoEstudio: number
+  tiempoDescanso: number
+}
+
 export default function Pomodoro() {
   const [sessionSeconds, setSessionSeconds] = useState(25 * 60)
   const [breakSeconds, setBreakSeconds] = useState(5 * 60)
   const [objCumplidos, setObjCumplidos] = useState(0)
   const [countdown, setCountdown] = useState(sessionSeconds)
   const [isActive, setIsActive] = useState(false)
+  const [isSetted, setIsSetted] = useState(false)
   const [mode, setMode] = useState<Mode>('Estudiando')
   const timer = useRef<NodeJS.Timeout>()
   const pomodoroCount = useRef(0)
+  const [pomodorosRealizados, setPomodorosRealizados] = useState<Pomodoro[]>([])
   const [capySound] = useSound(CapySound)
   const [ObjStudyTime, setObjStudyTime] = useState(0)
   const { selectedMusic } = useMusic()
   const { motivationType } = useMotivation()
-  const { objetivos, setObjetivos, objetivosFav, setTiempo, tiempo } =
-    useObjetivos()
+  const {
+    objetivos,
+    setObjetivos,
+    objetivosFav,
+    setTiempo,
+    tiempo,
+    setTiempoSesion,
+    setObjetivosPend
+  } = useObjetivos()
   const [marked, setMarked] = useState<string[]>([])
   const [, setLocation] = useLocation()
+  const {
+    setTiempoTotal,
+    setAcumuladorTiempoPausa,
+    setCantidadPausas,
+    tiempoTotal
+  } = useSesion()
 
   const finalizarSesion = () => {
     clearInterval(timer.current)
 
+    if (countdown > 0 && mode === 'Estudiando') {
+      console.log('entre en el primero')
+      setTiempoTotal(prev => (prev -= countdown))
+      setAcumuladorTiempoPausa(prev => (prev -= breakSeconds))
+    } else if (countdown > 0 && mode === 'Descansando') {
+      console.log('entre en el segundo')
+      setAcumuladorTiempoPausa(prev => (prev -= countdown))
+    }
     objetivos.forEach(objetivo => {
       if (!tiempo[objetivo]) {
         setTiempo(prev => ({
@@ -66,7 +95,7 @@ export default function Pomodoro() {
         }))
       }
     })
-    // setLocation('/capyEstadisticas')
+    setLocation('/capyEstadisticas?period=sesion')
   }
 
   //Revisar el funcionamiento de esta cosa!!!
@@ -94,9 +123,22 @@ export default function Pomodoro() {
     } else {
       capySound()
       clearInterval(timer.current)
-      setCountdown(mode === 'Estudiando' ? breakSeconds : sessionSeconds)
-      setMode(prev => (prev === 'Estudiando' ? 'Descansando' : 'Estudiando'))
-      pomodoroCount.current += 0.5
+      if (mode === 'Estudiando') {
+        setCountdown(breakSeconds)
+        setSessionSeconds(
+          pomodorosRealizados[pomodorosRealizados.length - 1].tiempoEstudio
+        )
+        setMode('Descansando')
+        setIsActive(false)
+      } else {
+        setMode('Estudiando')
+        setBreakSeconds(
+          pomodorosRealizados[pomodorosRealizados.length - 1].tiempoDescanso
+        )
+        setIsActive(prev => !prev)
+        setIsSetted(prev => !prev)
+        pomodoroCount.current += 1
+      }
     }
 
     if (objetivos.length === objCumplidos && objetivos.length > 0) {
@@ -104,6 +146,7 @@ export default function Pomodoro() {
     }
 
     return () => clearInterval(timer.current)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     isActive,
     countdown,
@@ -125,27 +168,54 @@ export default function Pomodoro() {
     )
   }
 
-  const handleCheckbox = (objetivo: string, key: number) => {
+  const handleCheckbox = (objetivo: string) => {
     if (marked.includes(objetivo)) {
       return
     }
     setMarked([...marked, objetivo])
     setObjCumplidos(prev => prev + 1)
-    console.log(
-      'Checkbox activado para objetivo:',
-      objetivo,
-      ', Key:',
-      key,
-      'Tiempo dedicado:',
-      ObjStudyTime
+    setObjetivosPend(prevObjetivosPend =>
+      prevObjetivosPend.filter(item => item !== objetivo)
     )
     setTiempo(prev => ({
       ...prev,
       [objetivo]: ObjStudyTime
     }))
+    setTiempoSesion(prev => ({ ...prev, [objetivo]: tiempoTotal - countdown }))
 
     setObjStudyTime(0)
   }
+
+  const handleSetted = (Sessioncountup: number, Breakcountup: number) => {
+    setIsSetted(prev => !prev)
+    const tiempoEstudio = Sessioncountup
+    const tiempoDescanso = Breakcountup
+
+    const pomodoro: Pomodoro = {
+      tiempoEstudio: tiempoEstudio,
+      tiempoDescanso: tiempoDescanso
+    }
+    if (pomodorosRealizados.length === 0) {
+      setPomodorosRealizados([pomodoro])
+    } else {
+      setPomodorosRealizados([...pomodorosRealizados, pomodoro])
+    }
+    setTiempoTotal(prev => (prev += tiempoEstudio))
+    setAcumuladorTiempoPausa(prev => (prev += tiempoDescanso))
+    setIsActive(prev => !prev)
+  }
+
+  const handlePause = (value: boolean) => {
+    if (!value) {
+      setCantidadPausas(prev => (prev += 1))
+    }
+    setIsActive(value)
+  }
+
+  useEffect(() => {
+    setObjetivosPend(objetivos)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <>
@@ -188,14 +258,14 @@ export default function Pomodoro() {
                   <Button
                     className=''
                     onClick={() => setSessionSeconds(prev => prev - 60)}
-                    disabled={sessionSeconds <= 60 || isActive}
+                    disabled={sessionSeconds <= 60 || isActive || isSetted}
                   >
                     -
                   </Button>
                   <p>{sessionSeconds / 60}</p>
                   <Button
                     onClick={() => setSessionSeconds(prev => prev + 60)}
-                    disabled={isActive}
+                    disabled={isActive || isSetted}
                   >
                     +
                   </Button>
@@ -208,14 +278,14 @@ export default function Pomodoro() {
                 <div className='flex items-center justify-center gap-4 text-lg'>
                   <Button
                     onClick={() => setBreakSeconds(prev => prev - 60)}
-                    disabled={breakSeconds <= 60 || isActive}
+                    disabled={breakSeconds <= 60 || isActive || isSetted}
                   >
                     -
                   </Button>
                   <p> {breakSeconds / 60}</p>
                   <Button
                     onClick={() => setBreakSeconds(prev => prev + 60)}
-                    disabled={isActive}
+                    disabled={isActive || isSetted}
                   >
                     +
                   </Button>
@@ -235,9 +305,26 @@ export default function Pomodoro() {
             </span>
           </div>
           <div className='mt-4 flex justify-center'>
-            <Button className='' onClick={() => setIsActive(prev => !prev)}>
-              {isActive ? 'Terminar' : 'Empezar'}
-            </Button>
+            {!isSetted && (
+              <Button
+                className=''
+                onClick={() => {
+                  handleSetted(sessionSeconds, breakSeconds)
+                }}
+              >
+                Empezar
+              </Button>
+            )}
+            {isSetted && (
+              <Button
+                className=''
+                onClick={() => {
+                  handlePause(!isActive)
+                }}
+              >
+                {isActive ? 'Pausar' : 'Reanudar'}
+              </Button>
+            )}
           </div>
 
           <div className='mt-4 rounded-xl bg-accent/90 p-4'>
@@ -249,7 +336,7 @@ export default function Pomodoro() {
                     <Checkbox
                       checked={marked.includes(objetivo)}
                       disabled={mode === 'Descansando' || !isActive}
-                      onClick={() => handleCheckbox(objetivo, key)}
+                      onClick={() => handleCheckbox(objetivo)}
                       className='mr-2'
                     />
                     <span>{objetivo}</span>
