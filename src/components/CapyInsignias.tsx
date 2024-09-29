@@ -1,40 +1,16 @@
 import { Button } from '@/components/ui/button'
 import { useLocation } from 'wouter'
-import { Progress } from '@/components/ui/progress'
-import { useEffect, useState } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog'
-import { DialogClose } from '@radix-ui/react-dialog'
+
 import CapyInsigniasCards from '@/components/ComponentesEspecifico/ComponenteInsignias'
 
 export default function CapyInsignias() {
   const [, setLocation] = useLocation()
-  const [progress, setProgress] = useState(10)
-  const [isUnlocked, setIsUnlocked] = useState(false)
+
 
   const handleVolver = () => {
     setLocation('/')
   }
 
-  useEffect(() => {
-    const timer = setTimeout(() => setProgress(66), 500)
-    return () => clearTimeout(timer)
-  }, [])
-
-  useEffect(() => {
-    if (progress === 100) {
-      setIsUnlocked(true)
-    }
-  }, [progress])
-
-  const bloqueada = './CapyInsigniasImagenes/CapySherlock.png'
 
   // la carta hay que clickearla para que se de vuelta y despues, una vez desbloequeda ya no se da mas vuelta.
 
@@ -188,7 +164,7 @@ export default function CapyInsignias() {
         </Button>
       </div>
 
-      <span className='relative inline-flex'>
+{/*       <span className='relative inline-flex'>
         <Button type='button' className=''>
           Transactions
         </Button>
@@ -196,7 +172,7 @@ export default function CapyInsignias() {
           <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-secondary opacity-75'></span>
           <span className='relative inline-flex h-3 w-3 rounded-full bg-secondary'></span>
         </span>
-      </span>
+      </span> */}
     </>
   )
 }
