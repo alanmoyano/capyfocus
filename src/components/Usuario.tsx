@@ -40,8 +40,8 @@ export default function Usuario() {
   }
 
   // que los default sean los anteriores
-  const [confirmedUsername, setConfirmedUsername] = useState("Chicho Perez")
-  const [confirmedEmail, setConfirmedEmail] = useState("hola@chicho.com")
+  const [confirmedUsername, setConfirmedUsername] = useState('Chicho Perez')
+  const [confirmedEmail, setConfirmedEmail] = useState('hola@chicho.com')
   const [sheetOpen, setSheetOpen] = useState(false)
 
   const handleConfirm = (data: FormValues) => {
@@ -59,8 +59,10 @@ export default function Usuario() {
     }
   })
 
-  const username = watch("username")
-  const email = watch("email")
+  const watchUsername = watch('username')
+  const watchEmail = watch('email')
+
+  const hasChanges = watchUsername !== confirmedUsername || watchEmail !== confirmedEmail
 
   return (
     <>
@@ -139,7 +141,7 @@ export default function Usuario() {
                           </Label>
                           <Input id='username' placeholder='Usuario' {...register('username')} className='w-full' />
                           {errors.username && (
-                            <p className="text-red-500 text-sm">
+                            <p className='text-red-500 text-sm'>
                               {errors.username.message}
                             </p>
                           )}
@@ -150,7 +152,7 @@ export default function Usuario() {
                           </Label>
                           <Input id='email' placeholder='Email' {...register('email')} className='w-full' />
                           {errors.email && (
-                            <p className="text-red-500 text-sm">
+                            <p className='text-red-500 text-sm'>
                               {errors.email.message}
                             </p>
                           )}
@@ -160,8 +162,7 @@ export default function Usuario() {
                     <hr className='py-2' />
                     <SheetFooter>
                       <SheetClose asChild>
-                        {/* Si hay errores que no se cierre! */}
-                        <Button type='submit' disabled={Object.keys(errors).length > 0}>Confirmar</Button>
+                        <Button type='submit' disabled={Object.keys(errors).length > 0 || !hasChanges}>Confirmar</Button>
                       </SheetClose>
                     </SheetFooter>
                   </form>
