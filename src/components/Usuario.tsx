@@ -78,7 +78,7 @@ export default function Usuario() {
           </div>
           <Card className='flex flex-col h-full w-full bg-secondary shadow-md'>
             <CardHeader className='text-center'>
-              <Avatar className='mx-auto h-40 w-40 hover:cursor-pointer'>
+              <Avatar className='mx-auto h-40 w-40'>
                 <AvatarImage
                   src='/capyPic.jpg'
                   className='h-full w-full'
