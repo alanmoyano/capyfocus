@@ -38,7 +38,6 @@ export default function Usuario() {
 
   const [dialogOpen, setDialogOpen] = useState(false)
 
-
   const handleConfirm = () => {
     setDialogOpen(false)
   }
@@ -67,7 +66,6 @@ export default function Usuario() {
                       <div className='relative'>
                         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                           <DialogTrigger asChild>
-
                             <Avatar className='mx-auto h-32 w-32 hover:cursor-pointer'>
                               <AvatarImage
                                 src='/capyPic.jpg'
@@ -77,7 +75,6 @@ export default function Usuario() {
                                 CN
                               </AvatarFallback>
                             </Avatar>
-
                           </DialogTrigger>
                           <DialogContent className='sm:max-w-[425px]'>
                             <DialogHeader>
@@ -89,16 +86,14 @@ export default function Usuario() {
 
                             <Avatar className='mx-auto h-32 w-32 hover:scale-105 hover:cursor-pointer'>
                               <AvatarImage
-
                                 src='/capyPic.jpg'
                                 className='bg-slate-500'
-  
                               />
-                             
+
                               <AvatarFallback className='text-2xl'>
                                 CN
                               </AvatarFallback>
-                            {/* { infoAvatar && (
+                              {/* { infoAvatar && (
         <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
           <div className='bg-white p-4 rounded-lg'>
             <h2 className='text-xl font-bold'>Descripción del Avatar</h2>
@@ -113,7 +108,6 @@ export default function Usuario() {
         </div>
       )} */}
                             </Avatar>
-
 
                             <div className='grid gap-4 py-4'>
                               <div className='grid grid-cols-4 items-center gap-4'>

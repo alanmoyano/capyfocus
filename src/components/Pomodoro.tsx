@@ -64,11 +64,17 @@ export default function Pomodoro() {
     objetivosFav,
     setTiempo,
     tiempo,
+    setTiempoSesion,
     setObjetivosPend
   } = useObjetivos()
   const [marked, setMarked] = useState<string[]>([])
   const [, setLocation] = useLocation()
-  const { setTiempoTotal, setAcumuladorTiempoPausa } = useSesion()
+  const {
+    setTiempoTotal,
+    setAcumuladorTiempoPausa,
+    setCantidadPausas,
+    tiempoTotal
+  } = useSesion()
 
   const finalizarSesion = () => {
     clearInterval(timer.current)
@@ -123,6 +129,7 @@ export default function Pomodoro() {
           pomodorosRealizados[pomodorosRealizados.length - 1].tiempoEstudio
         )
         setMode('Descansando')
+        setIsActive(false)
       } else {
         setMode('Estudiando')
         setBreakSeconds(
@@ -174,6 +181,7 @@ export default function Pomodoro() {
       ...prev,
       [objetivo]: ObjStudyTime
     }))
+    setTiempoSesion(prev => ({ ...prev, [objetivo]: tiempoTotal - countdown }))
 
     setObjStudyTime(0)
   }
@@ -195,6 +203,13 @@ export default function Pomodoro() {
     setTiempoTotal(prev => (prev += tiempoEstudio))
     setAcumuladorTiempoPausa(prev => (prev += tiempoDescanso))
     setIsActive(prev => !prev)
+  }
+
+  const handlePause = (value: boolean) => {
+    if (!value) {
+      setCantidadPausas(prev => (prev += 1))
+    }
+    setIsActive(value)
   }
 
   useEffect(() => {
@@ -304,7 +319,7 @@ export default function Pomodoro() {
               <Button
                 className=''
                 onClick={() => {
-                  setIsActive(prev => !prev)
+                  handlePause(!isActive)
                 }}
               >
                 {isActive ? 'Pausar' : 'Reanudar'}

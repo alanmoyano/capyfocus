@@ -131,7 +131,7 @@ export default function CapyInsignias() {
                                 className='absolute inset-0 h-full w-full object-contain p-4'
                               />
                               <p
-                                className='mt-4 flex text-center text-xl font-bold bottom text-gray-700'
+                                className='bottom mt-4 flex text-center text-xl font-bold text-gray-700'
                                 style={{ fontFamily: 'Jomolhari, serif' }}
                               >
                                 CapyBloqueada
