@@ -12,7 +12,8 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 import { DialogClose } from '@radix-ui/react-dialog'
-import { capyInsigniasCards } from '@/components/ComponentesEspecifico/ComponenteInsignias'
+import { CapyInsigniasCards } from '@/components/ComponentesEspecifico/ComponenteInsignias'
+import { CapyGandalf} from '@/components/ComponentesEspecifico/ProbandoAndo'
 
 export default function CapyInsignias() {
   const [, setLocation] = useLocation()
@@ -42,7 +43,7 @@ export default function CapyInsignias() {
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyInsiginias!</h1>
 
-      <div className='mt-4 flex justify-center gap-4 space-x-4'>
+      {/* <div className='mt-4 flex justify-center gap-4 space-x-4'>
         <Dialog>
           <DialogTrigger asChild>
             <div className='card-squere cursor-pointer bg-primary/80 hover:scale-105'>
@@ -175,9 +176,9 @@ export default function CapyInsignias() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </div>
+      </div> */}
 
-      <div>
+{/*        <div>
       {CapyInsigniasCards(
         './CapyInsigniasImagenes/WWECapy.png',
         'Descripcion desbloqueda',
@@ -186,7 +187,7 @@ export default function CapyInsignias() {
         100
       )}
     </div>
-    
+
     <div>
   <CapyInsigniasCards
     UrlImg='./CapyInsigniasImagenes/WWECapy.png'
@@ -195,7 +196,9 @@ export default function CapyInsignias() {
     capyName='CapyWWE'
     progress={100}
   />
-</div>
+</div>  */}
+
+<CapyGandalf/> 
 
       <div className='container w-screen'>
         <Button className='mt-4' onClick={handleVolver}>

@@ -14,8 +14,9 @@ import { useEffect, useState } from 'react'
 
 
 
+
 function CapyInsiginiasCards(
-  UrlImg: string,
+  urlImg: string,
   descLock: string,
   descUnlock: string,
   capyName: string,
@@ -45,7 +46,7 @@ function CapyInsiginiasCards(
                           <div className='mx-auto aspect-[3/4] w-11/12'>
                             <div className='imagen'>
                               <img
-                                src={UrlImg}
+                                src={urlImg}
                                 alt='HidenInsignia'
                                 className='absolute inset-0 h-full w-full object-contain p-4'
                               />
@@ -138,5 +139,7 @@ function CapyInsiginiasCards(
     </>
   )
 }
+
+
 
 export default CapyInsiginiasCards
