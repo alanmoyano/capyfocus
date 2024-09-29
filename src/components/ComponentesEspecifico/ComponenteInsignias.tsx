@@ -12,15 +12,6 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { useEffect, useState } from 'react'
 
-/* 
-  UrlImg: string,
-  descLock: string,
-  descUnlock: string,
-  capyName: string,
-  progress: number
-
- */
-
 export default function CapyInsiginiasCards({
   UrlImg,
   descLock,
