@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 
 const FotoSelector: React.FC<{ onSelect: (picture: string) => void }> = ({ onSelect }) => {
   const profilePictures = [
@@ -24,13 +24,13 @@ const FotoSelector: React.FC<{ onSelect: (picture: string) => void }> = ({ onSel
   }
 
   return (
-    <div className="grid grid-cols-3 gap-1 max-h-64">
+    <div className='grid grid-cols-3 gap-1 max-h-64'>
       {profilePictures.map((picture, index) => (
         <img
           key={index}
           src={picture}
           alt={`Foto ${index}`}
-          className={`rounded-full w-24 h-24 object-cover cursor-pointer ${selectedPicture === picture ? 'border-4 border-green-500' : ''}`}
+          className={`rounded-full w-24 h-24 object-cover cursor-pointer ${selectedPicture === picture ? 'border-4 shadow-lg border-orange-300' : ''}`}
           onClick={() => handleSelectPicture(picture)}
         />
       ))}

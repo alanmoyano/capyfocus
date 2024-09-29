@@ -68,8 +68,9 @@ export default function Usuario() {
 
   const hasChanges = watchUsername !== confirmedUsername || watchEmail !== confirmedEmail
 
-  const [selectedPicture, setSelectedPicture] = useState<string | null>(null);
+  const [selectedPicture, setSelectedPicture] = useState<string | null>(null)
 
+  {/* funcionalidad */}
   const handleProfilePictureSelect = (picture: string) => {
     setSelectedPicture(picture)
   }
@@ -151,14 +152,17 @@ export default function Usuario() {
                         </div>
                         <SheetTitle className='text-lg font-semibold pt-4'>Foto de perfil</SheetTitle>
                         <hr className='py-2'/>
+                        <div className="flex flex-col h-[80vh]">
                         <div>
                           <FotoSelector onSelect={handleProfilePictureSelect}/>
                         </div>
-                        <SheetFooter>
+                        <SheetFooter className='mt-4 flex justify-end'>
+                          {/* Ver si poner scroll o qué para que el boton no quede volando */}
                           <SheetClose asChild>
-                            <Button type='submit' className='mt-4' disabled={Object.keys(errors).length > 0 || !hasChanges}>Confirmar</Button>
+                            <Button type='submit' disabled={Object.keys(errors).length > 0 || !hasChanges}>Confirmar</Button>
                           </SheetClose>
                         </SheetFooter>
+                        </div>
                       </form>
                     </ScrollArea>
                   </SheetContent>
