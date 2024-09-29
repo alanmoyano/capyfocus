@@ -41,161 +41,147 @@ export default function CapyInsignias() {
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyInsiginias!</h1>
-
-      {/* <div className='mt-4 flex justify-center gap-4 space-x-4'>
-        <Dialog>
-          <DialogTrigger asChild>
-            <div className='card-squere cursor-pointer bg-primary/80 hover:scale-105'>
-              <div className='card-squere-inner'>
-                <div className='card-squere-content'>
-                  <div className=''>
-                    <div className='mx-auto aspect-[3/4] w-11/12'>
-                      <img
-                        src='./CapyInsigniasImagenes/CapyGandalf.png'
-                        alt='HidenInsignia'
-                        className='absolute inset-0 h-full w-full object-contain p-4'
-                      />
-                    </div>
-                    <p
-                      className='mt-8 text-xl font-bold text-gray-700'
-                      style={{ fontFamily: 'Jomolhari, serif' }}
-                    >
-                      CapyGandalf
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </DialogTrigger>
-          <DialogContent className='sm:max-w-[425px]'>
-            <DialogHeader>
-              <DialogTitle>CapyGandalf</DialogTitle>
-              <DialogDescription></DialogDescription>
-            </DialogHeader>
-            <div className='flex flex-col items-center'>
-              <div className='relative h-80 w-full overflow-hidden rounded-lg bg-accent'>
-                <img
-                  src='./CapyInsigniasImagenes/CapyGandalf.png'
-                  alt='HidenInsignia'
-                  className='absolute inset-0 h-full w-full object-contain p-4'
-                />
-              </div>
-              <div className='mt-4 text-center'>
-                <h2 className='text-2xl font-bold'>Desbloqueada </h2>
-                <p>Completa 10 objetivos</p>
-              </div>
-              <Progress value={100} className='w-3/4' />
-            </div>
-            <DialogFooter>
-              <DialogClose>
-                <Button className=''>Salir</Button>
-              </DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        <Dialog>
-          <DialogTrigger asChild>
-            <div className='card-squere cursor-pointer bg-primary/80 hover:scale-105'>
-              <div className='card-squere-inner'>
-                <div className='card-squere-content'>
-                  <div className=''>
-                    <div className='mx-auto aspect-[3/4] w-11/12'>
-                      {isUnlocked && (
-                        <>
-                          <div className=''>
-                            <div className='mx-auto aspect-[3/4] w-11/12'>
-                              <div className='imagen'>
-                                <img
-                                  src='./CapyInsigniasImagenes/CapyGandalf.png'
-                                  alt='HidenInsignia'
-                                  className='absolute inset-0 h-full w-full object-contain p-4'
-                                />
-                              </div>
-                            </div>
-
-                            <p
-                              className='mt-10 text-xl font-bold text-gray-800'
-                              style={{ fontFamily: 'Jomolhari, serif' }}
-                            >
-                              CapyExplorador
-                            </p>
-                          </div>
-                        </>
-                      )}
-
-                      {!isUnlocked && (
-                        <>
-                          <div>
-                            <div className='container flex h-full w-full justify-center text-center'>
-                              <img
-                                src={bloqueada}
-                                alt='HidenInsignia'
-                                className='absolute inset-0 h-full w-full object-contain p-4'
-                              />
-                              <p
-                                className='absolute left-0 top-2 w-full bg-transparent text-center text-xl font-semibold text-gray-700'
-                                style={{ fontFamily: 'Jomolhari, serif' }}
-                              >
-                                CapyBloqueada
-                              </p>
-                            </div>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </DialogTrigger>
-          <DialogContent className='sm:max-w-[425px]'>
-            <DialogHeader>
-              <DialogTitle>CapyBloqueada</DialogTitle>
-              <DialogDescription></DialogDescription>
-            </DialogHeader>
-            <div className='flex flex-col items-center'>
-              <div className='relative h-80 w-full overflow-hidden rounded-lg bg-accent'>
-                <img
-                  src='./CapyInsigniasImagenes/CapySherlock.png'
-                  alt='HidenInsignia'
-                  className='absolute inset-0 h-full w-full object-contain p-4'
-                />
-              </div>
-              <div className='mt-4 text-center'>
-                <h2 className='text-2xl font-bold'>Desbloquear: </h2>
-                <p>Completa 25 objetivos</p>
-              </div>
-              <Progress value={progress} className='w-3/4' />
-            </div>
-            <DialogFooter>
-              <DialogClose>
-                <Button className=''>Salir</Button>
-              </DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div> */}
-
-      <div>
-        <CapyInsigniasCards
-          UrlImg='/CapyInsigniasImagenes/WWECapy.png'
-          descLock='bloqueada'
-          descUnlock='Desbloqueada'
-          capyName='CapyWWE'
-          progress={0}
-        />
-        {/* {CapyInsigniasCards(
-        './CapyInsigniasImagenes/WWECapy.png',
-        'Descripcion desbloqueda',
-        'Descripcion bloqueada',
-        'CapyWWE',
-        100
-      )}*/}
+      <div className='flex p-10 gap-10 col-span-5'>
+        <div>
+          <CapyInsigniasCards
+            UrlImg='./CapyInsigniasImagenes/CapyMatrix.png'
+            descLock='Estudia 25 veces con motivación pasivo/agresivo'
+            descUnlock='Estudiaste 25 veces con motivación pasivo/agresivo'
+            capyName='CapyMatrix'
+            progress={0}
+          />
+        </div>
+        <div>
+          <CapyInsigniasCards
+            UrlImg='./CapyInsigniasImagenes/CapyScout.png'
+            descLock='Estudia 25 veces con motivación positiva'
+            descUnlock='Estudiaste 25 veces con motivación positiva'
+            capyName='CapyExplorador'
+            progress={0}
+          />
+        </div>
+        <div>
+          <CapyInsigniasCards
+            UrlImg='/CapyInsigniasImagenes/MontainCapy.png'
+            descLock='Alcanza un evento'
+            descUnlock='El dia de tu ansiado evento llegó'
+            capyName='MountainCapy'
+            progress={0}
+          />
+        </div>
+        <div>
+          <CapyInsigniasCards
+            UrlImg='./CapyInsigniasImagenes/CapyLoto.png'
+            descLock='Estudia durante 2 horas seguidas'
+            descUnlock='Estuviste estudiando durante 2 horas seguidas'
+            capyName='CapyLoto'
+            progress={0}
+          />
+        </div>        
+        <div>
+          <CapyInsigniasCards
+            UrlImg='./CapyInsigniasImagenes/CapyGandalf.png'
+            descLock='Acumula 10 horas de estudio para un evento'
+            descUnlock='Acumula 10 horas de estudio para un evento'
+            capyName='CapyGandalf'
+            progress={0}
+          />
+        </div>
       </div>
-
-      <div></div>
-
+      <div className='flex p-10 gap-10 col-span-5'>
+        <div>
+          <CapyInsigniasCards
+            UrlImg='./CapyInsigniasImagenes/CapyCanchero.png'
+            descLock='Finaliza 5 sesiones de estudio'
+            descUnlock='Haz realizado 5 sesiones de estudio'
+            capyName='CapyCanchero'
+            progress={0}
+          />
+        </div>
+        <div>
+          <CapyInsigniasCards
+            UrlImg='/CapyInsigniasImagenes/CapyLisa.png'
+            descLock='Finaliza 15 sesiones de estudio'
+            descUnlock='Haz realizado 15 sesiones de estudio'
+            capyName='CapyLisa'
+            progress={0}
+          />
+        </div>
+        <div>
+          <CapyInsigniasCards
+            UrlImg='./CapyInsigniasImagenes/CapyOsado.png'
+            descLock='Finaliza 35 sesiones de estudio'
+            descUnlock='Haz realizado 35 sesiones de estudio'
+            capyName='CapyOsado'
+            progress={0}
+          />
+        </div>        
+        <div>
+          <CapyInsigniasCards
+            UrlImg='./CapyInsigniasImagenes/SuperCapy.png'
+            descLock='Finaliza 50 sesiones de estudio'
+            descUnlock='Haz realizado 50 sesiones de estudio'
+            capyName='SuperCapy'
+            progress={0}
+          />
+        </div>
+        <div>
+          <CapyInsigniasCards
+            UrlImg='./CapyInsigniasImagenes/CapyGod.png'
+            descLock='Finaliza 100 sesiones de estudio'
+            descUnlock='Haz realizado 100 sesiones de estudio'
+            capyName='CapyGod'
+            progress={0}
+          />
+        </div>
+      </div>
+      <div className='flex p-10 gap-10 col-span-5'>
+        <div>
+          <CapyInsigniasCards
+            UrlImg='./CapyInsigniasImagenes/CapyTain.png'
+            descLock='Cumple todos los objetivos de una sesión de estudio'
+            descUnlock='Haz cumplido todos los objetivos de una sesión de estudio'
+            capyName='CapyTain'
+            progress={0}
+          />
+        </div>
+        <div>
+          <CapyInsigniasCards
+            UrlImg='./CapyInsigniasImagenes/ElCapyDeLaPerla.png'
+            descLock='Completa 35 objetivos'
+            descUnlock='Haz logrado completar 35 objetivos'
+            capyName='Capy De La Perla'
+            progress={0}
+          />
+        </div>        
+        <div>
+          <CapyInsigniasCards
+            UrlImg='./CapyInsigniasImagenes/CapyAstronauta.png'
+            descLock='Completa 75 objetivos'
+            descUnlock='Haz logrado completar 75 objetivos'
+            capyName='CapyAstronauta'
+            progress={0}
+          />
+        </div>
+        <div>
+          <CapyInsigniasCards
+            UrlImg='/CapyInsigniasImagenes/WWECapy.png'
+            descLock='Completa 100 objetivos'
+            descUnlock='Haz logrado completar 100 objetivos'
+            capyName='CapyWWE'
+            progress={0}
+          />
+        </div>
+        <div>
+          <CapyInsigniasCards
+            UrlImg='./CapyInsigniasImagenes/CapyAbandonado.png'
+            descLock="Pasa 30 dias sin realizar ningnuna sesion de estudio (Don't do it)"
+            descUnlock='Descansaste por 30 dias seguidos, es hora de volver'
+            capyName='CapyAbandonado'
+            progress={0}
+          />
+        </div>
+      </div>
       <div className='container w-screen'>
         <Button className='mt-4' onClick={handleVolver}>
           Volver
