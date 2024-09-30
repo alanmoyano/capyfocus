@@ -1,18 +1,21 @@
 export default function DialogoChicho({ dialogo }: { dialogo: string }) {
   return (
     <>
-    <div className="relative bg-white text-gray-800 p-4 rounded-lg shadow-md max-w-xs border-gray-700">
-      Hola soy Chicho, estoy aprendiendo a hablar!
+    <div className=" w-full flex justify-end ">
 
-      <div className="absolute left-1/2 transform translate-x-[10px] bottom-[-10px]">
-        <div className="relative">
-          {/* Triángulo con bordes oscuros */}
-          <div className="absolute border-[11px] border-transparent border-t-gray-800 -top-[10px]"></div>
-          {/* Triángulo blanco más pequeño dentro del anterior */}
-          <div className="absolute border-[8px] border-transparent border-t-white -top-[9px] -right-[19px]"></div>
+      <div className='relative max-w-xs rounded-lg border-gray-800 border-[2px] bg-gray-100 p-4 text-gray-800 shadow-md'>
+        <p>Hola soy Chicho, estoy aprendiendo a hablar!</p>
+        <p>{dialogo}</p>
+        <div className='absolute bottom-[-10px]  translate-x-[240px] transform'>
+          <div className='relative'>
+            {/* Triángulo con bordes oscuros */}
+            <div className='absolute -top-[10px] border-[11px] border-transparent border-t-gray-800'></div>
+            {/* Triángulo blanco más pequeño dentro del anterior */}
+            <div className='absolute -right-[19px] -top-[10px] border-[8px] border-transparent border-t-gray-100'></div>
+          </div>
+    </div>
         </div>
       </div>
-    </div>
     </>
   )
 }
