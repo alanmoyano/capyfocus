@@ -82,6 +82,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { useSesion } from '@/components/contexts/SesionContext'
 
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
+import { supabase } from './supabase/client'
 
 type CapyMetodos = 'Capydoro' | 'Capymetro' | ''
 
@@ -140,6 +141,12 @@ const playlists = [
   // }
 ]
 
+type Motivacion = {
+  id: number
+  nombre: string
+  descripcion?: string
+}
+
 export default function Inicio() {
   const [open, setOpen] = useState(false)
   const [value] = useState('')
@@ -164,6 +171,8 @@ export default function Inicio() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
 
   const { setTecnicaEstudio } = useSesion()
+
+  const [motivaciones, setMotivaciones] = useState<Motivacion[]>([])
 
   const handleAccept = () => {
     switch (description) {
@@ -259,6 +268,23 @@ export default function Inicio() {
 
   useEffect(() => {
     setSelectedMusic(null)
+  }, [])
+
+  useEffect(() => {
+    async function getMotivaciones() {
+      const { data } = await supabase.from('TiposMotivacion').select('*')
+      return data
+    }
+
+    getMotivaciones()
+      .then((data) => {
+        if (!data) return
+
+        console.log(data)
+        setMotivaciones(data)
+      })
+
+      .catch((error: unknown) => console.error(error))
   }, [])
 
   return (
@@ -684,7 +710,21 @@ export default function Inicio() {
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>Tipo de motivación</SelectLabel>
-                  <SelectItem key={0} value='Positiva'>
+                  {motivaciones.map(motivacion => (
+                    <SelectItem key={motivacion.id} value={motivacion.nombre}>
+                      <TooltipProvider delayDuration={150}>
+                        <Tooltip delayDuration={150}>
+                          <TooltipTrigger asChild>
+                            <p>{motivacion.nombre}</p>
+                          </TooltipTrigger>
+                          <TooltipContent className='ml-16'>
+                            <p>{motivacion.descripcion ?? `Mensajes ${motivacion.nombre}`}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </SelectItem>
+                  ))}
+                  {/* <SelectItem key={0} value='Positiva'>
                     <TooltipProvider delayDuration={50}>
                       <Tooltip delayDuration={50}>
                         <TooltipTrigger asChild>
@@ -707,7 +747,7 @@ export default function Inicio() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                  </SelectItem>
+                  </SelectItem> */}
                 </SelectGroup>
               </SelectContent>
             </Select>

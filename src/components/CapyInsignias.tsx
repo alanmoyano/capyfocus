@@ -2,9 +2,35 @@ import { Button } from '@/components/ui/button'
 import { useLocation } from 'wouter'
 
 import CapyInsigniasCards from '@/components/ComponentesEspecifico/ComponenteInsignias'
+import { useEffect, useState } from 'react'
+import { supabase } from './supabase/client'
+
+type Insignia = {
+  id: string
+  nombre: string
+  descripcionBloqueada: string
+  descripcionDesbloqueada: string
+}
 
 export default function CapyInsignias() {
+  const [insignias, setInsignias] = useState<Insignia[]>([])
   const [, setLocation] = useLocation()
+
+  useEffect(() => {
+    async function getInsingias() {
+      const insignias = await supabase.from('CapyInsignias').select('*')
+      return insignias.data
+    }
+
+    getInsingias()
+      .then(data => {
+        if (!data) return
+
+        console.log(data)
+        setInsignias(data)
+      })
+      .catch((error: unknown) => console.error(error))
+  }, [])
 
   const handleVolver = () => {
     setLocation('/')
@@ -15,148 +41,17 @@ export default function CapyInsignias() {
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyInsiginias!</h1>
-      <div className='col-span-5 flex gap-10 p-10'>
-        <div>
+      <div className='grid grid-cols-1 gap-10 p-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
+        {insignias.map(insignia => (
           <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyMatrix.png'
-            descLock='Estudia 25 veces con motivación pasivo/agresivo'
-            descUnlock='Estudiaste 25 veces con motivación pasivo/agresivo'
-            capyName='CapyMatrix'
+            key={insignia.id}
+            UrlImg={`CapyInsigniasImagenes/${insignia.nombre}.png`}
+            descLock={insignia.descripcionBloqueada}
+            descUnlock={insignia.descripcionDesbloqueada}
+            capyName={insignia.nombre}
             progress={100}
           />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyScout.png'
-            descLock='Estudia 25 veces con motivación positiva'
-            descUnlock='Estudiaste 25 veces con motivación positiva'
-            capyName='CapyExplorador'
-            progress={100}
-          />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='/CapyInsigniasImagenes/MontainCapy.png'
-            descLock='Alcanza un evento'
-            descUnlock='El dia de tu ansiado evento llegó'
-            capyName='MountainCapy'
-            progress={100}
-          />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyLoto.png'
-            descLock='Estudia durante 2 horas seguidas'
-            descUnlock='Estuviste estudiando durante 2 horas seguidas'
-            capyName='CapyLoto'
-            progress={100}
-          />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyGandalf.png'
-            descLock='Acumula 10 horas de estudio para un evento'
-            descUnlock='Acumula 10 horas de estudio para un evento'
-            capyName='CapyGandalf'
-            progress={100}
-          />
-        </div>
-      </div>
-      <div className='col-span-5 flex gap-10 p-10'>
-        <div >
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyGamer.png'
-            descLock='Finaliza 5 sesiones de estudio'
-            descUnlock='Haz realizado 5 sesiones de estudio'
-            capyName='CapyGamer'
-            progress={100}
-            
-            
-          />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='/CapyInsigniasImagenes/CapyLisa.png'
-            descLock='Finaliza 15 sesiones de estudio'
-            descUnlock='Haz realizado 15 sesiones de estudio'
-            capyName='CapyLisa'
-            progress={100}
-          />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyOsado.png'
-            descLock='Finaliza 35 sesiones de estudio'
-            descUnlock='Haz realizado 35 sesiones de estudio'
-            capyName='CapyOsado'
-            progress={100}
-          />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/SuperCapy.png'
-            descLock='Finaliza 50 sesiones de estudio'
-            descUnlock='Haz realizado 50 sesiones de estudio'
-            capyName='SuperCapy'
-            progress={100}
-          />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyGod.png'
-            descLock='Finaliza 100 sesiones de estudio'
-            descUnlock='Haz realizado 100 sesiones de estudio'
-            capyName='CapyGod'
-            progress={100}
-          />
-        </div>
-      </div>
-      <div className='col-span-5 flex gap-10 p-10'>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyTain.png'
-            descLock='Cumple todos los objetivos de una sesión de estudio'
-            descUnlock='Haz cumplido todos los objetivos de una sesión de estudio'
-            capyName='CapyTain'
-            progress={100}
-          />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/ElCapyDeLaPerla.png'
-            descLock='Completa 35 objetivos'
-            descUnlock='Haz logrado completar 35 objetivos'
-            capyName='Capy De La Perla'
-            progress={100}
-          />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyAstronauta.png'
-            descLock='Completa 75 objetivos'
-            descUnlock='Haz logrado completar 75 objetivos'
-            capyName='CapyAstronauta'
-            progress={100}
-          />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='/CapyInsigniasImagenes/WWECapy.png'
-            descLock='Completa 100 objetivos'
-            descUnlock='Haz logrado completar 100 objetivos'
-            capyName='CapyWWE'
-            progress={100}
-          />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyAbandonado.png'
-            descLock="Pasa 30 dias sin realizar ningnuna sesion de estudio (Don't do it)"
-            descUnlock='Descansaste por 30 dias seguidos, es hora de volver'
-            capyName='CapyAbandonado'
-            progress={100}
-          />
-        </div>
+        ))}
       </div>
       <div className='container w-screen'>
         <Button className='mt-4' onClick={handleVolver}>
