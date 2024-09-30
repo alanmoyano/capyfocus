@@ -19,13 +19,15 @@ export default function CapyInsiginiasCards({
   descLock,
   descUnlock,
   capyName,
-  progress
+  progress,
+  ImgStyle
 }: {
   UrlImg: string
   descLock: string
   descUnlock: string
   capyName: string
   progress: number
+  ImgStyle?: React.CSSProperties 
 }) {
   const bloqueada = './CapyInsigniasImagenes/CapySherlock.png'
   const [isUnlocked, setIsUnlocked] = useState<boolean>(false)
@@ -52,6 +54,7 @@ export default function CapyInsiginiasCards({
                             <div className='imagen'>
                               <img
                                 src={UrlImg}
+                                style={ImgStyle}
                                 alt='HidenInsignia'
                                 className='absolute inset-0 h-full w-full object-contain p-4'
                               />
@@ -72,6 +75,7 @@ export default function CapyInsiginiasCards({
                           <div className='container flex h-full w-full justify-center text-center'>
                             <img
                               src={bloqueada}
+                              style={ImgStyle}
                               alt='HidenInsignia'
                               className='absolute inset-0 h-full w-full object-contain p-4'
                             />
@@ -131,7 +135,7 @@ export default function CapyInsiginiasCards({
           </div>
           <DialogFooter>
             <DialogClose>
-              <Button className=''>Salir</Button>
+              <Button className='' variant={'accent'}>Salir</Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>

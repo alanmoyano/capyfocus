@@ -63,13 +63,15 @@ export default function CapyInsignias() {
         </div>
       </div>
       <div className='col-span-5 flex gap-10 p-10'>
-        <div>
+        <div >
           <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyCanchero.png'
+            UrlImg='./CapyInsigniasImagenes/CapyGamer.png'
             descLock='Finaliza 5 sesiones de estudio'
             descUnlock='Haz realizado 5 sesiones de estudio'
-            capyName='CapyCanchero'
+            capyName='CapyGamer'
             progress={100}
+            
+            
           />
         </div>
         <div>
