@@ -6,18 +6,16 @@ import CapyInsigniasCards from '@/components/ComponentesEspecifico/ComponenteIns
 export default function CapyInsignias() {
   const [, setLocation] = useLocation()
 
-
   const handleVolver = () => {
     setLocation('/')
   }
-
 
   // la carta hay que clickearla para que se de vuelta y despues, una vez desbloequeda ya no se da mas vuelta.
 
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyInsiginias!</h1>
-      <div className='flex p-10 gap-10 col-span-5'>
+      <div className='col-span-5 flex gap-10 p-10'>
         <div>
           <CapyInsigniasCards
             UrlImg='./CapyInsigniasImagenes/CapyMatrix.png'
@@ -53,7 +51,7 @@ export default function CapyInsignias() {
             capyName='CapyLoto'
             progress={100}
           />
-        </div>        
+        </div>
         <div>
           <CapyInsigniasCards
             UrlImg='./CapyInsigniasImagenes/CapyGandalf.png'
@@ -64,7 +62,7 @@ export default function CapyInsignias() {
           />
         </div>
       </div>
-      <div className='flex p-10 gap-10 col-span-5'>
+      <div className='col-span-5 flex gap-10 p-10'>
         <div>
           <CapyInsigniasCards
             UrlImg='./CapyInsigniasImagenes/CapyCanchero.png'
@@ -91,7 +89,7 @@ export default function CapyInsignias() {
             capyName='CapyOsado'
             progress={100}
           />
-        </div>        
+        </div>
         <div>
           <CapyInsigniasCards
             UrlImg='./CapyInsigniasImagenes/SuperCapy.png'
@@ -111,7 +109,7 @@ export default function CapyInsignias() {
           />
         </div>
       </div>
-      <div className='flex p-10 gap-10 col-span-5'>
+      <div className='col-span-5 flex gap-10 p-10'>
         <div>
           <CapyInsigniasCards
             UrlImg='./CapyInsigniasImagenes/CapyTain.png'
@@ -129,7 +127,7 @@ export default function CapyInsignias() {
             capyName='Capy De La Perla'
             progress={100}
           />
-        </div>        
+        </div>
         <div>
           <CapyInsigniasCards
             UrlImg='./CapyInsigniasImagenes/CapyAstronauta.png'
@@ -164,7 +162,7 @@ export default function CapyInsignias() {
         </Button>
       </div>
 
-{/*       <span className='relative inline-flex'>
+      {/*       <span className='relative inline-flex'>
         <Button type='button' className=''>
           Transactions
         </Button>

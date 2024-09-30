@@ -781,7 +781,6 @@ export default function Inicio() {
               Aceptar
             </Button>
           </div>
-
         </div>
       </section>
     </>

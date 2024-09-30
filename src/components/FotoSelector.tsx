@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 
-const FotoSelector: React.FC<{ onSelect: (picture: string) => void }> = ({ onSelect }) => {
+const FotoSelector: React.FC<{ onSelect: (picture: string) => void }> = ({
+  onSelect
+}) => {
   const profilePictures = [
     './FotoPerfil/CapyCute.jpg',
     './FotoPerfil/Capyntor.jpg',
@@ -13,7 +15,7 @@ const FotoSelector: React.FC<{ onSelect: (picture: string) => void }> = ({ onSel
     './FotoPerfil/CapyMaid.jpg',
     './FotoPerfil/CapyTomate.jpg',
     './FotoPerfil/CapyMoney.jpg',
-    './FotoPerfil/CapyCow.jpg',
+    './FotoPerfil/CapyCow.jpg'
   ]
 
   const [selectedPicture, setSelectedPicture] = useState<string | null>(null)
@@ -24,13 +26,13 @@ const FotoSelector: React.FC<{ onSelect: (picture: string) => void }> = ({ onSel
   }
 
   return (
-    <div className='grid grid-cols-3 gap-1 max-h-64'>
+    <div className='grid max-h-64 grid-cols-3 gap-1'>
       {profilePictures.map((picture, index) => (
         <img
           key={index}
           src={picture}
           alt={`Foto ${index}`}
-          className={`rounded-full w-24 h-24 object-cover cursor-pointer ${selectedPicture === picture ? 'border-4 shadow-lg border-orange-300' : ''}`}
+          className={`h-24 w-24 cursor-pointer rounded-full object-cover ${selectedPicture === picture ? 'border-4 border-orange-300 shadow-lg' : ''}`}
           onClick={() => handleSelectPicture(picture)}
         />
       ))}

@@ -1,6 +1,6 @@
 import FotoSelector from './FotoSelector'
 import { SetStateAction, useState } from 'react'
-import { z } from 'zod';
+import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -21,7 +21,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
+  SheetTrigger
 } from '@/components/ui/sheet'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -29,8 +29,11 @@ import { useLocation } from 'wouter'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
 const formSchema = z.object({
-  username: z.string().min(5, 'El nombre de usuario debe tener al menos 5 caracteres').max(15, 'El nombre de usuario no puede tener más de 15 caracteres'),
-  email: z.string().email('Por favor, ingresa un email válido'),
+  username: z
+    .string()
+    .min(5, 'El nombre de usuario debe tener al menos 5 caracteres')
+    .max(15, 'El nombre de usuario no puede tener más de 15 caracteres'),
+  email: z.string().email('Por favor, ingresa un email válido')
 })
 type FormValues = z.infer<typeof formSchema>
 
@@ -55,22 +58,30 @@ export default function Usuario() {
     setSheetOpen(false)
   }
 
-  const { register, handleSubmit, watch, formState: { errors }, } = useForm<FormValues>({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors }
+  } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: currentUsername,
-      email: currentEmail,
+      email: currentEmail
     }
   })
 
   const watchUsername = watch('username')
   const watchEmail = watch('email')
 
-  const hasChanges = watchUsername !== confirmedUsername || watchEmail !== confirmedEmail
+  const hasChanges =
+    watchUsername !== confirmedUsername || watchEmail !== confirmedEmail
 
   const [selectedPicture, setSelectedPicture] = useState<string | null>(null)
 
-  {/* funcionalidad */}
+  {
+    /* funcionalidad */
+  }
   const handleProfilePictureSelect = (picture: string) => {
     setSelectedPicture(picture)
   }
@@ -85,16 +96,11 @@ export default function Usuario() {
               <video src='/idle.webm' autoPlay loop muted playsInline />
             </div>
           </div>
-          <Card className='flex flex-col h-full w-full bg-secondary shadow-md'>
+          <Card className='flex h-full w-full flex-col bg-secondary shadow-md'>
             <CardHeader className='text-center'>
               <Avatar className='mx-auto h-40 w-40'>
-                <AvatarImage
-                  src='/capyPic.jpg'
-                  className='h-full w-full'
-                />
-                <AvatarFallback className='text-2xl'>
-                  CN
-                </AvatarFallback>
+                <AvatarImage src='/capyPic.jpg' className='h-full w-full' />
+                <AvatarFallback className='text-2xl'>CN</AvatarFallback>
               </Avatar>
               <CardDescription className='text-center'>
                 {/* { infoAvatar && (
@@ -111,57 +117,98 @@ export default function Usuario() {
                                   </div>
                                 </div>
                               )} */}
-
               </CardDescription>
             </CardHeader>
-            <CardContent className='flex flex-col items-center justify-start flex-grow text-center'>
-              <p className='text-3xl font-semibold flex items-center'>
+            <CardContent className='flex flex-grow flex-col items-center justify-start text-center'>
+              <p className='flex items-center text-3xl font-semibold'>
                 {confirmedUsername}
                 <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
                   <SheetTrigger asChild>
                     <svg
-                      xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor'
-                      strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' className='lucide lucide-pencil ml-2 hover:cursor-pointer'>
+                      xmlns='http://www.w3.org/2000/svg'
+                      width='24'
+                      height='24'
+                      viewBox='0 0 24 24'
+                      fill='none'
+                      stroke='currentColor'
+                      strokeWidth='2'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      className='lucide lucide-pencil ml-2 hover:cursor-pointer'
+                    >
                       <path d='M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z' />
                       <path d='m15 5 4 4' />
                     </svg>
                   </SheetTrigger>
-                  <SheetContent className='w-full sm:max-w-md '>
+                  <SheetContent className='w-full sm:max-w-md'>
                     <ScrollArea className='h-[80vh] pr-4'>
                       <SheetHeader className='pb-7'>
-                        <SheetTitle className='text-2xl font-bold'>Modificar perfil</SheetTitle>
+                        <SheetTitle className='text-2xl font-bold'>
+                          Modificar perfil
+                        </SheetTitle>
                       </SheetHeader>
-                      <SheetTitle className='text-lg font-semibold'>Datos del perfil</SheetTitle>
+                      <SheetTitle className='text-lg font-semibold'>
+                        Datos del perfil
+                      </SheetTitle>
                       <hr className='py-2' />
                       <form onSubmit={handleSubmit(handleConfirm)}>
                         <div className='grid gap-7 py-4'>
                           <div className='grid gap-2'>
-                            <Label htmlFor='username' className='text-left'>Usuario</Label>
-                            <Input id='username' placeholder='Usuario' {...register('username')} className='w-full' />
+                            <Label htmlFor='username' className='text-left'>
+                              Usuario
+                            </Label>
+                            <Input
+                              id='username'
+                              placeholder='Usuario'
+                              {...register('username')}
+                              className='w-full'
+                            />
                             {errors.username && (
-                              <p className='text-red-500 text-sm'>{errors.username.message}</p>
+                              <p className='text-sm text-red-500'>
+                                {errors.username.message}
+                              </p>
                             )}
                           </div>
                           <div className='grid gap-2'>
-                            <Label htmlFor='email' className='text-left'>Email</Label>
-                            <Input id='email' placeholder='Email' {...register('email')} className='w-full' />
+                            <Label htmlFor='email' className='text-left'>
+                              Email
+                            </Label>
+                            <Input
+                              id='email'
+                              placeholder='Email'
+                              {...register('email')}
+                              className='w-full'
+                            />
                             {errors.email && (
-                              <p className='text-red-500 text-sm'>{errors.email.message}</p>
+                              <p className='text-sm text-red-500'>
+                                {errors.email.message}
+                              </p>
                             )}
                           </div>
                         </div>
-                        <SheetTitle className='text-lg font-semibold pt-4'>Foto de perfil</SheetTitle>
-                        <hr className='py-2'/>
-                        <div className="flex flex-col h-[80vh]">
-                        <div>
-                          <FotoSelector onSelect={handleProfilePictureSelect}/>
-                        </div>
-                        <SheetFooter className='mt-4 flex justify-end'>
-                          {/* Ver si poner scroll o qué para que el boton no quede volando */}
-                          <SheetClose asChild>
-                            <Button type='submit' disabled={Object.keys(errors).length > 0 || !hasChanges}>Confirmar</Button>
-                          </SheetClose>
-                        </SheetFooter>
+                        <SheetTitle className='pt-4 text-lg font-semibold'>
+                          Foto de perfil
+                        </SheetTitle>
+                        <hr className='py-2' />
+                        <div className='flex h-[80vh] flex-col'>
+                          <div>
+                            <FotoSelector
+                              onSelect={handleProfilePictureSelect}
+                            />
+                          </div>
+                          <SheetFooter className='mt-4 flex justify-end'>
+                            {/* Ver si poner scroll o qué para que el boton no quede volando */}
+                            <SheetClose asChild>
+                              <Button
+                                type='submit'
+                                disabled={
+                                  Object.keys(errors).length > 0 || !hasChanges
+                                }
+                              >
+                                Confirmar
+                              </Button>
+                            </SheetClose>
+                          </SheetFooter>
                         </div>
                       </form>
                     </ScrollArea>
@@ -172,7 +219,7 @@ export default function Usuario() {
                 <p className='text-lg font-normal'>{confirmedEmail}</p>
               </div>
             </CardContent>
-            <CardFooter className='flex justify-end mt-auto'>
+            <CardFooter className='mt-auto flex justify-end'>
               <div className='space-x-4'>
                 <Button onClick={() => handleLogin()} className='mt-4'>
                   Cerrar sesión
@@ -181,7 +228,7 @@ export default function Usuario() {
             </CardFooter>
           </Card>
         </div>
-      </div >
+      </div>
     </>
   )
 }

@@ -1,4 +1,5 @@
-import React from 'react'
+import { useEffect, useState } from 'react'
+
 import {
   Dialog,
   DialogContent,
@@ -10,7 +11,8 @@ import {
 import { DialogClose } from '@radix-ui/react-dialog'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
-import { useEffect, useState } from 'react'
+
+import '@/brenda.css'
 
 export default function CapyInsiginiasCards({
   UrlImg,

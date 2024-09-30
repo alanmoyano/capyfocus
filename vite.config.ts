@@ -43,7 +43,8 @@ export default defineConfig({
             'embla-carousel-react',
             'react-resizable-panels'
           ],
-          charts: ['recharts'],
+          charts: ['recharts', './src/components/ui/chart.tsx'],
+          icons: ['lucide-react'],
           shadcn: [
             './src/components/ui/alert-dialog.tsx',
             './src/components/ui/avatar.tsx',
@@ -51,7 +52,6 @@ export default defineConfig({
             './src/components/ui/calendar.tsx',
             './src/components/ui/card.tsx',
             './src/components/ui/carousel.tsx',
-            './src/components/ui/chart.tsx',
             './src/components/ui/checkbox.tsx',
             './src/components/ui/command.tsx',
             './src/components/ui/dialog.tsx',
