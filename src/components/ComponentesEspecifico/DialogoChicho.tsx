@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { supabase } from '../supabase/client'
 
 type Dialogo = {
@@ -12,25 +12,50 @@ function selectRandomDialogo(dialogos: Dialogo[]) {
   return dialogos[randomIndex]
 }
 
-export default function DialogoChicho({ dialogo }: { dialogo: string }) {
+function parseMotivation(motivation?: string) {
+  switch (motivation) {
+    case 'Positiva':
+      return 1
+    case 'Pasivo Agresiva':
+      return 2
+    default:
+      return null
+  }
+}
+
+export default function DialogoChicho({ motivation }: { motivation?: string }) {
   const [dialogos, setDialogos] = useState<Dialogo[]>([])
+  const dialogo = useRef('')
+  const motivacion = useRef(parseMotivation(motivation))
 
   useEffect(() => {
     async function getDialogos() {
-      const { data } = await supabase
-        .from('Mensajes')
-        .select()
-        .is('tipoMotivacion', null)
+      let data
+
+      if (motivacion.current === null) {
+        const res = await supabase
+          .from('Mensajes')
+          .select()
+          .is('tipoMotivacion', motivacion.current)
+        data = res.data
+      } else {
+        const res = await supabase
+          .from('Mensajes')
+          .select()
+          .eq('tipoMotivacion', motivacion.current)
+        data = res.data
+      }
 
       return data
     }
 
     getDialogos()
-      .then(data => {
+      .then((data: Dialogo[] | null) => {
         if (!data) return
 
         console.log(data)
         setDialogos(data)
+        dialogo.current = selectRandomDialogo(data).mensaje
       })
       .catch((error: unknown) => console.error(error))
   }, [])
@@ -40,8 +65,7 @@ export default function DialogoChicho({ dialogo }: { dialogo: string }) {
       {dialogos.length > 0 && (
         <div className='flex w-full justify-end'>
           <div className='relative max-w-xs rounded-xl border-[2px] border-gray-800 bg-gray-100 p-4 text-gray-800 shadow-md'>
-            <p>{selectRandomDialogo(dialogos).mensaje}</p>
-            <p>{dialogo}</p>
+            <p>{dialogo.current}</p>
             <div className='absolute bottom-[-10px] translate-x-[240px] transform'>
               <div className='relative'>
                 {/* Triángulo con bordes oscuros */}

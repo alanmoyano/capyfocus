@@ -84,12 +84,11 @@ import { useSesion } from '@/components/contexts/SesionContext'
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
 import { supabase } from './supabase/client'
 
-type CapyMetodos = 'Capydoro' | 'Capymetro' | ''
+type CapyMetodos = 'Capydoro' | 'Capymetro'
 
 const descriptions: Record<CapyMetodos, string> = {
   Capydoro: 'Estudia con el método Pomodoro',
-  Capymetro: 'Estudia con un cronómetro',
-  '': ''
+  Capymetro: 'Estudia con un cronómetro'
 }
 
 /* Evento */
@@ -158,7 +157,7 @@ export default function Inicio() {
   const { objetivos, setObjetivos, objetivosFav, setObjetivosFav } =
     useObjetivos()
 
-  const [description, setDescription] = useState<CapyMetodos>('')
+  const [description, setDescription] = useState<CapyMetodos>()
 
   const [, setLocation] = useLocation()
 
@@ -277,7 +276,7 @@ export default function Inicio() {
     }
 
     getMotivaciones()
-      .then((data) => {
+      .then(data => {
         if (!data) return
 
         console.log(data)
@@ -291,7 +290,7 @@ export default function Inicio() {
     <>
       <section className='mt-10 flex flex-col gap-20 p-10 md:flex-row'>
         <div className=''>
-          <DialogoChicho dialogo={descriptions[description]} />
+          <DialogoChicho />
           <video src='/idle.webm' autoPlay loop muted playsInline />
         </div>
 
@@ -718,7 +717,10 @@ export default function Inicio() {
                             <p>{motivacion.nombre}</p>
                           </TooltipTrigger>
                           <TooltipContent className='ml-16'>
-                            <p>{motivacion.descripcion ?? `Mensajes ${motivacion.nombre}`}</p>
+                            <p>
+                              {motivacion.descripcion ??
+                                `Mensajes ${motivacion.nombre}`}
+                            </p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
