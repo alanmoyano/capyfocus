@@ -1,29 +1,26 @@
 /* Estilo de letra (fea) de CapyInsignias */
 @import url('https://fonts.googleapis.com/css2?family=Jomolhari&display=swap');
 
-
-
-  .card {
-    width: 180px;
-    height: 330px;
-    perspective: 2000px;
-    transition: transform 0.6s;
-    perspective: 2000px;
-    text-align: center;
-    border-radius: 28px;
-    box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.15);
-    &:hover {
-      transform: scale(1.05);
-    }
+.card {
+  width: 180px;
+  height: 330px;
+  perspective: 2000px;
+  transition: transform 0.6s;
+  perspective: 2000px;
+  text-align: center;
+  border-radius: 28px;
+  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.15);
+  &:hover {
+    transform: scale(1.05);
   }
+}
 
-  .card-front {
-    background-color: hsl(var(--primary));
-    text-align: center;
-    display: grid;
-    place-items: center;
-  }
-
+.card-front {
+  background-color: hsl(var(--primary));
+  text-align: center;
+  display: grid;
+  place-items: center;
+}
 
 .static-card {
   width: 180px;

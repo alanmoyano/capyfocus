@@ -156,30 +156,10 @@ export default function CapyEstadisticas() {
   }
 
   const captureScreenshot = async (period: string) => {
-    const tipoEstadisticas: { indice: number; estadistica: string }[] = [
-      { indice: 0, estadistica: 'sesion' },
-      { indice: 1, estadistica: 'semanal' },
-      { indice: 2, estadistica: 'mensual' },
-      { indice: 3, estadistica: 'bimestral' },
-      { indice: 4, estadistica: 'semestral' },
-      { indice: 5, estadistica: 'evento' }
-    ]
-
-    function obtenerIndice(estadistica: string): number {
-      const resultado = tipoEstadisticas.find(
-        item => item.estadistica === estadistica
-      )
-
-      if (resultado) {
-        return resultado.indice
-      } else {
-        return -1
-      }
-    }
     // @ts-expect-error 7053 no seas molesto typescript
-    if (cardRefs[obtenerIndice(period)].current) {
+    if (cardRefs[period].current) {
       // @ts-expect-error 7053 no seas molesto typescript
-      const canvas = await html2canvas(cardRefs[obtenerIndice(period)].current)
+      const canvas = await html2canvas(cardRefs[period].current)
       const image = canvas.toDataURL('image/png')
       const link = document.createElement('a')
       link.href = image
