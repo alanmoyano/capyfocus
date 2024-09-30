@@ -343,6 +343,8 @@ export default function Inicio() {
                   {/* Calendario */}
 
                   <div className='w-full sm:w-auto'>
+
+                    
                     <Calendar
                       mode='single'
                       selected={date}
