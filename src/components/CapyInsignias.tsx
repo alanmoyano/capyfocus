@@ -45,7 +45,7 @@ export default function CapyInsignias() {
         {insignias.map(insignia => (
           <CapyInsigniasCards
             key={insignia.id}
-            UrlImg={`CapyInsigniasImagenes/${insignia.nombre}.png`}
+            UrlImg={`CapyInsigniasImagenes/${insignia.nombre}.webp`}
             descLock={insignia.descripcionBloqueada}
             descUnlock={insignia.descripcionDesbloqueada}
             capyName={insignia.nombre}

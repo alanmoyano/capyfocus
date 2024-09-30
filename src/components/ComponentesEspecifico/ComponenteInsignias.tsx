@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -8,9 +9,8 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-import { DialogClose } from '@radix-ui/react-dialog'
-import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
+import { DialogClose } from '@radix-ui/react-dialog'
 
 import '@/brenda.css'
 
@@ -29,7 +29,7 @@ export default function CapyInsiginiasCards({
   progress: number
   ImgStyle?: React.CSSProperties 
 }) {
-  const bloqueada = './CapyInsigniasImagenes/CapySherlock.png'
+  const bloqueada = './CapyInsigniasImagenes/CapySherlock.webp'
   const [isUnlocked, setIsUnlocked] = useState<boolean>(false)
 
   useEffect(() => {
