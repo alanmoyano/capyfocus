@@ -264,7 +264,7 @@ export default function Inicio() {
   return (
     <>
       <section className='mt-10 flex flex-col gap-20 p-10 md:flex-row'>
-        <div className='m-auto'>
+        <div className=''>
           <DialogoChicho dialogo={descriptions[description]} />
           <video src='/idle.webm' autoPlay loop muted playsInline />
         </div>
