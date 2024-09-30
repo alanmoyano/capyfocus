@@ -24,7 +24,7 @@ export default function CapyInsignias() {
             descLock='Estudia 25 veces con motivación pasivo/agresivo'
             descUnlock='Estudiaste 25 veces con motivación pasivo/agresivo'
             capyName='CapyMatrix'
-            progress={0}
+            progress={100}
           />
         </div>
         <div>
@@ -33,7 +33,7 @@ export default function CapyInsignias() {
             descLock='Estudia 25 veces con motivación positiva'
             descUnlock='Estudiaste 25 veces con motivación positiva'
             capyName='CapyExplorador'
-            progress={0}
+            progress={100}
           />
         </div>
         <div>
@@ -42,7 +42,7 @@ export default function CapyInsignias() {
             descLock='Alcanza un evento'
             descUnlock='El dia de tu ansiado evento llegó'
             capyName='MountainCapy'
-            progress={0}
+            progress={100}
           />
         </div>
         <div>
@@ -51,7 +51,7 @@ export default function CapyInsignias() {
             descLock='Estudia durante 2 horas seguidas'
             descUnlock='Estuviste estudiando durante 2 horas seguidas'
             capyName='CapyLoto'
-            progress={0}
+            progress={100}
           />
         </div>        
         <div>
@@ -60,7 +60,7 @@ export default function CapyInsignias() {
             descLock='Acumula 10 horas de estudio para un evento'
             descUnlock='Acumula 10 horas de estudio para un evento'
             capyName='CapyGandalf'
-            progress={0}
+            progress={100}
           />
         </div>
       </div>
@@ -71,7 +71,7 @@ export default function CapyInsignias() {
             descLock='Finaliza 5 sesiones de estudio'
             descUnlock='Haz realizado 5 sesiones de estudio'
             capyName='CapyCanchero'
-            progress={0}
+            progress={100}
           />
         </div>
         <div>
@@ -80,7 +80,7 @@ export default function CapyInsignias() {
             descLock='Finaliza 15 sesiones de estudio'
             descUnlock='Haz realizado 15 sesiones de estudio'
             capyName='CapyLisa'
-            progress={0}
+            progress={100}
           />
         </div>
         <div>
@@ -89,7 +89,7 @@ export default function CapyInsignias() {
             descLock='Finaliza 35 sesiones de estudio'
             descUnlock='Haz realizado 35 sesiones de estudio'
             capyName='CapyOsado'
-            progress={0}
+            progress={100}
           />
         </div>        
         <div>
@@ -98,7 +98,7 @@ export default function CapyInsignias() {
             descLock='Finaliza 50 sesiones de estudio'
             descUnlock='Haz realizado 50 sesiones de estudio'
             capyName='SuperCapy'
-            progress={0}
+            progress={100}
           />
         </div>
         <div>
@@ -107,7 +107,7 @@ export default function CapyInsignias() {
             descLock='Finaliza 100 sesiones de estudio'
             descUnlock='Haz realizado 100 sesiones de estudio'
             capyName='CapyGod'
-            progress={0}
+            progress={100}
           />
         </div>
       </div>
@@ -118,7 +118,7 @@ export default function CapyInsignias() {
             descLock='Cumple todos los objetivos de una sesión de estudio'
             descUnlock='Haz cumplido todos los objetivos de una sesión de estudio'
             capyName='CapyTain'
-            progress={0}
+            progress={100}
           />
         </div>
         <div>
@@ -127,7 +127,7 @@ export default function CapyInsignias() {
             descLock='Completa 35 objetivos'
             descUnlock='Haz logrado completar 35 objetivos'
             capyName='Capy De La Perla'
-            progress={0}
+            progress={100}
           />
         </div>        
         <div>
@@ -136,7 +136,7 @@ export default function CapyInsignias() {
             descLock='Completa 75 objetivos'
             descUnlock='Haz logrado completar 75 objetivos'
             capyName='CapyAstronauta'
-            progress={0}
+            progress={100}
           />
         </div>
         <div>
@@ -145,7 +145,7 @@ export default function CapyInsignias() {
             descLock='Completa 100 objetivos'
             descUnlock='Haz logrado completar 100 objetivos'
             capyName='CapyWWE'
-            progress={0}
+            progress={100}
           />
         </div>
         <div>
@@ -154,7 +154,7 @@ export default function CapyInsignias() {
             descLock="Pasa 30 dias sin realizar ningnuna sesion de estudio (Don't do it)"
             descUnlock='Descansaste por 30 dias seguidos, es hora de volver'
             capyName='CapyAbandonado'
-            progress={0}
+            progress={100}
           />
         </div>
       </div>
