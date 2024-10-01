@@ -5,6 +5,7 @@ import { useState, useRef } from 'react'
 import html2canvas from 'html2canvas'
 import { ImageDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import EstadisticasPeriodo from './ComponentesEspecifico/EstadisticasPeriodo'
 
 import {
   Tooltip as ChartTooltip,
@@ -123,10 +124,7 @@ const chartConfig4 = {
   }
 } satisfies ChartConfig
 
-type tipoEstadistica = {
-  indice: number
-  estadistica: string
-}
+
 
 export default function CapyEstadisticas() {
   const queryParams = useSearch()
@@ -1110,6 +1108,15 @@ export default function CapyEstadisticas() {
           {/* Ver fin de tarjeta, para que se termine antes y no con la pagina*/}
         </>
       )}
+
+{selectedPeriod === 'evento' && (
+  <>
+  <p>Funciona?</p>
+  <EstadisticasPeriodo period='evento'></EstadisticasPeriodo>
+  </>
+)}
+
+
     </>
   )
 }

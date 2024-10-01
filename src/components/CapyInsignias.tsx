@@ -49,7 +49,7 @@ export default function CapyInsignias() {
             descLock={insignia.descripcionBloqueada}
             descUnlock={insignia.descripcionDesbloqueada}
             capyName={insignia.nombre}
-            progress={100}
+            progress={10}
           />
         ))}
       </div>
