@@ -171,7 +171,7 @@ export default function CapyEstadisticas() {
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyEstadisticas!</h1>
       {/* Seleccion de tiempo */}
-      <div className='ml-32 mt-4 flex justify-start'>
+      <div className='mt-4 flex flex-col justify-center px-2 md:flex-row'>
         <p className='flex items-center'>
           Ingresa el intervalo de tiempo para visualizar las estadisticas:{' '}
         </p>
@@ -485,8 +485,8 @@ export default function CapyEstadisticas() {
                 </h1>
               </CardTitle>
             </CardHeader>
-            <CardContent className='flex justify-between gap-8'>
-              <div className='w-1/2'>
+            <CardContent className='flex flex-col justify-between gap-8 md:flex-row'>
+              <div className='md:w-1/2'>
                 <div className='grid grid-cols-2 gap-6'>
                   {[
                     {
@@ -535,7 +535,7 @@ export default function CapyEstadisticas() {
                 </div>
               </div>
 
-              <div className='w-1/2 space-y-6'>
+              <div className='space-y-6 md:w-1/2'>
                 <Card className='overflow-hidden rounded-lg shadow-md'>
                   <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-2'>
                     <CardTitle className='text-lg font-bold text-gray-900'>
@@ -596,8 +596,8 @@ export default function CapyEstadisticas() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className='p-2'>
-                    <div className='flex'>
-                      <div className='w-1/2'>
+                    <div className='flex flex-col md:flex-row'>
+                      <div className='md:w-1/2'>
                         <Calendar
                           mode='single'
                           selected={date}
@@ -605,7 +605,7 @@ export default function CapyEstadisticas() {
                           className='rounded-md border text-sm shadow-sm'
                         />
                       </div>
-                      <div className='w-1/2 pl-4'>
+                      <div className='pl-4 md:w-1/2'>
                         <h1 className='mb-2 text-lg font-semibold'>Eventos</h1>
                         {/* Lista de eventos */}
                         <p>11/07 Brenda conquista el mundo</p>
