@@ -9,6 +9,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { useMusic } from './contexts/MusicContext'
 import { useMotivation } from './contexts/MotivationContext'
 import { useSesion } from './contexts/SesionContext'
+import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Sesión' | 'Descanso'
@@ -161,6 +162,7 @@ export default function Timer() {
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
         {/* Columna 1:  */}
         <div className='col-span-1 p-4'>
+          <DialogoChicho motivation={motivationType} />
           <video
             src='/idle.webm'
             autoPlay

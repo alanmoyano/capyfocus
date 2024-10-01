@@ -1,15 +1,10 @@
-import { useState } from 'react'
+import FotoSelector from './FotoSelector'
+import { SetStateAction, useState } from 'react'
+import { z } from 'zod'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog'
 import {
   Card,
   CardContent,
@@ -19,15 +14,28 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from '@/components/ui/tooltip'
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger
+} from '@/components/ui/sheet'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-
 import { useLocation } from 'wouter'
+import { ScrollArea } from '@/components/ui/scroll-area'
+
+const formSchema = z.object({
+  username: z
+    .string()
+    .min(5, 'El nombre de usuario debe tener al menos 5 caracteres')
+    .max(15, 'El nombre de usuario no puede tener más de 15 caracteres'),
+  email: z.string().email('Por favor, ingresa un email válido')
+})
+type FormValues = z.infer<typeof formSchema>
 
 export default function Usuario() {
   const [, setLocation] = useLocation()
@@ -36,16 +44,58 @@ export default function Usuario() {
     setLocation('/login')
   }
 
-  const [dialogOpen, setDialogOpen] = useState(false)
+  // que los default sean los anteriores, ver cuando este la DB
+  const currentUsername = 'Chicho'
+  const currentEmail = 'chicho@capymail.com'
 
-  const handleConfirm = () => {
-    setDialogOpen(false)
+  const [selectedPicture, setSelectedPicture] = useState<string | undefined>(
+    undefined
+  )
+  const [confirmedPicture, setConfirmedPicture] = useState<string | undefined>(
+    undefined
+  )
+  const [confirmedUsername, setConfirmedUsername] = useState(currentUsername)
+  const [confirmedEmail, setConfirmedEmail] = useState(currentEmail)
+  const [sheetOpen, setSheetOpen] = useState(false)
+
+  const handleConfirm = (data: FormValues) => {
+    setConfirmedUsername(data.username)
+    setConfirmedEmail(data.email)
+    if (selectedPicture) {
+      setConfirmedPicture(selectedPicture)
+    }
+    setSheetOpen(false)
+  }
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors }
+  } = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: currentUsername,
+      email: currentEmail
+    }
+  })
+
+  const watchUsername = watch('username')
+  const watchEmail = watch('email')
+  const watchPicture = selectedPicture
+
+  const hasChanges =
+    watchUsername !== confirmedUsername ||
+    watchEmail !== confirmedEmail ||
+    watchPicture !== confirmedPicture
+
+  const handleProfilePictureSelect = (picture: string) => {
+    setSelectedPicture(picture)
   }
 
   return (
     <>
       <h1 className='mb-4 text-4xl font-bold'>Capy Datos</h1>
-
       <div className='mt-10 flex flex-col gap-20 p-10 md:flex-row'>
         <div className='grid grid-cols-2 gap-10'>
           <div className='flex h-full w-full items-center justify-center'>
@@ -53,131 +103,136 @@ export default function Usuario() {
               <video src='/idle.webm' autoPlay loop muted playsInline />
             </div>
           </div>
-          <Card className='h-full w-full bg-secondary shadow-md'>
+          <Card className='flex h-full w-full flex-col bg-secondary shadow-md'>
             <CardHeader className='text-center'>
-              <CardTitle className='py-4 text-xl'>
-                Hola, @capyUsuario!
-              </CardTitle>
-
+              <Avatar className='mx-auto h-40 w-40'>
+                <AvatarImage src={confirmedPicture} className='h-full w-full' />
+                <AvatarFallback className='text-2xl'>CN</AvatarFallback>
+              </Avatar>
               <CardDescription className='text-center'>
-                <TooltipProvider delayDuration={50}>
-                  <Tooltip delayDuration={50}>
-                    <TooltipTrigger asChild>
-                      <div className='relative'>
-                        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                          <DialogTrigger asChild>
-                            <Avatar className='mx-auto h-32 w-32 hover:cursor-pointer'>
-                              <AvatarImage
-                                src='/capyPic.jpg'
-                                className='h-full w-full'
-                              />
-                              <AvatarFallback className='text-2xl'>
-                                CN
-                              </AvatarFallback>
-                            </Avatar>
-                          </DialogTrigger>
-                          <DialogContent className='sm:max-w-[425px]'>
-                            <DialogHeader>
-                              <DialogTitle>Datos del perfil</DialogTitle>
-                              <DialogDescription>
-                                Haz los cambios de tu CapyPerfil aquí.
-                              </DialogDescription>
-                            </DialogHeader>
-
-                            <Avatar className='mx-auto h-32 w-32 hover:scale-105 hover:cursor-pointer'>
-                              <AvatarImage
-                                src='/capyPic.jpg'
-                                className='bg-slate-500'
-                              />
-
-                              <AvatarFallback className='text-2xl'>
-                                CN
-                              </AvatarFallback>
-                              {/* { infoAvatar && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
-          <div className='bg-white p-4 rounded-lg'>
-            <h2 className='text-xl font-bold'>Descripción del Avatar</h2>
-            <p>Esta es la descripción del avatar.</p>
-            <button
-              className='mt-4 px-4 py-2 bg-primary text-white rounded'
-              onClick={() => setInfoAvatar(false)}
-            >
-              Cerrar
-            </button>
-          </div>
-        </div>
-      )} */}
-                            </Avatar>
-
-                            <div className='grid gap-4 py-4'>
-                              <div className='grid grid-cols-4 items-center gap-4'>
-                                <Label
-                                  htmlFor='username'
-                                  className='text-right'
-                                >
-                                  Username
-                                </Label>
-                                <Input
-                                  id='username'
-                                  defaultValue='Chicho Perez'
-                                  className='col-span-3'
-                                />
-                              </div>
-                              <div className='grid grid-cols-4 items-center gap-4'>
-                                <Label htmlFor='email' className='text-right'>
-                                  Email
-                                </Label>
-                                <Input
-                                  id='email'
-                                  defaultValue='hola@chicho.com'
-                                  className='col-span-3'
-                                />
-                              </div>
-                            </div>
-                            <DialogFooter>
-                              <Button onClick={() => handleConfirm()}>
-                                Confirmar
-                              </Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
-                      </div>
-                    </TooltipTrigger>
-                    {/* Arreglar tooltip para que salga a la derecha! */}
-                    <TooltipContent className='absolute left-full top-1/2 ml-2 -translate-y-1/2 transform'>
-                      <p>Modificar datos del perfil</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                {/* { infoAvatar && (
+                                <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
+                                  <div className='bg-white p-4 rounded-lg'>
+                                    <h2 className='text-xl font-bold'>Descripción del Avatar</h2>
+                                    <p>Esta es la descripción del avatar.</p>
+                                    <button
+                                      className='mt-4 px-4 py-2 bg-primary text-white rounded'
+                                      onClick={() => setInfoAvatar(false)}
+                                    >
+                                      Cerrar
+                                    </button>
+                                  </div>
+                                </div>
+                              )} */}
               </CardDescription>
             </CardHeader>
-            <CardContent className='text-center'>
-              <p className='text-xl'>Chicho Perez</p>
-              <div className='m-4'>
-                <div className='grid w-full max-w-sm items-start gap-1.5 p-4 text-left'>
-                  <Label htmlFor='email'>Email</Label>
-                  <Input
-                    disabled
-                    type='mail'
-                    id='email'
-                    placeholder='hola@chicho.com'
-                  />
-                </div>
-                <div className='grid w-full max-w-sm items-start gap-1.5 p-4 text-left'>
-                  <Label htmlFor='username'>Usuario</Label>
-                  <Input
-                    disabled
-                    type='username'
-                    id='username'
-                    placeholder='Chichito24'
-                  />
-                </div>
+            <CardContent className='flex flex-grow flex-col items-center justify-start text-center'>
+              <div className='flex-grow flex-col items-center'>
+                <p className='flex items-center text-3xl font-semibold'>
+                  {confirmedUsername}
+                  <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+                    <SheetTrigger asChild>
+                      <svg
+                        xmlns='http://www.w3.org/2000/svg'
+                        width='24'
+                        height='24'
+                        viewBox='0 0 24 24'
+                        fill='none'
+                        stroke='currentColor'
+                        strokeWidth='2'
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        className='lucide lucide-pencil ml-2 hover:cursor-pointer'
+                      >
+                        <path d='M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z' />
+                        <path d='m15 5 4 4' />
+                      </svg>
+                    </SheetTrigger>
+                    <SheetContent className='w-full sm:max-w-md'>
+                      <SheetHeader className='pb-7'>
+                        <SheetTitle className='text-2xl font-bold'>
+                          Modificar perfil
+                        </SheetTitle>
+                      </SheetHeader>
+                      <form onSubmit={handleSubmit(handleConfirm)}>
+                        <ScrollArea className='h-[80vh] pr-4'>
+                          <SheetTitle className='text-lg font-semibold'>
+                            Datos del perfil
+                          </SheetTitle>
+                          <hr className='py-2' />
+                          <div className='grid gap-7 py-4'>
+                            <div className='grid gap-2'>
+                              <Label htmlFor='username' className='text-left'>
+                                Usuario
+                              </Label>
+                              <Input
+                                id='username'
+                                placeholder='Usuario'
+                                {...register('username')}
+                                className='w-full'
+                              />
+                              {errors.username && (
+                                <p className='text-sm text-red-500'>
+                                  {errors.username.message}
+                                </p>
+                              )}
+                            </div>
+                            <div className='grid gap-2'>
+                              <Label htmlFor='email' className='text-left'>
+                                Email
+                              </Label>
+                              <Input
+                                id='email'
+                                placeholder='Email'
+                                {...register('email')}
+                                className='w-full'
+                              />
+                              {errors.email && (
+                                <p className='text-sm text-red-500'>
+                                  {errors.email.message}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          <SheetTitle className='pt-4 text-lg font-semibold'>
+                            Foto de perfil
+                          </SheetTitle>
+                          <hr className='py-2' />
+                          <div className='flex h-[80vh] flex-col'>
+                            <div>
+                              <FotoSelector
+                                onSelect={handleProfilePictureSelect}
+                              />
+                            </div>
+                          </div>
+                        </ScrollArea>
+                        <SheetFooter className='mt-4 flex justify-end'>
+                          <SheetClose asChild>
+                            <Button
+                              type='submit'
+                              disabled={
+                                Object.keys(errors).length > 0 || !hasChanges
+                              }
+                            >
+                              Confirmar
+                            </Button>
+                          </SheetClose>
+                        </SheetFooter>
+                      </form>
+                    </SheetContent>
+                  </Sheet>
+                </p>
+              </div>
+              <div className='m-2'>
+                <p className='text-lg font-normal'>{confirmedEmail}</p>
               </div>
             </CardContent>
-            <CardFooter className='flex justify-end'>
-              <Button onClick={() => handleLogin()} className='mt-4'>
-                Cerrar sesión
-              </Button>
+            <CardFooter className='mt-auto flex justify-end'>
+              <div className='space-x-4'>
+                <Button onClick={() => handleLogin()} className='mt-4'>
+                  Cerrar sesión
+                </Button>
+              </div>
             </CardFooter>
           </Card>
         </div>

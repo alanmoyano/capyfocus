@@ -18,7 +18,13 @@ import {
   navigationMenuTriggerStyle
   // NavigationMenuViewport
 } from '@/components/ui/navigation-menu'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger
+} from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 
 type NavbarLinkProps = {
@@ -70,21 +76,32 @@ function NavItems() {
 }
 
 export default function Navbar() {
+  const [abierto, setAbierto] = React.useState(false)
+
   return (
     <header className='sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
       <div className='container flex h-14 max-w-screen-2xl items-center justify-between md:justify-center'>
         <div className='flex items-center gap-4 md:absolute md:left-4'>
-          <Sheet>
+          <Sheet open={abierto}>
+            <SheetTitle className='sr-only'>Menú de navegación</SheetTitle>
+            <SheetDescription className='sr-only'>
+              Navega por las distintas páginas de Capyfocus!
+            </SheetDescription>
             <SheetTrigger asChild>
               <Button
                 variant='ghost'
                 className='px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden'
+                onClick={() => setAbierto(prev => !prev)}
               >
                 <Menu className='size-5' />
                 <span className='sr-only'>Toggle Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side='left' className='pr-0'>
+            <SheetContent
+              side='left'
+              className='pr-0'
+              onClick={() => setAbierto(prev => !prev)}
+            >
               <div className='px-7'>
                 <LogoLink />
               </div>

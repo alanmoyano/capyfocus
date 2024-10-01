@@ -1,11 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { useState, useRef } from 'react'
 import html2canvas from 'html2canvas'
 import { ImageDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import EstadisticasPeriodo from './ComponentesEspecifico/EstadisticasPeriodo'
 
 import {
   Tooltip as ChartTooltip,
@@ -68,7 +68,7 @@ import { useSesion } from '@contexts/SesionContext'
 
 import { formatTime } from '@/lib/utils'
 import useSearchParams from '@hooks/useSearchParams'
-import { boolean, number, string } from 'zod'
+import Reproductor from './ComponentesEspecifico/Reproductor'
 
 // const chartData = [
 //   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -124,11 +124,6 @@ const chartConfig4 = {
   }
 } satisfies ChartConfig
 
-type tipoEstadistica = {
-  indice: number
-  estadistica: string
-}
-
 export default function CapyEstadisticas() {
   const queryParams = useSearch()
   const { period } = useSearchParams()
@@ -156,30 +151,10 @@ export default function CapyEstadisticas() {
   }
 
   const captureScreenshot = async (period: string) => {
-    const tipoEstadisticas: { indice: number; estadistica: string }[] = [
-      { indice: 0, estadistica: 'sesion' },
-      { indice: 1, estadistica: 'semanal' },
-      { indice: 2, estadistica: 'mensual' },
-      { indice: 3, estadistica: 'bimestral' },
-      { indice: 4, estadistica: 'semestral' },
-      { indice: 5, estadistica: 'evento' }
-    ]
-
-    function obtenerIndice(estadistica: string): number {
-      const resultado = tipoEstadisticas.find(
-        item => item.estadistica === estadistica
-      )
-
-      if (resultado) {
-        return resultado.indice
-      } else {
-        return -1
-      }
-    }
     // @ts-expect-error 7053 no seas molesto typescript
-    if (cardRefs[obtenerIndice(period)].current) {
+    if (cardRefs[period].current) {
       // @ts-expect-error 7053 no seas molesto typescript
-      const canvas = await html2canvas(cardRefs[obtenerIndice(period)].current)
+      const canvas = await html2canvas(cardRefs[period].current as HTMLElement)
       const image = canvas.toDataURL('image/png')
       const link = document.createElement('a')
       link.href = image
@@ -192,7 +167,7 @@ export default function CapyEstadisticas() {
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyEstadisticas!</h1>
       {/* Seleccion de tiempo */}
-      <div className='ml-32 mt-4 flex w-full justify-start'>
+      <div className='mt-4 flex flex-col justify-center px-2 md:flex-row'>
         <p className='flex items-center'>
           Ingresa el intervalo de tiempo para visualizar las estadisticas:{' '}
         </p>
@@ -290,14 +265,12 @@ export default function CapyEstadisticas() {
 
       {/* Pagina en blanco */}
       {selectedPeriod === '' && tiempoTotal === 0 && (
-        <>
-          <img src='./auto.gif' alt='' />
-        </>
+        <Reproductor src='/auto.webm' />
       )}
       {/* Pagina de sesion */}
       {selectedPeriod === 'sesion' && tiempoTotal === 0 && (
         <>
-          <img src='./Chicho/CapyDesilucionado.gif' className='' alt='' />
+          <Reproductor src='/Chicho/CapyDesilucionado.webm' />
           <div className='flex w-1/2 content-center justify-center rounded-lg bg-red-700 p-8 text-white shadow-lg'>
             <p>
               Primero inicia una sesion para tener estadisticas de la sesion!!
@@ -312,7 +285,6 @@ export default function CapyEstadisticas() {
           <div className='mr-12 flex w-full justify-end'>
             <Button
               variant='ghost'
-              // eslint-disable-next-line @typescript-eslint/no-misused-promises
               onClick={() => captureScreenshot('sesion')}
               className=''
             >
@@ -507,8 +479,8 @@ export default function CapyEstadisticas() {
                 </h1>
               </CardTitle>
             </CardHeader>
-            <CardContent className='flex justify-between gap-8'>
-              <div className='w-1/2'>
+            <CardContent className='flex flex-col justify-between gap-8 md:flex-row'>
+              <div className='md:w-1/2'>
                 <div className='grid grid-cols-2 gap-6'>
                   {[
                     {
@@ -553,11 +525,11 @@ export default function CapyEstadisticas() {
                   ))}
                 </div>
                 <div className='mt-8 flex justify-center'>
-                  <img src='./auto.gif' alt='Mascota' className='w-1/2' />
+                  <Reproductor src='/auto.webm' className='w-1/2' />
                 </div>
               </div>
 
-              <div className='w-1/2 space-y-6'>
+              <div className='space-y-6 md:w-1/2'>
                 <Card className='overflow-hidden rounded-lg shadow-md'>
                   <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-2'>
                     <CardTitle className='text-lg font-bold text-gray-900'>
@@ -618,8 +590,8 @@ export default function CapyEstadisticas() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className='p-2'>
-                    <div className='flex'>
-                      <div className='w-1/2'>
+                    <div className='flex flex-col md:flex-row'>
+                      <div className='md:w-1/2'>
                         <Calendar
                           mode='single'
                           selected={date}
@@ -627,7 +599,7 @@ export default function CapyEstadisticas() {
                           className='rounded-md border text-sm shadow-sm'
                         />
                       </div>
-                      <div className='w-1/2 pl-4'>
+                      <div className='pl-4 md:w-1/2'>
                         <h1 className='mb-2 text-lg font-semibold'>Eventos</h1>
                         {/* Lista de eventos */}
                         <p>11/07 Brenda conquista el mundo</p>
@@ -762,8 +734,8 @@ export default function CapyEstadisticas() {
                 Tu progreso en los últimos dos meses
               </CardTitle>
             </CardHeader>
-            <CardContent className='flex justify-between gap-4'>
-              <div className='w-1/2 pl-4'>
+            <CardContent className='flex flex-col justify-between gap-4 md:flex-row'>
+              <div className='md:w-1/2 md:pl-4'>
                 <div className='grid grid-cols-2 gap-14'>
                   <div>
                     <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
@@ -845,18 +817,15 @@ export default function CapyEstadisticas() {
                   </p>
                 </div>
               </div>
-              <div className='ml-2 w-1/3 pr-6'>
-                <Card className='w-auto'>
-                  {/* Por ahora me ganó el borde del calendario. Ver si mostramos las sesiones en el cal*/}
-                  <div className='text-center'>
-                    <Calendar
-                      mode='single'
-                      selected={date}
-                      onSelect={setDate}
-                      className='inline-block rounded-lg border p-4 shadow-sm'
-                    />
-                  </div>
-                </Card>
+              <div className='md:w-1/3 md:pr-4'>
+                <div className='text-center'>
+                  <Calendar
+                    mode='single'
+                    selected={date}
+                    onSelect={setDate}
+                    className='inline-block rounded-lg border bg-background p-4 shadow-sm'
+                  />
+                </div>
                 <Card className='mt-8 w-full rounded-lg shadow-md'>
                   <CardHeader>
                     <CardTitle className='p-2 text-center'>
@@ -906,7 +875,7 @@ export default function CapyEstadisticas() {
                 </Card>
               </div>
             </CardContent>
-            <h2 className='ml-4 flex w-full justify-start text-2xl font-bold'>
+            {/* <h2 className='ml-4 flex w-full justify-start text-2xl font-bold'>
               Objetivos favoritos
             </h2>
             <Table className='mt-4'>
@@ -947,7 +916,7 @@ export default function CapyEstadisticas() {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
+            </Table> */}
           </Card>
         </>
       )}
@@ -966,15 +935,15 @@ export default function CapyEstadisticas() {
           </div>
           <Card
             ref={cardRefs.seisMeses}
-            className='container mx-auto mt-4 flex-col overflow-y-auto rounded-lg bg-orange-100 p-6 shadow-lg'
+            className='container mx-auto mt-4 flex flex-col overflow-y-auto rounded-lg bg-orange-100 p-6 shadow-lg'
           >
             <CardHeader>
               <CardTitle className='mb-4 py-4 text-left text-3xl font-bold'>
                 Tu progreso en los últimos seis meses
               </CardTitle>
             </CardHeader>
-            <CardContent className='flex justify-between gap-4'>
-              <div className='w-1/2 pl-4'>
+            <CardContent className='flex flex-col justify-between gap-4 md:flex-row'>
+              <div className='md:w-1/2 md:pl-4'>
                 <div className='grid grid-cols-2 gap-14'>
                   <div>
                     <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
@@ -1074,7 +1043,7 @@ export default function CapyEstadisticas() {
                   </p>
                 </div>
               </div>
-              <div className='ml-2 w-1/3 pr-6'>
+              <div className='flex flex-col gap-4 md:w-1/3 md:pr-4'>
                 <Card className='w-full'>
                   {/* Si bien es redundante considerando los titulos, esta bueno tener algo visual tambien!! ver <3 */}
                   <CardHeader>
@@ -1123,21 +1092,25 @@ export default function CapyEstadisticas() {
                     </div>
                   </CardFooter>
                 </Card>
-                <Card className='mt-8 w-auto'>
-                  {/* Por ahora me ganó el borde del calendario. Ver si mostramos las sesiones en el cal*/}
-                  <div className='text-center'>
-                    <Calendar
-                      mode='single'
-                      selected={date}
-                      onSelect={setDate}
-                      className='inline-block rounded-md border p-4'
-                    />
-                  </div>
-                </Card>
+                <div className='text-center'>
+                  <Calendar
+                    mode='single'
+                    selected={date}
+                    onSelect={setDate}
+                    className='inline-block rounded-md border bg-background p-4'
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
           {/* Ver fin de tarjeta, para que se termine antes y no con la pagina*/}
+        </>
+      )}
+
+      {selectedPeriod === 'evento' && (
+        <>
+          <p>Funciona?</p>
+          <EstadisticasPeriodo period='evento'></EstadisticasPeriodo>
         </>
       )}
     </>

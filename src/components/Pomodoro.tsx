@@ -10,6 +10,7 @@ import useSound from 'use-sound'
 import { useMusic } from './contexts/MusicContext'
 import { useMotivation } from './contexts/MotivationContext'
 import { useSesion } from './contexts/SesionContext'
+import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
 
 type Mode = 'Estudiando' | 'Descansando'
 
@@ -223,6 +224,7 @@ export default function Pomodoro() {
       {/* Columna imagen  */}
       <div className='grid grid-cols-2 gap-12'>
         <div className=''>
+          <DialogoChicho motivation={motivationType} />
           <video src='/idle.webm' autoPlay loop muted playsInline />
 
           <div className='mb-4 rounded-lg bg-primary p-2'>

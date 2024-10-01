@@ -17,6 +17,7 @@ import { MotivationProvider } from './components/contexts/MotivationContext'
 import { MusicProvider } from './components/contexts/MusicContext'
 import PruebaTabla from './components/PruebaTabla'
 import { SesionProvider } from './components/contexts/SesionContext'
+import { Helmet } from 'react-helmet'
 
 function App() {
   return (
@@ -28,6 +29,10 @@ function App() {
           <SesionProvider>
             <MusicProvider>
               <Navbar />
+
+              <Helmet>
+                <title>Capyfocus</title>
+              </Helmet>
 
               <main>
                 <Switch>

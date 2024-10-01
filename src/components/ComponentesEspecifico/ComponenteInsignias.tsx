@@ -1,4 +1,6 @@
-import React from 'react'
+import { useEffect, useState } from 'react'
+
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -7,25 +9,27 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-import { DialogClose } from '@radix-ui/react-dialog'
-import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
-import { useEffect, useState } from 'react'
+import { DialogClose } from '@radix-ui/react-dialog'
+
+import '@/brenda.css'
 
 export default function CapyInsiginiasCards({
   UrlImg,
   descLock,
   descUnlock,
   capyName,
-  progress
+  progress,
+  ImgStyle
 }: {
   UrlImg: string
   descLock: string
   descUnlock: string
   capyName: string
   progress: number
+  ImgStyle?: React.CSSProperties
 }) {
-  const bloqueada = './CapyInsigniasImagenes/CapySherlock.png'
+  const bloqueada = './CapyInsigniasImagenes/CapySherlock.webp'
   const [isUnlocked, setIsUnlocked] = useState<boolean>(false)
 
   useEffect(() => {
@@ -50,6 +54,7 @@ export default function CapyInsiginiasCards({
                             <div className='imagen'>
                               <img
                                 src={UrlImg}
+                                style={ImgStyle}
                                 alt='HidenInsignia'
                                 className='absolute inset-0 h-full w-full object-contain p-4'
                               />
@@ -70,6 +75,7 @@ export default function CapyInsiginiasCards({
                           <div className='container flex h-full w-full justify-center text-center'>
                             <img
                               src={bloqueada}
+                              style={ImgStyle}
                               alt='HidenInsignia'
                               className='absolute inset-0 h-full w-full object-contain p-4'
                             />
@@ -129,7 +135,9 @@ export default function CapyInsiginiasCards({
           </div>
           <DialogFooter>
             <DialogClose>
-              <Button className=''>Salir</Button>
+              <Button className='' variant={'accent'}>
+                Salir
+              </Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>

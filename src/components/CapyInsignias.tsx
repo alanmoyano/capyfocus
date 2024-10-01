@@ -1,186 +1,57 @@
 import { Button } from '@/components/ui/button'
 import { useLocation } from 'wouter'
-import { Progress } from '@/components/ui/progress'
-import { useEffect, useState } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog'
-import { DialogClose } from '@radix-ui/react-dialog'
+
 import CapyInsigniasCards from '@/components/ComponentesEspecifico/ComponenteInsignias'
+import { useEffect, useState } from 'react'
+import { supabase } from './supabase/client'
+
+type Insignia = {
+  id: string
+  nombre: string
+  descripcionBloqueada: string
+  descripcionDesbloqueada: string
+}
 
 export default function CapyInsignias() {
+  const [insignias, setInsignias] = useState<Insignia[]>([])
   const [, setLocation] = useLocation()
-  const [progress, setProgress] = useState(10)
-  const [isUnlocked, setIsUnlocked] = useState(false)
+
+  useEffect(() => {
+    async function getInsingias() {
+      const insignias = await supabase.from('CapyInsignias').select('*')
+      return insignias.data
+    }
+
+    getInsingias()
+      .then(data => {
+        if (!data) return
+
+        console.log(data)
+        setInsignias(data)
+      })
+      .catch((error: unknown) => console.error(error))
+  }, [])
 
   const handleVolver = () => {
     setLocation('/')
   }
-
-  useEffect(() => {
-    const timer = setTimeout(() => setProgress(66), 500)
-    return () => clearTimeout(timer)
-  }, [])
-
-  useEffect(() => {
-    if (progress === 100) {
-      setIsUnlocked(true)
-    }
-  }, [progress])
-
-  const bloqueada = './CapyInsigniasImagenes/CapySherlock.png'
 
   // la carta hay que clickearla para que se de vuelta y despues, una vez desbloequeda ya no se da mas vuelta.
 
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyInsiginias!</h1>
-      <div className='flex p-10 gap-10 col-span-5'>
-        <div>
+      <div className='grid grid-cols-1 gap-10 p-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
+        {insignias.map(insignia => (
           <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyMatrix.png'
-            descLock='Estudia 25 veces con motivación pasivo/agresivo'
-            descUnlock='Estudiaste 25 veces con motivación pasivo/agresivo'
-            capyName='CapyMatrix'
-            progress={0}
+            key={insignia.id}
+            UrlImg={`CapyInsigniasImagenes/${insignia.nombre}.webp`}
+            descLock={insignia.descripcionBloqueada}
+            descUnlock={insignia.descripcionDesbloqueada}
+            capyName={insignia.nombre}
+            progress={10}
           />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyScout.png'
-            descLock='Estudia 25 veces con motivación positiva'
-            descUnlock='Estudiaste 25 veces con motivación positiva'
-            capyName='CapyExplorador'
-            progress={0}
-          />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='/CapyInsigniasImagenes/MontainCapy.png'
-            descLock='Alcanza un evento'
-            descUnlock='El dia de tu ansiado evento llegó'
-            capyName='MountainCapy'
-            progress={0}
-          />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyLoto.png'
-            descLock='Estudia durante 2 horas seguidas'
-            descUnlock='Estuviste estudiando durante 2 horas seguidas'
-            capyName='CapyLoto'
-            progress={0}
-          />
-        </div>        
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyGandalf.png'
-            descLock='Acumula 10 horas de estudio para un evento'
-            descUnlock='Acumula 10 horas de estudio para un evento'
-            capyName='CapyGandalf'
-            progress={0}
-          />
-        </div>
-      </div>
-      <div className='flex p-10 gap-10 col-span-5'>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyCanchero.png'
-            descLock='Finaliza 5 sesiones de estudio'
-            descUnlock='Haz realizado 5 sesiones de estudio'
-            capyName='CapyCanchero'
-            progress={0}
-          />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='/CapyInsigniasImagenes/CapyLisa.png'
-            descLock='Finaliza 15 sesiones de estudio'
-            descUnlock='Haz realizado 15 sesiones de estudio'
-            capyName='CapyLisa'
-            progress={0}
-          />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyOsado.png'
-            descLock='Finaliza 35 sesiones de estudio'
-            descUnlock='Haz realizado 35 sesiones de estudio'
-            capyName='CapyOsado'
-            progress={0}
-          />
-        </div>        
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/SuperCapy.png'
-            descLock='Finaliza 50 sesiones de estudio'
-            descUnlock='Haz realizado 50 sesiones de estudio'
-            capyName='SuperCapy'
-            progress={0}
-          />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyGod.png'
-            descLock='Finaliza 100 sesiones de estudio'
-            descUnlock='Haz realizado 100 sesiones de estudio'
-            capyName='CapyGod'
-            progress={0}
-          />
-        </div>
-      </div>
-      <div className='flex p-10 gap-10 col-span-5'>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyTain.png'
-            descLock='Cumple todos los objetivos de una sesión de estudio'
-            descUnlock='Haz cumplido todos los objetivos de una sesión de estudio'
-            capyName='CapyTain'
-            progress={0}
-          />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/ElCapyDeLaPerla.png'
-            descLock='Completa 35 objetivos'
-            descUnlock='Haz logrado completar 35 objetivos'
-            capyName='Capy De La Perla'
-            progress={0}
-          />
-        </div>        
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyAstronauta.png'
-            descLock='Completa 75 objetivos'
-            descUnlock='Haz logrado completar 75 objetivos'
-            capyName='CapyAstronauta'
-            progress={0}
-          />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='/CapyInsigniasImagenes/WWECapy.png'
-            descLock='Completa 100 objetivos'
-            descUnlock='Haz logrado completar 100 objetivos'
-            capyName='CapyWWE'
-            progress={0}
-          />
-        </div>
-        <div>
-          <CapyInsigniasCards
-            UrlImg='./CapyInsigniasImagenes/CapyAbandonado.png'
-            descLock="Pasa 30 dias sin realizar ningnuna sesion de estudio (Don't do it)"
-            descUnlock='Descansaste por 30 dias seguidos, es hora de volver'
-            capyName='CapyAbandonado'
-            progress={0}
-          />
-        </div>
+        ))}
       </div>
       <div className='container w-screen'>
         <Button className='mt-4' onClick={handleVolver}>
@@ -188,7 +59,7 @@ export default function CapyInsignias() {
         </Button>
       </div>
 
-      <span className='relative inline-flex'>
+      {/*       <span className='relative inline-flex'>
         <Button type='button' className=''>
           Transactions
         </Button>
@@ -196,7 +67,7 @@ export default function CapyInsignias() {
           <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-secondary opacity-75'></span>
           <span className='relative inline-flex h-3 w-3 rounded-full bg-secondary'></span>
         </span>
-      </span>
+      </span> */}
     </>
   )
 }

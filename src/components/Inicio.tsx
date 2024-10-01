@@ -2,7 +2,7 @@ import { KeyboardEvent, useEffect, useState } from 'react'
 
 import { useLocation } from 'wouter'
 
-import { es } from 'date-fns/locale'
+import Eventos from './ComponentesEspecifico/Eventos'
 
 import {
   Edit3,
@@ -26,18 +26,6 @@ import {
 } from '@/components/ui/tooltip'
 
 import { Button } from './ui/button'
-
-import { Label } from '@/components/ui/label'
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger
-} from '@/components/ui/sheet'
 
 import {
   Select,
@@ -64,8 +52,6 @@ import {
 } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 
-import { Calendar } from '@/components/ui/calendar'
-
 import { Card, CardContent } from '@/components/ui/card'
 import {
   Carousel,
@@ -78,16 +64,13 @@ import { useMotivation } from './contexts/MotivationContext'
 
 import { useMusic } from './contexts/MusicContext'
 
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { useSesion } from '@/components/contexts/SesionContext'
 
-type CapyMetodos = 'Capydoro' | 'Capymetro' | ''
+import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
+import { supabase } from './supabase/client'
+import { Helmet } from 'react-helmet'
 
-const descriptions: Record<CapyMetodos, string> = {
-  Capydoro: 'Estudia con el método Pomodoro',
-  Capymetro: 'Estudia con un cronómetro',
-  '': ''
-}
+type CapyMetodos = 'Capydoro' | 'Capymetro'
 
 /* Evento */
 type Event = {
@@ -98,7 +81,7 @@ type Event = {
 const playlists = [
   {
     key: 1,
-    src: './CapyChill.jpg',
+    src: './CapyChill.webp',
     alt: 'CapyChill',
     title: 'Capy Chill',
     description: 'Música relajante para estudiar con tranquilidad',
@@ -138,10 +121,15 @@ const playlists = [
   // }
 ]
 
+type Motivacion = {
+  id: number
+  nombre: string
+  descripcion?: string
+}
+
 export default function Inicio() {
   const [open, setOpen] = useState(false)
   const [value] = useState('')
-  const [date, setDate] = useState<Date | undefined>(new Date())
   const [inputValue, setInputValue] = useState('')
   const [index, setIndex] = useState<number | null>(null)
   const [selectedPlaylist, setSelectedPlaylist] = useState(-1)
@@ -149,7 +137,7 @@ export default function Inicio() {
   const { objetivos, setObjetivos, objetivosFav, setObjetivosFav } =
     useObjetivos()
 
-  const [description, setDescription] = useState<CapyMetodos>('')
+  const [description, setDescription] = useState<CapyMetodos>()
 
   const [, setLocation] = useLocation()
 
@@ -157,11 +145,9 @@ export default function Inicio() {
 
   const { setSelectedMusic } = useMusic()
 
-  const [events, setEvents] = useState<Event[]>([])
-  const [eventTitle, setEventTitle] = useState<string>('')
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
-
   const { setTecnicaEstudio } = useSesion()
+
+  const [motivaciones, setMotivaciones] = useState<Motivacion[]>([])
 
   const handleAccept = () => {
     switch (description) {
@@ -174,10 +160,6 @@ export default function Inicio() {
         setTecnicaEstudio(description)
         break
     }
-  }
-
-  const handleVolver = () => {
-    setLocation('/')
   }
 
   const handleSelect = (value: string) => {
@@ -228,17 +210,6 @@ export default function Inicio() {
     }
   }
 
-  /* Evento */
-
-  /* const [date, setDate] = useState<Date | undefined>(new Date()) */
-
-  const addEvent = () => {
-    if (date && eventTitle) {
-      setEvents([...events, { date, title: eventTitle }])
-      setEventTitle('') // Limpiar el título después de añadir el evento
-    }
-  }
-
   // musica
 
   const handleMusicSelection = (
@@ -259,10 +230,37 @@ export default function Inicio() {
     setSelectedMusic(null)
   }, [])
 
+  useEffect(() => {
+    async function getMotivaciones() {
+      const { data } = await supabase.from('TiposMotivacion').select('*')
+      return data
+    }
+
+    getMotivaciones()
+      .then(data => {
+        if (!data) return
+
+        console.log(data)
+        setMotivaciones(data)
+      })
+
+      .catch((error: unknown) => console.error(error))
+  }, [])
+
   return (
     <>
+      <Helmet>
+        <link
+          rel='preload'
+          fetchPriority='high'
+          as='image'
+          href='/CapyChill.webp'
+          type='image/webp'
+        />
+      </Helmet>
       <section className='mt-10 flex flex-col gap-20 p-10 md:flex-row'>
-        <div className='m-auto'>
+        <div className=''>
+          <DialogoChicho />
           <video src='/idle.webm' autoPlay loop muted playsInline />
         </div>
 
@@ -290,233 +288,11 @@ export default function Inicio() {
             </ToggleGroupItem>
           </ToggleGroup>
           {/* Agregar evento  */}
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button
-                variant='secondary'
-                className='mt-6 w-full bg-secondary sm:w-auto'
-              >
-                Eventos
-              </Button>
-            </SheetTrigger>
-            <SheetContent className='w-full sm:max-w-md'>
-              <ScrollArea className='h-[80vh] pr-4'>
-                <SheetHeader>
-                  <SheetTitle className='text-xl font-bold sm:text-2xl'>
-                    Agregar evento
-                  </SheetTitle>
-                  <SheetDescription className='text-lg text-black sm:text-xl'>
-                    Agrega eventos desde aquí.
-                  </SheetDescription>
-                </SheetHeader>
-                <p className='mt-2 text-sm text-muted-foreground'>
-                  ¿Cual es el evento?
-                </p>
-                <div className='grid gap-4 py-4'>
-                  <div className='grid grid-cols-1 items-center gap-4 sm:grid-cols-4'>
-                    <Label
-                      htmlFor='name'
-                      className='text-sm font-bold sm:text-right sm:text-base'
-                    >
-                      Nombre
-                    </Label>
-                    <Input
-                      id='name'
-                      type='text'
-                      value={eventTitle}
-                      onChange={e => setEventTitle(e.target.value)}
-                      placeholder='Evento'
-                      className='col-span-1 sm:col-span-3'
-                    />
-                  </div>
-                  <p className='text-sm text-muted-foreground'>
-                    Selecciona una fecha para el evento.
-                  </p>
-                  <div className='grid grid-cols-1 items-center gap-4 sm:grid-cols-4'>
-                    <Label className='text-sm font-bold sm:text-right sm:text-base'>
-                      Calendario
-                    </Label>
-                  </div>
-                  {/* Calendario */}
 
-                  <div className='w-full sm:w-auto'>
-                    <Calendar
-                      mode='single'
-                      selected={date}
-                      onSelect={selectedDate => {
-                        const today = new Date()
-                        today.setHours(0, 0, 0, 0)
-                        if (selectedDate && selectedDate >= today) {
-                          setDate(selectedDate)
-                        }
-                      }}
-                      className='flex w-full justify-center rounded-md border sm:w-auto'
-                      modifiers={{
-                        eventDay: events.map(event => event.date),
-                        disabled: date => {
-                          const today = new Date()
-                          today.setHours(0, 0, 0, 0)
-                          return date < today
-                        }
-                      }}
-                      modifiersClassNames={{
-                        eventDay: 'bg-secondary',
-                        disabled: 'opacity-50 cursor-not-allowed'
-                      }}
-                      locale={es}
-                      onDayClick={(day: Date) => {
-                        const clickedEvent = events.find(
-                          event =>
-                            event.date.toDateString() === day.toDateString()
-                        )
-                        setSelectedEvent(clickedEvent ?? null)
-                      }}
-                      components={{
-                        DayContent: ({ date }) => {
-                          const event = events.find(
-                            e => e.date.toDateString() === date.toDateString()
-                          )
-                          return (
-                            <div>
-                              <TooltipProvider delayDuration={50}>
-                                <Tooltip delayDuration={50}>
-                                  <TooltipTrigger asChild>
-                                    <div>{date.getDate()}</div>
-                                  </TooltipTrigger>
-                                  {event && (
-                                    <TooltipContent>
-                                      <p>{event.title}</p>
-                                    </TooltipContent>
-                                  )}
-                                </Tooltip>
-                              </TooltipProvider>
-                            </div>
-                          )
-                        }
-                      }}
-                    />
+          <Eventos />
 
-                    <div className='mt-4'>
-                      <Button
-                        onClick={addEvent}
-                        variant={'accent'}
-                        className='w-full sm:w-auto'
-                      >
-                        Agregar
-                      </Button>
-                    </div>
-                    <hr className='my-4' />
-                    <div className='mt-4'>
-                      <p className='text-sm text-muted-foreground'>
-                        Selecciona el evento para agregar objetivos de sesión:
-                      </p>
-                      <h1 className='mt-2 border-b-2 text-xl font-bold text-sky-800 sm:text-2xl'>
-                        Información de eventos:
-                      </h1>
-                      <h2 className='text-lg font-bold sm:text-xl'>
-                        Eventos programados:
-                      </h2>
-                      <ul className='list-inside list-disc space-y-2 text-sm text-black sm:text-base'>
-                        {events.map((event, index) => (
-                          <li
-                            key={index}
-                            className='flex items-center justify-between'
-                          >
-                            <span
-                              onClick={() => setSelectedEvent(event)}
-                              className={`cursor-pointer ${
-                                selectedEvent === event
-                                  ? 'text-primary'
-                                  : 'hover:text-primary'
-                              }`}
-                            >
-                              {event.date.toLocaleDateString('es-ES', {
-                                weekday: 'short',
-                                month: 'numeric',
-                                day: 'numeric'
-                              })}
-                              - {event.title}
-                            </span>
-                            <Button
-                              variant='ghost'
-                              size='sm'
-                              onClick={() => {
-                                setEvents(events.filter((_, i) => i !== index))
-                                if (selectedEvent === event) {
-                                  setSelectedEvent(null)
-                                }
-                              }}
-                            >
-                              <Trash size={16} />
-                            </Button>
-                          </li>
-                        ))}
-                      </ul>
-                      <h2 className='mt-4 text-lg font-bold sm:text-xl'>
-                        Evento seleccionado:
-                      </h2>
-                      {selectedEvent ? (
-                        <div className='mt-2'>
-                          <p className='font-bold'>
-                            Evento:{' '}
-                            <span className='font-normal'>
-                              {selectedEvent.title}
-                            </span>
-                          </p>
-                          <p>
-                            Fecha:{' '}
-                            {selectedEvent.date.toLocaleDateString('es-ES', {
-                              weekday: 'long',
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric'
-                            })}
-                          </p>
-                        </div>
-                      ) : (
-                        <p>Ningún evento seleccionado</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </ScrollArea>
-              <SheetFooter className='flex w-full justify-between'>
-                <SheetClose asChild>
-                  <div className='flex w-full justify-between'>
-                    <Button
-                      variant={'accent'}
-                      className='w-full sm:mr-2 sm:w-auto'
-                      onClick={() => {
-                        handleVolver()
-                        setSelectedEvent(null)
-                      }}
-                    >
-                      Cancelar
-                    </Button>
-                    <Button
-                      variant={'secondary'}
-                      className='w-full sm:ml-2 sm:w-auto'
-                      onClick={() => {
-                        handleVolver()
-                      }}
-                    >
-                      Aceptar
-                    </Button>
-                  </div>
-                </SheetClose>
-              </SheetFooter>
-            </SheetContent>
-          </Sheet>
           {/* Objetivos */}
           <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
-            {selectedEvent ? (
-              <p className='font-bold'>
-                Evento:{' '}
-                <span className='font-normal'>{selectedEvent.title}</span>
-              </p>
-            ) : (
-              <p></p>
-            )}
             <div className='mt-2 flex items-center gap-2'>
               <Input
                 type='text'
@@ -681,7 +457,24 @@ export default function Inicio() {
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>Tipo de motivación</SelectLabel>
-                  <SelectItem key={0} value='Positiva'>
+                  {motivaciones.map(motivacion => (
+                    <SelectItem key={motivacion.id} value={motivacion.nombre}>
+                      <TooltipProvider delayDuration={150}>
+                        <Tooltip delayDuration={150}>
+                          <TooltipTrigger asChild>
+                            <p>{motivacion.nombre}</p>
+                          </TooltipTrigger>
+                          <TooltipContent className='ml-16'>
+                            <p>
+                              {motivacion.descripcion ??
+                                `Mensajes ${motivacion.nombre}`}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </SelectItem>
+                  ))}
+                  {/* <SelectItem key={0} value='Positiva'>
                     <TooltipProvider delayDuration={50}>
                       <Tooltip delayDuration={50}>
                         <TooltipTrigger asChild>
@@ -704,7 +497,7 @@ export default function Inicio() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                  </SelectItem>
+                  </SelectItem> */}
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -777,9 +570,6 @@ export default function Inicio() {
             >
               Aceptar
             </Button>
-          </div>
-          <div className='mt-4'>
-            <p>{descriptions[description]}</p>
           </div>
         </div>
       </section>
