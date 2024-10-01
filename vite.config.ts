@@ -22,7 +22,6 @@ export default defineConfig({
           standalone: [
             './src/components/ui/input.tsx',
             './src/components/ui/card.tsx',
-            './src/components/ui/sheet.tsx',
             './src/components/ui/table.tsx'
           ],
           button: ['./src/components/ui/button.tsx', '@radix-ui/react-slot'],
@@ -32,7 +31,12 @@ export default defineConfig({
             './src/components/ui/checkbox.tsx',
             '@radix-ui/react-checkbox'
           ],
-          dialog: ['./src/components/ui/dialog.tsx', '@radix-ui/react-dialog'],
+
+          dialog: [
+            './src/components/ui/dialog.tsx',
+            './src/components/ui/sheet.tsx',
+            '@radix-ui/react-dialog'
+          ],
           popover: [
             './src/components/ui/popover.tsx',
             '@radix-ui/react-popover'
@@ -47,32 +51,31 @@ export default defineConfig({
             './src/components/ui/tooltip.tsx',
             '@radix-ui/react-tooltip'
           ],
-          'alert-dialog': [
-            './src/components/ui/alert-dialog.tsx',
-            '@radix-ui/react-alert-dialog'
-          ],
           calendar: ['./src/components/ui/calendar.tsx', 'react-day-picker'],
-          avatar: ['./src/components/ui/avatar.tsx', '@radix-ui/react-avatar'],
           'dropdown-menu': [
             './src/components/ui/dropdown-menu.tsx',
             '@radix-ui/react-dropdown-menu'
           ],
-          'hover-card': [
-            './src/components/ui/hover-card.tsx',
-            '@radix-ui/react-hover-card'
-          ],
-          progress: [
-            './src/components/ui/progress.tsx',
-            '@radix-ui/react-progress'
-          ],
-          'radio-group': [
-            './src/components/ui/radio-group.tsx',
-            '@radix-ui/react-radio-group'
-          ],
-          tabs: ['./src/components/ui/tabs.tsx', '@radix-ui/react-tabs'],
+
           'scroll-area': [
             './src/components/ui/scroll-area.tsx',
             '@radix-ui/react-scroll-area'
+          ],
+          smallers: [
+            './src/components/ui/hover-card.tsx',
+            '@radix-ui/react-hover-card',
+            './src/components/ui/radio-group.tsx',
+            '@radix-ui/react-radio-group',
+            './src/components/ui/resizable.tsx',
+            'react-resizable-panels',
+            './src/components/ui/alert-dialog.tsx',
+            '@radix-ui/react-alert-dialog',
+            './src/components/ui/avatar.tsx',
+            '@radix-ui/react-avatar',
+            './src/components/ui/progress.tsx',
+            '@radix-ui/react-progress',
+            './src/components/ui/tabs.tsx',
+            '@radix-ui/react-tabs'
           ],
           command: ['./src/components/ui/command.tsx', 'cmdk'],
           carousel: [
@@ -83,10 +86,7 @@ export default defineConfig({
             './src/components/ui/navigation-menu.tsx',
             '@radix-ui/react-navigation-menu'
           ],
-          resizable: [
-            './src/components/ui/resizable.tsx',
-            'react-resizable-panels'
-          ],
+
           form: ['./src/components/ui/form.tsx', 'react-hook-form'],
           charts: ['recharts', './src/components/ui/chart.tsx'],
           icons: ['lucide-react']
