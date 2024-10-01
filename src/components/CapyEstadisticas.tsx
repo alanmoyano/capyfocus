@@ -740,8 +740,8 @@ export default function CapyEstadisticas() {
                 Tu progreso en los últimos dos meses
               </CardTitle>
             </CardHeader>
-            <CardContent className='flex justify-between gap-4'>
-              <div className='w-1/2 pl-4'>
+            <CardContent className='flex flex-col justify-between gap-4 md:flex-row'>
+              <div className='md:w-1/2 md:pl-4'>
                 <div className='grid grid-cols-2 gap-14'>
                   <div>
                     <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
@@ -823,18 +823,15 @@ export default function CapyEstadisticas() {
                   </p>
                 </div>
               </div>
-              <div className='ml-2 w-1/3 pr-6'>
-                <Card className='w-auto'>
-                  {/* Por ahora me ganó el borde del calendario. Ver si mostramos las sesiones en el cal*/}
-                  <div className='text-center'>
-                    <Calendar
-                      mode='single'
-                      selected={date}
-                      onSelect={setDate}
-                      className='inline-block rounded-lg border p-4 shadow-sm'
-                    />
-                  </div>
-                </Card>
+              <div className='md:w-1/3 md:pr-4'>
+                <div className='text-center'>
+                  <Calendar
+                    mode='single'
+                    selected={date}
+                    onSelect={setDate}
+                    className='inline-block rounded-lg border bg-background p-4 shadow-sm'
+                  />
+                </div>
                 <Card className='mt-8 w-full rounded-lg shadow-md'>
                   <CardHeader>
                     <CardTitle className='p-2 text-center'>
@@ -884,7 +881,7 @@ export default function CapyEstadisticas() {
                 </Card>
               </div>
             </CardContent>
-            <h2 className='ml-4 flex w-full justify-start text-2xl font-bold'>
+            {/* <h2 className='ml-4 flex w-full justify-start text-2xl font-bold'>
               Objetivos favoritos
             </h2>
             <Table className='mt-4'>
@@ -925,7 +922,7 @@ export default function CapyEstadisticas() {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
+            </Table> */}
           </Card>
         </>
       )}
@@ -944,15 +941,15 @@ export default function CapyEstadisticas() {
           </div>
           <Card
             ref={cardRefs.seisMeses}
-            className='container mx-auto mt-4 flex-col overflow-y-auto rounded-lg bg-orange-100 p-6 shadow-lg'
+            className='container mx-auto mt-4 flex flex-col overflow-y-auto rounded-lg bg-orange-100 p-6 shadow-lg'
           >
             <CardHeader>
               <CardTitle className='mb-4 py-4 text-left text-3xl font-bold'>
                 Tu progreso en los últimos seis meses
               </CardTitle>
             </CardHeader>
-            <CardContent className='flex justify-between gap-4'>
-              <div className='w-1/2 pl-4'>
+            <CardContent className='flex flex-col justify-between gap-4 md:flex-row'>
+              <div className='md:w-1/2 md:pl-4'>
                 <div className='grid grid-cols-2 gap-14'>
                   <div>
                     <p className='text-md rounded-lg bg-primary p-1 text-center font-semibold shadow-md'>
@@ -1052,7 +1049,7 @@ export default function CapyEstadisticas() {
                   </p>
                 </div>
               </div>
-              <div className='ml-2 w-1/3 pr-6'>
+              <div className='flex flex-col gap-4 md:w-1/3 md:pr-4'>
                 <Card className='w-full'>
                   {/* Si bien es redundante considerando los titulos, esta bueno tener algo visual tambien!! ver <3 */}
                   <CardHeader>
@@ -1101,17 +1098,14 @@ export default function CapyEstadisticas() {
                     </div>
                   </CardFooter>
                 </Card>
-                <Card className='mt-8 w-auto'>
-                  {/* Por ahora me ganó el borde del calendario. Ver si mostramos las sesiones en el cal*/}
-                  <div className='text-center'>
-                    <Calendar
-                      mode='single'
-                      selected={date}
-                      onSelect={setDate}
-                      className='inline-block rounded-md border p-4'
-                    />
-                  </div>
-                </Card>
+                <div className='text-center'>
+                  <Calendar
+                    mode='single'
+                    selected={date}
+                    onSelect={setDate}
+                    className='inline-block rounded-md border bg-background p-4'
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
