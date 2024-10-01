@@ -2,7 +2,7 @@ import { KeyboardEvent, useEffect, useState } from 'react'
 
 import { useLocation } from 'wouter'
 
-import  Eventos  from './ComponentesEspecifico/Eventos'
+import Eventos from './ComponentesEspecifico/Eventos'
 
 import {
   Edit3,
@@ -26,8 +26,6 @@ import {
 } from '@/components/ui/tooltip'
 
 import { Button } from './ui/button'
-
-
 
 import {
   Select,
@@ -53,8 +51,6 @@ import {
   PopoverTrigger
 } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
-
-
 
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -171,8 +167,6 @@ export default function Inicio() {
         break
     }
   }
-
-
 
   const handleSelect = (value: string) => {
     console.log(value)
@@ -291,9 +285,8 @@ export default function Inicio() {
             </ToggleGroupItem>
           </ToggleGroup>
           {/* Agregar evento  */}
-          
-          <Eventos/>
 
+          <Eventos />
 
           {/* Objetivos */}
           <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
