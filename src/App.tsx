@@ -18,6 +18,7 @@ import { MusicProvider } from './components/contexts/MusicContext'
 import PruebaTabla from './components/PruebaTabla'
 import { SesionProvider } from './components/contexts/SesionContext'
 import { Helmet } from 'react-helmet'
+import NotFound from './components/NotFound'
 
 function App() {
   return (
@@ -58,7 +59,9 @@ function App() {
 
                   <Route path='/usuario' component={Usuario} />
 
-                  <Route>404!</Route>
+                  <Route>
+                    <NotFound />
+                  </Route>
                 </Switch>
               </main>
             </MusicProvider>

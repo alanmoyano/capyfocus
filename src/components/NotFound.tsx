@@ -1,7 +1,9 @@
 import { Button } from '@/components/ui/button'
 import Reproductor from './ComponentesEspecifico/Reproductor'
+import { useLocation } from 'wouter'
 
 export default function NotFound() {
+  const [, setLocation] = useLocation()
   return (
     <>
       <h1 className='text-3xl font-semibold'>Pagina no encontrada</h1>
@@ -11,11 +13,7 @@ export default function NotFound() {
           Lo sentimos! La pagina que buscas no existe. Por favor, verifica la
           URL o regresa a la pagina principal.
         </p>
-        <Button
-          className=''
-          variant={'outline'}
-          onClick={() => (window.location.href = '/')}
-        >
+        <Button onClick={() => setLocation('/')}>
           Para regresar a la pagina principal click aquí
         </Button>
       </div>
