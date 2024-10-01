@@ -71,10 +71,6 @@ import { supabase } from './supabase/client'
 
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
-const descriptions: Record<CapyMetodos, string> = {
-  Capydoro: 'Estudia con el método Pomodoro',
-  Capymetro: 'Estudia con un cronómetro'
-}
 
 /* Evento */
 type Event = {
@@ -149,7 +145,7 @@ export default function Inicio() {
 
   const { setSelectedMusic } = useMusic()
 
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
+
 
   const { setTecnicaEstudio } = useSesion()
 
