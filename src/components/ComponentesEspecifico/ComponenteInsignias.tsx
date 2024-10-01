@@ -27,7 +27,7 @@ export default function CapyInsiginiasCards({
   descUnlock: string
   capyName: string
   progress: number
-  ImgStyle?: React.CSSProperties 
+  ImgStyle?: React.CSSProperties
 }) {
   const bloqueada = './CapyInsigniasImagenes/CapySherlock.webp'
   const [isUnlocked, setIsUnlocked] = useState<boolean>(false)
@@ -135,7 +135,9 @@ export default function CapyInsiginiasCards({
           </div>
           <DialogFooter>
             <DialogClose>
-              <Button className='' variant={'accent'}>Salir</Button>
+              <Button className='' variant={'accent'}>
+                Salir
+              </Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>

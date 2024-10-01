@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { useState, useRef } from 'react'
 import html2canvas from 'html2canvas'
@@ -172,7 +171,7 @@ export default function CapyEstadisticas() {
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyEstadisticas!</h1>
       {/* Seleccion de tiempo */}
-      <div className='ml-32 mt-4 flex w-full justify-start'>
+      <div className='ml-32 mt-4 flex justify-start'>
         <p className='flex items-center'>
           Ingresa el intervalo de tiempo para visualizar las estadisticas:{' '}
         </p>
@@ -292,7 +291,6 @@ export default function CapyEstadisticas() {
           <div className='mr-12 flex w-full justify-end'>
             <Button
               variant='ghost'
-              // eslint-disable-next-line @typescript-eslint/no-misused-promises
               onClick={() => captureScreenshot('sesion')}
               className=''
             >
