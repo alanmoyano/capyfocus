@@ -124,8 +124,6 @@ const chartConfig4 = {
   }
 } satisfies ChartConfig
 
-
-
 export default function CapyEstadisticas() {
   const queryParams = useSearch()
   const { period } = useSearchParams()
@@ -1109,14 +1107,12 @@ export default function CapyEstadisticas() {
         </>
       )}
 
-{selectedPeriod === 'evento' && (
-  <>
-  <p>Funciona?</p>
-  <EstadisticasPeriodo period='evento'></EstadisticasPeriodo>
-  </>
-)}
-
-
+      {selectedPeriod === 'evento' && (
+        <>
+          <p>Funciona?</p>
+          <EstadisticasPeriodo period='evento'></EstadisticasPeriodo>
+        </>
+      )}
     </>
   )
 }

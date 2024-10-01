@@ -51,15 +51,15 @@ export default function Eventos() {
 
   return (
     <Sheet>
-    <SheetTrigger asChild>
-      <Button
-        variant='secondary'
-        className='mt-6 w-full bg-secondary sm:w-auto'
-      >
-        Eventos
-      </Button>
-    </SheetTrigger>
-    <SheetContent className='w-full sm:max-w-md'>
+      <SheetTrigger asChild>
+        <Button
+          variant='secondary'
+          className='mt-6 w-full bg-secondary sm:w-auto'
+        >
+          Eventos
+        </Button>
+      </SheetTrigger>
+      <SheetContent className='w-full sm:max-w-md'>
         <SheetHeader>
           <SheetTitle className='text-xl font-bold sm:text-2xl'>
             Agregar evento
@@ -68,7 +68,7 @@ export default function Eventos() {
             Agrega eventos desde aquí.
           </SheetDescription>
         </SheetHeader>
-      <ScrollArea className='h-[80vh] pr-4'>
+        <ScrollArea className='h-[80vh] pr-4'>
           <p className='text-sm text-muted-foreground'>
             Selecciona una fecha para el evento.
           </p>
@@ -264,6 +264,5 @@ export default function Eventos() {
         </SheetFooter>
       </SheetContent>
     </Sheet>
-    
   )
 }
