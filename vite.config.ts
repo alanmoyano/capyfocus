@@ -19,7 +19,6 @@ export default defineConfig({
       output: {
         compact: true,
         manualChunks: {
-          deps: ['class-variance-authority'],
           standalone: [
             './src/components/ui/input.tsx',
             './src/components/ui/card.tsx',
