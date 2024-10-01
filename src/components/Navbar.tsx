@@ -18,7 +18,13 @@ import {
   navigationMenuTriggerStyle
   // NavigationMenuViewport
 } from '@/components/ui/navigation-menu'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger
+} from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 
 type NavbarLinkProps = {
@@ -77,6 +83,10 @@ export default function Navbar() {
       <div className='container flex h-14 max-w-screen-2xl items-center justify-between md:justify-center'>
         <div className='flex items-center gap-4 md:absolute md:left-4'>
           <Sheet open={abierto}>
+            <SheetTitle className='sr-only'>Menú de navegación</SheetTitle>
+            <SheetDescription className='sr-only'>
+              Navega por las distintas páginas de Capyfocus!
+            </SheetDescription>
             <SheetTrigger asChild>
               <Button
                 variant='ghost'
