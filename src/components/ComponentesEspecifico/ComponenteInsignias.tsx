@@ -72,47 +72,27 @@ export default function CapyInsiginiasCards({
         </DialogTrigger>
         <DialogContent className='sm:max-w-[425px]'>
           <DialogHeader>
-            {isUnlocked && <DialogTitle>{capyName}</DialogTitle>}
-            {!isUnlocked && <DialogTitle>CapyBloqueada</DialogTitle>}
+            <DialogTitle>{isUnlocked ? capyName : 'CapyBloqueada'}</DialogTitle>
           </DialogHeader>
-          <div className='flex flex-col items-center'>
-            {isUnlocked && (
-              <>
-                <div className='relative h-80 w-full overflow-hidden rounded-lg bg-accent'>
-                  <img
-                    src={UrlImg}
-                    alt='HidenInsignia'
-                    className='absolute inset-0 h-full w-full object-contain p-4'
-                  />
-                </div>
-                <div className='mt-4 text-center'>
-                  <p>{descUnlock}</p>
-                </div>
-                <Progress value={progress} className='w-3/4' />
-              </>
-            )}
-            {!isUnlocked && (
-              <>
-                <div className='relative h-80 w-full overflow-hidden rounded-lg bg-accent'>
-                  <img
-                    src={bloqueada}
-                    alt='HidenInsignia'
-                    className='absolute inset-0 h-full w-full object-contain p-4'
-                  />
-                </div>
-                <div className='mt-4 text-center'>
-                  <h2 className='text-lg font-semibold'>Para desbloquear: </h2>
-                  <p>{descLock}</p>
-                </div>
-                <Progress value={progress} className='w-3/4' />
-              </>
-            )}
+          <div className='flex flex-col items-center gap-4'>
+            <div className='relative flex aspect-square items-center justify-center overflow-hidden rounded-md bg-accent'>
+              <img
+                src={isUnlocked ? UrlImg : bloqueada}
+                alt='HidenInsignia'
+                className='object-cover'
+              />
+            </div>
+            <div className='text-center'>
+              {!isUnlocked && (
+                <h2 className='text-lg font-semibold'>Para desbloquear: </h2>
+              )}
+              <p>{isUnlocked ? descUnlock : descLock}</p>
+            </div>
+            <Progress value={progress} className='w-3/4' />
           </div>
           <DialogFooter>
             <DialogClose>
-              <Button className='' variant={'accent'}>
-                Salir
-              </Button>
+              <Button variant='accent'>Salir</Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>
