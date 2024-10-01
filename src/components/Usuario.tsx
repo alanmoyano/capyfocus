@@ -48,13 +48,19 @@ export default function Usuario() {
   const currentUsername = 'Chicho'
   const currentEmail = 'chicho@capymail.com'
 
+  const [selectedPicture, setSelectedPicture] = useState<string | undefined>(undefined)
+  const [confirmedPicture, setConfirmedPicture] = useState<string | undefined>(undefined)
   const [confirmedUsername, setConfirmedUsername] = useState(currentUsername)
   const [confirmedEmail, setConfirmedEmail] = useState(currentEmail)
   const [sheetOpen, setSheetOpen] = useState(false)
 
+
   const handleConfirm = (data: FormValues) => {
     setConfirmedUsername(data.username)
     setConfirmedEmail(data.email)
+    if (selectedPicture) {
+      setConfirmedPicture(selectedPicture)
+    }
     setSheetOpen(false)
   }
 
@@ -73,15 +79,12 @@ export default function Usuario() {
 
   const watchUsername = watch('username')
   const watchEmail = watch('email')
+  const watchPicture = selectedPicture
 
   const hasChanges =
-    watchUsername !== confirmedUsername || watchEmail !== confirmedEmail
+    watchUsername !== confirmedUsername || watchEmail !== confirmedEmail || watchPicture !== confirmedPicture
 
-  const [selectedPicture, setSelectedPicture] = useState<string | null>(null)
 
-  {
-    /* funcionalidad */
-  }
   const handleProfilePictureSelect = (picture: string) => {
     setSelectedPicture(picture)
   }
@@ -99,7 +102,10 @@ export default function Usuario() {
           <Card className='flex h-full w-full flex-col bg-secondary shadow-md'>
             <CardHeader className='text-center'>
               <Avatar className='mx-auto h-40 w-40'>
-                <AvatarImage src='/capyPic.jpg' className='h-full w-full' />
+              <AvatarImage 
+                src={confirmedPicture}
+                className='h-full w-full' 
+              />
                 <AvatarFallback className='text-2xl'>CN</AvatarFallback>
               </Avatar>
               <CardDescription className='text-center'>
@@ -124,8 +130,6 @@ export default function Usuario() {
 
               <p className='flex items-center text-3xl font-semibold'>
                 {confirmedUsername}
-              
-                  
               <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
                 <SheetTrigger asChild>
                   <svg
@@ -196,19 +200,13 @@ export default function Usuario() {
                       <hr className='py-2' />
                       <div className='flex h-[80vh] flex-col'>
                         <div>
-                          <FotoSelector onSelect={handleProfilePictureSelect} />
+                        <FotoSelector onSelect={handleProfilePictureSelect} />
                         </div>
                       </div>
                     </ScrollArea>
                     <SheetFooter className='mt-4 flex justify-end'>
-                      {/* Ver si poner scroll o qué para que el boton no quede volando */}
                       <SheetClose asChild>
-                        <Button
-                          type='submit'
-                          disabled={
-                            Object.keys(errors).length > 0 || !hasChanges
-                          }
-                        >
+                        <Button type='submit' disabled={Object.keys(errors).length > 0 || !hasChanges}>
                           Confirmar
                         </Button>
                       </SheetClose>
