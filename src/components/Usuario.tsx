@@ -120,101 +120,104 @@ export default function Usuario() {
               </CardDescription>
             </CardHeader>
             <CardContent className='flex flex-grow flex-col items-center justify-start text-center'>
+              <div className='flex-grow flex-col items-center'>
+
               <p className='flex items-center text-3xl font-semibold'>
                 {confirmedUsername}
-                <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-                  <SheetTrigger asChild>
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      width='24'
-                      height='24'
-                      viewBox='0 0 24 24'
-                      fill='none'
-                      stroke='currentColor'
-                      strokeWidth='2'
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      className='lucide lucide-pencil ml-2 hover:cursor-pointer'
+              
+                  
+              <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+                <SheetTrigger asChild>
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    width='24'
+                    height='24'
+                    viewBox='0 0 24 24'
+                    fill='none'
+                    stroke='currentColor'
+                    strokeWidth='2'
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    className='lucide lucide-pencil ml-2 hover:cursor-pointer'
                     >
-                      <path d='M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z' />
-                      <path d='m15 5 4 4' />
-                    </svg>
-                  </SheetTrigger>
-                  <SheetContent className='w-full sm:max-w-md'>
+                    <path d='M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z' />
+                    <path d='m15 5 4 4' />
+                  </svg>
+                </SheetTrigger>
+                <SheetContent className='w-full sm:max-w-md'>
+                  <SheetHeader className='pb-7'>
+                    <SheetTitle className='text-2xl font-bold'>
+                      Modificar perfil
+                    </SheetTitle>
+                  </SheetHeader>
+                  <form onSubmit={handleSubmit(handleConfirm)}>
                     <ScrollArea className='h-[80vh] pr-4'>
-                      <SheetHeader className='pb-7'>
-                        <SheetTitle className='text-2xl font-bold'>
-                          Modificar perfil
-                        </SheetTitle>
-                      </SheetHeader>
                       <SheetTitle className='text-lg font-semibold'>
                         Datos del perfil
                       </SheetTitle>
                       <hr className='py-2' />
-                      <form onSubmit={handleSubmit(handleConfirm)}>
-                        <div className='grid gap-7 py-4'>
-                          <div className='grid gap-2'>
-                            <Label htmlFor='username' className='text-left'>
-                              Usuario
-                            </Label>
-                            <Input
-                              id='username'
-                              placeholder='Usuario'
-                              {...register('username')}
-                              className='w-full'
-                            />
-                            {errors.username && (
-                              <p className='text-sm text-red-500'>
-                                {errors.username.message}
-                              </p>
-                            )}
-                          </div>
-                          <div className='grid gap-2'>
-                            <Label htmlFor='email' className='text-left'>
-                              Email
-                            </Label>
-                            <Input
-                              id='email'
-                              placeholder='Email'
-                              {...register('email')}
-                              className='w-full'
-                            />
-                            {errors.email && (
-                              <p className='text-sm text-red-500'>
-                                {errors.email.message}
-                              </p>
-                            )}
-                          </div>
+                      <div className='grid gap-7 py-4'>
+                        <div className='grid gap-2'>
+                          <Label htmlFor='username' className='text-left'>
+                            Usuario
+                          </Label>
+                          <Input
+                            id='username'
+                            placeholder='Usuario'
+                            {...register('username')}
+                            className='w-full'
+                          />
+                          {errors.username && (
+                            <p className='text-sm text-red-500'>
+                              {errors.username.message}
+                            </p>
+                          )}
                         </div>
-                        <SheetTitle className='pt-4 text-lg font-semibold'>
-                          Foto de perfil
-                        </SheetTitle>
-                        <hr className='py-2' />
-                        <div className='flex h-[80vh] flex-col'>
-                          <div>
-                            <FotoSelector
-                              onSelect={handleProfilePictureSelect}
-                            />
-                          </div>
-                          <SheetFooter className='mt-4 flex justify-end'>
-                            {/* Ver si poner scroll o qué para que el boton no quede volando */}
-                            <SheetClose asChild>
-                              <Button
-                                type='submit'
-                                disabled={
-                                  Object.keys(errors).length > 0 || !hasChanges
-                                }
-                              >
-                                Confirmar
-                              </Button>
-                            </SheetClose>
-                          </SheetFooter>
+                        <div className='grid gap-2'>
+                          <Label htmlFor='email' className='text-left'>
+                            Email
+                          </Label>
+                          <Input
+                            id='email'
+                            placeholder='Email'
+                            {...register('email')}
+                            className='w-full'
+                          />
+                          {errors.email && (
+                            <p className='text-sm text-red-500'>
+                              {errors.email.message}
+                            </p>
+                          )}
                         </div>
-                      </form>
+                      </div>
+                      <SheetTitle className='pt-4 text-lg font-semibold'>
+                        Foto de perfil
+                      </SheetTitle>
+                      <hr className='py-2' />
+                      <div className='flex h-[80vh] flex-col'>
+                        <div>
+                          <FotoSelector onSelect={handleProfilePictureSelect} />
+                        </div>
+                      </div>
                     </ScrollArea>
-                  </SheetContent>
-                </Sheet>
+                    <SheetFooter className='mt-4 flex justify-end'>
+                      {/* Ver si poner scroll o qué para que el boton no quede volando */}
+                      <SheetClose asChild>
+                        <Button
+                          type='submit'
+                          disabled={
+                            Object.keys(errors).length > 0 || !hasChanges
+                          }
+                        >
+                          Confirmar
+                        </Button>
+                      </SheetClose>
+                    </SheetFooter>
+                  </form>
+                </SheetContent>
+              </Sheet>
               </p>
+              </div>
               <div className='m-2'>
                 <p className='text-lg font-normal'>{confirmedEmail}</p>
               </div>

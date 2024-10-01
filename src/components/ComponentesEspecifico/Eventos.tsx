@@ -63,7 +63,6 @@ return (
       </Button>
     </SheetTrigger>
     <SheetContent className='w-full sm:max-w-md'>
-      <ScrollArea className='h-[80vh] pr-4'>
         <SheetHeader>
           <SheetTitle className='text-xl font-bold sm:text-2xl'>
             Agregar evento
@@ -72,6 +71,7 @@ return (
             Agrega eventos desde aquí.
           </SheetDescription>
         </SheetHeader>
+      <ScrollArea className='h-[80vh] pr-4'>
         <p className='mt-2 text-sm text-muted-foreground'>
           ¿Cual es el evento?
         </p>
