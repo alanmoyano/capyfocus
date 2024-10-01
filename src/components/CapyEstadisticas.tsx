@@ -67,7 +67,7 @@ import { useSesion } from '@contexts/SesionContext'
 
 import { formatTime } from '@/lib/utils'
 import useSearchParams from '@hooks/useSearchParams'
-import { boolean, number, string } from 'zod'
+import Reproductor from './ComponentesEspecifico/Reproductor'
 
 // const chartData = [
 //   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -158,7 +158,7 @@ export default function CapyEstadisticas() {
     // @ts-expect-error 7053 no seas molesto typescript
     if (cardRefs[period].current) {
       // @ts-expect-error 7053 no seas molesto typescript
-      const canvas = await html2canvas(cardRefs[period].current)
+      const canvas = await html2canvas(cardRefs[period].current as HTMLElement)
       const image = canvas.toDataURL('image/png')
       const link = document.createElement('a')
       link.href = image
@@ -269,14 +269,12 @@ export default function CapyEstadisticas() {
 
       {/* Pagina en blanco */}
       {selectedPeriod === '' && tiempoTotal === 0 && (
-        <>
-          <img src='./auto.gif' alt='' />
-        </>
+        <Reproductor src='/auto.webm' />
       )}
       {/* Pagina de sesion */}
       {selectedPeriod === 'sesion' && tiempoTotal === 0 && (
         <>
-          <img src='./Chicho/CapyDesilucionado.gif' className='' alt='' />
+          <Reproductor src='/Chicho/CapyDesilucionado.webm' />
           <div className='flex w-1/2 content-center justify-center rounded-lg bg-red-700 p-8 text-white shadow-lg'>
             <p>
               Primero inicia una sesion para tener estadisticas de la sesion!!
@@ -531,7 +529,7 @@ export default function CapyEstadisticas() {
                   ))}
                 </div>
                 <div className='mt-8 flex justify-center'>
-                  <img src='./auto.gif' alt='Mascota' className='w-1/2' />
+                  <Reproductor src='/auto.webm' className='w-1/2' />
                 </div>
               </div>
 

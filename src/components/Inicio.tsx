@@ -68,9 +68,9 @@ import { useSesion } from '@/components/contexts/SesionContext'
 
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
 import { supabase } from './supabase/client'
+import { Helmet } from 'react-helmet'
 
 type CapyMetodos = 'Capydoro' | 'Capymetro'
-
 
 /* Evento */
 type Event = {
@@ -144,8 +144,6 @@ export default function Inicio() {
   const { setMotivationType } = useMotivation()
 
   const { setSelectedMusic } = useMusic()
-
-
 
   const { setTecnicaEstudio } = useSesion()
 
@@ -251,6 +249,15 @@ export default function Inicio() {
 
   return (
     <>
+      <Helmet>
+        <link
+          rel='preload'
+          fetchPriority='high'
+          as='image'
+          href='/CapyChill.jpg'
+          type='image/jpg'
+        />
+      </Helmet>
       <section className='mt-10 flex flex-col gap-20 p-10 md:flex-row'>
         <div className=''>
           <DialogoChicho />

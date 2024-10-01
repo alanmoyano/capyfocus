@@ -1,16 +1,16 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import LoginForm from './LoginForm'
 import SignupForm from './SignUpForm'
+import Reproductor from './ComponentesEspecifico/Reproductor'
 
 export default function Login() {
   return (
     <section className='mt-4 flex h-full w-[80vw] items-center justify-center rounded-[10rem] bg-secondary/60 p-4 text-current md:h-[90vh]'>
       <div className='xl:gap-30 flex flex-col p-10 sm:gap-10 md:flex-row lg:gap-20 2xl:gap-40'>
         <div className='m-auto w-full max-w-[300px] md:max-w-[366px]'>
-          <img
-            src='/girando.gif'
+          <Reproductor
+            src='/girando.webm'
             className='aspect-[366/301] h-auto w-full object-contain'
-            alt='capybara animation'
           />
         </div>
 
