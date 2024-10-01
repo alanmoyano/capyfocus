@@ -13,6 +13,13 @@ import { Progress } from '@/components/ui/progress'
 import { DialogClose } from '@radix-ui/react-dialog'
 
 import '@/brenda.css'
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '../ui/card'
 
 export default function CapyInsiginiasCards({
   UrlImg,
@@ -42,58 +49,26 @@ export default function CapyInsiginiasCards({
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <div className='card-squere cursor-pointer bg-primary/80 hover:scale-105'>
-            <div className='card-squere-inner'>
-              <div className='card-squere-content'>
-                <div className=''>
-                  <div className='mx-auto aspect-[3/4] w-11/12'>
-                    {isUnlocked && (
-                      <>
-                        <div className=''>
-                          <div className='mx-auto aspect-[3/4] w-11/12'>
-                            <div className='imagen'>
-                              <img
-                                src={UrlImg}
-                                style={ImgStyle}
-                                alt='HidenInsignia'
-                                className='absolute inset-0 h-full w-full object-contain p-4'
-                              />
-                              <p
-                                className='absolute left-0 top-2 w-full bg-transparent text-center text-xl font-semibold text-gray-700'
-                                style={{ fontFamily: 'Jomolhari, serif' }}
-                              >
-                                {capyName}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                    {!isUnlocked && (
-                      <>
-                        <div>
-                          <div className='container flex h-full w-full justify-center text-center'>
-                            <img
-                              src={bloqueada}
-                              style={ImgStyle}
-                              alt='HidenInsignia'
-                              className='absolute inset-0 h-full w-full object-contain p-4'
-                            />
-                            <p
-                              className='bottom mt-4 flex text-center text-xl font-bold text-gray-700'
-                              style={{ fontFamily: 'Jomolhari, serif' }}
-                            >
-                              CapyBloqueada
-                            </p>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
+          <Card className='group cursor-pointer overflow-hidden bg-primary transition-all duration-200 ease-in-out hover:scale-105 hover:shadow-lg'>
+            <CardHeader>
+              <CardTitle className='text-center text-xl'>{capyName}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='relative flex aspect-square items-center justify-center overflow-hidden rounded-md'>
+                <img
+                  src={isUnlocked ? UrlImg : bloqueada}
+                  style={ImgStyle}
+                  alt='HidenInsignia'
+                  className='object-cover'
+                />
               </div>
-            </div>
-          </div>
+            </CardContent>
+            <CardFooter
+              className={`flex justify-center font-medium italic ${!isUnlocked && 'text-muted'}`}
+            >
+              {isUnlocked ? 'Desbloqueada!' : 'CapyBloqueada'}
+            </CardFooter>
+          </Card>
         </DialogTrigger>
         <DialogContent className='sm:max-w-[425px]'>
           <DialogHeader>

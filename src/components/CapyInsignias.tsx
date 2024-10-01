@@ -36,12 +36,10 @@ export default function CapyInsignias() {
     setLocation('/')
   }
 
-  // la carta hay que clickearla para que se de vuelta y despues, una vez desbloequeda ya no se da mas vuelta.
-
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyInsiginias!</h1>
-      <div className='grid grid-cols-1 gap-10 p-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
+      <div className='container grid grid-cols-2 gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 md:gap-10 md:p-10 lg:grid-cols-4 xl:grid-cols-5'>
         {insignias.map(insignia => (
           <CapyInsigniasCards
             key={insignia.id}
@@ -49,7 +47,10 @@ export default function CapyInsignias() {
             descLock={insignia.descripcionBloqueada}
             descUnlock={insignia.descripcionDesbloqueada}
             capyName={insignia.nombre}
-            progress={10}
+            progress={
+              Number(insignia.id) % 2 === 0 ? 100 : 50
+            } /* versión aleatoria! */
+            // progress={100}
           />
         ))}
       </div>
