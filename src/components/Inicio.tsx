@@ -81,7 +81,7 @@ type Event = {
 const playlists = [
   {
     key: 1,
-    src: './CapyChill.jpg',
+    src: './CapyChill.webp',
     alt: 'CapyChill',
     title: 'Capy Chill',
     description: 'Música relajante para estudiar con tranquilidad',
@@ -254,8 +254,8 @@ export default function Inicio() {
           rel='preload'
           fetchPriority='high'
           as='image'
-          href='/CapyChill.jpg'
-          type='image/jpg'
+          href='/CapyChill.webp'
+          type='image/webp'
         />
       </Helmet>
       <section className='mt-10 flex flex-col gap-20 p-10 md:flex-row'>
