@@ -69,6 +69,8 @@ import { useSesion } from '@/components/contexts/SesionContext'
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
 import { supabase } from './supabase/client'
 import { Helmet } from 'react-helmet'
+import { getDate, set } from 'date-fns'
+import { date } from 'zod'
 
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
@@ -149,6 +151,7 @@ export default function Inicio() {
 
   const [motivaciones, setMotivaciones] = useState<Motivacion[]>([])
 
+
   const handleAccept = () => {
     switch (description) {
       case 'Capydoro':
@@ -158,6 +161,7 @@ export default function Inicio() {
       case 'Capymetro':
         setLocation('capymetro')
         setTecnicaEstudio(description)
+        
         break
     }
   }
