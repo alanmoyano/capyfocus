@@ -191,7 +191,9 @@ export default function Timer() {
               ></iframe>
             )}
           </div>
-          <AnimacionChicho />
+          <AnimacionChicho
+          motivation={motivationType}
+          />
         </div>
 
         {/* Columna 2:*/}

@@ -1,3 +1,5 @@
+/* import { useState, useEffect } from 'react';
+ */
 const animacionesPositivas = [
   'Bubble',
   'Calabaza',
@@ -5,27 +7,83 @@ const animacionesPositivas = [
   'Cocinero',
   'Compras',
   'Durmiendo',
-  'Fire'
+  'Fire',
+  'Te'
 ]
-const animacionesNegativas = ['Cocodrilo', 'Computadora', 'Fiaca']
 
-export default function AnimacionChicho() {
+const animacionesNegativas = [
+  'Cocodrilo',
+  'Computadora',
+  'Fiaca',
+  'Desilucionado',
+  'Jugando',
+  'Skate',
+  'Sky',
+  'Reloj'
+]
+
+
+
+
+function parseMotivation(motivation?: string) {
+  switch (motivation) {
+    case 'Positiva':
+      return 1
+    case 'Pasivo Agresiva':
+      return 2
+    default:
+      return null
+  }
+}
+
+export default function AnimacionChicho({
+  motivation
+}: {
+  motivation?: string
+}) {
+
+  const motivacion = parseMotivation(motivation)
+  //Agarro un numero random
   function getRandomIndex(array: string[]): number {
     return Math.floor(Math.random() * array.length)
   }
 
-  function getRandomElement(array: string[]): string {
-    const randomIndex = getRandomIndex(array)
-    return array[randomIndex]
-  }
+  console.log(motivacion)
 
-  const randomElement = getRandomElement(animacionesNegativas)
+  console.log(getAnimacion())
+
+  function getAnimacion() {
+    if (motivacion === 1) {
+      const NumAnimacion = getRandomIndex(animacionesPositivas)
+      return animacionesPositivas[NumAnimacion]
+    } else {
+      const NumAnimacion = getRandomIndex(animacionesNegativas)
+      return animacionesNegativas[NumAnimacion]
+    }
+  }
+  console.log(`./Chicho/Negativo/Capy${getAnimacion()}.gif`)
 
   return (
     <>
-      <div>   
-        <img src={`./Chicho/Negativo/Capy${randomElement}.gif`} alt='' />
+      <div>
+        {motivacion === 1 && (
+          <img
+            src={`./Chicho/Negativo/Capy${getAnimacion()}.gif`}
+            alt=''
+          />
+        )
+        
+        }
+        {motivacion === 2  && (
+          <img
+            src={`./Chicho/Positivo/Capy${getAnimacion()}.gif`}
+            alt=''
+          />
+        )}
       </div>
+      {motivacion === 2  && (
+        <img src='./Chicho/Negativo/CapySky.gif' alt='' />
+      )}
     </>
   )
 }

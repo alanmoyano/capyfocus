@@ -177,23 +177,7 @@ export default function Usuario() {
                                 </p>
                               )}
                             </div>
-                            <div className='grid gap-2'>
-                              <Label htmlFor='email' className='text-left'>
-                                Email
-                              </Label>
-                              <Input
-                                id='email'
-                                placeholder='Email'
-                                {...register('email')}
-                                className='w-full'
-                              />
-                              {errors.email && (
-                                <p className='text-sm text-red-500'>
-                                  {errors.email.message}
-                                </p>
-                              )}
                             </div>
-                          </div>
                           <SheetTitle className='pt-4 text-lg font-semibold'>
                             Foto de perfil
                           </SheetTitle>
