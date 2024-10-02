@@ -45,36 +45,45 @@ export default function AnimacionChicho({
 }) {
   const intervalIdRef = useRef<number | null>(null)
   const motivacion = parseMotivation(motivation)
-  const [animation, setAnimation] = useState<string>()
+  const [animation, setAnimation] = useState<string>('Nada')
   //Agarro un numero random
   function getRandomIndex(array: string[]): number {
     return Math.floor(Math.random() * array.length)
   }
 
+  useEffect(() => {
+    getAnimacion();
+  }, [motivacion]);
+
   console.log(motivacion)
 
-  console.log(getAnimacion())
+
 
   function getAnimacion() {
     if (intervalIdRef.current !== null) {
       clearInterval(intervalIdRef.current)
     }
-    
     if (motivacion === 1) {
       intervalIdRef.current = window.setInterval(() => {
         setAnimation(animacionesPositivas[getRandomIndex(animacionesPositivas)])
       }, 10000)
       
     }
-    /* if (motivacion === 1) {
-      const NumAnimacion = getRandomIndex(animacionesPositivas)
-      return animacionesPositivas[NumAnimacion]
-    } */ else {
-      const NumAnimacion = getRandomIndex(animacionesNegativas)
-      return animacionesNegativas[NumAnimacion]
+    if (motivacion === 2) {
+      intervalIdRef.current = window.setInterval(() => {
+        setAnimation(animacionesNegativas[getRandomIndex(animacionesNegativas)])
+      }, 10000)
+      
     }
+    if (intervalIdRef.current !== null) {
+      clearInterval(intervalIdRef.current)
+    }
+
+
+
   }
-  console.log(`./Chicho/Negativo/Capy${getAnimacion()}.gif`)
+  
+  console.log(`./Chicho/Negativo/Capy${animation}.gif`)
 
   return (
     <>
@@ -89,7 +98,7 @@ export default function AnimacionChicho({
         }
         {motivacion === 2  && (
           <img
-            src={`./Chicho/Negativo/Capy${getAnimacion()}.gif`}
+            src={`./Chicho/Negativo/Capy${animation}.gif`}
             alt=''
           />
         )}
