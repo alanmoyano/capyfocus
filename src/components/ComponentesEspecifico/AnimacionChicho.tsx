@@ -1,5 +1,7 @@
-/* import { useState, useEffect } from 'react';
- */
+ import { useState, useEffect } from 'react';
+ 
+import {useRef} from 'react'
+
 const animacionesPositivas = [
   'Bubble',
   'Calabaza',
@@ -41,8 +43,9 @@ export default function AnimacionChicho({
 }: {
   motivation?: string
 }) {
-
+  const intervalIdRef = useRef<number | null>(null)
   const motivacion = parseMotivation(motivation)
+  const [animation, setAnimation] = useState<string>()
   //Agarro un numero random
   function getRandomIndex(array: string[]): number {
     return Math.floor(Math.random() * array.length)
@@ -53,10 +56,20 @@ export default function AnimacionChicho({
   console.log(getAnimacion())
 
   function getAnimacion() {
+    if (intervalIdRef.current !== null) {
+      clearInterval(intervalIdRef.current)
+    }
+    
     if (motivacion === 1) {
+      intervalIdRef.current = window.setInterval(() => {
+        setAnimation(animacionesPositivas[getRandomIndex(animacionesPositivas)])
+      }, 10000)
+      
+    }
+    /* if (motivacion === 1) {
       const NumAnimacion = getRandomIndex(animacionesPositivas)
       return animacionesPositivas[NumAnimacion]
-    } else {
+    } */ else {
       const NumAnimacion = getRandomIndex(animacionesNegativas)
       return animacionesNegativas[NumAnimacion]
     }
@@ -68,7 +81,7 @@ export default function AnimacionChicho({
       <div>
         {motivacion === 1 && (
           <img
-            src={`./Chicho/Positivo/Capy${getAnimacion()}.gif`}
+            src={`./Chicho/Positivo/Capy${animation}.gif`}
             alt=''
           />
         )
