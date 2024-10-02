@@ -17,7 +17,6 @@ const animacionesNegativas = [
   'Cocodrilo',
   'Computadora',
   'Fiaca',
-  'Desilucionado',
   'Jugando',
   'Skate',
   'Sky',
@@ -74,7 +73,7 @@ export default function AnimacionChicho({
     if (motivacion === 2) {
       intervalIdRef.current = window.setInterval(() => {
         setAnimation(animacionesNegativas[getRandomIndex(animacionesNegativas)])
-      }, 5000)
+      }, 10000)
       
     }
     return () => {
@@ -86,9 +85,9 @@ export default function AnimacionChicho({
   
   console.log(`./Chicho/Negativo/Capy${animation}.gif`)
 
-  return (
+  return ( 
     <>
-      <div>
+      <div className='h-auto w-full'>
         {motivacion === 1 && (
           <img
             src={`./Chicho/Positivo/Capy${animation}.gif`}
