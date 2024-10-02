@@ -68,7 +68,7 @@ export default function AnimacionChicho({
       <div>
         {motivacion === 1 && (
           <img
-            src={`./Chicho/Negativo/Capy${getAnimacion()}.gif`}
+            src={`./Chicho/Positivo/Capy${getAnimacion()}.gif`}
             alt=''
           />
         )
@@ -76,14 +76,12 @@ export default function AnimacionChicho({
         }
         {motivacion === 2  && (
           <img
-            src={`./Chicho/Positivo/Capy${getAnimacion()}.gif`}
+            src={`./Chicho/Negativo/Capy${getAnimacion()}.gif`}
             alt=''
           />
         )}
       </div>
-      {motivacion === 2  && (
-        <img src='./Chicho/Negativo/CapySky.gif' alt='' />
-      )}
+
     </>
   )
 }
