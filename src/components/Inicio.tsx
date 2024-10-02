@@ -151,7 +151,6 @@ export default function Inicio() {
 
   const [motivaciones, setMotivaciones] = useState<Motivacion[]>([])
 
-
   const handleAccept = () => {
     switch (description) {
       case 'Capydoro':
@@ -161,7 +160,7 @@ export default function Inicio() {
       case 'Capymetro':
         setLocation('capymetro')
         setTecnicaEstudio(description)
-        
+
         break
     }
   }

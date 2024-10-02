@@ -19,6 +19,7 @@ import PruebaTabla from './components/PruebaTabla'
 import { SesionProvider } from './components/contexts/SesionContext'
 import { Helmet } from 'react-helmet'
 import NotFound from './components/NotFound'
+import Prueba from './components/Prueba'
 
 function App() {
   return (
@@ -59,6 +60,7 @@ function App() {
 
                   <Route path='/usuario' component={Usuario} />
 
+                  <Route path='/prueba' component={Prueba} />
                   <Route>
                     <NotFound />
                   </Route>
