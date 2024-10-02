@@ -10,6 +10,8 @@ import { useMusic } from './contexts/MusicContext'
 import { useMotivation } from './contexts/MotivationContext'
 import { useSesion } from './contexts/SesionContext'
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
+
+import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Sesión' | 'Descanso'
@@ -189,6 +191,7 @@ export default function Timer() {
               ></iframe>
             )}
           </div>
+          <AnimacionChicho />
         </div>
 
         {/* Columna 2:*/}
