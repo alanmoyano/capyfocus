@@ -60,27 +60,28 @@ export default function AnimacionChicho({
 
 
   function getAnimacion() {
+    //Esto si o si va primero!
     if (intervalIdRef.current !== null) {
       clearInterval(intervalIdRef.current)
     }
+    
     if (motivacion === 1) {
       intervalIdRef.current = window.setInterval(() => {
         setAnimation(animacionesPositivas[getRandomIndex(animacionesPositivas)])
-      }, 10000)
+      }, 5000)
       
     }
     if (motivacion === 2) {
       intervalIdRef.current = window.setInterval(() => {
         setAnimation(animacionesNegativas[getRandomIndex(animacionesNegativas)])
-      }, 10000)
+      }, 5000)
       
     }
-    if (intervalIdRef.current !== null) {
-      clearInterval(intervalIdRef.current)
+    return () => {
+      if (intervalIdRef.current !== null) {
+        clearInterval(intervalIdRef.current)
+      }
     }
-
-
-
   }
   
   console.log(`./Chicho/Negativo/Capy${animation}.gif`)
