@@ -101,14 +101,14 @@ export default function Pomodoro() {
 
   //Revisar el funcionamiento de esta cosa!!!
 
-  // useEffect(() => {
-  //   const worker = new Worker('worker.js')
+  useEffect(() => {
+    const worker = new Worker('worker.js')
 
-  //   worker.postMessage('start')
-  //   worker.onmessage = () => console.log('hola!')
+    worker.postMessage('start')
+    worker.onmessage = () => console.log('hola!')
 
-  //   return () => worker.terminate()
-  // }, [])
+    return () => worker.terminate()
+  }, [])
 
   useEffect(() => {
     if (!isActive) return () => clearInterval(timer.current)
