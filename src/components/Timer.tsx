@@ -10,7 +10,7 @@ import { useMusic } from './contexts/MusicContext'
 import { useMotivation } from './contexts/MotivationContext'
 import { useSesion } from './contexts/SesionContext'
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
-
+import AnimacionChicho2 from './ComponentesEspecifico/AnimacionChicho2'
 import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
 //import Confetti from 'react-confetti-boom'
 
@@ -186,6 +186,8 @@ export default function Timer() {
               ></iframe>
             )}
           </div>
+
+          <AnimacionChicho2 motivation='motivationType' />
           
         </div>
 
