@@ -65,7 +65,7 @@ export default function AnimacionChicho2({
     if (motivacion === 1) {
       intervalIdRef.current = window.setInterval(() => {
         setAnimation(prev => (prev === 'Nada' ? animacionesPositivas[getRandomIndex(animacionesPositivas)] : 'Nada'))
-      }, 5000)
+      }, 5000) //Esto esta en milisegundos! 
     } else if (motivacion === 2) {
       intervalIdRef.current = window.setInterval(() => {
         setAnimation(animacionesNegativas[getRandomIndex(animacionesNegativas)])

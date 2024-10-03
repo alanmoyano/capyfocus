@@ -99,7 +99,7 @@ export default function DialogoChicho2(
           </div>
         </div>
       )}
-      {animacion !== 'Nada' && <div className=''></div>}
+      {animacion !== 'Nada' && <div className='mt-20'></div>}
     </>
   )
 }
