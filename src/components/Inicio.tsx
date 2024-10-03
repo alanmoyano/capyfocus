@@ -71,6 +71,7 @@ import { supabase } from './supabase/client'
 import { Helmet } from 'react-helmet'
 import { getDate, set } from 'date-fns'
 import { date } from 'zod'
+import Reproductor from './ComponentesEspecifico/Reproductor'
 
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
@@ -262,9 +263,9 @@ export default function Inicio() {
         />
       </Helmet>
       <section className='mt-10 flex flex-col gap-20 p-10 md:flex-row'>
-        <div className=''>
+        <div>
           <DialogoChicho />
-          <video src='/idle.webm' autoPlay loop muted playsInline />
+          <Reproductor src='/idle.webm' />
         </div>
 
         <div className='m-auto'>

@@ -1,6 +1,6 @@
- import { useState, useEffect } from 'react';
- 
-import {useRef} from 'react'
+import { useState, useEffect } from 'react'
+
+import { useRef } from 'react'
 
 const animacionesPositivas = [
   'Bubble',
@@ -22,9 +22,6 @@ const animacionesNegativas = [
   'Sky',
   'Reloj'
 ]
-
-
-
 
 function parseMotivation(motivation?: string) {
   switch (motivation) {
@@ -51,30 +48,26 @@ export default function AnimacionChicho({
   }
 
   useEffect(() => {
-    getAnimacion();
-  }, [motivacion]);
+    getAnimacion()
+  }, [motivacion])
 
   console.log(motivacion)
-
-
 
   function getAnimacion() {
     //Esto si o si va primero!
     if (intervalIdRef.current !== null) {
       clearInterval(intervalIdRef.current)
     }
-    
+
     if (motivacion === 1) {
       intervalIdRef.current = window.setInterval(() => {
         setAnimation(animacionesPositivas[getRandomIndex(animacionesPositivas)])
       }, 5000)
-      
     }
     if (motivacion === 2) {
       intervalIdRef.current = window.setInterval(() => {
         setAnimation(animacionesNegativas[getRandomIndex(animacionesNegativas)])
       }, 10000)
-      
     }
     return () => {
       if (intervalIdRef.current !== null) {
@@ -82,28 +75,19 @@ export default function AnimacionChicho({
       }
     }
   }
-  
+
   console.log(`./Chicho/Negativo/Capy${animation}.gif`)
 
-  return ( 
+  return (
     <>
       <div className='h-auto w-full'>
         {motivacion === 1 && (
-          <img
-            src={`./Chicho/Positivo/Capy${animation}.gif`}
-            alt=''
-          />
-        )
-        
-        }
-        {motivacion === 2  && (
-          <img
-            src={`./Chicho/Negativo/Capy${animation}.gif`}
-            alt=''
-          />
+          <img src={`./Chicho/Positivo/Capy${animation}.gif`} alt='' />
+        )}
+        {motivacion === 2 && (
+          <img src={`./Chicho/Negativo/Capy${animation}.gif`} alt='' />
         )}
       </div>
-
     </>
   )
 }

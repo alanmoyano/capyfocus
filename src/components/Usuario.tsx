@@ -177,7 +177,7 @@ export default function Usuario() {
                                 </p>
                               )}
                             </div>
-                            </div>
+                          </div>
                           <SheetTitle className='pt-4 text-lg font-semibold'>
                             Foto de perfil
                           </SheetTitle>

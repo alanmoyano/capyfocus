@@ -1,3 +1,5 @@
+import { cn } from '@/lib/utils'
+
 /**
  * Acá van los videos en webm, NO en gif!!!
  */
@@ -9,6 +11,13 @@ export default function Reproductor({
   className?: string
 }) {
   return (
-    <video autoPlay playsInline muted loop src={src} className={className} />
+    <video
+      autoPlay
+      playsInline
+      muted
+      loop
+      src={src}
+      className={cn('aspect-auto', className)}
+    />
   )
 }
