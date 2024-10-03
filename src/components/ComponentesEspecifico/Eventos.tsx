@@ -50,8 +50,8 @@ export default function Eventos() {
   }
 
   const handleAdd = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key == 'Enter' && eventTitle.trim() != '') {
-      const newEvent = {
+    if (e.key == 'Enter' && eventTitle.trim() != '' && date) {
+      const newEvent: Event = {
         date: date, 
         title: eventTitle
       }
@@ -96,7 +96,7 @@ export default function Eventos() {
                 type='text'
                 value={eventTitle}
                 onChange={e => setEventTitle(e.target.value)}
-                onKeyPress={handleAdd}
+                onKeyDown={handleAdd}
                 placeholder='Nuevo evento'
                 className='col-span-1 sm:col-span-3'
               />
