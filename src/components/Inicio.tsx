@@ -100,8 +100,8 @@ const playlists = [
   {
     key: 3,
     src: './CapySinthwave.jpg',
-    alt: 'CapySinthwave',
-    title: 'Capy Sinthwave',
+    alt: 'CapySynthwave',
+    title: 'Capy Synthwave',
     description: 'Música electrónica retro para un estudio energético',
     spotifyUri: '6xYhxczmfgi6L6knoEHktx'
   },
