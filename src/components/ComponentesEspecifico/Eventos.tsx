@@ -52,8 +52,8 @@ export default function Eventos() {
   const handleAdd = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key == 'Enter' && eventTitle.trim() != '' && date) {
       const newEvent: Event = {
-        date: date, 
-        title: eventTitle
+        date: date,
+        title: eventTitle,
       }
       setEvents([...events, newEvent])
       setEventTitle('')

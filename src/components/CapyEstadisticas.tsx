@@ -147,7 +147,7 @@ export default function CapyEstadisticas() {
     semanal: useRef(null),
     mensual: useRef(null),
     bimestral: useRef(null),
-    semestral: useRef(null)
+    semestral: useRef(null),
   }
 
   const captureScreenshot = async (period: string) => {

@@ -65,7 +65,14 @@ const chartConfig1: ChartConfig = {
     color: 'hsl(var(--chart-5))',
   },
 }
-type Period = 'sesion' | 'semanal' | 'mensual' | 'bimestral' | 'semestre';
+
+type Period =
+  | 'sesion'
+  | 'semanal'
+  | 'mensual'
+  | 'bimestral'
+  | 'semestre'
+  | 'evento'
 
 export default function EstadisticasPeriodo({ period }: { period: Period }) {
   const cardRefs = {
@@ -73,9 +80,9 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
     semanal: useRef(null),
     mensual: useRef(null),
     bimestral: useRef(null),
-    semestre: useRef(null)
+    semestre: useRef(null),
+    evento: useRef(null),
   }
-
 
   const { objetivos, tiempo } = useObjetivos()
   const [date, setDate] = useState<Date | undefined>(new Date())
@@ -223,7 +230,9 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
         </CardContent>
 
         <div className='px-6 pb-6'>
-          <h2 className='mb-4 text-2xl font-bold'>Objetivos de las Sesiones {period}</h2>
+          <h2 className='mb-4 text-2xl font-bold'>
+            Objetivos de las Sesiones {period}
+          </h2>
           <Table>
             <TableHeader>
               <TableRow>
