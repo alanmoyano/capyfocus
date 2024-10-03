@@ -10,7 +10,7 @@ const animacionesPositivas = [
   'Compras',
   'Durmiendo',
   'Fire',
-  'Te'
+  'Te',
 ]
 
 const animacionesNegativas = [
@@ -20,7 +20,7 @@ const animacionesNegativas = [
   'Jugando',
   'Skate',
   'Sky',
-  'Reloj'
+  'Reloj',
 ]
 
 function parseMotivation(motivation?: string) {
@@ -35,7 +35,7 @@ function parseMotivation(motivation?: string) {
 }
 
 export default function AnimacionChicho({
-  motivation
+  motivation,
 }: {
   motivation?: string
 }) {

@@ -66,7 +66,7 @@ export default function Pomodoro() {
     setTiempo,
     tiempo,
     setTiempoSesion,
-    setObjetivosPend
+    setObjetivosPend,
   } = useObjetivos()
   const [marked, setMarked] = useState<string[]>([])
   const [, setLocation] = useLocation()
@@ -74,7 +74,7 @@ export default function Pomodoro() {
     setTiempoTotal,
     setAcumuladorTiempoPausa,
     setCantidadPausas,
-    tiempoTotal
+    tiempoTotal,
   } = useSesion()
 
   const finalizarSesion = () => {
@@ -92,7 +92,7 @@ export default function Pomodoro() {
       if (!tiempo[objetivo]) {
         setTiempo(prev => ({
           ...prev,
-          [objetivo]: 0
+          [objetivo]: 0,
         }))
       }
     })
@@ -155,7 +155,7 @@ export default function Pomodoro() {
     breakSeconds,
     mode,
     capySound,
-    objCumplidos
+    objCumplidos,
   ])
 
   useEffect(() => {
@@ -180,7 +180,7 @@ export default function Pomodoro() {
     )
     setTiempo(prev => ({
       ...prev,
-      [objetivo]: ObjStudyTime
+      [objetivo]: ObjStudyTime,
     }))
     setTiempoSesion(prev => ({ ...prev, [objetivo]: tiempoTotal - countdown }))
 
@@ -194,7 +194,7 @@ export default function Pomodoro() {
 
     const pomodoro: Pomodoro = {
       tiempoEstudio: tiempoEstudio,
-      tiempoDescanso: tiempoDescanso
+      tiempoDescanso: tiempoDescanso,
     }
     if (pomodorosRealizados.length === 0) {
       setPomodorosRealizados([pomodoro])

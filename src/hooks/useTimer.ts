@@ -29,29 +29,25 @@ export default function useTimer() {
 
     return () => {
       // Limpiar el worker al desmontar el componente
-      if (!workerRef.current) return
-      workerRef.current.terminate()
+      workerRef.current?.terminate()
     }
   }, [])
 
   const startStudy = () => {
-    if (!workerRef.current) return
-    workerRef.current.postMessage('startTimer1')
+    workerRef.current?.postMessage('startTimer1')
 
     setIsStudying(true)
   }
 
   const pauseStudy = () => {
-    if (!workerRef.current) return
+    workerRef.current?.postMessage('pauseTimer1')
 
-    workerRef.current.postMessage('pauseTimer1')
     setIsStudying(false)
   }
 
   const resetTimers = () => {
-    if (!workerRef.current) return
+    workerRef.current?.postMessage('reset')
 
-    workerRef.current.postMessage('reset')
     setStudyTime(0)
     setRestTime(0)
     setIsStudying(false)
@@ -63,6 +59,6 @@ export default function useTimer() {
     isStudying,
     startStudy,
     pauseStudy,
-    resetTimers
+    resetTimers,
   }
 }

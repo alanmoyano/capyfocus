@@ -16,7 +16,7 @@ import {
   CartesianGrid,
   XAxis,
   Cell,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from 'recharts'
 
 import { useSearch } from 'wouter'
@@ -28,7 +28,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table'
 import {
   Card,
@@ -36,12 +36,12 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from '@/components/ui/card'
 import {
   ChartConfig,
   ChartContainer,
-  ChartTooltipContent
+  ChartTooltipContent,
 } from '@/components/ui/chart'
 import {
   Select,
@@ -50,13 +50,13 @@ import {
   SelectItem,
   SelectLabel,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
+  TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { Calendar } from '@components/ui/calendar'
 import { ChartLegend, ChartLegendContent } from '@components/ui/chart'
@@ -80,28 +80,28 @@ import Reproductor from './ComponentesEspecifico/Reproductor'
 
 const chartConfig1: ChartConfig = {
   visitors: {
-    label: 'Objetivos'
+    label: 'Objetivos',
   },
   chrome: {
     label: 'Objetivo1',
-    color: 'hsl(var(--chart-1))'
+    color: 'hsl(var(--chart-1))',
   },
   safari: {
     label: 'Objetivo2',
-    color: 'hsl(var(--chart-2))'
+    color: 'hsl(var(--chart-2))',
   },
   firefox: {
     label: 'Objetivo3',
-    color: 'hsl(var(--chart-3))'
+    color: 'hsl(var(--chart-3))',
   },
   edge: {
     label: 'Objetivo4',
-    color: 'hsl(var(--chart-4))'
+    color: 'hsl(var(--chart-4))',
   },
   other: {
     label: 'Objetivo5',
-    color: 'hsl(var(--chart-5))'
-  }
+    color: 'hsl(var(--chart-5))',
+  },
 }
 
 const chartData1 = [
@@ -110,18 +110,18 @@ const chartData1 = [
   { month: 'Marzo', desktop: 237, mobile: 120 },
   { month: 'Abril', desktop: 73, mobile: 190 },
   { month: 'Mayo', desktop: 209, mobile: 130 },
-  { month: 'Junio', desktop: 214, mobile: 140 }
+  { month: 'Junio', desktop: 214, mobile: 140 },
 ]
 
 const chartConfig4 = {
   desktop: {
     label: 'Desktop',
-    color: 'hsl(var(--chart-1))'
+    color: 'hsl(var(--chart-1))',
   },
   mobile: {
     label: 'Mobile',
-    color: 'hsl(var(--chart-2))'
-  }
+    color: 'hsl(var(--chart-2))',
+  },
 } satisfies ChartConfig
 
 export default function CapyEstadisticas() {
@@ -147,7 +147,7 @@ export default function CapyEstadisticas() {
     semanal: useRef(null),
     mensual: useRef(null),
     bimestral: useRef(null),
-    seisMeses: useRef(null)
+    seisMeses: useRef(null),
   }
 
   const captureScreenshot = async (period: string) => {
@@ -310,37 +310,37 @@ export default function CapyEstadisticas() {
                   {[
                     {
                       label: 'Tiempo total de estudio',
-                      value: formatTime(tiempoTotal ?? 0)
+                      value: formatTime(tiempoTotal ?? 0),
                     },
                     {
                       label: 'Tiempo total de descanso',
-                      value: formatTime(acumuladorTiempoPausa ?? 0)
+                      value: formatTime(acumuladorTiempoPausa ?? 0),
                     },
                     { label: 'Total de objetivos', value: objetivos.length },
                     {
                       label: 'Objetivos cumplidos',
-                      value: objetivos.length - objetivosPend.length
+                      value: objetivos.length - objetivosPend.length,
                     },
                     {
                       label: 'Objetivos pendientes',
-                      value: objetivosPend.length
+                      value: objetivosPend.length,
                     },
                     {
                       label: 'Cantidad de pausas',
-                      value: cantidadPausas
+                      value: cantidadPausas,
                     },
                     {
                       label: 'Tipo de motivación',
-                      value: motivationType
+                      value: motivationType,
                     },
                     {
                       label: 'Música',
-                      value: selectedMusic?.title ?? 'Sin música'
+                      value: selectedMusic?.title ?? 'Sin música',
                     },
                     {
                       label: 'Técnica de estudio',
-                      value: tecnicaEstudio
-                    }
+                      value: tecnicaEstudio,
+                    },
                   ].map(({ label, value }, index) => (
                     <div
                       key={index}
@@ -372,7 +372,7 @@ export default function CapyEstadisticas() {
                             .filter(objetivo => tiempo[objetivo] > 0)
                             .map(objetivo => ({
                               name: objetivo,
-                              value: tiempo[objetivo] ?? 0
+                              value: tiempo[objetivo] ?? 0,
                             }))}
                           labelLine={false}
                           outerRadius='80%'
@@ -485,33 +485,33 @@ export default function CapyEstadisticas() {
                   {[
                     {
                       label: 'Tiempo total de estudio',
-                      value: formatTime(tiempoTotal ?? 0)
+                      value: formatTime(tiempoTotal ?? 0),
                     },
                     { label: 'Total de objetivos', value: objetivos.length },
                     {
                       label: 'Objetivos cumplidos',
-                      value: objetivos.length - objetivosPend.length
+                      value: objetivos.length - objetivosPend.length,
                     },
                     {
                       label: 'Objetivos pendientes',
-                      value: objetivosPend.length
+                      value: objetivosPend.length,
                     },
                     {
                       label: 'Tipo de motivación preferida',
-                      value: motivationType
+                      value: motivationType,
                     },
                     {
                       label: 'Música preferida',
-                      value: selectedMusic?.title ?? 'Sin música'
+                      value: selectedMusic?.title ?? 'Sin música',
                     },
                     {
                       label: 'Técnica de estudio más frecuente',
-                      value: tecnicaEstudio
+                      value: tecnicaEstudio,
                     },
                     {
                       label: 'Mayor racha de días',
-                      value: objetivosPend.length
-                    }
+                      value: objetivosPend.length,
+                    },
                   ].map(({ label, value }, index) => (
                     <div
                       key={index}
@@ -545,7 +545,7 @@ export default function CapyEstadisticas() {
                               .filter(objetivo => tiempo[objetivo] > 0)
                               .map(objetivo => ({
                                 name: objetivo,
-                                value: tiempo[objetivo] ?? 0
+                                value: tiempo[objetivo] ?? 0,
                               }))}
                             labelLine={false}
                             outerRadius='70%'

@@ -11,7 +11,7 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from '@/components/ui/card'
 import {
   Sheet,
@@ -21,7 +21,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger
+  SheetTrigger,
 } from '@/components/ui/sheet'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -33,7 +33,7 @@ const formSchema = z.object({
     .string()
     .min(5, 'El nombre de usuario debe tener al menos 5 caracteres')
     .max(15, 'El nombre de usuario no puede tener más de 15 caracteres'),
-  email: z.string().email('Por favor, ingresa un email válido')
+  email: z.string().email('Por favor, ingresa un email válido'),
 })
 type FormValues = z.infer<typeof formSchema>
 
@@ -71,13 +71,13 @@ export default function Usuario() {
     register,
     handleSubmit,
     watch,
-    formState: { errors }
+    formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: currentUsername,
-      email: currentEmail
-    }
+      email: currentEmail,
+    },
   })
 
   const watchUsername = watch('username')

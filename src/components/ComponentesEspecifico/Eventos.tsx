@@ -4,7 +4,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
+  TooltipTrigger,
 } from '@/components/ui/tooltip'
 
 import { Button } from '@/components/ui/button'
@@ -18,7 +18,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger
+  SheetTrigger,
 } from '@/components/ui/sheet'
 import { Calendar } from '@/components/ui/calendar'
 
@@ -117,11 +117,11 @@ export default function Eventos() {
                     const today = new Date()
                     today.setHours(0, 0, 0, 0)
                     return date < today
-                  }
+                  },
                 }}
                 modifiersClassNames={{
                   eventDay: 'bg-secondary',
-                  disabled: 'opacity-50 cursor-not-allowed'
+                  disabled: 'opacity-50 cursor-not-allowed',
                 }}
                 locale={es}
                 onDayClick={(day: Date) => {
@@ -151,7 +151,7 @@ export default function Eventos() {
                         </TooltipProvider>
                       </div>
                     )
-                  }
+                  },
                 }}
               />
 
@@ -192,7 +192,7 @@ export default function Eventos() {
                         {event.date.toLocaleDateString('es-ES', {
                           weekday: 'short',
                           month: 'numeric',
-                          day: 'numeric'
+                          day: 'numeric',
                         })}
                         - {event.title}
                       </span>
@@ -226,7 +226,7 @@ export default function Eventos() {
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
-                        day: 'numeric'
+                        day: 'numeric',
                       })}
                     </p>
                   </div>

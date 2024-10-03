@@ -13,14 +13,19 @@ export default function Prueba() {
     isStudying,
     startStudy,
     pauseStudy,
-    resetTimers
+    resetTimers,
   } = useTimer()
 
   return (
     <>
       <Helmet>
-        <title>{`1:${formatTime(studyTime)} - 2:${formatTime(restTime)}`}</title>
+        {studyTime <= 0 ? (
+          <title>CapyMetro!</title>
+        ) : (
+          <title>{`${isStudying ? 'Estudiando' : 'Descansando'}: ${isStudying ? formatTime(studyTime) : formatTime(restTime)}`}</title>
+        )}
       </Helmet>
+
       <div className='flex flex-col'>
         <div className='flex flex-row items-center justify-center gap-2'>
           <h1 className='text-2xl font-bold'>

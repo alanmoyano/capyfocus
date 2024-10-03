@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 const FotoSelector: React.FC<{ onSelect: (picture: string) => void }> = ({
-  onSelect
+  onSelect,
 }) => {
   const profilePictures = [
     './FotoPerfil/CapyCute.jpg',
@@ -15,7 +15,7 @@ const FotoSelector: React.FC<{ onSelect: (picture: string) => void }> = ({
     './FotoPerfil/CapyMaid.jpg',
     './FotoPerfil/CapyTomate.jpg',
     './FotoPerfil/CapyMoney.jpg',
-    './FotoPerfil/CapyCow.jpg'
+    './FotoPerfil/CapyCow.jpg',
   ]
 
   const [selectedPicture, setSelectedPicture] = useState<string | null>(null)

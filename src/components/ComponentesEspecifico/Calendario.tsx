@@ -4,7 +4,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
+  TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { useState } from 'react'
 
@@ -25,11 +25,11 @@ export default function Calendario(events: { date: Date; title: string }[]) {
           const today = new Date()
           today.setHours(0, 0, 0, 0)
           return date < today
-        }
+        },
       }}
       modifiersClassNames={{
         eventDay: 'bg-secondary',
-        disabled: 'opacity-50 cursor-not-allowed'
+        disabled: 'opacity-50 cursor-not-allowed',
       }}
       locale={es}
       onDayClick={(day: Date) => {
@@ -59,7 +59,7 @@ export default function Calendario(events: { date: Date; title: string }[]) {
               </TooltipProvider>
             </div>
           )
-        }
+        },
       }}
     />
   )

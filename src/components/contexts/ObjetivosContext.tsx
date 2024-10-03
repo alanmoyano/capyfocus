@@ -49,7 +49,7 @@ export const ObjetivosProvider = ({ children }: { children: ReactNode }) => {
           setObjetivosFav(newObjetivosFav)
         },
         tiempoSesion,
-        setTiempoSesion
+        setTiempoSesion,
       }}
     >
       {children}

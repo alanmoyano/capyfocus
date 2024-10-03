@@ -36,7 +36,6 @@ onmessage = function (e) {
       return
     }
     default: {
-      console.log('no pasó nada')
       return
     }
   }

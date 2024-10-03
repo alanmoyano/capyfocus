@@ -13,7 +13,7 @@ type MusicContextType = {
 const MusicContext = createContext<MusicContextType | undefined>(undefined)
 
 export const MusicProvider: React.FC<{ children: ReactNode }> = ({
-  children
+  children,
 }) => {
   const [selectedMusic, setSelectedMusic] = useState<Music | null>(null)
 

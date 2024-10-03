@@ -7,7 +7,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
+  DialogTrigger,
 } from '@/components/ui/dialog'
 import { Progress } from '@/components/ui/progress'
 import { DialogClose } from '@radix-ui/react-dialog'
@@ -18,7 +18,7 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from '../ui/card'
 
 export default function CapyInsiginiasCards({
@@ -27,7 +27,7 @@ export default function CapyInsiginiasCards({
   descUnlock,
   capyName,
   progress,
-  ImgStyle
+  ImgStyle,
 }: {
   UrlImg: string
   descLock: string

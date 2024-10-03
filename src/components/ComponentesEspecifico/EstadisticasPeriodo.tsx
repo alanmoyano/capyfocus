@@ -8,7 +8,7 @@ import {
   Pie,
   PieChart,
   Cell,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from 'recharts'
 
 import {
@@ -17,13 +17,13 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   ChartConfig,
   ChartContainer,
-  ChartTooltipContent
+  ChartTooltipContent,
 } from '@/components/ui/chart'
 
 import Reproductor from './Reproductor'
@@ -46,28 +46,28 @@ import useSearchParams from '@hooks/useSearchParams'
 
 const chartConfig1: ChartConfig = {
   visitors: {
-    label: 'Objetivos'
+    label: 'Objetivos',
   },
   chrome: {
     label: 'Objetivo1',
-    color: 'hsl(var(--chart-1))'
+    color: 'hsl(var(--chart-1))',
   },
   safari: {
     label: 'Objetivo2',
-    color: 'hsl(var(--chart-2))'
+    color: 'hsl(var(--chart-2))',
   },
   firefox: {
     label: 'Objetivo3',
-    color: 'hsl(var(--chart-3))'
+    color: 'hsl(var(--chart-3))',
   },
   edge: {
     label: 'Objetivo4',
-    color: 'hsl(var(--chart-4))'
+    color: 'hsl(var(--chart-4))',
   },
   other: {
     label: 'Objetivo5',
-    color: 'hsl(var(--chart-5))'
-  }
+    color: 'hsl(var(--chart-5))',
+  },
 }
 export default function EstadisticasPeriodo({ period }: { period: string }) {
   const cardRefs = {
@@ -75,7 +75,7 @@ export default function EstadisticasPeriodo({ period }: { period: string }) {
     semanal: useRef(null),
     mensual: useRef(null),
     bimestral: useRef(null),
-    seisMeses: useRef(null)
+    seisMeses: useRef(null),
   }
 
   const captureScreenshot = async () => {
@@ -123,33 +123,33 @@ export default function EstadisticasPeriodo({ period }: { period: string }) {
               {[
                 {
                   label: 'Tiempo total de estudio',
-                  value: 20
+                  value: 20,
                 },
                 { label: 'Total de objetivos', value: 3 },
                 {
                   label: 'Objetivos cumplidos',
-                  value: 5 - 2
+                  value: 5 - 2,
                 },
                 {
                   label: 'Objetivos pendientes',
-                  value: 5
+                  value: 5,
                 },
                 {
                   label: 'Tipo de motivación preferida',
-                  value: 'Positiva'
+                  value: 'Positiva',
                 },
                 {
                   label: 'Música preferida',
-                  value: 'CapyChill'
+                  value: 'CapyChill',
                 },
                 {
                   label: 'Técnica de estudio más frecuente',
-                  value: 'Capydoro'
+                  value: 'Capydoro',
                 },
                 {
                   label: 'Mayor racha de días',
-                  value: 5
-                }
+                  value: 5,
+                },
               ].map(({ label, value }, index) => (
                 <div key={index} className='rounded-lg bg-white p-2 shadow-md'>
                   <p className='mb-2 rounded-lg bg-primary p-2 text-sm font-semibold text-gray-800'>
@@ -180,7 +180,7 @@ export default function EstadisticasPeriodo({ period }: { period: string }) {
                           .filter(objetivo => tiempo[objetivo] > 0)
                           .map(objetivo => ({
                             name: objetivo,
-                            value: tiempo[objetivo] ?? 0
+                            value: tiempo[objetivo] ?? 0,
                           }))}
                         labelLine={false}
                         outerRadius='70%'

@@ -4,14 +4,14 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger
+  PopoverTrigger,
 } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -21,14 +21,14 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from '@/components/ui/form'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select'
 
 import { Calendar as CalendarIcon } from 'lucide-react'
@@ -47,7 +47,7 @@ const now = new Date()
 const formSchema = z.object({
   name: z
     .string({
-      required_error: 'El nombre es requerido'
+      required_error: 'El nombre es requerido',
     })
     .min(2, 'El nombre debe tener al menos 2 caracteres'),
   email: z.string().email('El correo no es válido'),
@@ -60,7 +60,7 @@ const formSchema = z.object({
     ),
   password: z
     .string({ required_error: 'La contraseña es obligatoria' })
-    .min(8, 'La contraseña debe tener al menos 8 caracteres')
+    .min(8, 'La contraseña debe tener al menos 8 caracteres'),
 })
 
 function SignupForm() {
@@ -76,8 +76,8 @@ function SignupForm() {
       name: '',
       email: '',
       birthdate: now,
-      password: ''
-    }
+      password: '',
+    },
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {

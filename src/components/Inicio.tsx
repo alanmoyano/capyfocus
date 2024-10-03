@@ -12,7 +12,7 @@ import {
   Trash,
   StarOff,
   Check,
-  ChevronsUpDown
+  ChevronsUpDown,
 } from 'lucide-react'
 
 import { Input } from '@/components/ui/input'
@@ -22,7 +22,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
+  TooltipTrigger,
 } from '@/components/ui/tooltip'
 
 import { Button } from './ui/button'
@@ -34,7 +34,7 @@ import {
   SelectItem,
   SelectLabel,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select'
 
 import {
@@ -43,12 +43,12 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList
+  CommandList,
 } from '@/components/ui/command'
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger
+  PopoverTrigger,
 } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 
@@ -58,7 +58,7 @@ import {
   CarouselContent,
   CarouselItem,
   CarouselNext,
-  CarouselPrevious
+  CarouselPrevious,
 } from '@/components/ui/carousel'
 import { useMotivation } from './contexts/MotivationContext'
 
@@ -88,7 +88,7 @@ const playlists = [
     alt: 'CapyChill',
     title: 'Capy Chill',
     description: 'Música relajante para estudiar con tranquilidad',
-    spotifyUri: '7u6QwhygZJJqqGWMMMINhR'
+    spotifyUri: '7u6QwhygZJJqqGWMMMINhR',
   },
   {
     key: 2,
@@ -96,7 +96,7 @@ const playlists = [
     alt: 'CapyAmbiente',
     title: 'Capy Ambiente',
     description: 'Sonidos ambientales para mejorar la concentración',
-    spotifyUri: '4Pi6DScPJfg1RTGVZuxTZV'
+    spotifyUri: '4Pi6DScPJfg1RTGVZuxTZV',
   },
   {
     key: 3,
@@ -104,7 +104,7 @@ const playlists = [
     alt: 'CapySynthwave',
     title: 'Capy Synthwave',
     description: 'Música electrónica retro para un estudio energético',
-    spotifyUri: '6xYhxczmfgi6L6knoEHktx'
+    spotifyUri: '6xYhxczmfgi6L6knoEHktx',
   },
   {
     key: 4,
@@ -112,8 +112,8 @@ const playlists = [
     alt: 'CapyEpic',
     title: 'Capy Epic',
     description: 'Música épica para momentos de máxima concentración',
-    spotifyUri: '5GnSqO293GdPWaJhD6iz8E'
-  }
+    spotifyUri: '5GnSqO293GdPWaJhD6iz8E',
+  },
   // {
   //   key: 5,
   //   src: './NoCapyMusic.png',
@@ -528,7 +528,7 @@ export default function Inicio() {
                       handleMusicSelection(
                         {
                           title: item.title,
-                          spotifyUri: item.spotifyUri
+                          spotifyUri: item.spotifyUri,
                         },
                         item.key
                       )

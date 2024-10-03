@@ -25,7 +25,7 @@ function parseMotivation(motivation?: string) {
 
 export default function DialogoChicho2({
   motivation,
-  animacion
+  animacion,
 }: {
   motivation?: string
   animacion: string

@@ -63,7 +63,7 @@ export default function Timer() {
     setTiempo,
     tiempo,
     setTiempoSesion,
-    setObjetivosPend
+    setObjetivosPend,
   } = useObjetivos()
   const [marked, setMarked] = useState<string[]>([])
   const { selectedMusic } = useMusic()
@@ -78,7 +78,7 @@ export default function Timer() {
       if (!tiempo[objetivo]) {
         setTiempo(prev => ({
           ...prev,
-          [objetivo]: 0
+          [objetivo]: 0,
         }))
         setTiempoSesion(prev => ({ ...prev, [objetivo]: 0 }))
       }
@@ -150,7 +150,7 @@ export default function Timer() {
     } else {
       setTiempo(prev => ({
         ...prev,
-        [objetivo]: Sessioncountup - tiempoObjAcumulado
+        [objetivo]: Sessioncountup - tiempoObjAcumulado,
       }))
       setTiempoSesion(prev => ({ ...prev, [objetivo]: Sessioncountup }))
     }
