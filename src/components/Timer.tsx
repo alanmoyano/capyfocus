@@ -164,7 +164,10 @@ export default function Timer() {
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
         {/* Columna 1:  */}
         <div className='col-span-1 p-4'>
-        <AnimacionChicho2 motivation={motivationType} />
+        {/* <AnimacionChicho2 motivation={motivationType} /> */}
+        <DialogoChicho motivation={motivationType}/>
+        <AnimacionChicho motivation={motivationType} />
+
           <div className='mb-4 rounded-lg bg-primary p-2'>
             Tu tipo de motivación es:{' '}
             <span className='font-semibold'>{motivationType}</span>
