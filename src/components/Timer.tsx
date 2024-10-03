@@ -164,8 +164,7 @@ export default function Timer() {
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
         {/* Columna 1:  */}
         <div className='col-span-1 p-4'>
-          <DialogoChicho motivation={motivationType} />
-          <AnimacionChicho motivation={motivationType} />
+        <AnimacionChicho2 motivation={motivationType} />
           <div className='mb-4 rounded-lg bg-primary p-2'>
             Tu tipo de motivación es:{' '}
             <span className='font-semibold'>{motivationType}</span>
@@ -184,9 +183,8 @@ export default function Timer() {
               ></iframe>
             )}
           </div>
-
-          <AnimacionChicho2 motivation='motivationType' />
         </div>
+        
 
         {/* Columna 2:*/}
         <div className='col-span-1'>

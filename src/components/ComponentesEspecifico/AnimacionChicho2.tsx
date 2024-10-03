@@ -1,8 +1,7 @@
-import { set } from 'date-fns'
 import { useState, useEffect } from 'react'
 
 import { useRef } from 'react'
-
+import DialogoChicho2 from './DialogoChicho2'
 const animacionesPositivas = [
   'Bubble',
   'Calabaza',
@@ -50,33 +49,27 @@ export default function AnimacionChicho2({
 
   useEffect(() => {
     getAnimacion()
+    return () => {
+      // Cleanup al desmontar o cambiar motivación
+      if (intervalIdRef.current !== null) {
+        clearInterval(intervalIdRef.current)
+      }
+    }
   }, [motivacion])
 
-  console.log(motivacion)
-
   function getAnimacion() {
-    //Esto si o si va primero!
     if (intervalIdRef.current !== null) {
       clearInterval(intervalIdRef.current)
     }
 
     if (motivacion === 1) {
       intervalIdRef.current = window.setInterval(() => {
-        setAnimation(animacionesPositivas[getRandomIndex(animacionesPositivas)])
+        setAnimation(prev => (prev === 'Nada' ? animacionesPositivas[getRandomIndex(animacionesPositivas)] : 'Nada'))
       }, 5000)
-      intervalIdRef.current = window.setInterval(() => {
-        setAnimation('Nada')
-      }, 5000)
-    }
-    if (motivacion === 2) {
+    } else if (motivacion === 2) {
       intervalIdRef.current = window.setInterval(() => {
         setAnimation(animacionesNegativas[getRandomIndex(animacionesNegativas)])
       }, 10000)
-    }
-    return () => {
-      if (intervalIdRef.current !== null) {
-        clearInterval(intervalIdRef.current)
-      }
     }
   }
 
@@ -84,6 +77,7 @@ export default function AnimacionChicho2({
 
   return (
     <>
+    <DialogoChicho2 motivation={motivation} animacion={animation} />
       <div className='h-auto w-full'>
         {motivacion === 1 && (
           <img src={`./Chicho/Positivo/Capy${animation}.gif`} alt='' />
