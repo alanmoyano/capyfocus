@@ -69,17 +69,10 @@ import { useSesion } from '@/components/contexts/SesionContext'
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
 import { supabase } from './supabase/client'
 import { Helmet } from 'react-helmet'
-import { getDate, set } from 'date-fns'
-import { date } from 'zod'
+
 import Reproductor from './ComponentesEspecifico/Reproductor'
 
 type CapyMetodos = 'Capydoro' | 'Capymetro'
-
-/* Evento */
-type Event = {
-  date: Date
-  title: string
-}
 
 const playlists = [
   {

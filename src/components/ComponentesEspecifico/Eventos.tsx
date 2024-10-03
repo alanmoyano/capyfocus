@@ -1,5 +1,4 @@
 import { Trash } from 'lucide-react'
-import { es } from 'date-fns/locale'
 import {
   Tooltip,
   TooltipContent,
@@ -21,9 +20,10 @@ import {
   SheetTrigger
 } from '@/components/ui/sheet'
 import { Calendar } from '@/components/ui/calendar'
+import { es } from 'date-fns/locale'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useState } from 'react'
+import { useState, KeyboardEvent } from 'react'
 import { useLocation } from 'wouter'
 
 type Event = {
@@ -34,9 +34,9 @@ type Event = {
 export default function Eventos() {
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [, setLocation] = useLocation()
-  const [events, setEvents] = useState<Event[]>([])
-  const [eventTitle, setEventTitle] = useState<string>('')
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
+  const [events, setEvents] = useState<Event[]>([]) //todos los eventos
+  const [eventTitle, setEventTitle] = useState<string>('') //el titulos del evento
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null) //el evento seleccionado
 
   const handleVolver = () => {
     setLocation('/')
@@ -46,6 +46,17 @@ export default function Eventos() {
     if (date && eventTitle) {
       setEvents([...events, { date, title: eventTitle }])
       setEventTitle('') // Limpiar el título después de añadir el evento
+    }
+  }
+
+  const handleAdd = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key == 'Enter' && eventTitle.trim() != '') {
+      const newEvent = {
+        date: date, 
+        title: eventTitle
+      }
+      setEvents([...events, newEvent])
+      setEventTitle('')
     }
   }
 
@@ -85,7 +96,8 @@ export default function Eventos() {
                 type='text'
                 value={eventTitle}
                 onChange={e => setEventTitle(e.target.value)}
-                placeholder='Evento'
+                onKeyPress={handleAdd}
+                placeholder='Nuevo evento'
                 className='col-span-1 sm:col-span-3'
               />
             </div>
