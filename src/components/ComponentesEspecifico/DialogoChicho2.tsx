@@ -23,15 +23,13 @@ function parseMotivation(motivation?: string) {
   }
 }
 
-export default function DialogoChicho2(
-  {
-    motivation,
-    animacion
-  }: {
-    motivation?: string,
-    animacion: string
-  }
-) {
+export default function DialogoChicho2({
+  motivation,
+  animacion
+}: {
+  motivation?: string
+  animacion: string
+}) {
   const [dialogos, setDialogos] = useState<Dialogo[]>([])
   const [dialogo, setDialogo] = useState('') // Usamos useState para actualizar el diálogo
   const intervalIdRef = useRef<number | null>(null) // Referencia para almacenar el ID del intervalo

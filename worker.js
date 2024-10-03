@@ -9,6 +9,7 @@ onmessage = function (e) {
     intervalId1 = setInterval(() => {
       timer1++
       postMessage({ timer1, timer2 })
+      console.log(`timer1: ${timer1}, timer2: ${timer2} at ${new Date()}`)
     }, 1000)
     clearInterval(intervalId2)
   } else if (e.data === 'pauseTimer1') {
@@ -16,6 +17,7 @@ onmessage = function (e) {
     intervalId2 = setInterval(() => {
       timer2++
       postMessage({ timer1, timer2 })
+      console.log(`timer1: ${timer1}, timer2: ${timer2} at ${new Date()}`)
     }, 1000)
   }
   //  else if (e.data === 'pauseTimer2') {

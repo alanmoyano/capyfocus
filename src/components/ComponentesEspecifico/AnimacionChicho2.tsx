@@ -64,8 +64,12 @@ export default function AnimacionChicho2({
 
     if (motivacion === 1) {
       intervalIdRef.current = window.setInterval(() => {
-        setAnimation(prev => (prev === 'Nada' ? animacionesPositivas[getRandomIndex(animacionesPositivas)] : 'Nada'))
-      }, 5000) //Esto esta en milisegundos! 
+        setAnimation(prev =>
+          prev === 'Nada'
+            ? animacionesPositivas[getRandomIndex(animacionesPositivas)]
+            : 'Nada'
+        )
+      }, 5000) //Esto esta en milisegundos!
     } else if (motivacion === 2) {
       intervalIdRef.current = window.setInterval(() => {
         setAnimation(animacionesNegativas[getRandomIndex(animacionesNegativas)])
@@ -77,7 +81,7 @@ export default function AnimacionChicho2({
 
   return (
     <>
-    <DialogoChicho2 motivation={motivation} animacion={animation} />
+      <DialogoChicho2 motivation={motivation} animacion={animation} />
       <div className='h-auto w-full'>
         {motivacion === 1 && (
           <img src={`./Chicho/Positivo/Capy${animation}.gif`} alt='' />
