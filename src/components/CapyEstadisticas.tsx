@@ -147,7 +147,7 @@ export default function CapyEstadisticas() {
     semanal: useRef(null),
     mensual: useRef(null),
     bimestral: useRef(null),
-    seisMeses: useRef(null)
+    semestral: useRef(null)
   }
 
   const captureScreenshot = async (period: string) => {
@@ -233,7 +233,7 @@ export default function CapyEstadisticas() {
                 </TooltipProvider>
               </SelectItem>
 
-              <SelectItem key={4} value='seisMeses'>
+              <SelectItem key={4} value='semestral'>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -295,7 +295,7 @@ export default function CapyEstadisticas() {
 
           <Card
             ref={cardRefs.sesion}
-            className='container mx-auto mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg'
+            className='container mx-auto mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg dark:from-gray-800 dark:to-gray-900 dark:shadow-gray-800'
           >
             <CardHeader>
               <CardTitle className=''>
@@ -921,12 +921,12 @@ export default function CapyEstadisticas() {
         </>
       )}
 
-      {selectedPeriod === 'seisMeses' && (
+      {selectedPeriod === 'semestral' && (
         <>
           <div className='mr-12 flex w-full justify-end'>
             <Button
               variant='ghost'
-              onClick={() => captureScreenshot('seisMeses')}
+              onClick={() => captureScreenshot('semestral')}
               className=''
             >
               <ImageDown className='mr-2 h-4 w-4' />
@@ -934,7 +934,7 @@ export default function CapyEstadisticas() {
             </Button>
           </div>
           <Card
-            ref={cardRefs.seisMeses}
+            ref={cardRefs.semestral}
             className='container mx-auto mt-4 flex flex-col overflow-y-auto rounded-lg bg-orange-100 p-6 shadow-lg'
           >
             <CardHeader>

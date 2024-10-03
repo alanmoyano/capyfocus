@@ -1,7 +1,4 @@
 import { useRef, useState } from 'react'
-import html2canvas from 'html2canvas'
-import { ImageDown } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 
 import {
   Tooltip as ChartTooltip,
@@ -42,7 +39,6 @@ import { Calendar } from '@components/ui/calendar'
 import { ChartLegend, ChartLegendContent } from '@components/ui/chart'
 
 import { formatTime } from '@/lib/utils'
-import useSearchParams from '@hooks/useSearchParams'
 
 const chartConfig1: ChartConfig = {
   visitors: {
@@ -69,50 +65,31 @@ const chartConfig1: ChartConfig = {
     color: 'hsl(var(--chart-5))'
   }
 }
-export default function EstadisticasPeriodo({ period }: { period: string }) {
+type Period = 'sesion' | 'semanal' | 'mensual' | 'bimestral' | 'semestre';
+
+export default function EstadisticasPeriodo({ period }: { period: Period }) {
   const cardRefs = {
     sesion: useRef(null),
     semanal: useRef(null),
     mensual: useRef(null),
     bimestral: useRef(null),
-    seisMeses: useRef(null)
+    semestre: useRef(null)
   }
 
-  const captureScreenshot = async () => {
-    // @ts-expect-error 7053 no seas molesto typescript
-    if (cardRefs[period].current) {
-      // @ts-expect-error 7053 no seas molesto typescript
-      const canvas = await html2canvas(cardRefs[period].current as HTMLElement)
-      const image = canvas.toDataURL('image/png')
-      const link = document.createElement('a')
-      link.href = image
-      link.download = `capyestadisticas_${period}.png`
-      link.click()
-    }
-  }
+
   const { objetivos, tiempo } = useObjetivos()
   const [date, setDate] = useState<Date | undefined>(new Date())
 
   return (
     <>
-      <div className='mr-12 flex w-full justify-end'>
-        <Button
-          variant='ghost'
-          onClick={() => captureScreenshot()}
-          className=''
-        >
-          <ImageDown className='mr-2 h-4 w-4' />
-          Capturar
-        </Button>
-      </div>
       <Card
-        ref={cardRefs.semanal}
-        className='container mx-auto mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg'
+        ref={cardRefs[period]}
+        className='container mx-auto mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg dark:from-gray-800 dark:to-gray-900 dark:shadow-gray-800'
       >
         <CardHeader>
           <CardTitle>
             <h1 className='text-left text-3xl font-bold'>
-              Resumen Semanal de Sesiones de Estudio
+              Resumen {period} de Sesiones de Estudio
             </h1>
           </CardTitle>
         </CardHeader>
@@ -246,7 +223,7 @@ export default function EstadisticasPeriodo({ period }: { period: string }) {
         </CardContent>
 
         <div className='px-6 pb-6'>
-          <h2 className='mb-4 text-2xl font-bold'>Objetivos de las Sesiones</h2>
+          <h2 className='mb-4 text-2xl font-bold'>Objetivos de las Sesiones {period}</h2>
           <Table>
             <TableHeader>
               <TableRow>
