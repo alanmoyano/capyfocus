@@ -23,7 +23,15 @@ function parseMotivation(motivation?: string) {
   }
 }
 
-export default function DialogoChicho({ motivation }: { motivation?: string }) {
+export default function DialogoChicho2(
+  {
+    motivation,
+    animacion
+  }: {
+    motivation?: string,
+    animacion: string
+  }
+) {
   const [dialogos, setDialogos] = useState<Dialogo[]>([])
   const [dialogo, setDialogo] = useState('') // Usamos useState para actualizar el diálogo
   const intervalIdRef = useRef<number | null>(null) // Referencia para almacenar el ID del intervalo
@@ -76,7 +84,7 @@ export default function DialogoChicho({ motivation }: { motivation?: string }) {
 
   return (
     <>
-      {dialogos.length > 0 && (
+      {animacion === 'Nada' && dialogos.length > 0 && (
         <div className='flex w-full justify-end'>
           <div className='relative max-w-xs rounded-xl border-[2px] border-gray-800 bg-gray-100 p-6 text-gray-800 shadow-md'>
             <p>{dialogo}</p>
@@ -91,6 +99,7 @@ export default function DialogoChicho({ motivation }: { motivation?: string }) {
           </div>
         </div>
       )}
+      {animacion !== 'Nada' && <div className='mt-20'></div>}
     </>
   )
 }

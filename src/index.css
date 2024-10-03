@@ -13,7 +13,6 @@
   -moz-osx-font-smoothing: grayscale;
 
   --cream: 330 20% 98%;
-  --muted: 0 0% 15%;
 
   color: hsl(var(--foreground));
   background-color: hsl(var(--background));

@@ -10,6 +10,8 @@ import { useMusic } from './contexts/MusicContext'
 import { useMotivation } from './contexts/MotivationContext'
 import { useSesion } from './contexts/SesionContext'
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
+import AnimacionChicho2 from './ComponentesEspecifico/AnimacionChicho2'
+import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Sesión' | 'Descanso'
@@ -162,15 +164,7 @@ export default function Timer() {
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
         {/* Columna 1:  */}
         <div className='col-span-1 p-4'>
-          <DialogoChicho motivation={motivationType} />
-          <video
-            src='/idle.webm'
-            autoPlay
-            loop
-            muted
-            playsInline
-            className='h-auto w-full'
-          />
+        <AnimacionChicho2 motivation={motivationType} />
           <div className='mb-4 rounded-lg bg-primary p-2'>
             Tu tipo de motivación es:{' '}
             <span className='font-semibold'>{motivationType}</span>
@@ -190,6 +184,7 @@ export default function Timer() {
             )}
           </div>
         </div>
+        
 
         {/* Columna 2:*/}
         <div className='col-span-1'>

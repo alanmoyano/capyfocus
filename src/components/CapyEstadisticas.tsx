@@ -185,7 +185,7 @@ export default function CapyEstadisticas() {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <p>Sesion</p>
+                      <p>Sesión</p>
                     </TooltipTrigger>
                     <TooltipContent className='ml-40'>
                       <p>Estadísticas de la sesión actual</p>
@@ -273,7 +273,7 @@ export default function CapyEstadisticas() {
           <Reproductor src='/Chicho/CapyDesilucionado.webm' />
           <div className='flex w-1/2 content-center justify-center rounded-lg bg-red-700 p-8 text-white shadow-lg'>
             <p>
-              Primero inicia una sesion para tener estadisticas de la sesion!!
+              Primero inicia una sesión para tener estadísticas de la sesión!!
             </p>
           </div>
         </>
@@ -412,7 +412,7 @@ export default function CapyEstadisticas() {
             </CardContent>
             {/* Tabla de objetivos de la sesión */}
             <h2 className='ml-4 flex w-full justify-start text-2xl font-bold'>
-              Objetivos de la sesion
+              Objetivos de la sesión
             </h2>
             {/* Aca estaria bueno agregar el nombre del evento si se estudio para uno  */}
             <Table className=''>

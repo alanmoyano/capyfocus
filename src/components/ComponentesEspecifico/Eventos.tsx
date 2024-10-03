@@ -64,7 +64,7 @@ export default function Eventos() {
           <SheetTitle className='text-xl font-bold sm:text-2xl'>
             Agregar evento
           </SheetTitle>
-          <SheetDescription className='text-lg text-black sm:text-xl'>
+          <SheetDescription className='text-black sm:text-lg'>
             Agrega eventos desde aquí.
           </SheetDescription>
         </SheetHeader>
@@ -169,7 +169,7 @@ export default function Eventos() {
                 <p className='text-sm text-muted-foreground'>
                   Selecciona el evento para agregar objetivos de sesión:
                 </p>
-                <h1 className='mt-2 border-b-2 text-xl font-bold text-sky-800 sm:text-2xl'>
+                <h1 className='mt-2 border-b-2 text-xl font-bold text-[#678287] sm:text-2xl'>
                   Información de eventos:
                 </h1>
                 <h2 className='text-lg font-bold sm:text-xl'>
