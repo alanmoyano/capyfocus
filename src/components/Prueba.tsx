@@ -9,7 +9,7 @@ import useTimer from '@/hooks/useTimer'
 export default function Prueba() {
   const {
     studyTime,
-    restTime,
+    breakTime,
     isStudying,
     startStudy,
     pauseStudy,
@@ -22,7 +22,7 @@ export default function Prueba() {
         {studyTime <= 0 ? (
           <title>CapyMetro!</title>
         ) : (
-          <title>{`${isStudying ? 'Estudiando' : 'Descansando'}: ${isStudying ? formatTime(studyTime) : formatTime(restTime)}`}</title>
+          <title>{`${isStudying ? 'Estudiando' : 'Descansando'}: ${isStudying ? formatTime(studyTime) : formatTime(breakTime)}`}</title>
         )}
       </Helmet>
 
@@ -32,7 +32,7 @@ export default function Prueba() {
             Tiempo de estudio: {formatTime(studyTime)}
           </h1>
           <h1 className='text-2xl font-bold'>
-            Tiempo de descanso: {formatTime(restTime)}
+            Tiempo de descanso: {formatTime(breakTime)}
           </h1>
         </div>
         <div className='flex flex-row items-center justify-center gap-4'>

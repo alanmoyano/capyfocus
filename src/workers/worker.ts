@@ -6,6 +6,7 @@ let intervalId2: NodeJS.Timeout
 onmessage = function (e) {
   switch (e.data) {
     case 'startTimer1': {
+      clearInterval(intervalId2)
       intervalId1 = setInterval(() => {
         timer1++
         postMessage({ timer1, timer2 })
@@ -13,7 +14,6 @@ onmessage = function (e) {
           `timer1: ${timer1}, timer2: ${timer2} at ${new Date().toLocaleString()}`
         )
       }, 1000)
-      clearInterval(intervalId2)
       return
     }
     case 'pauseTimer1': {
@@ -35,8 +35,15 @@ onmessage = function (e) {
       postMessage({ timer1, timer2 })
       return
     }
-    default: {
+    case 'finalize': {
+      clearInterval(intervalId1)
+      clearInterval(intervalId2)
+      postMessage({ timer1, timer2 })
+
       return
+    }
+    default: {
+      return { timer1, timer2 }
     }
   }
 }
