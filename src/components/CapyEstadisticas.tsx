@@ -162,7 +162,8 @@ export default function CapyEstadisticas() {
       link.click()
     }
   }
-
+  //Va a quedar lo de las estadisticas de sesion
+  //Pero vamos a colocar el tema del mapeo de los eventos
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyEstadisticas!</h1>
@@ -363,50 +364,63 @@ export default function CapyEstadisticas() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className='p-4'>
-                  <ChartContainer config={chartConfig1}>
-                    <ResponsiveContainer width='100%' height={400}>
-                      <PieChart>
-                        {/* Agregue un filtro para que no se muestren los objetivos que no se han cumplido */}
-                        <Pie
-                          data={objetivos
-                            .filter(objetivo => tiempo[objetivo] > 0)
-                            .map(objetivo => ({
-                              name: objetivo,
-                              value: tiempo[objetivo] ?? 0,
-                            }))}
-                          labelLine={false}
-                          outerRadius='80%'
-                          dataKey='value'
-                          label={({ name, percent }) =>
-                            `${name} ${(percent * 100).toFixed(0)}%`
-                          }
-                        >
-                          {objetivos
-                            .filter(objetivo => tiempo[objetivo] > 0)
-                            .map((objetivo, index) => (
-                              <Cell
-                                key={`cell-${index}`}
-                                fill={
-                                  chartConfig1[
-                                    Object.keys(chartConfig1)[index + 1]
-                                  ].color ?? `hsl(${index * 90}, 70%, 60%)`
-                                }
-                                name={objetivo}
-                              />
-                            ))}
-                        </Pie>
-                        <ChartTooltip
-                          content={
-                            <ChartTooltipContent
-                              indicator='dot'
-                              formatType='time'
+                  {objetivos.length === 0 && (
+                    <div className='h-[270px] w-full flex items-center justify-center'>
+                      <p className='text-center'>
+                        Para tener el gráfico de los objetivos de la sesión,
+                        coloque antes de empezar la sesión objetivos.
+                      </p>
+                    </div>
+                  )}
+
+                  {objetivos.length > 0 && (
+                    <div>
+                      <ChartContainer config={chartConfig1}>
+                        <ResponsiveContainer width='100%' height={400}>
+                          <PieChart>
+                            {/* Agregue un filtro para que no se muestren los objetivos que no se han cumplido */}
+                            <Pie
+                              data={objetivos
+                                .filter(objetivo => tiempo[objetivo] > 0)
+                                .map(objetivo => ({
+                                  name: objetivo,
+                                  value: tiempo[objetivo] ?? 0,
+                                }))}
+                              labelLine={false}
+                              outerRadius='80%'
+                              dataKey='value'
+                              label={({ name, percent }) =>
+                                `${name} ${(percent * 100).toFixed(0)}%`
+                              }
+                            >
+                              {objetivos
+                                .filter(objetivo => tiempo[objetivo] > 0)
+                                .map((objetivo, index) => (
+                                  <Cell
+                                    key={`cell-${index}`}
+                                    fill={
+                                      chartConfig1[
+                                        Object.keys(chartConfig1)[index + 1]
+                                      ].color ?? `hsl(${index * 90}, 70%, 60%)`
+                                    }
+                                    name={objetivo}
+                                  />
+                                ))}
+                            </Pie>
+                            <ChartTooltip
+                              content={
+                                <ChartTooltipContent
+                                  indicator='dot'
+                                  formatType='time'
+                                />
+                              }
                             />
-                          }
-                        />
-                        <ChartLegend content={<ChartLegendContent />} />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </ChartContainer>
+                            <ChartLegend content={<ChartLegendContent />} />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </ChartContainer>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </CardContent>
