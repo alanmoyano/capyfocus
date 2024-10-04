@@ -357,15 +357,15 @@ export default function CapyEstadisticas() {
               </div>
 
               {/* Chart */}
-              <Card className='h-1/2 overflow-hidden rounded-lg shadow-lg'>
+              <Card className='h-1/2 w-5/12 overflow-hidden rounded-lg shadow-lg'>
                 <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 text-gray-900'>
                   <CardTitle className='text-xl font-bold'>
                     Tiempo dedicado a objetivos en la sesión actual
                   </CardTitle>
                 </CardHeader>
-                <CardContent className='p-4'>
+                <CardContent className='p-4 h-[300px]'>
                   {objetivos.length === 0 && (
-                    <div className='h-[270px] w-full flex items-center justify-center'>
+                    <div className='h-full w-full flex items-center justify-center'>
                       <p className='text-center'>
                         Para tener el gráfico de los objetivos de la sesión,
                         coloque objetivos antes de empezar la sesión.
@@ -424,12 +424,16 @@ export default function CapyEstadisticas() {
                 </CardContent>
               </Card>
             </CardContent>
+            {/* Aca estaria bueno agregar el nombre del evento si se estudio para uno  */}
             {/* Tabla de objetivos de la sesión */}
+            {objetivos.length > 0 && (
+              <div>
+
             <h2 className='ml-4 flex w-full justify-start text-2xl font-bold'>
               Objetivos de la sesión
             </h2>
-            {/* Aca estaria bueno agregar el nombre del evento si se estudio para uno  */}
-            <Table className=''>
+
+              <Table className=''>
               <TableCaption></TableCaption>
               <TableHeader>
                 <TableRow>
@@ -464,6 +468,8 @@ export default function CapyEstadisticas() {
                 ))}
               </TableBody>
             </Table>
+            </div>
+            )}
           </Card>
           <hr />
           <hr />
