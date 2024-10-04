@@ -198,7 +198,7 @@ export default function Eventos() {
                         className={`cursor-pointer ${
                           selectedEvent === event
                             ? 'text-accent'
-                            : 'hover:text-accent opacity-100'
+                            : 'opacity-100 hover:text-accent'
                         }`}
                       >
                         {event.date.toLocaleDateString('es-ES', {

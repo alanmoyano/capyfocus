@@ -18,7 +18,7 @@ const animacionesPositivas = [
   'Plantas',
   'Skate',
   'Sombrilla',
-  'Tortuga'
+  'Tortuga',
 ]
 
 const animacionesNegativas = [
@@ -33,7 +33,7 @@ const animacionesNegativas = [
   'Futbol',
   'Music',
   'Piano',
-  'Tortuga'
+  'Tortuga',
 ]
 
 function parseMotivation(motivation?: string) {
