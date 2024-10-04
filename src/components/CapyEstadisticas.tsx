@@ -368,7 +368,7 @@ export default function CapyEstadisticas() {
                     <div className='h-[270px] w-full flex items-center justify-center'>
                       <p className='text-center'>
                         Para tener el gráfico de los objetivos de la sesión,
-                        coloque antes de empezar la sesión objetivos.
+                        coloque objetivos antes de empezar la sesión.
                       </p>
                     </div>
                   )}
