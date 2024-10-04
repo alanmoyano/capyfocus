@@ -132,7 +132,7 @@ export default function Eventos() {
                   },
                 }}
                 modifiersClassNames={{
-                  eventDay: 'bg-secondary',
+                  eventDay: 'bg-secondary ',
                   disabled: 'opacity-50 cursor-not-allowed',
                 }}
                 locale={es}
@@ -197,8 +197,8 @@ export default function Eventos() {
                         onClick={() => setSelectedEvent(event)}
                         className={`cursor-pointer ${
                           selectedEvent === event
-                            ? 'text-primary'
-                            : 'hover:text-primary'
+                            ? 'text-accent'
+                            : 'hover:text-accent opacity-100'
                         }`}
                       >
                         {event.date.toLocaleDateString('es-ES', {

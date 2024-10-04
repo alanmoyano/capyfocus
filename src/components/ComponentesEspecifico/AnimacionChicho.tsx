@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 
 import { useRef } from 'react'
-
 const animacionesPositivas = [
   'Bubble',
   'Calabaza',
@@ -11,6 +10,15 @@ const animacionesPositivas = [
   'Durmiendo',
   'Fire',
   'Te',
+  'Futbol',
+  'Libro',
+  'Music',
+  'Pancake',
+  'Piano',
+  'Plantas',
+  'Skate',
+  'Sombrilla',
+  'Tortuga'
 ]
 
 const animacionesNegativas = [
@@ -21,6 +29,11 @@ const animacionesNegativas = [
   'Skate',
   'Sky',
   'Reloj',
+  'Nada',
+  'Futbol',
+  'Music',
+  'Piano',
+  'Tortuga'
 ]
 
 function parseMotivation(motivation?: string) {
