@@ -132,7 +132,7 @@ export default function Eventos() {
                   },
                 }}
                 modifiersClassNames={{
-                  eventDay: 'bg-secondary ',
+                  eventDay: 'bg-secondary',
                   disabled: 'opacity-50 cursor-not-allowed',
                 }}
                 locale={es}
