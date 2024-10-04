@@ -256,7 +256,7 @@ export default function Timer() {
           </div>
           <div className='mt-6 flex flex-col items-center justify-between sm:flex-row'>
             <Button
-              className='mb-2 w-full sm:mb-0 sm:w-auto'
+              className='mb-2 w-full sm:mb-0 sm:w-auto dark:text-white'
               variant={'destructive'}
               onClick={() => {
                 finalizarSesion()
