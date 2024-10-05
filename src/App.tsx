@@ -15,7 +15,6 @@ import CapyEstadisticas from './components/CapyEstadisticas'
 import Usuario from './components/Usuario'
 import { MotivationProvider } from './components/contexts/MotivationContext'
 import { MusicProvider } from './components/contexts/MusicContext'
-import PruebaTabla from './components/PruebaTabla'
 import { SesionProvider } from './components/contexts/SesionContext'
 import { Helmet } from 'react-helmet'
 import NotFound from './components/NotFound'
@@ -42,7 +41,6 @@ function App() {
                     <Inicio />
                   </Route>
 
-                  <Route path='/tablas' component={PruebaTabla} />
                   <Route path='/login' component={Login} />
 
                   <Route path='/capydoro'>

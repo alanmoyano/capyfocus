@@ -98,7 +98,7 @@ export default function Eventos() {
                 onChange={e => setEventTitle(e.target.value)}
                 onKeyDown={handleAdd}
                 placeholder='Nuevo evento'
-                className='col-span-1 sm:col-span-3'
+                className='col-span-1 sm:col-span-3 dark:placeholder:text-gray-500'
               />
             </div>
             <p className='text-sm text-muted-foreground'>
@@ -187,7 +187,7 @@ export default function Eventos() {
                 <h2 className='text-lg font-bold sm:text-xl'>
                   Eventos programados:
                 </h2>
-                <ul className='list-inside list-disc space-y-2 text-sm text-black sm:text-base'>
+                <ul className='list-inside list-disc space-y-2 text-sm text-black sm:text-base dark:text-white'>
                   {events.map((event, index) => (
                     <li
                       key={index}

@@ -213,7 +213,7 @@ export default function Usuario() {
             </CardContent>
             <CardFooter className='mt-auto flex justify-end'>
               <div className='space-x-4'>
-                <Button onClick={() => handleLogin()} className='mt-4'>
+                <Button variant={'destructive'} onClick={() => handleLogin()} className='mt-4 border-2 border-black' >
                   Cerrar sesión
                 </Button>
               </div>
