@@ -93,9 +93,9 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
               {[
                 {
                   label: 'Tiempo total de estudio',
-                  value: 20,
+                  value: formatTime(2000),
                 },
-                { label: 'Total de objetivos', value: 3 },
+                { label: 'Total de objetivos', value: 800 },
                 {
                   label: 'Objetivos cumplidos',
                   value: 5 - 2,
