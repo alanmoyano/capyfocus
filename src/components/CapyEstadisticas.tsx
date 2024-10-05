@@ -296,7 +296,7 @@ export default function CapyEstadisticas() {
 
           <Card
             ref={cardRefs.sesion}
-            className='container mx-auto mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg dark:from-gray-800 dark:to-gray-900 dark:shadow-gray-800'
+            className='container mx-auto mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg dark:from-gray-800 dark:to-gray-600 dark:shadow-gray-700'
           >
             <CardHeader>
               <CardTitle className=''>
@@ -305,7 +305,7 @@ export default function CapyEstadisticas() {
                 </h1>
               </CardTitle>
             </CardHeader>
-            <CardContent className='flex justify-between gap-4'>
+            <CardContent className='flex justify-between gap-4 '>
               <div className='w-1/2'>
                 <div className='grid grid-cols-2 gap-6'>
                   {[
@@ -345,7 +345,7 @@ export default function CapyEstadisticas() {
                   ].map(({ label, value }, index) => (
                     <div
                       key={index}
-                      className='rounded-lg bg-white p-2 shadow-md'
+                      className='rounded-lg bg-white p-2 shadow-md '
                     >
                       <p className='mb-2 rounded-lg bg-primary p-2 text-sm font-semibold text-gray-800'>
                         {label}

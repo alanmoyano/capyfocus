@@ -266,7 +266,7 @@ export default function Inicio() {
           <p>Elige tu método de estudio:</p>
           <ToggleGroup
             type='single'
-            className='rounded-xl bg-primary/60 p-2'
+            className='rounded-xl bg-primary/60 dark:bg-primary p-2'
             onValueChange={value => setDescription(value as CapyMetodos)}
           >
             <ToggleGroupItem
@@ -289,7 +289,7 @@ export default function Inicio() {
           <Eventos />
 
           {/* Objetivos */}
-          <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
+          <div className='mt-4 rounded-xl bg-secondary/70 p-4 dark:bg-secondary/90'>
             <div className='mt-2 flex items-center gap-2'>
               <Input
                 type='text'
@@ -297,7 +297,7 @@ export default function Inicio() {
                 value={inputValue}
                 onKeyDown={handleAdd}
                 onChange={e => setInputValue(e.target.value)}
-                className='rounded-md border border-secondary bg-white p-3 shadow-md transition-shadow duration-200 ease-in-out hover:shadow-lg focus:outline-none focus:ring-2'
+                className='rounded-md border dark:placeholder:text-white dark:bg-[#110d09] border-secondary bg-white p-3 shadow-md transition-shadow duration-200 ease-in-out hover:shadow-lg focus:outline-none focus:ring-2'
                 disabled={objetivos.length >= 10}
               />
               <Popover open={open} onOpenChange={setOpen}>
@@ -312,7 +312,7 @@ export default function Inicio() {
                     {value ? (
                       objetivosFav.find(objetivoFav => objetivoFav === value)
                     ) : (
-                      <Star />
+                      <Star className=''/>
                     )}
                     <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
                   </Button>
@@ -368,7 +368,7 @@ export default function Inicio() {
                         />
                       </div>
                     ) : (
-                      <div className='flex w-full items-center justify-between'>
+                      <div className='flex w-full items-center  justify-between'>
                         <span>{objetivo}</span>
                         <div className='flex items-center'>
                           <TooltipProvider delayDuration={50}>

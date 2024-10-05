@@ -103,7 +103,7 @@ export default function Usuario() {
               <video src='/idle.webm' autoPlay loop muted playsInline />
             </div>
           </div>
-          <Card className='flex h-full w-full flex-col bg-secondary shadow-md'>
+          <Card className='flex h-full w-full flex-col bg-secondary shadow-md dark:bg-secondary/80 '>
             <CardHeader className='text-center'>
               <Avatar className='mx-auto h-40 w-40'>
                 <AvatarImage src={confirmedPicture} className='h-full w-full' />
