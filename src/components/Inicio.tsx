@@ -297,7 +297,7 @@ export default function Inicio() {
                 value={inputValue}
                 onKeyDown={handleAdd}
                 onChange={e => setInputValue(e.target.value)}
-                className='rounded-md border dark:placeholder:text-white dark:bg-[#110d09] border-secondary bg-white p-3 shadow-md transition-shadow duration-200 ease-in-out hover:shadow-lg focus:outline-none focus:ring-2'
+                className='rounded-md border dark:placeholder:text-gray-500 dark:bg-[#110d09] border-secondary bg-white p-3 shadow-md transition-shadow duration-200 ease-in-out hover:shadow-lg focus:outline-none focus:ring-2'
                 disabled={objetivos.length >= 10}
               />
               <Popover open={open} onOpenChange={setOpen}>

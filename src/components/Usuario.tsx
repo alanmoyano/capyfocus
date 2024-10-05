@@ -167,9 +167,9 @@ export default function Usuario() {
                               </Label>
                               <Input
                                 id='username'
-                                placeholder='Usuario'
+                                placeholder='Ingrese un nuevo nombre'
                                 {...register('username')}
-                                className='w-full'
+                                className='w-full dark:placeholder:text-gray-400'
                               />
                               {errors.username && (
                                 <p className='text-sm text-red-500'>

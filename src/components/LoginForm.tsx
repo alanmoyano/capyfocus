@@ -10,8 +10,16 @@ import {
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { useState } from 'react'
+import { Eye, EyeOff } from 'lucide-react'
 
 export default function LoginForm() {
+  const [verContraseña, setVerContraseña] = useState(false)
+
+  const handlePassword = () => {
+    setVerContraseña(!verContraseña)
+  }
+
   return (
     <Card className='h-auto'>
       <CardHeader>
@@ -25,13 +33,23 @@ export default function LoginForm() {
           <Label htmlFor='username' className='font-medium'>
             Usuario
           </Label>
-          <Input placeholder='Chicho' type='text' />
+          <Input placeholder='Chicho' className='dark:placeholder:text-gray-500' type='text' />
         </div>
         <div className='space-y-1'>
           <Label htmlFor='contraseña' className='font-medium'>
             Contraseña
           </Label>
-          <Input id='contraseña' placeholder='********' type='password' />
+          <div className='flex justify-between'>
+            <Input
+              id='contraseña'
+              placeholder='********'
+              className='dark:placeholder:text-gray-500'
+              type={verContraseña ? 'text' : 'password'}
+            />
+            <Button variant={'icon'} onClick={handlePassword}>
+              {verContraseña ? <EyeOff></EyeOff> : <Eye></Eye>}
+            </Button>
+          </div>
         </div>
         <Label>¿Olvidaste tu contraseña?</Label>
         <Button variant={'link'} className='border-none text-sm font-normal'>
