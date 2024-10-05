@@ -256,7 +256,7 @@ function SignupForm() {
                         type={verContraseña ? 'text' : 'password'}
                         className='dark:placeholder:text-gray-500'
                       />
-                      <Button variant={'icon'} onClick={handlePassword}>
+                      <Button variant={'icon'} type='button' onClick={handlePassword}>
                         {verContraseña ? <EyeOff></EyeOff> : <Eye></Eye>}
                       </Button>
                     </div>

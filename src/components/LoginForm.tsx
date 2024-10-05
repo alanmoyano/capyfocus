@@ -46,7 +46,7 @@ export default function LoginForm() {
               className='dark:placeholder:text-gray-500'
               type={verContraseña ? 'text' : 'password'}
             />
-            <Button variant={'icon'} onClick={handlePassword}>
+            <Button type='button' variant={'icon'} onClick={handlePassword}>
               {verContraseña ? <EyeOff></EyeOff> : <Eye></Eye>}
             </Button>
           </div>

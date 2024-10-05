@@ -296,14 +296,14 @@ export default function Pomodoro() {
             </div>
           </div>
           <div className='mt-8 flex justify-center'>
-            <span className='rounded-xl bg-secondary/90 px-12 py-4'>
+            <span className='rounded-xl bg-secondary/90 text-black px-12 py-4'>
               <ActualTimer mode={mode} time={countdown} />
               {pomodoroCount.current >= 1 && (
                 <Confetti mode='boom' particleCount={150} />
               )}
               {/* <Confetti mode='boom' particleCount={150} /> */}
 
-              <p className=''>Capydoros: {Math.floor(pomodoroCount.current)}</p>
+              <p className='text-black'>Capydoros: {Math.floor(pomodoroCount.current)}</p>
             </span>
           </div>
           <div className='mt-4 flex justify-center'>
