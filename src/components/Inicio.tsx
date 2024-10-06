@@ -149,8 +149,15 @@ export default function Inicio() {
       case 'Capymetro':
         setLocation('capymetro')
         setTecnicaEstudio(description)
-
         break
+      case undefined:
+      toast.error('CapyError', {
+        description: 'Selecciona un método de estudio antes.',
+        duration: 5000,
+        action: { label: 'Aceptar', onClick: () => {toast.dismiss()} },
+      })
+      break
+      
     }
   }
 
