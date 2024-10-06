@@ -11,7 +11,7 @@ import { useMusic } from './contexts/MusicContext'
 import { useMotivation } from './contexts/MotivationContext'
 import { useSesion } from './contexts/SesionContext'
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
-
+import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
 type Mode = 'Estudiando' | 'Descansando'
 
 function addZeroIfNeeded(value: number) {
@@ -220,149 +220,87 @@ export default function Pomodoro() {
 
   return (
     <>
-      <h1 className='mt-4 text-4xl font-bold'>Capydoro!</h1>
-      {/* Columna imagen  */}
-      <div className='grid grid-cols-2 gap-12'>
-        <div className=''>
+      <h1 className='mt-4 text-4xl font-bold text-center'>Capydoro!</h1>
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+        <div className='px-4 mt-4'>
           <DialogoChicho motivation={motivationType} />
-          <video src='/idle.webm' autoPlay loop muted playsInline />
-
-          <div className='mb-4 rounded-lg bg-primary p-2'>
-            Tu tipo de motivación es:{' '}
-            <span className='font-semibold'>{motivationType}</span>
+          <AnimacionChicho motivation={motivationType} />
+          <div className='mb-4 rounded-lg bg-primary p-2 text-center'>
+            Tu tipo de motivación es: <span className='font-semibold'>{motivationType}</span>
           </div>
-          <div>
+          <div className='w-full'>
             {selectedMusic && (
               <iframe
-                style={{ borderRadius: '12px' }}
+                className='rounded-lg w-full h-40'
                 src={`https://open.spotify.com/embed/playlist/${selectedMusic.spotifyUri}?utm_source=generator`}
-                width='100%'
-                height='152'
                 frameBorder='0'
-                allowFullScreen={true}
                 allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
                 loading='eager'
               ></iframe>
             )}
           </div>
         </div>
-        {/* Columna 2 */}
-        <div className=''>
-          <p className='mt-8 flex w-full items-center justify-center text-xl font-semibold'>
-            Coloca el tiempo a estudiar y descansar
-          </p>
-          <div className='flex justify-between gap-4'>
-            {/* subit y bajar tiempo de estudio */}
-            <div className='w-1/2 p-4 text-center'>
+        <div className='px-4'>
+          <p className='mt-8 text-center text-xl font-semibold'>Coloca el tiempo a estudiar y descansar</p>
+          <div className='flex flex-col md:flex-row justify-between gap-4'>
+            <div className='w-full md:w-1/2 p-4 text-center'>
               <div className='mt-2 items-center justify-center gap-2 rounded-xl bg-secondary/60 p-2 font-semibold'>
                 <h3>Minutos de Estudio</h3>
                 <div className='flex items-center justify-center gap-4 text-lg'>
-                  <Button
-                    className=''
-                    onClick={() => setSessionSeconds(prev => prev - 60)}
-                    disabled={sessionSeconds <= 60 || isActive || isSetted}
-                  >
-                    -
-                  </Button>
+                  <Button onClick={() => setSessionSeconds(prev => prev - 60)} disabled={sessionSeconds <= 60 || isActive || isSetted}>-</Button>
                   <p>{sessionSeconds / 60}</p>
-                  <Button
-                    onClick={() => setSessionSeconds(prev => prev + 60)}
-                    disabled={isActive || isSetted}
-                  >
-                    +
-                  </Button>
+                  <Button onClick={() => setSessionSeconds(prev => prev + 60)} disabled={isActive || isSetted}>+</Button>
                 </div>
               </div>
             </div>
-            <div className='w-1/2 p-4 text-center'>
+            <div className='w-full md:w-1/2 p-4 text-center'>
               <div className='mt-2 items-center justify-center gap-2 rounded-xl bg-secondary/60 p-2 font-semibold'>
                 <h3>Minutos de descanso</h3>
                 <div className='flex items-center justify-center gap-4 text-lg'>
-                  <Button
-                    onClick={() => setBreakSeconds(prev => prev - 60)}
-                    disabled={breakSeconds <= 60 || isActive || isSetted}
-                  >
-                    -
-                  </Button>
-                  <p> {breakSeconds / 60}</p>
-                  <Button
-                    onClick={() => setBreakSeconds(prev => prev + 60)}
-                    disabled={isActive || isSetted}
-                  >
-                    +
-                  </Button>
+                  <Button onClick={() => setBreakSeconds(prev => prev - 60)} disabled={breakSeconds <= 60 || isActive || isSetted}>-</Button>
+                  <p>{breakSeconds / 60}</p>
+                  <Button onClick={() => setBreakSeconds(prev => prev + 60)} disabled={isActive || isSetted}>+</Button>
                 </div>
               </div>
             </div>
           </div>
           <div className='mt-8 flex justify-center'>
-            <span className='rounded-xl bg-secondary/90 text-black px-12 py-4'>
+            <span className='rounded-xl bg-secondary/90 text-black px-12 py-4 text-center'>
               <ActualTimer mode={mode} time={countdown} />
-              {pomodoroCount.current >= 1 && (
-                <Confetti mode='boom' particleCount={150} />
-              )}
-              {/* <Confetti mode='boom' particleCount={150} /> */}
-
+              {pomodoroCount.current >= 1 && <Confetti mode='boom' particleCount={150} />}
               <p className='text-black'>Capydoros: {Math.floor(pomodoroCount.current)}</p>
             </span>
           </div>
           <div className='mt-4 flex justify-center'>
-            {!isSetted && (
-              <Button
-                className=''
-                onClick={() => {
-                  handleSetted(sessionSeconds, breakSeconds)
-                }}
-              >
-                Empezar
-              </Button>
-            )}
-            {isSetted && (
-              <Button
-                className=''
-                onClick={() => {
-                  handlePause(!isActive)
-                }}
-              >
-                {isActive ? 'Pausar' : 'Reanudar'}
-              </Button>
+            {!isSetted ? (
+              <Button onClick={() => handleSetted(sessionSeconds, breakSeconds)}>Empezar</Button>
+            ) : (
+              <Button onClick={() => handlePause(!isActive)}>{isActive ? 'Pausar' : 'Reanudar'}</Button>
             )}
           </div>
-
           <div className='mt-4 rounded-xl bg-accent/90 p-4'>
             <h1 className='text-xl'>Objetivos de la sesión:</h1>
             <ul className='list-inside list-disc space-y-2 text-black'>
               {objetivos.map((objetivo, key) => (
                 <li key={key} className='flex items-center space-x-2'>
-                  <span className='flex items-center'>
-                    <Checkbox
-                      checked={marked.includes(objetivo)}
-                      disabled={mode === 'Descansando' || !isActive}
-                      onClick={() => handleCheckbox(objetivo)}
-                      className='mr-2'
-                    />
-                    <span>{objetivo}</span>
-                  </span>
-                  {objetivosFav.includes(objetivo) && (
-                    <Star size={20} style={{ color: '#ffbc05' }} />
-                  )}
+                  <Checkbox
+                    checked={marked.includes(objetivo)}
+                    disabled={mode === 'Descansando' || !isActive}
+                    onClick={() => handleCheckbox(objetivo)}
+                    className='mr-2'
+                  />
+                  <span>{objetivo}</span>
+                  {objetivosFav.includes(objetivo) && <Star size={20} style={{ color: '#ffbc05' }} />}
                 </li>
               ))}
             </ul>
           </div>
-          <div className='container mt-8 flex w-full gap-44'>
-            <div className='flex items-start justify-start'>
-              <Button onClick={handleAccept}>Volver</Button>
-            </div>
-            <div className='flex justify-end'>
-              <Button
-                className=''
-                variant={'destructive'}
-                onClick={finalizarSesion}
-              >
-                Finalizar Sesion
-              </Button>
-            </div>
+          <div className='container mt-4 flex flex-col md:flex-row justify-end'>
+            <Button variant={'destructive'} onClick={finalizarSesion}>Finalizar Sesion</Button>
+          </div>
+          <div className='container w-full mt-8'>
+
+           
           </div>
         </div>
       </div>
