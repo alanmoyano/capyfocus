@@ -65,7 +65,7 @@ function App() {
                 </Switch>
               </main>
 
-              <Toaster richColors closeButton/>
+              <Toaster richColors closeButton />
             </MusicProvider>
           </SesionProvider>
         </MotivationProvider>

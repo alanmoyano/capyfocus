@@ -12,7 +12,7 @@ import { useSesion } from './contexts/SesionContext'
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
 import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
 import useTimer from '@/hooks/useTimer'
-
+import { Helmet } from 'react-helmet'
 
 //import Confetti from 'react-confetti-boom'
 
@@ -168,6 +168,14 @@ export default function Timer() {
 
   return (
     <>
+      <Helmet>
+        {studyTime <= 0 ? (
+          <title>CapyMetro!</title>
+        ) : (
+          <title>{`${isStudying ? 'Estudiando' : 'Descansando'}: ${isStudying ? formatTime(studyTime) : formatTime(breakTime)}`}</title>
+        )}
+      </Helmet>
+
       <h1 className='mt-4 text-4xl font-bold'>CapyMetro!</h1>
 
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
@@ -269,15 +277,10 @@ export default function Timer() {
             <Button className='w-full sm:w-auto' onClick={handleAccept}>
               Volver
             </Button>
-
-            
           </div>
         </div>
       </div>
-      
-      
 
-      
       {/* {pomodoroCount.current >= pomodoroSessions && (
         <Confetti effectCount={1} />
         )} */}

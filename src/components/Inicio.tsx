@@ -291,7 +291,7 @@ export default function Inicio() {
           <div className='flex h-auto w-1/2 items-center space-x-4'>
             <Eventos />
             <div className='mt-6'>
-            <CapyInfo  desc='Organiza tus sesiones de estudio con eventos y objetivos. Selecciona el evento, haz clic en "Aceptar", añade los objetivos de la sesión y ¡Controla tu progreso en las CapyEstadísticas!' />
+              <CapyInfo desc='Organiza tus sesiones de estudio con eventos y objetivos. Selecciona el evento, haz clic en "Aceptar", añade los objetivos de la sesión y ¡Controla tu progreso en las CapyEstadísticas!' />
             </div>
           </div>
 
@@ -475,7 +475,7 @@ export default function Inicio() {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <CapyInfo desc='La motivación es un factor clave para el éxito en el estudio. Selecciona el tipo de mensajes que te ayude a mantenerte enfocado y motivado. '/>
+            <CapyInfo desc='La motivación es un factor clave para el éxito en el estudio. Selecciona el tipo de mensajes que te ayude a mantenerte enfocado y motivado. ' />
           </div>
           {/* Musica */}
           <div className='mt-4'>

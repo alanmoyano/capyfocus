@@ -13,6 +13,7 @@ export default function CapyInfo({ desc }: { desc: string }) {
           toast.info('CapyInfo', {
             description: desc,
             duration: 10000,
+            position: 'bottom-left',
           })
         }
       >

@@ -28,13 +28,12 @@ import { Label } from '@/components/ui/label'
 import { useLocation } from 'wouter'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import ChichoHablaPerfil from './ComponentesEspecifico/ChichoHablaPerfil'
-import { se } from 'date-fns/locale'
 
 const formSchema = z.object({
   username: z
     .string()
-    .min(5, 'El nombre de usuario debe tener al menos 5 caracteres')
-    .max(15, 'El nombre de usuario no puede tener más de 15 caracteres'),
+    .min(3, 'El nombre de usuario debe tener al menos 3 caracteres')
+    .max(30, 'El nombre de usuario no puede tener más de 30 caracteres'),
   email: z.string().email('Por favor, ingresa un email válido'),
 })
 type FormValues = z.infer<typeof formSchema>
@@ -47,7 +46,7 @@ export default function Usuario() {
   }
 
   // que los default sean los anteriores, ver cuando este la DB
-  const currentUsername = 'Chicho'
+  const [currentUsername, setCurrentUsername] = useState('Chicho')
   const currentEmail = 'chicho@capymail.com'
 
   const [selectedPicture, setSelectedPicture] = useState<string | undefined>(
@@ -114,7 +113,13 @@ export default function Usuario() {
             <CardHeader className='text-center'>
               <Avatar className='mx-auto h-40 w-40'>
                 <AvatarImage src={confirmedPicture} className='h-full w-full' />
-                <AvatarFallback className='text-2xl'>CN</AvatarFallback>
+                <AvatarFallback className='border border-accent-foreground bg-accent text-4xl font-medium'>
+                  {confirmedUsername
+                    .split(' ')
+                    .map(palabra => palabra.at(0)?.toUpperCase())
+                    .join('')
+                    .slice(0, 2)}
+                </AvatarFallback>
               </Avatar>
               <CardDescription className='text-center'>
                 {/* { infoAvatar && (
@@ -161,6 +166,7 @@ export default function Usuario() {
                           Modificar perfil
                         </SheetTitle>
                       </SheetHeader>
+                      {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
                       <form onSubmit={handleSubmit(handleConfirm)}>
                         <ScrollArea className='h-[80vh] pr-4'>
                           <SheetTitle className='text-lg font-semibold'>
@@ -201,7 +207,6 @@ export default function Usuario() {
                           <SheetClose asChild>
                             <Button
                               type='submit'
-                      
                               disabled={
                                 Object.keys(errors).length > 0 || !hasChanges
                               }

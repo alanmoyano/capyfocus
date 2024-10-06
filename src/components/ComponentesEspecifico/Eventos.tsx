@@ -1,4 +1,4 @@
-import { Trash} from 'lucide-react'
+import { Trash } from 'lucide-react'
 import {
   Tooltip,
   TooltipContent,
@@ -69,7 +69,6 @@ export default function Eventos() {
 
   return (
     <Sheet>
-
       <SheetTrigger asChild>
         <Button
           variant='secondary'

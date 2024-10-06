@@ -9,7 +9,7 @@ export default function useTimer() {
 
   useEffect(() => {
     workerRef.current = new Worker(
-      new URL('../workers/capymetro.ts', import.meta.url)
+      new URL('../workers/capydoro.ts', import.meta.url)
     )
 
     workerRef.current.onmessage = event => {

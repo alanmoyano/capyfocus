@@ -220,18 +220,19 @@ export default function Pomodoro() {
 
   return (
     <>
-      <h1 className='mt-4 text-4xl font-bold text-center'>Capydoro!</h1>
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-        <div className='px-4 mt-4'>
+      <h1 className='mt-4 text-center text-4xl font-bold'>Capydoro!</h1>
+      <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+        <div className='mt-4 px-4'>
           <DialogoChicho motivation={motivationType} />
           <AnimacionChicho motivation={motivationType} />
           <div className='mb-4 rounded-lg bg-primary p-2 text-center'>
-            Tu tipo de motivación es: <span className='font-semibold'>{motivationType}</span>
+            Tu tipo de motivación es:{' '}
+            <span className='font-semibold'>{motivationType}</span>
           </div>
           <div className='w-full'>
             {selectedMusic && (
               <iframe
-                className='rounded-lg w-full h-40'
+                className='h-40 w-full rounded-lg'
                 src={`https://open.spotify.com/embed/playlist/${selectedMusic.spotifyUri}?utm_source=generator`}
                 frameBorder='0'
                 allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
@@ -241,41 +242,73 @@ export default function Pomodoro() {
           </div>
         </div>
         <div className='px-4'>
-          <p className='mt-8 text-center text-xl font-semibold'>Coloca el tiempo a estudiar y descansar</p>
-          <div className='flex flex-col md:flex-row justify-between gap-4'>
-            <div className='w-full md:w-1/2 p-4 text-center'>
+          <p className='mt-8 text-center text-xl font-semibold'>
+            Coloca el tiempo a estudiar y descansar
+          </p>
+          <div className='flex flex-col justify-between gap-4 md:flex-row'>
+            <div className='w-full p-4 text-center md:w-1/2'>
               <div className='mt-2 items-center justify-center gap-2 rounded-xl bg-secondary/60 p-2 font-semibold'>
                 <h3>Minutos de Estudio</h3>
                 <div className='flex items-center justify-center gap-4 text-lg'>
-                  <Button onClick={() => setSessionSeconds(prev => prev - 60)} disabled={sessionSeconds <= 60 || isActive || isSetted}>-</Button>
+                  <Button
+                    onClick={() => setSessionSeconds(prev => prev - 60)}
+                    disabled={sessionSeconds <= 60 || isActive || isSetted}
+                  >
+                    -
+                  </Button>
                   <p>{sessionSeconds / 60}</p>
-                  <Button onClick={() => setSessionSeconds(prev => prev + 60)} disabled={isActive || isSetted}>+</Button>
+                  <Button
+                    onClick={() => setSessionSeconds(prev => prev + 60)}
+                    disabled={isActive || isSetted}
+                  >
+                    +
+                  </Button>
                 </div>
               </div>
             </div>
-            <div className='w-full md:w-1/2 p-4 text-center'>
+            <div className='w-full p-4 text-center md:w-1/2'>
               <div className='mt-2 items-center justify-center gap-2 rounded-xl bg-secondary/60 p-2 font-semibold'>
                 <h3>Minutos de descanso</h3>
                 <div className='flex items-center justify-center gap-4 text-lg'>
-                  <Button onClick={() => setBreakSeconds(prev => prev - 60)} disabled={breakSeconds <= 60 || isActive || isSetted}>-</Button>
+                  <Button
+                    onClick={() => setBreakSeconds(prev => prev - 60)}
+                    disabled={breakSeconds <= 60 || isActive || isSetted}
+                  >
+                    -
+                  </Button>
                   <p>{breakSeconds / 60}</p>
-                  <Button onClick={() => setBreakSeconds(prev => prev + 60)} disabled={isActive || isSetted}>+</Button>
+                  <Button
+                    onClick={() => setBreakSeconds(prev => prev + 60)}
+                    disabled={isActive || isSetted}
+                  >
+                    +
+                  </Button>
                 </div>
               </div>
             </div>
           </div>
           <div className='mt-8 flex justify-center'>
-            <span className='rounded-xl bg-secondary/90 text-black px-12 py-4 text-center'>
+            <span className='rounded-xl bg-secondary/90 px-12 py-4 text-center text-black'>
               <ActualTimer mode={mode} time={countdown} />
-              {pomodoroCount.current >= 1 && <Confetti mode='boom' particleCount={150} />}
-              <p className='text-black'>Capydoros: {Math.floor(pomodoroCount.current)}</p>
+              {pomodoroCount.current >= 1 && (
+                <Confetti mode='boom' particleCount={150} />
+              )}
+              <p className='text-black'>
+                Capydoros: {Math.floor(pomodoroCount.current)}
+              </p>
             </span>
           </div>
           <div className='mt-4 flex justify-center'>
             {!isSetted ? (
-              <Button onClick={() => handleSetted(sessionSeconds, breakSeconds)}>Empezar</Button>
+              <Button
+                onClick={() => handleSetted(sessionSeconds, breakSeconds)}
+              >
+                Empezar
+              </Button>
             ) : (
-              <Button onClick={() => handlePause(!isActive)}>{isActive ? 'Pausar' : 'Reanudar'}</Button>
+              <Button onClick={() => handlePause(!isActive)}>
+                {isActive ? 'Pausar' : 'Reanudar'}
+              </Button>
             )}
           </div>
           <div className='mt-4 rounded-xl bg-accent/90 p-4'>
@@ -290,18 +323,19 @@ export default function Pomodoro() {
                     className='mr-2'
                   />
                   <span>{objetivo}</span>
-                  {objetivosFav.includes(objetivo) && <Star size={20} style={{ color: '#ffbc05' }} />}
+                  {objetivosFav.includes(objetivo) && (
+                    <Star size={20} style={{ color: '#ffbc05' }} />
+                  )}
                 </li>
               ))}
             </ul>
           </div>
-          <div className='container mt-4 flex flex-col md:flex-row justify-end'>
-            <Button variant={'destructive'} onClick={finalizarSesion}>Finalizar Sesion</Button>
+          <div className='container mt-4 flex flex-col justify-end md:flex-row'>
+            <Button variant={'destructive'} onClick={finalizarSesion}>
+              Finalizar Sesion
+            </Button>
           </div>
-          <div className='container w-full mt-8'>
-
-           
-          </div>
+          <div className='container mt-8 w-full'></div>
         </div>
       </div>
     </>

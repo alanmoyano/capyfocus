@@ -305,7 +305,7 @@ export default function CapyEstadisticas() {
                 </h1>
               </CardTitle>
             </CardHeader>
-            <CardContent className='flex justify-between gap-4 '>
+            <CardContent className='flex justify-between gap-4'>
               <div className='w-1/2'>
                 <div className='grid grid-cols-2 gap-6'>
                   {[
@@ -345,7 +345,7 @@ export default function CapyEstadisticas() {
                   ].map(({ label, value }, index) => (
                     <div
                       key={index}
-                      className='rounded-lg bg-white p-2 shadow-md '
+                      className='rounded-lg bg-white p-2 shadow-md'
                     >
                       <p className='mb-2 rounded-lg bg-primary p-2 text-sm font-semibold text-gray-800'>
                         {label}
@@ -363,9 +363,9 @@ export default function CapyEstadisticas() {
                     Tiempo dedicado a objetivos en la sesión actual
                   </CardTitle>
                 </CardHeader>
-                <CardContent className='p-4 h-[300px]'>
+                <CardContent className='h-[300px] p-4'>
                   {objetivos.length === 0 && (
-                    <div className='h-full w-full flex items-center justify-center'>
+                    <div className='flex h-full w-full items-center justify-center'>
                       <p className='text-center'>
                         Para tener el gráfico de los objetivos de la sesión,
                         coloque objetivos antes de empezar la sesión.
@@ -428,47 +428,50 @@ export default function CapyEstadisticas() {
             {/* Tabla de objetivos de la sesión */}
             {objetivos.length > 0 && (
               <div>
+                <h2 className='ml-4 flex w-full justify-start text-2xl font-bold'>
+                  Objetivos de la sesión
+                </h2>
 
-            <h2 className='ml-4 flex w-full justify-start text-2xl font-bold'>
-              Objetivos de la sesión
-            </h2>
-
-              <Table className=''>
-              <TableCaption></TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className='w-[100px]'>Objetivo</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead className='text-right'>Tiempo</TableHead>
-                  <TableHead className='text-right'>Tiempo acumulado</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {objetivos.map((objetivo, index) => (
-                  <TableRow key={index}>
-                    <TableCell className='font-medium'>{objetivo}</TableCell>
-                    <TableCell>
-                      {tiempo[objetivo] === 0 ? (
-                        <span className='rounded-full bg-orange-200 px-2 py-1 text-xs font-semibold text-yellow-800'>
-                          Pendiente
-                        </span>
-                      ) : (
-                        <span className='rounded-full bg-green-200 px-2 py-1 text-xs font-semibold text-green-800'>
-                          Cumplido
-                        </span>
-                      )}
-                    </TableCell>
-                    <TableCell className='text-right'>
-                      {formatTime(tiempo[objetivo] || 0)}
-                    </TableCell>
-                    <TableCell className='text-right'>
-                      {formatTime(tiempoSesion[objetivo] || 0)}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            </div>
+                <Table className=''>
+                  <TableCaption></TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className='w-[100px]'>Objetivo</TableHead>
+                      <TableHead>Estado</TableHead>
+                      <TableHead className='text-right'>Tiempo</TableHead>
+                      <TableHead className='text-right'>
+                        Tiempo acumulado
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {objetivos.map((objetivo, index) => (
+                      <TableRow key={index}>
+                        <TableCell className='font-medium'>
+                          {objetivo}
+                        </TableCell>
+                        <TableCell>
+                          {tiempo[objetivo] === 0 ? (
+                            <span className='rounded-full bg-orange-200 px-2 py-1 text-xs font-semibold text-yellow-800'>
+                              Pendiente
+                            </span>
+                          ) : (
+                            <span className='rounded-full bg-green-200 px-2 py-1 text-xs font-semibold text-green-800'>
+                              Cumplido
+                            </span>
+                          )}
+                        </TableCell>
+                        <TableCell className='text-right'>
+                          {formatTime(tiempo[objetivo] || 0)}
+                        </TableCell>
+                        <TableCell className='text-right'>
+                          {formatTime(tiempoSesion[objetivo] || 0)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             )}
           </Card>
           <hr />
@@ -750,7 +753,7 @@ export default function CapyEstadisticas() {
 
       {selectedPeriod === 'evento' && (
         <>
-        <p>Prototipo</p>
+          <p>Prototipo</p>
           <EstadisticasPeriodo period='evento'></EstadisticasPeriodo>
         </>
       )}

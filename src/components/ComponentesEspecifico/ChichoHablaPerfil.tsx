@@ -1,44 +1,37 @@
-import { useEffect, useState} from 'react'
+import { useEffect, useState } from 'react'
 
-type Dialogo = {
-  mensaje: string
-}
-const dialogosPosibles =[
-    'Estas fachero con ese avatar, ¿eh?',
-    'Definitivamente vas a conquistar el mundo',
-    'Bueno, con este avatar seguro que nadie te olvidará… por decirlo de una manera.',
-    'Interesante decisión. Te hace ver… diferente, por decir algo.',
-    'Elegiste un avatar que va contra corriente. Muy, muy original.',
-    'Supongo que alguien tiene que ser el personaje peculiar del grupo… ¿por qué no tú?',
-    'Digno de un auténtico personaje de relleno. ¡Pero alguien tiene que hacerlo!',
-    'Interesante elección. Se nota que no sigues las tendencias...',
-    'Parece que no tienes miedo de causar una impresión fuerte. Demasiado fuerte, quizás.',
-    'No cualquiera elegiría este avatar. De hecho, probablemente nadie más lo haría.',
-    'Elegiste este avatar… ¡Eso sí que es confiar en tu propia personalidad para sobresalir!',
-    'Bueno, parece que alguien decidió que la originalidad está sobrevalorada. ¡Con este avatar queda claro!',
-    'Bueno, este avatar tiene una especie de encanto. Muy peculiar. Muy, muy peculiar',
-    'Con este avatar, definitivamente eres el rey o reina del "¿qué estaban pensando?"',
-    'Al menos con este avatar, nadie te confundirá con alguien normal. ¡Eso es un logro!',
-    'Te veo con este avatar y me pregunto: ¿te encanta la atención o es solo una coincidencia?',
-    'Es tan peculiar que parece que lo elegiste al azar. ¡Aplausos por ser tan audaz!',
-
+const dialogosPosibles = [
+  'Estas fachero con ese avatar, ¿eh?',
+  'Definitivamente vas a conquistar el mundo',
+  'Bueno, con este avatar seguro que nadie te olvidará… por decirlo de una manera.',
+  'Interesante decisión. Te hace ver… diferente, por decir algo.',
+  'Elegiste un avatar que va contra corriente. Muy, muy original.',
+  'Supongo que alguien tiene que ser el personaje peculiar del grupo… ¿por qué no tú?',
+  'Digno de un auténtico personaje de relleno. ¡Pero alguien tiene que hacerlo!',
+  'Interesante elección. Se nota que no sigues las tendencias...',
+  'Parece que no tienes miedo de causar una impresión fuerte. Demasiado fuerte, quizás.',
+  'No cualquiera elegiría este avatar. De hecho, probablemente nadie más lo haría.',
+  'Elegiste este avatar… ¡Eso sí que es confiar en tu propia personalidad para sobresalir!',
+  'Bueno, parece que alguien decidió que la originalidad está sobrevalorada. ¡Con este avatar queda claro!',
+  'Bueno, este avatar tiene una especie de encanto. Muy peculiar. Muy, muy peculiar',
+  'Con este avatar, definitivamente eres el rey o reina del "¿qué estaban pensando?"',
+  'Al menos con este avatar, nadie te confundirá con alguien normal. ¡Eso es un logro!',
+  'Te veo con este avatar y me pregunto: ¿te encanta la atención o es solo una coincidencia?',
+  'Es tan peculiar que parece que lo elegiste al azar. ¡Aplausos por ser tan audaz!',
 ]
 function selectRandomDialogo() {
   const randomIndex = Math.floor(Math.random() * dialogosPosibles.length)
   return dialogosPosibles[randomIndex]
 }
 
-
-export default function ChichoHablaPerfil({imagen} : {imagen: string | undefined}) {
+export default function ChichoHablaPerfil({ imagen }: { imagen?: string }) {
   const [dialogo, setDialogo] = useState<string>()
-  const [cambioImg, setCambioImg] = useState<boolean>(false) 
-  
+
   useEffect(() => {
-    setDialogo(selectRandomDialogo)
-    
-  }, [cambioImg])
-
-
+    setDialogo(
+      imagen ? selectRandomDialogo : '¿Venís a cambiar la foto de perfil?'
+    )
+  }, [imagen])
 
   return (
     <>

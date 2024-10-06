@@ -31,7 +31,6 @@ import { formatTime } from '@/lib/utils'
 //Lo siguiente se va a ir fuertemente cuando este implementada la BD:
 import { useObjetivos } from '@contexts/ObjetivosContext'
 
-
 //Elementos de la gráfica:
 const chartData1 = [
   { month: 'Enero', desktop: 186, mobile: 80 },
@@ -144,26 +143,35 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
               <CardContent className='p-3'>
                 <ChartContainer config={chartConfig}>
                   <ResponsiveContainer width='100%' height={250}>
-                  <BarChart accessibilityLayer data={chartData1}>
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey='month'
-                    tickLine={false}
-                    tickMargin={10}
-                    axisLine={false}
-                    tickFormatter={(value: string) => value.slice(0, 3)}
-                  />
-                  <ChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent formatType='integer' indicator='line' />}
-                  />
-                  <Bar
-                    dataKey='desktop'
-                    fill='var(--color-desktop)'
-                    radius={4}
-                  />
-                  <Bar dataKey='mobile' fill='var(--color-mobile)' radius={4} />
-                </BarChart>
+                    <BarChart accessibilityLayer data={chartData1}>
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey='month'
+                        tickLine={false}
+                        tickMargin={10}
+                        axisLine={false}
+                        tickFormatter={(value: string) => value.slice(0, 3)}
+                      />
+                      <ChartTooltip
+                        cursor={false}
+                        content={
+                          <ChartTooltipContent
+                            formatType='integer'
+                            indicator='line'
+                          />
+                        }
+                      />
+                      <Bar
+                        dataKey='desktop'
+                        fill='var(--color-desktop)'
+                        radius={4}
+                      />
+                      <Bar
+                        dataKey='mobile'
+                        fill='var(--color-mobile)'
+                        radius={4}
+                      />
+                    </BarChart>
                   </ResponsiveContainer>
                 </ChartContainer>
               </CardContent>

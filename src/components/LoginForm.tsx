@@ -33,7 +33,11 @@ export default function LoginForm() {
           <Label htmlFor='username' className='font-medium'>
             Usuario
           </Label>
-          <Input placeholder='Chicho' className='dark:placeholder:text-gray-500' type='text' />
+          <Input
+            placeholder='Chicho'
+            className='dark:placeholder:text-gray-500'
+            type='text'
+          />
         </div>
         <div className='space-y-1'>
           <Label htmlFor='contraseña' className='font-medium'>
