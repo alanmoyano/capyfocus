@@ -14,7 +14,7 @@ type SesionData = {
 export const SesionContext = createContext<SesionData | undefined>(undefined)
 
 export const SesionProvider: React.FC<{ children: ReactNode }> = ({
-  children
+  children,
 }) => {
   const [tiempoTotal, setTiempoTotal] = useState<number>(0)
   const [cantidadPausas, setCantidadPausas] = useState<number>(0)
@@ -30,7 +30,7 @@ export const SesionProvider: React.FC<{ children: ReactNode }> = ({
         acumuladorTiempoPausa,
         setAcumuladorTiempoPausa,
         tecnicaEstudio,
-        setTecnicaEstudio
+        setTecnicaEstudio,
       }}
     >
       {children}

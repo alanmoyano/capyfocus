@@ -11,7 +11,7 @@ import { useMusic } from './contexts/MusicContext'
 import { useMotivation } from './contexts/MotivationContext'
 import { useSesion } from './contexts/SesionContext'
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
-
+import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
 type Mode = 'Estudiando' | 'Descansando'
 
 function addZeroIfNeeded(value: number) {
@@ -66,7 +66,7 @@ export default function Pomodoro() {
     setTiempo,
     tiempo,
     setTiempoSesion,
-    setObjetivosPend
+    setObjetivosPend,
   } = useObjetivos()
   const [marked, setMarked] = useState<string[]>([])
   const [, setLocation] = useLocation()
@@ -74,7 +74,7 @@ export default function Pomodoro() {
     setTiempoTotal,
     setAcumuladorTiempoPausa,
     setCantidadPausas,
-    tiempoTotal
+    tiempoTotal,
   } = useSesion()
 
   const finalizarSesion = () => {
@@ -92,7 +92,7 @@ export default function Pomodoro() {
       if (!tiempo[objetivo]) {
         setTiempo(prev => ({
           ...prev,
-          [objetivo]: 0
+          [objetivo]: 0,
         }))
       }
     })
@@ -155,7 +155,7 @@ export default function Pomodoro() {
     breakSeconds,
     mode,
     capySound,
-    objCumplidos
+    objCumplidos,
   ])
 
   useEffect(() => {
@@ -180,7 +180,7 @@ export default function Pomodoro() {
     )
     setTiempo(prev => ({
       ...prev,
-      [objetivo]: ObjStudyTime
+      [objetivo]: ObjStudyTime,
     }))
     setTiempoSesion(prev => ({ ...prev, [objetivo]: tiempoTotal - countdown }))
 
@@ -194,7 +194,7 @@ export default function Pomodoro() {
 
     const pomodoro: Pomodoro = {
       tiempoEstudio: tiempoEstudio,
-      tiempoDescanso: tiempoDescanso
+      tiempoDescanso: tiempoDescanso,
     }
     if (pomodorosRealizados.length === 0) {
       setPomodorosRealizados([pomodoro])
@@ -220,45 +220,37 @@ export default function Pomodoro() {
 
   return (
     <>
-      <h1 className='mt-4 text-4xl font-bold'>Capydoro!</h1>
-      {/* Columna imagen  */}
-      <div className='grid grid-cols-2 gap-12'>
-        <div className=''>
+      <h1 className='mt-4 text-center text-4xl font-bold'>Capydoro!</h1>
+      <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+        <div className='mt-4 px-4'>
           <DialogoChicho motivation={motivationType} />
-          <video src='/idle.webm' autoPlay loop muted playsInline />
-
-          <div className='mb-4 rounded-lg bg-primary p-2'>
+          <AnimacionChicho motivation={motivationType} />
+          <div className='mb-4 rounded-lg bg-primary p-2 text-center'>
             Tu tipo de motivación es:{' '}
             <span className='font-semibold'>{motivationType}</span>
           </div>
-          <div>
+          <div className='w-full'>
             {selectedMusic && (
               <iframe
-                style={{ borderRadius: '12px' }}
+                className='h-40 w-full rounded-lg'
                 src={`https://open.spotify.com/embed/playlist/${selectedMusic.spotifyUri}?utm_source=generator`}
-                width='100%'
-                height='152'
                 frameBorder='0'
-                allowFullScreen={true}
                 allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
                 loading='eager'
               ></iframe>
             )}
           </div>
         </div>
-        {/* Columna 2 */}
-        <div className=''>
-          <p className='mt-8 flex w-full items-center justify-center text-xl font-semibold'>
+        <div className='px-4'>
+          <p className='mt-8 text-center text-xl font-semibold'>
             Coloca el tiempo a estudiar y descansar
           </p>
-          <div className='flex justify-between gap-4'>
-            {/* subit y bajar tiempo de estudio */}
-            <div className='w-1/2 p-4 text-center'>
+          <div className='flex flex-col justify-between gap-4 md:flex-row'>
+            <div className='w-full p-4 text-center md:w-1/2'>
               <div className='mt-2 items-center justify-center gap-2 rounded-xl bg-secondary/60 p-2 font-semibold'>
                 <h3>Minutos de Estudio</h3>
                 <div className='flex items-center justify-center gap-4 text-lg'>
                   <Button
-                    className=''
                     onClick={() => setSessionSeconds(prev => prev - 60)}
                     disabled={sessionSeconds <= 60 || isActive || isSetted}
                   >
@@ -274,7 +266,7 @@ export default function Pomodoro() {
                 </div>
               </div>
             </div>
-            <div className='w-1/2 p-4 text-center'>
+            <div className='w-full p-4 text-center md:w-1/2'>
               <div className='mt-2 items-center justify-center gap-2 rounded-xl bg-secondary/60 p-2 font-semibold'>
                 <h3>Minutos de descanso</h3>
                 <div className='flex items-center justify-center gap-4 text-lg'>
@@ -284,7 +276,7 @@ export default function Pomodoro() {
                   >
                     -
                   </Button>
-                  <p> {breakSeconds / 60}</p>
+                  <p>{breakSeconds / 60}</p>
                   <Button
                     onClick={() => setBreakSeconds(prev => prev + 60)}
                     disabled={isActive || isSetted}
@@ -296,53 +288,41 @@ export default function Pomodoro() {
             </div>
           </div>
           <div className='mt-8 flex justify-center'>
-            <span className='rounded-xl bg-secondary/90 px-12 py-4'>
+            <span className='rounded-xl bg-secondary/90 px-12 py-4 text-center text-black'>
               <ActualTimer mode={mode} time={countdown} />
               {pomodoroCount.current >= 1 && (
                 <Confetti mode='boom' particleCount={150} />
               )}
-              {/* <Confetti mode='boom' particleCount={150} /> */}
-
-              <p className=''>Capydoros: {Math.floor(pomodoroCount.current)}</p>
+              <p className='text-black'>
+                Capydoros: {Math.floor(pomodoroCount.current)}
+              </p>
             </span>
           </div>
           <div className='mt-4 flex justify-center'>
-            {!isSetted && (
+            {!isSetted ? (
               <Button
-                className=''
-                onClick={() => {
-                  handleSetted(sessionSeconds, breakSeconds)
-                }}
+                onClick={() => handleSetted(sessionSeconds, breakSeconds)}
               >
                 Empezar
               </Button>
-            )}
-            {isSetted && (
-              <Button
-                className=''
-                onClick={() => {
-                  handlePause(!isActive)
-                }}
-              >
+            ) : (
+              <Button onClick={() => handlePause(!isActive)}>
                 {isActive ? 'Pausar' : 'Reanudar'}
               </Button>
             )}
           </div>
-
           <div className='mt-4 rounded-xl bg-accent/90 p-4'>
             <h1 className='text-xl'>Objetivos de la sesión:</h1>
             <ul className='list-inside list-disc space-y-2 text-black'>
               {objetivos.map((objetivo, key) => (
                 <li key={key} className='flex items-center space-x-2'>
-                  <span className='flex items-center'>
-                    <Checkbox
-                      checked={marked.includes(objetivo)}
-                      disabled={mode === 'Descansando' || !isActive}
-                      onClick={() => handleCheckbox(objetivo)}
-                      className='mr-2'
-                    />
-                    <span>{objetivo}</span>
-                  </span>
+                  <Checkbox
+                    checked={marked.includes(objetivo)}
+                    disabled={mode === 'Descansando' || !isActive}
+                    onClick={() => handleCheckbox(objetivo)}
+                    className='mr-2'
+                  />
+                  <span>{objetivo}</span>
                   {objetivosFav.includes(objetivo) && (
                     <Star size={20} style={{ color: '#ffbc05' }} />
                   )}
@@ -350,20 +330,12 @@ export default function Pomodoro() {
               ))}
             </ul>
           </div>
-          <div className='container mt-8 flex w-full gap-44'>
-            <div className='flex items-start justify-start'>
-              <Button onClick={handleAccept}>Volver</Button>
-            </div>
-            <div className='flex justify-end'>
-              <Button
-                className=''
-                variant={'destructive'}
-                onClick={finalizarSesion}
-              >
-                Finalizar Sesion
-              </Button>
-            </div>
+          <div className='container mt-4 flex flex-col justify-end md:flex-row'>
+            <Button variant={'destructive'} onClick={finalizarSesion}>
+              Finalizar Sesion
+            </Button>
           </div>
+          <div className='container mt-8 w-full'></div>
         </div>
       </div>
     </>

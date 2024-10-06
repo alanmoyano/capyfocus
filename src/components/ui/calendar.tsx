@@ -41,19 +41,19 @@ function Calendar({
         ),
         day_range_end: 'day-range-end',
         day_selected:
-          'bg-accent text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+          ' text-accent-foreground ring-accent  hover:text-accent-foreground  focus:text-accent-foreground focus:ring-2 focus:ring-accent',
         day_today: 'bg-accent/50 text-accent-foreground',
         day_outside:
-          'day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30',
+          'day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30 ',
         day_disabled: 'text-muted opacity-50',
         day_range_middle:
           'aria-selected:bg-accent aria-selected:text-accent-foreground',
         day_hidden: 'invisible',
-        ...classNames
+        ...classNames,
       }}
       components={{
         IconLeft: () => <ChevronLeft className='h-4 w-4' />,
-        IconRight: () => <ChevronRight className='h-4 w-4' />
+        IconRight: () => <ChevronRight className='h-4 w-4' />,
       }}
       {...props}
     />

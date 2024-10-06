@@ -15,11 +15,11 @@ import CapyEstadisticas from './components/CapyEstadisticas'
 import Usuario from './components/Usuario'
 import { MotivationProvider } from './components/contexts/MotivationContext'
 import { MusicProvider } from './components/contexts/MusicContext'
-import PruebaTabla from './components/PruebaTabla'
 import { SesionProvider } from './components/contexts/SesionContext'
 import { Helmet } from 'react-helmet'
 import NotFound from './components/NotFound'
 import Prueba from './components/Prueba'
+import { Toaster } from '@/components/ui/sonner'
 
 function App() {
   return (
@@ -41,8 +41,6 @@ function App() {
                   <Route path='/'>
                     <Inicio />
                   </Route>
-
-                  <Route path='/tablas' component={PruebaTabla} />
                   <Route path='/login' component={Login} />
 
                   <Route path='/capydoro'>
@@ -66,6 +64,8 @@ function App() {
                   </Route>
                 </Switch>
               </main>
+
+              <Toaster richColors closeButton />
             </MusicProvider>
           </SesionProvider>
         </MotivationProvider>

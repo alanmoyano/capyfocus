@@ -46,7 +46,7 @@ export function ThemeProvider({
     setTheme: (theme: Theme) => {
       localStorage.setItem(storageKey, theme)
       setTheme(theme)
-    }
+    },
   }
 
   return (
@@ -58,7 +58,7 @@ export function ThemeProvider({
 
 const initialState: ThemeProviderState = {
   theme: 'system',
-  setTheme: () => null
+  setTheme: () => null,
 }
 
 export const ThemeProviderContext = createContext<

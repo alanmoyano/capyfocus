@@ -6,7 +6,7 @@ import {
   formatTime,
   formatPercentage,
   formatDecimal,
-  formatInteger
+  formatInteger,
 } from '@/lib/utils'
 
 // Format: { THEME_NAME: CSS_SELECTOR }
@@ -100,7 +100,7 @@ ${colorConfig
 }
 `
           )
-          .join('\n')
+          .join('\n'),
       }}
     />
   )
@@ -193,7 +193,7 @@ const ChartTooltipContent = React.forwardRef<
       hideLabel,
       labelClassName,
       config,
-      labelKey
+      labelKey,
     ])
 
     if (!active || !payload?.length) {
@@ -239,13 +239,13 @@ const ChartTooltipContent = React.forwardRef<
                           'w-1': indicator === 'line',
                           'w-0 border-[1.5px] border-dashed bg-transparent':
                             indicator === 'dashed',
-                          'my-0.5': nestLabel && indicator === 'dashed'
+                          'my-0.5': nestLabel && indicator === 'dashed',
                         }
                       )}
                       style={
                         {
                           '--color-bg': indicatorColor,
-                          '--color-border': indicatorColor
+                          '--color-border': indicatorColor,
                         } as React.CSSProperties
                       }
                     />
@@ -333,7 +333,7 @@ const ChartLegendContent = React.forwardRef<
                 <div
                   className='h-2 w-2 shrink-0 rounded-[2px]'
                   style={{
-                    backgroundColor: item.color
+                    backgroundColor: item.color,
                   }}
                 />
               )}
@@ -390,5 +390,5 @@ export {
   ChartTooltipContent,
   ChartLegend,
   ChartLegendContent,
-  ChartStyle
+  ChartStyle,
 }

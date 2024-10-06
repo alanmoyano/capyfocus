@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
  */
 export default function Reproductor({
   src,
-  className
+  className,
 }: {
   src: `${string}.webm`
   className?: string

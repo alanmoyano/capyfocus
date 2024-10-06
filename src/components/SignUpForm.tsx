@@ -4,14 +4,14 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger
+  PopoverTrigger,
 } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -21,17 +21,17 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from '@/components/ui/form'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select'
 
-import { Calendar as CalendarIcon } from 'lucide-react'
+import { Calendar as CalendarIcon, Eye, EyeOff } from 'lucide-react'
 
 import { format } from 'date-fns'
 
@@ -47,7 +47,7 @@ const now = new Date()
 const formSchema = z.object({
   name: z
     .string({
-      required_error: 'El nombre es requerido'
+      required_error: 'El nombre es requerido',
     })
     .min(2, 'El nombre debe tener al menos 2 caracteres'),
   email: z.string().email('El correo no es válido'),
@@ -60,7 +60,7 @@ const formSchema = z.object({
     ),
   password: z
     .string({ required_error: 'La contraseña es obligatoria' })
-    .min(8, 'La contraseña debe tener al menos 8 caracteres')
+    .min(8, 'La contraseña debe tener al menos 8 caracteres'),
 })
 
 function SignupForm() {
@@ -68,7 +68,11 @@ function SignupForm() {
   const [month, setMonth] = useState<number>(now.getMonth())
   const [year, setYear] = useState<number>(now.getFullYear() - 10)
   const [isOpen, setIsOpen] = useState(false)
+  const [verContraseña, setVerContraseña] = useState(false)
 
+  const handlePassword = () => {
+    setVerContraseña(!verContraseña)
+  }
   const form = useForm<z.infer<typeof formSchema>>({
     // eslint-disable-next-line
     resolver: zodResolver(formSchema),
@@ -76,8 +80,8 @@ function SignupForm() {
       name: '',
       email: '',
       birthdate: now,
-      password: ''
-    }
+      password: '',
+    },
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -105,7 +109,11 @@ function SignupForm() {
                 <FormItem>
                   <FormLabel>Nombre</FormLabel>
                   <FormControl>
-                    <Input placeholder='Chicho' {...field} />
+                    <Input
+                      placeholder='Chicho'
+                      className='dark:placeholder:text-gray-500'
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -124,6 +132,7 @@ function SignupForm() {
                       type='mail'
                       placeholder='chicho@capymail.com'
                       {...field}
+                      className='dark:placeholder:text-gray-500'
                     />
                   </FormControl>
                   <FormMessage />
@@ -150,7 +159,9 @@ function SignupForm() {
                         {date ? (
                           format(date, 'PPP', { locale: es })
                         ) : (
-                          <span>Elige una fecha</span>
+                          <span className='text-gray-500 hover:text-black'>
+                            Elige una fecha
+                          </span>
                         )}
                       </Button>
                     </PopoverTrigger>
@@ -238,7 +249,21 @@ function SignupForm() {
                 <FormItem>
                   <FormLabel>Contraseña</FormLabel>
                   <FormControl>
-                    <Input type='password' placeholder='********' {...field} />
+                    <div className='flex justify-between'>
+                      <Input
+                        id='contraseña'
+                        placeholder='********'
+                        type={verContraseña ? 'text' : 'password'}
+                        className='dark:placeholder:text-gray-500'
+                      />
+                      <Button
+                        variant={'icon'}
+                        type='button'
+                        onClick={handlePassword}
+                      >
+                        {verContraseña ? <EyeOff></EyeOff> : <Eye></Eye>}
+                      </Button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

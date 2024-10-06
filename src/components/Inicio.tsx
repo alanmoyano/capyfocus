@@ -3,6 +3,7 @@ import { KeyboardEvent, useEffect, useState } from 'react'
 import { useLocation } from 'wouter'
 
 import Eventos from './ComponentesEspecifico/Eventos'
+import { toast } from 'sonner'
 
 import {
   Edit3,
@@ -12,7 +13,8 @@ import {
   Trash,
   StarOff,
   Check,
-  ChevronsUpDown
+  ChevronsUpDown,
+  Info,
 } from 'lucide-react'
 
 import { Input } from '@/components/ui/input'
@@ -22,7 +24,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
+  TooltipTrigger,
 } from '@/components/ui/tooltip'
 
 import { Button } from './ui/button'
@@ -34,7 +36,7 @@ import {
   SelectItem,
   SelectLabel,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select'
 
 import {
@@ -43,12 +45,12 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList
+  CommandList,
 } from '@/components/ui/command'
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger
+  PopoverTrigger,
 } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 
@@ -58,7 +60,7 @@ import {
   CarouselContent,
   CarouselItem,
   CarouselNext,
-  CarouselPrevious
+  CarouselPrevious,
 } from '@/components/ui/carousel'
 import { useMotivation } from './contexts/MotivationContext'
 
@@ -69,59 +71,45 @@ import { useSesion } from '@/components/contexts/SesionContext'
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
 import { supabase } from './supabase/client'
 import { Helmet } from 'react-helmet'
-import { getDate, set } from 'date-fns'
-import { date } from 'zod'
+
 import Reproductor from './ComponentesEspecifico/Reproductor'
+import CapyInfo from './ComponentesEspecifico/CapyInfo'
 
 type CapyMetodos = 'Capydoro' | 'Capymetro'
-
-/* Evento */
-type Event = {
-  date: Date
-  title: string
-}
 
 const playlists = [
   {
     key: 1,
     src: './CapyChill.webp',
     alt: 'CapyChill',
-    title: 'Capy Chill',
+    title: 'CapyChill',
     description: 'Música relajante para estudiar con tranquilidad',
-    spotifyUri: '7u6QwhygZJJqqGWMMMINhR'
+    spotifyUri: '7u6QwhygZJJqqGWMMMINhR',
   },
   {
     key: 2,
     src: './CapyAmbiente.jpg',
     alt: 'CapyAmbiente',
-    title: 'Capy Ambiente',
+    title: 'CapyAmbiente',
     description: 'Sonidos ambientales para mejorar la concentración',
-    spotifyUri: '4Pi6DScPJfg1RTGVZuxTZV'
+    spotifyUri: '4Pi6DScPJfg1RTGVZuxTZV',
   },
   {
     key: 3,
     src: './CapySinthwave.jpg',
     alt: 'CapySynthwave',
-    title: 'Capy Synthwave',
+    title: 'CapySynthwave',
     description: 'Música electrónica retro para un estudio energético',
-    spotifyUri: '6xYhxczmfgi6L6knoEHktx'
+    spotifyUri: '6xYhxczmfgi6L6knoEHktx',
   },
   {
     key: 4,
     src: './CapyEpic.jpg',
     alt: 'CapyEpic',
-    title: 'Capy Epic',
+    title: 'CapyEpic',
     description: 'Música épica para momentos de máxima concentración',
-    spotifyUri: '5GnSqO293GdPWaJhD6iz8E'
-  }
-  // {
-  //   key: 5,
-  //   src: './NoCapyMusic.png',
-  //   alt: 'NoCapyMusic',
-  //   title: 'Sin Musica',
-  //   description:
-  //     'Reproduce tu propia musica'
-  // }
+    spotifyUri: '5GnSqO293GdPWaJhD6iz8E',
+  },
 ]
 
 type Motivacion = {
@@ -161,8 +149,15 @@ export default function Inicio() {
       case 'Capymetro':
         setLocation('capymetro')
         setTecnicaEstudio(description)
-
         break
+      case undefined:
+      toast.error('CapyError', {
+        description: 'Selecciona un método de estudio antes.',
+        duration: 5000,
+        action: { label: 'Aceptar', onClick: () => {toast.dismiss()} },
+      })
+      break
+      
     }
   }
 
@@ -178,6 +173,14 @@ export default function Inicio() {
       inputValue.trim() != '' &&
       !objetivos.includes(inputValue)
     ) {
+      if (objetivos.length === 9) {
+        toast.error('CapyError', {
+          description:
+            'En capyfocus, te ayudamos a mantener márgenes realistas de trabajo, si una sesión tiene más de 10 objetivos, quizás deberías hacer más de una sesión!',
+
+          descriptionClassName: 'text-white',
+        })
+      }
       setObjetivos([...objetivos, inputValue])
       setInputValue('')
     }
@@ -273,7 +276,7 @@ export default function Inicio() {
           <p>Elige tu método de estudio:</p>
           <ToggleGroup
             type='single'
-            className='rounded-xl bg-primary/60 p-2'
+            className='rounded-xl bg-primary/60 p-2 dark:bg-primary'
             onValueChange={value => setDescription(value as CapyMetodos)}
           >
             <ToggleGroupItem
@@ -292,11 +295,17 @@ export default function Inicio() {
             </ToggleGroupItem>
           </ToggleGroup>
           {/* Agregar evento  */}
-
-          <Eventos />
+          <div className='flex h-auto w-1/2 items-center space-x-4'>
+            <Eventos />
+            <div className='mt-6'>
+              <CapyInfo desc='Organiza tus sesiones de estudio con eventos y objetivos. Selecciona el evento, haz clic en "Aceptar", añade los objetivos de la sesión y ¡Controla tu progreso en las CapyEstadísticas!' />
+            </div>
+          </div>
 
           {/* Objetivos */}
-          <div className='mt-4 rounded-xl bg-secondary/60 p-4'>
+          <div className='mt-4 rounded-xl bg-secondary/70 p-4 dark:bg-secondary/90'>
+            {/* Aca si eligio sesion o evento va a ir */}
+            <label htmlFor=''>Objetivos de sesion o evento:</label>
             <div className='mt-2 flex items-center gap-2'>
               <Input
                 type='text'
@@ -304,7 +313,7 @@ export default function Inicio() {
                 value={inputValue}
                 onKeyDown={handleAdd}
                 onChange={e => setInputValue(e.target.value)}
-                className='rounded-md border border-secondary bg-white p-3 shadow-md transition-shadow duration-200 ease-in-out hover:shadow-lg focus:outline-none focus:ring-2'
+                className='rounded-md border border-secondary bg-white p-3 shadow-md transition-shadow duration-200 ease-in-out hover:shadow-lg focus:outline-none focus:ring-2 dark:bg-[#110d09] dark:placeholder:text-gray-500'
                 disabled={objetivos.length >= 10}
               />
               <Popover open={open} onOpenChange={setOpen}>
@@ -319,7 +328,7 @@ export default function Inicio() {
                     {value ? (
                       objetivosFav.find(objetivoFav => objetivoFav === value)
                     ) : (
-                      <Star />
+                      <Star className='' />
                     )}
                     <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
                   </Button>
@@ -447,9 +456,11 @@ export default function Inicio() {
               </ul>
             </div>
             {objetivos.length >= 10 && (
-              <p className='mt-2 text-red-500'>
-                Has alcanzado el límite de 10 objetivos.
-              </p>
+              <div>
+                <p className='mt-2 text-red-500'>
+                  Has alcanzado el límite de 10 objetivos.
+                </p>
+              </div>
             )}
           </div>
           <div className='mt-6 flex items-center justify-center'>
@@ -463,48 +474,15 @@ export default function Inicio() {
                   <SelectLabel>Tipo de motivación</SelectLabel>
                   {motivaciones.map(motivacion => (
                     <SelectItem key={motivacion.id} value={motivacion.nombre}>
-                      <TooltipProvider delayDuration={150}>
-                        <Tooltip delayDuration={150}>
-                          <TooltipTrigger asChild>
-                            <p>{motivacion.nombre}</p>
-                          </TooltipTrigger>
-                          <TooltipContent className='ml-16'>
-                            <p>
-                              {motivacion.descripcion ??
-                                `Mensajes ${motivacion.nombre}`}
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <p className='flex w-full items-center justify-between'>
+                        {motivacion.nombre}
+                      </p>
                     </SelectItem>
                   ))}
-                  {/* <SelectItem key={0} value='Positiva'>
-                    <TooltipProvider delayDuration={50}>
-                      <Tooltip delayDuration={50}>
-                        <TooltipTrigger asChild>
-                          <p>Positiva</p>
-                        </TooltipTrigger>
-                        <TooltipContent className='ml-16'>
-                          <p>Mensajes positivos</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </SelectItem>
-                  <SelectItem key={1} value='PasivoAgresiva'>
-                    <TooltipProvider delayDuration={50}>
-                      <Tooltip delayDuration={50}>
-                        <TooltipTrigger asChild>
-                          <p>Pasivo/Agresivo</p>
-                        </TooltipTrigger>
-                        <TooltipContent className='ml-16'>
-                          <p>Mensajes pasivos/agresivos</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </SelectItem> */}
                 </SelectGroup>
               </SelectContent>
             </Select>
+            <CapyInfo desc='La motivación es un factor clave para el éxito en el estudio. Selecciona el tipo de mensajes que te ayude a mantenerte enfocado y motivado. ' />
           </div>
           {/* Musica */}
           <div className='mt-4'>
@@ -528,7 +506,7 @@ export default function Inicio() {
                       handleMusicSelection(
                         {
                           title: item.title,
-                          spotifyUri: item.spotifyUri
+                          spotifyUri: item.spotifyUri,
                         },
                         item.key
                       )

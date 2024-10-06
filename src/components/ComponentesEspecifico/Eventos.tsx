@@ -1,12 +1,11 @@
 import { Trash } from 'lucide-react'
-import { es } from 'date-fns/locale'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
+  TooltipTrigger,
 } from '@/components/ui/tooltip'
-
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -18,12 +17,13 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger
+  SheetTrigger,
 } from '@/components/ui/sheet'
 import { Calendar } from '@/components/ui/calendar'
+import { es } from 'date-fns/locale'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useState } from 'react'
+import { useState, KeyboardEvent } from 'react'
 import { useLocation } from 'wouter'
 
 type Event = {
@@ -34,9 +34,9 @@ type Event = {
 export default function Eventos() {
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [, setLocation] = useLocation()
-  const [events, setEvents] = useState<Event[]>([])
-  const [eventTitle, setEventTitle] = useState<string>('')
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
+  const [events, setEvents] = useState<Event[]>([]) //todos los eventos
+  const [eventTitle, setEventTitle] = useState<string>('') //el titulos del evento
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null) //el evento seleccionado
 
   const handleVolver = () => {
     setLocation('/')
@@ -44,8 +44,26 @@ export default function Eventos() {
 
   const addEvent = () => {
     if (date && eventTitle) {
+      const dateString = date.toLocaleDateString('es-ES', {
+        weekday: 'long',
+        month: 'numeric',
+        day: 'numeric',
+      })
       setEvents([...events, { date, title: eventTitle }])
+      toast.success('Se ha creado el evento:', {
+        description: '"' + eventTitle + '"' + ' en el dia: ' + dateString,
+      })
       setEventTitle('') // Limpiar el título después de añadir el evento
+    } else {
+      toast.error('No se ha podido crear el evento:', {
+        description: 'Por favor, ingresa un título para el evento.',
+      })
+    }
+  }
+
+  const handleAdd = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key == 'Enter' && eventTitle.trim() != '' && date) {
+      addEvent()
     }
   }
 
@@ -61,7 +79,7 @@ export default function Eventos() {
       </SheetTrigger>
       <SheetContent className='w-full sm:max-w-md'>
         <SheetHeader>
-          <SheetTitle className='text-xl font-bold sm:text-2xl'>
+          <SheetTitle className='flex items-center justify-between text-xl font-bold sm:text-2xl'>
             Agregar evento
           </SheetTitle>
           <SheetDescription className='text-black sm:text-lg'>
@@ -85,8 +103,9 @@ export default function Eventos() {
                 type='text'
                 value={eventTitle}
                 onChange={e => setEventTitle(e.target.value)}
-                placeholder='Evento'
-                className='col-span-1 sm:col-span-3'
+                onKeyDown={handleAdd}
+                placeholder='Nuevo evento'
+                className='col-span-1 sm:col-span-3 dark:placeholder:text-gray-500'
               />
             </div>
             <p className='text-sm text-muted-foreground'>
@@ -117,11 +136,11 @@ export default function Eventos() {
                     const today = new Date()
                     today.setHours(0, 0, 0, 0)
                     return date < today
-                  }
+                  },
                 }}
                 modifiersClassNames={{
                   eventDay: 'bg-secondary',
-                  disabled: 'opacity-50 cursor-not-allowed'
+                  disabled: 'opacity-50 cursor-not-allowed',
                 }}
                 locale={es}
                 onDayClick={(day: Date) => {
@@ -151,13 +170,15 @@ export default function Eventos() {
                         </TooltipProvider>
                       </div>
                     )
-                  }
+                  },
                 }}
               />
 
               <div className='mt-4'>
                 <Button
-                  onClick={addEvent}
+                  onClick={() => {
+                    addEvent()
+                  }}
                   variant={'accent'}
                   className='w-full sm:w-auto'
                 >
@@ -175,7 +196,7 @@ export default function Eventos() {
                 <h2 className='text-lg font-bold sm:text-xl'>
                   Eventos programados:
                 </h2>
-                <ul className='list-inside list-disc space-y-2 text-sm text-black sm:text-base'>
+                <ul className='list-inside list-disc space-y-2 text-sm text-black sm:text-base dark:text-white'>
                   {events.map((event, index) => (
                     <li
                       key={index}
@@ -185,14 +206,14 @@ export default function Eventos() {
                         onClick={() => setSelectedEvent(event)}
                         className={`cursor-pointer ${
                           selectedEvent === event
-                            ? 'text-primary'
-                            : 'hover:text-primary'
+                            ? 'text-accent'
+                            : 'opacity-100 hover:text-accent'
                         }`}
                       >
                         {event.date.toLocaleDateString('es-ES', {
                           weekday: 'short',
                           month: 'numeric',
-                          day: 'numeric'
+                          day: 'numeric',
                         })}
                         - {event.title}
                       </span>
@@ -226,7 +247,7 @@ export default function Eventos() {
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
-                        day: 'numeric'
+                        day: 'numeric',
                       })}
                     </p>
                   </div>

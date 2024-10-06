@@ -40,6 +40,6 @@
   },
   "include": [
     "src",
-    "worker.js"
+    "src/workers/capymetro.ts"
   ]
 }

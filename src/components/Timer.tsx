@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import { useLocation } from 'wouter'
 import { useObjetivos } from './contexts/ObjetivosContext'
@@ -10,8 +10,10 @@ import { useMusic } from './contexts/MusicContext'
 import { useMotivation } from './contexts/MotivationContext'
 import { useSesion } from './contexts/SesionContext'
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
-import AnimacionChicho2 from './ComponentesEspecifico/AnimacionChicho2'
 import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
+import useTimer from '@/hooks/useTimer'
+import { Helmet } from 'react-helmet'
+
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Sesión' | 'Descanso'
@@ -44,15 +46,23 @@ export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
 }
 
 export default function Timer() {
-  const [Sessioncountup, setSessionCountup] = useState(0)
-  const [Breakcountup, setBreakCountup] = useState(0)
+  const {
+    studyTime,
+    breakTime,
+    isStudying,
+    startStudy,
+    pauseStudy,
+    finalizeTimers,
+  } = useTimer()
+
   const [tiempoObjAcumulado, setTiempoObjAcumulado] = useState(0)
   const [objCumplidos, setObjCumplidos] = useState(0)
-  const [isActive, setIsActive] = useState<boolean | null>(true)
+
   const [mode, setMode] = useState<Mode>('Sesión')
-  const timer = useRef<NodeJS.Timeout>()
+
   const { motivationType } = useMotivation()
   // // @ts-expect-error vamos a usar la descripción después, no te enojes typescript!!! 🥺
+
   const [, setDescription] = useState<Accion>('Estudiar')
   const [, setLocation] = useLocation()
   const [lastCheckedObj, setLastCheckedObj] = useState<number | null>(null)
@@ -63,7 +73,7 @@ export default function Timer() {
     setTiempo,
     tiempo,
     setTiempoSesion,
-    setObjetivosPend
+    setObjetivosPend,
   } = useObjetivos()
   const [marked, setMarked] = useState<string[]>([])
   const { selectedMusic } = useMusic()
@@ -71,14 +81,14 @@ export default function Timer() {
     useSesion()
 
   const finalizarSesion = () => {
-    clearInterval(timer.current)
-    setTiempoTotal(Sessioncountup)
-    setAcumuladorTiempoPausa(Breakcountup)
+    finalizeTimers()
+    setTiempoTotal(studyTime)
+    setAcumuladorTiempoPausa(breakTime)
     objetivos.forEach(objetivo => {
       if (!tiempo[objetivo]) {
         setTiempo(prev => ({
           ...prev,
-          [objetivo]: 0
+          [objetivo]: 0,
         }))
         setTiempoSesion(prev => ({ ...prev, [objetivo]: 0 }))
       }
@@ -88,35 +98,34 @@ export default function Timer() {
 
   useEffect(() => {
     setObjetivosPend(objetivos)
+    startStudy()
   }, [])
 
   useEffect(() => {
-    if (!isActive) {
+    if (!isStudying) {
       setMode('Descanso')
       // Esto esta hecho para que ts no joda pero es una barbaridad y debe ser cambiado lo antes posible
       console.log(mode)
       setCantidadPausas(prev => prev + 1)
       console.log('pausaste')
-      clearInterval(timer.current)
-      timer.current = setInterval(() => {
-        setBreakCountup(prev => prev + 1)
-      }, 1000)
     } else {
       setMode('Sesión')
-      timer.current = setInterval(() => {
-        setSessionCountup(prev => prev + 1)
-      }, 1000)
     }
     if (objetivos.length === objCumplidos && objetivos.length > 0) {
       finalizarSesion()
     }
-    return () => clearInterval(timer.current)
-  }, [isActive, objCumplidos])
+  }, [isStudying, objCumplidos])
 
   /* Esto es para que los botones si los tocas mas de una vez no hagan nada */
   const handleToggle = (value: boolean) => {
-    if (isActive !== value) {
-      setIsActive(value) // Cambia el estado si no está ya activo
+    if (isStudying && value) return
+    if (!isStudying && !value) return
+
+    finalizeTimers()
+    if (value) {
+      startStudy()
+    } else {
+      pauseStudy()
     }
   }
 
@@ -138,33 +147,44 @@ export default function Timer() {
     }
     setMarked([...marked, objetivo])
     setObjCumplidos(prev => prev + 1)
-    setTiempoObjAcumulado(prev => prev + (Sessioncountup - prev))
+    setTiempoObjAcumulado(prev => prev + (studyTime - prev))
     setObjetivosPend(prevObjetivosPend =>
       prevObjetivosPend.filter(item => item !== objetivo)
     )
 
     if (lastCheckedObj === null) {
       // clearInterval(timer.current)
-      setTiempo(prev => ({ ...prev, [objetivo]: Sessioncountup }))
-      setTiempoSesion(prev => ({ ...prev, [objetivo]: Sessioncountup }))
+      setTiempo(prev => ({ ...prev, [objetivo]: studyTime }))
+      setTiempoSesion(prev => ({ ...prev, [objetivo]: studyTime }))
     } else {
       setTiempo(prev => ({
         ...prev,
-        [objetivo]: Sessioncountup - tiempoObjAcumulado
+        [objetivo]: studyTime - tiempoObjAcumulado,
       }))
-      setTiempoSesion(prev => ({ ...prev, [objetivo]: Sessioncountup }))
+      setTiempoSesion(prev => ({ ...prev, [objetivo]: studyTime }))
     }
     setLastCheckedObj(key)
   }
 
   return (
     <>
+      <Helmet>
+        {studyTime <= 0 ? (
+          <title>CapyMetro!</title>
+        ) : (
+          <title>{`${isStudying ? 'Estudiando' : 'Descansando'}: ${isStudying ? formatTime(studyTime) : formatTime(breakTime)}`}</title>
+        )}
+      </Helmet>
+
       <h1 className='mt-4 text-4xl font-bold'>CapyMetro!</h1>
 
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
         {/* Columna 1:  */}
         <div className='col-span-1 p-4'>
-        <AnimacionChicho2 motivation={motivationType} />
+          {/* <AnimacionChicho2 motivation={motivationType} /> */}
+          <DialogoChicho motivation={motivationType} />
+          <AnimacionChicho motivation={motivationType} />
+
           <div className='mb-4 rounded-lg bg-primary p-2'>
             Tu tipo de motivación es:{' '}
             <span className='font-semibold'>{motivationType}</span>
@@ -184,29 +204,28 @@ export default function Timer() {
             )}
           </div>
         </div>
-        
 
         {/* Columna 2:*/}
         <div className='col-span-1'>
           {/* Contadores */}
           <div className='mt-6 flex w-full flex-col items-center justify-center gap-2 text-black sm:flex-row'>
             <div className='mb-2 w-full rounded-xl bg-accent/90 p-6 sm:mb-0 sm:mr-2'>
-              <ActualTimer mode={'Sesión'} time={Sessioncountup} />
+              <ActualTimer mode={'Sesión'} time={studyTime} />
             </div>
             <div className='w-full rounded-xl bg-accent/90 p-6'>
-              <ActualTimer mode={'Descanso'} time={Breakcountup} />
+              <ActualTimer mode={'Descanso'} time={breakTime} />
             </div>
           </div>
           <div className='mt-8 sm:mt-16'>
             <div className='flex justify-center'>
               <ToggleGroup
                 type='single'
-                className='mx-auto w-full gap-0 rounded-xl bg-primary/90 p-1 sm:w-2/3'
+                className='mx-auto w-full gap-2 rounded-xl bg-primary/90 p-2 sm:w-2/3'
                 onValueChange={value => setDescription(value as Accion)}
               >
                 <ToggleGroupItem
                   value='Estudiar'
-                  className={`flex w-1/2 items-center justify-center ${isActive ? 'bg-muted text-muted-foreground' : 'bg-primary/90'}`}
+                  className={`flex w-1/2 items-center justify-center ${isStudying ? 'bg-muted text-muted-foreground' : 'bg-primary/90'}`}
                   onClick={() => handleToggle(true)}
                 >
                   <NotebookPen className='mr-2' />
@@ -214,10 +233,8 @@ export default function Timer() {
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value='Descansar'
-                  className={`flex w-1/2 items-center justify-center ${isActive ? 'bg-primary/90' : 'bg-muted text-muted-foreground'}`}
-                  onClick={() => {
-                    handleToggle(false)
-                  }}
+                  className={`flex w-1/2 items-center justify-center ${isStudying ? 'bg-primary/90' : 'bg-muted text-muted-foreground'}`}
+                  onClick={() => handleToggle(false)}
                 >
                   <Moon className='mr-2' />
                   Descansar
