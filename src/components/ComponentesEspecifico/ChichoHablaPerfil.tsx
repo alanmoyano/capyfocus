@@ -1,5 +1,4 @@
 import { useEffect, useState} from 'react'
-import { supabase } from '../supabase/client'
 
 type Dialogo = {
   NombreImagen: number
@@ -32,26 +31,20 @@ function selectRandomDialogo() {
 
 
 
-export default function ChichoHablaPerfil({img} : {img: string}) {
-  const [dialogos, setDialogos] = useState<Dialogo[]>([])
+export default function ChichoHablaPerfil({imagen} : {imagen: string | undefined}) {
   const [dialogo, setDialogo] = useState('¡Hola! ¿Vas a cambiar tus datos? Ya era hora, ¿no?')
-  const [cambioImg, setCambioImg] = useState('') 
-
-
+  const [cambioImg, setCambioImg] = useState<string | undefined>(imagen) 
+  
   useEffect(() => {
-    // Cambia el diálogo cuando cambioImg cambie
     setDialogo(selectRandomDialogo())
+    
   }, [cambioImg])
 
-  useEffect(() => {
-    function getDialogos() {
-      console.log('getDialogos')
-    }
-  }, [])
+
 
   return (
     <>
-      {dialogos.length > 0 && (
+      {dialogosPosibles.length > 0 && (
         <div className='flex w-full justify-end'>
           <div className='relative max-w-xs rounded-xl border-[2px] border-gray-800 bg-gray-100 p-6 text-gray-800 shadow-md'>
             <p>{dialogo}</p>

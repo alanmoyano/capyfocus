@@ -27,6 +27,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useLocation } from 'wouter'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import ChichoHablaPerfil from './ComponentesEspecifico/ChichoHablaPerfil'
+import { se } from 'date-fns/locale'
 
 const formSchema = z.object({
   username: z
@@ -55,12 +57,11 @@ export default function Usuario() {
     undefined
   )
   const [confirmedUsername, setConfirmedUsername] = useState(currentUsername)
-  const [confirmedEmail, setConfirmedEmail] = useState(currentEmail)
+
   const [sheetOpen, setSheetOpen] = useState(false)
 
   const handleConfirm = (data: FormValues) => {
     setConfirmedUsername(data.username)
-    setConfirmedEmail(data.email)
     if (selectedPicture) {
       setConfirmedPicture(selectedPicture)
     }
@@ -81,12 +82,10 @@ export default function Usuario() {
   })
 
   const watchUsername = watch('username')
-  const watchEmail = watch('email')
   const watchPicture = selectedPicture
 
   const hasChanges =
     watchUsername !== confirmedUsername ||
-    watchEmail !== confirmedEmail ||
     watchPicture !== confirmedPicture
 
   const handleProfilePictureSelect = (picture: string) => {
@@ -100,6 +99,7 @@ export default function Usuario() {
         <div className='grid grid-cols-2 gap-10'>
           <div className='flex h-full w-full items-center justify-center'>
             <div className='m-auto'>
+              <ChichoHablaPerfil imagen={confirmedPicture}/>
               <video src='/idle.webm' autoPlay loop muted playsInline />
             </div>
           </div>
@@ -208,7 +208,7 @@ export default function Usuario() {
                 </p>
               </div>
               <div className='m-2'>
-                <p className='text-lg font-normal'>{confirmedEmail}</p>
+                <p className='text-lg font-normal'>{currentEmail}</p>
               </div>
             </CardContent>
             <CardFooter className='mt-auto flex justify-end'>
