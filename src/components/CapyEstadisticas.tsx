@@ -366,9 +366,16 @@ export default function CapyEstadisticas() {
                 <CardContent className='h-[300px] p-4'>
                   {objetivos.length === 0 && (
                     <div className='flex h-full w-full items-center justify-center'>
-                      <p className='text-center'>
+                      <p className='text-center bg-accent rounded-lg p-4' >
                         Para tener el gráfico de los objetivos de la sesión,
                         coloque objetivos antes de empezar la sesión.
+                      </p>
+                    </div>
+                  )}
+                  {objetivos.length - objetivosPend.length === 0 && (
+                    <div className='flex h-full w-full items-center justify-center '>
+                      <p className='text-center bg-accent rounded-lg p-4'>
+                        Oh, en esta sesion no has completado objetivos, entonces no podrás ver las CapyEstadísticas.
                       </p>
                     </div>
                   )}
