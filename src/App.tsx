@@ -34,7 +34,6 @@ function App() {
 
               <Helmet>
                 <title>Capyfocus</title>
-                <meta property='og:url' content={import.meta.url} />
               </Helmet>
 
               <main>
