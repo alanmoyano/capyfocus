@@ -1,11 +1,11 @@
-import { Trash } from 'lucide-react'
+import { Trash} from 'lucide-react'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -44,24 +44,32 @@ export default function Eventos() {
 
   const addEvent = () => {
     if (date && eventTitle) {
+      const dateString = date.toLocaleDateString('es-ES', {
+        weekday: 'long',
+        month: 'numeric',
+        day: 'numeric',
+      })
       setEvents([...events, { date, title: eventTitle }])
+      toast.success('Se ha creado el evento:', {
+        description: '"' + eventTitle + '"' + ' en el dia: ' + dateString,
+      })
       setEventTitle('') // Limpiar el título después de añadir el evento
+    } else {
+      toast.error('No se ha podido crear el evento:', {
+        description: 'Por favor, ingresa un título para el evento.',
+      })
     }
   }
 
   const handleAdd = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key == 'Enter' && eventTitle.trim() != '' && date) {
-      const newEvent: Event = {
-        date: date,
-        title: eventTitle,
-      }
-      setEvents([...events, newEvent])
-      setEventTitle('')
+      addEvent()
     }
   }
 
   return (
     <Sheet>
+
       <SheetTrigger asChild>
         <Button
           variant='secondary'
@@ -72,7 +80,7 @@ export default function Eventos() {
       </SheetTrigger>
       <SheetContent className='w-full sm:max-w-md'>
         <SheetHeader>
-          <SheetTitle className='text-xl font-bold sm:text-2xl'>
+          <SheetTitle className='flex items-center justify-between text-xl font-bold sm:text-2xl'>
             Agregar evento
           </SheetTitle>
           <SheetDescription className='text-black sm:text-lg'>
@@ -169,7 +177,9 @@ export default function Eventos() {
 
               <div className='mt-4'>
                 <Button
-                  onClick={addEvent}
+                  onClick={() => {
+                    addEvent()
+                  }}
                   variant={'accent'}
                   className='w-full sm:w-auto'
                 >

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import { useLocation } from 'wouter'
 import { useObjetivos } from './contexts/ObjetivosContext'
@@ -12,6 +12,8 @@ import { useSesion } from './contexts/SesionContext'
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
 import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
 import useTimer from '@/hooks/useTimer'
+
+
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Sesión' | 'Descanso'
@@ -267,10 +269,15 @@ export default function Timer() {
             <Button className='w-full sm:w-auto' onClick={handleAccept}>
               Volver
             </Button>
+
+            
           </div>
         </div>
       </div>
+      
+      
 
+      
       {/* {pomodoroCount.current >= pomodoroSessions && (
         <Confetti effectCount={1} />
         )} */}
