@@ -1,7 +1,6 @@
 import { useEffect, useState} from 'react'
 
 type Dialogo = {
-  NombreImagen: number
   mensaje: string
 }
 const dialogosPosibles =[
@@ -30,13 +29,12 @@ function selectRandomDialogo() {
 }
 
 
-
 export default function ChichoHablaPerfil({imagen} : {imagen: string | undefined}) {
-  const [dialogo, setDialogo] = useState('¡Hola! ¿Vas a cambiar tus datos? Ya era hora, ¿no?')
-  const [cambioImg, setCambioImg] = useState<string | undefined>(imagen) 
+  const [dialogo, setDialogo] = useState<string>()
+  const [cambioImg, setCambioImg] = useState<boolean>(false) 
   
   useEffect(() => {
-    setDialogo(selectRandomDialogo())
+    setDialogo(selectRandomDialogo)
     
   }, [cambioImg])
 

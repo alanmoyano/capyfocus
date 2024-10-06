@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from './supabase/client'
 import { Info } from 'lucide-react'
 import { toast } from 'sonner'
+import CapyInfo from './ComponentesEspecifico/CapyInfo'
 
 type Insignia = {
   id: string
@@ -42,21 +43,7 @@ export default function CapyInsignias() {
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyInsiginias!</h1>
       <div className='w-full flex justify-end mr-8'>
-      <Button
-        variant={'icon'}
-        size={'icon'}
-        className='ml-2'
-        onClick={() =>
-          toast.info('CapyInfo', {
-            description:
-              'A medida que estudies se desbloquedaran CapyInsignias, estas son un reconocimiento a tu esfuerzo y dedicación. ¡Sigue así!',
-            duration: 10000,
-            action: { label: 'Entendido', onClick: () => toast.dismiss() },
-          })
-        }
-      >
-        <Info />
-      </Button>
+      <CapyInfo desc='A medida que estudies se desbloquedaran CapyInsignias, estas son un reconocimiento a tu esfuerzo y dedicación. ¡Sigue así!' />
         
       </div>
       <div className='container grid grid-cols-2 gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 md:gap-10 md:p-10 lg:grid-cols-4 xl:grid-cols-5'>

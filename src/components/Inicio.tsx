@@ -73,6 +73,7 @@ import { supabase } from './supabase/client'
 import { Helmet } from 'react-helmet'
 
 import Reproductor from './ComponentesEspecifico/Reproductor'
+import CapyInfo from './ComponentesEspecifico/CapyInfo'
 
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
@@ -287,30 +288,17 @@ export default function Inicio() {
             </ToggleGroupItem>
           </ToggleGroup>
           {/* Agregar evento  */}
-          <div className='flex w-1/2 h-auto  items-center space-x-4'>
-
-          <Eventos />
-          <Button
-            variant={'icon'}
-            size={'icon'}
-            className='mt-6'
-            onClick={() =>
-              toast.info('CapyInfo', {
-                description:
-                'Organiza tus sesiones de estudio con eventos y objetivos. Selecciona el evento, haz clic en "Aceptar", añade los objetivos de la sesión y ¡Controla tu progreso en las CapyEstadísticas!',
-                duration: 10000,
-                action: { label: 'Entendido', onClick: () => toast.dismiss() },
-              })
-            }
-            >
-            <Info />
-          </Button>
+          <div className='flex h-auto w-1/2 items-center space-x-4'>
+            <Eventos />
+            <div className='mt-6'>
+            <CapyInfo  desc='Organiza tus sesiones de estudio con eventos y objetivos. Selecciona el evento, haz clic en "Aceptar", añade los objetivos de la sesión y ¡Controla tu progreso en las CapyEstadísticas!' />
             </div>
+          </div>
 
           {/* Objetivos */}
           <div className='mt-4 rounded-xl bg-secondary/70 p-4 dark:bg-secondary/90'>
-              {/* Aca si eligio sesion o evento va a ir */}
-              <label htmlFor="">Objetivos de sesion o evento:</label>
+            {/* Aca si eligio sesion o evento va a ir */}
+            <label htmlFor=''>Objetivos de sesion o evento:</label>
             <div className='mt-2 flex items-center gap-2'>
               <Input
                 type='text'
@@ -487,19 +475,7 @@ export default function Inicio() {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <Button
-              variant={'icon'}
-              size={'icon'}
-              className='ml-2'
-              onClick={() =>
-                toast.info('CapyInfo', {
-                  description:
-                    'La motivación es un factor clave para el éxito en el estudio. Selecciona el tipo de mensajes que te ayude a mantenerte enfocado y motivado.',
-                })
-              }
-            >
-              <Info />
-            </Button>
+            <CapyInfo desc='La motivación es un factor clave para el éxito en el estudio. Selecciona el tipo de mensajes que te ayude a mantenerte enfocado y motivado. '/>
           </div>
           {/* Musica */}
           <div className='mt-4'>

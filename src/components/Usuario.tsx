@@ -1,5 +1,5 @@
 import FotoSelector from './FotoSelector'
-import { SetStateAction, useState } from 'react'
+import { SetStateAction, useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -68,6 +68,14 @@ export default function Usuario() {
     setSheetOpen(false)
   }
 
+  const [bandera, setBandera] = useState<boolean>(false)
+
+  useEffect(() => {
+    function cambiarBandera() {
+      setBandera(!bandera)
+    }
+  })
+
   const {
     register,
     handleSubmit,
@@ -85,8 +93,7 @@ export default function Usuario() {
   const watchPicture = selectedPicture
 
   const hasChanges =
-    watchUsername !== confirmedUsername ||
-    watchPicture !== confirmedPicture
+    watchUsername !== confirmedUsername || watchPicture !== confirmedPicture
 
   const handleProfilePictureSelect = (picture: string) => {
     setSelectedPicture(picture)
@@ -99,11 +106,11 @@ export default function Usuario() {
         <div className='grid grid-cols-2 gap-10'>
           <div className='flex h-full w-full items-center justify-center'>
             <div className='m-auto'>
-              <ChichoHablaPerfil imagen={confirmedPicture}/>
+              <ChichoHablaPerfil imagen={confirmedPicture} />
               <video src='/idle.webm' autoPlay loop muted playsInline />
             </div>
           </div>
-          <Card className='flex h-full w-full flex-col bg-secondary shadow-md dark:bg-secondary/80 '>
+          <Card className='flex h-full w-full flex-col bg-secondary shadow-md dark:bg-secondary/80'>
             <CardHeader className='text-center'>
               <Avatar className='mx-auto h-40 w-40'>
                 <AvatarImage src={confirmedPicture} className='h-full w-full' />
@@ -194,6 +201,7 @@ export default function Usuario() {
                           <SheetClose asChild>
                             <Button
                               type='submit'
+                      
                               disabled={
                                 Object.keys(errors).length > 0 || !hasChanges
                               }
@@ -213,7 +221,11 @@ export default function Usuario() {
             </CardContent>
             <CardFooter className='mt-auto flex justify-end'>
               <div className='space-x-4'>
-                <Button variant={'destructive'} onClick={() => handleLogin()} className='mt-4 border-2 border-black' >
+                <Button
+                  variant={'destructive'}
+                  onClick={() => handleLogin()}
+                  className='mt-4 border-2 border-black'
+                >
                   Cerrar sesión
                 </Button>
               </div>
