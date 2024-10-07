@@ -139,7 +139,7 @@ export default function Usuario() {
               </CardDescription>
             </CardHeader>
             <CardContent className='flex flex-grow flex-col items-center justify-start text-center'>
-              <div className='flex-grow flex-col items-center'>
+              <div className='items-center'>
                 <p className='flex items-center text-3xl font-semibold'>
                   {confirmedUsername}
                   <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
@@ -170,13 +170,13 @@ export default function Usuario() {
                       <form onSubmit={handleSubmit(handleConfirm)}>
                         <ScrollArea className='h-[80vh] pr-4'>
                           <SheetTitle className='text-lg font-semibold'>
-                            Datos del perfil
+                            Datos del usuario
                           </SheetTitle>
                           <hr className='py-2' />
-                          <div className='grid gap-7 py-4'>
-                            <div className='grid gap-2'>
+                          <div className='grid gap-7'>
+                            <div className='grid gap-2 px-1'>
                               <Label htmlFor='username' className='text-left'>
-                                Usuario
+                                Nombre de usuario
                               </Label>
                               <Input
                                 id='username'
