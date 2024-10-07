@@ -82,26 +82,46 @@ const chartConfig1: ChartConfig = {
   visitors: {
     label: 'Objetivos',
   },
-  chrome: {
+  obj1: {
     label: 'Objetivo1',
     color: 'hsl(var(--chart-1))',
   },
-  safari: {
+  obj2: {
     label: 'Objetivo2',
     color: 'hsl(var(--chart-2))',
   },
-  firefox: {
+  obj3: {
     label: 'Objetivo3',
     color: 'hsl(var(--chart-3))',
   },
-  edge: {
+  obj4: {
     label: 'Objetivo4',
     color: 'hsl(var(--chart-4))',
   },
-  other: {
+  obj5: {
     label: 'Objetivo5',
     color: 'hsl(var(--chart-5))',
   },
+  obj6: {
+    label: 'Objetivo6',
+    color: 'hsl(var(--chart-6))',
+  },
+  obj7: {
+    label: 'Objetivo7',
+    color: 'hsl(var(--chart-7))',
+  },
+ obj8: {
+    label: 'Objetivo8',
+    color: 'hsl(var(--chart-8))',
+  },
+  obj9: {
+    label: 'Objetivo9',
+    color: 'hsl(var(--chart-9))',
+  },
+  obj10: {
+    label: 'Objetivo10',
+    color: 'hsl(var(--chart-10))',
+  }
 }
 
 const chartData1 = [
@@ -588,12 +608,9 @@ export default function CapyEstadisticas() {
                               .filter(objetivo => tiempo[objetivo] > 0)
                               .map((objetivo, index) => (
                                 <Cell
-                                  key={`cell-${index}`}
-                                  fill={
-                                    chartConfig1[
-                                      Object.keys(chartConfig1)[index + 1]
-                                    ].color ?? `hsl(${index * 90}, 70%, 60%)`
-                                  }
+                                key={`cell-${index}`}
+                                /* Lo cambié porque hacia conflicto con los colores definidos en el css para el dark mode. Funciona igual! <3  */
+                                fill={`hsl(var(--color-obj${index + 1}))`}
                                   name={objetivo}
                                 />
                               ))}
