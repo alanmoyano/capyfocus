@@ -1,4 +1,6 @@
 function me(){
+
+    //Puse mal el archivo para que no me moleste con los import.
     return(
         <>
                   <div className='mr-12 flex w-full justify-end'>
