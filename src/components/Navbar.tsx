@@ -7,14 +7,7 @@ import { ModeToggle } from './ModeToggle'
 
 import { Menu } from 'lucide-react'
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+
 
 import {
   // NavigationMenu,
