@@ -9,7 +9,6 @@ import EstadisticasPeriodo from './ComponentesEspecifico/EstadisticasPeriodo'
 
 import {
   Tooltip as ChartTooltip,
-
   Pie,
   PieChart,
   Cell,
@@ -27,13 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import {
-  Card,
-  CardContent,
-
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   ChartConfig,
   ChartContainer,
@@ -105,7 +98,7 @@ const chartConfig1: ChartConfig = {
     label: 'Objetivo7',
     color: 'hsl(var(--chart-7))',
   },
- obj8: {
+  obj8: {
     label: 'Objetivo8',
     color: 'hsl(var(--chart-8))',
   },
@@ -116,7 +109,7 @@ const chartConfig1: ChartConfig = {
   obj10: {
     label: 'Objetivo10',
     color: 'hsl(var(--chart-10))',
-  }
+  },
 }
 
 const chartData1 = [
@@ -381,16 +374,17 @@ export default function CapyEstadisticas() {
                 <CardContent className='h-[300px] p-4'>
                   {objetivos.length === 0 && (
                     <div className='flex h-full w-full items-center justify-center'>
-                      <p className='text-center bg-accent rounded-lg p-4' >
+                      <p className='rounded-lg bg-accent p-4 text-center'>
                         Para tener el gráfico de los objetivos de la sesión,
                         coloque objetivos antes de empezar la sesión.
                       </p>
                     </div>
                   )}
                   {objetivos.length - objetivosPend.length === 0 && (
-                    <div className='flex h-full w-full items-center justify-center '>
-                      <p className='text-center bg-accent rounded-lg p-4'>
-                        Oh, en esta sesion no has completado objetivos, entonces no podrás ver las CapyEstadísticas.
+                    <div className='flex h-full w-full items-center justify-center'>
+                      <p className='rounded-lg bg-accent p-4 text-center'>
+                        Oh, en esta sesion no has completado objetivos, entonces
+                        no podrás ver las CapyEstadísticas.
                       </p>
                     </div>
                   )}
@@ -503,10 +497,8 @@ export default function CapyEstadisticas() {
 
       {selectedPeriod === 'semanal' && (
         <>
-        
-          <p className='text-xl mt-4 font-bold'>Trabajando</p>
+          <p className='mt-4 text-xl font-bold'>Trabajando</p>
           <img src='/Chicho/Negativo/CapyComputadora.gif' />
-       
         </>
       )}
 
@@ -523,22 +515,22 @@ export default function CapyEstadisticas() {
             </Button>
           </div>
           <>
-          <p className='text-xl mt-4 font-bold'>Trabajando</p>
-          <img src='/Chicho/Negativo/CapyComputadora.gif' />
-        </>
+            <p className='mt-4 text-xl font-bold'>Trabajando</p>
+            <img src='/Chicho/Negativo/CapyComputadora.gif' />
+          </>
         </>
       )}
 
       {selectedPeriod === 'bimestral' && (
         <>
-          <p className='text-xl mt-4 font-bold'>Trabajando</p>
+          <p className='mt-4 text-xl font-bold'>Trabajando</p>
           <img src='/Chicho/Negativo/CapyComputadora.gif' />
         </>
       )}
 
       {selectedPeriod === 'semestral' && (
         <>
-          <p className='text-xl mt-4 font-bold'>Trabajando</p>
+          <p className='mt-4 text-xl font-bold'>Trabajando</p>
           <img src='/Chicho/Negativo/CapyComputadora.gif' />
           {/* Ver fin de tarjeta, para que se termine antes y no con la pagina*/}
         </>

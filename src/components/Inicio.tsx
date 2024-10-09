@@ -118,6 +118,18 @@ type Motivacion = {
   descripcion?: string
 }
 
+const eventillo = {
+  summary: 'Pruebitas',
+  start: {
+    date: '2024-10-10',
+  },
+  end: {
+    date: '2024-10-11',
+  },
+
+  description: 'Gonza pudo hacer un evento',
+}
+
 export default function Inicio() {
   const [open, setOpen] = useState(false)
   const [value] = useState('')
@@ -151,13 +163,17 @@ export default function Inicio() {
         setTecnicaEstudio(description)
         break
       case undefined:
-      toast.error('CapyError', {
-        description: 'Selecciona un método de estudio antes.',
-        duration: 5000,
-        action: { label: 'Aceptar', onClick: () => {toast.dismiss()} },
-      })
-      break
-      
+        toast.error('CapyError', {
+          description: 'Selecciona un método de estudio antes.',
+          duration: 5000,
+          action: {
+            label: 'Aceptar',
+            onClick: () => {
+              toast.dismiss()
+            },
+          },
+        })
+        break
     }
   }
 

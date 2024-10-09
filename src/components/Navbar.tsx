@@ -8,6 +8,15 @@ import { ModeToggle } from './ModeToggle'
 import { Menu } from 'lucide-react'
 
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+
+import {
   // NavigationMenu,
   // NavigationMenuContent,
   // NavigationMenuIndicator,
@@ -70,7 +79,17 @@ function NavItems() {
 
       <NavbarLink to='/capyEstadisticas'>CapyEstadisticas</NavbarLink>
 
-      <NavbarLink to='/usuario'>CapyDatos</NavbarLink>
+      {/* <NavbarLink to='/usuario'>CapyDatos</NavbarLink> */}
+    </>
+  )
+}
+
+function NuevoBoton() {
+  return (
+    <>
+      <Button variant='ghost' type='button' size='icon' className=''>
+        <Menu />
+      </Button>
     </>
   )
 }
@@ -93,7 +112,7 @@ export default function Navbar() {
                 className='px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden'
                 onClick={() => setAbierto(prev => !prev)}
               >
-                <Menu className='size-5' />
+                <Menu className='' />
                 <span className='sr-only'>Toggle Menu</span>
               </Button>
             </SheetTrigger>
@@ -111,7 +130,7 @@ export default function Navbar() {
               </div>
             </SheetContent>
           </Sheet>
-
+          <NuevoBoton />
           <LogoLink />
         </div>
 
