@@ -57,7 +57,7 @@ export default function Pomodoro() {
   const { selectedMusic } = useMusic()
   const { motivationType } = useMotivation()
   const [sessionStart, setSessionStart] = useState(false)
-  const [volumen, setVolumen] = useState(false)
+  const [volumen, setVolumen] = useState(true)
   const {
     objetivos,
     setObjetivos,
@@ -125,7 +125,7 @@ export default function Pomodoro() {
         }
       }, 1000)
     } else {
-      capySound()
+      if (volumen)  {capySound()}
       clearInterval(timer.current)
       if (mode === 'Estudiando') {
         console.log('La countdown 3 es la culpable')
@@ -165,13 +165,13 @@ export default function Pomodoro() {
   useEffect(() => {
     setCountdown(mode === 'Estudiando' ? sessionSeconds : breakSeconds)
   }, [mode, sessionSeconds, breakSeconds])
-
+  /* 
   const handleAccept = () => {
     setLocation('/')
     setObjetivos(prevObjetivos =>
       prevObjetivos.filter(obj => !marked.includes(obj))
     )
-  }
+  } */
 
   const handleCheckbox = (objetivo: string) => {
     if (marked.includes(objetivo)) {
@@ -232,6 +232,28 @@ export default function Pomodoro() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+
+  //Esto es para subir y bajar rapido los minutos de estudio, lo hice con la maldad de subir y bajar rapido 
+  //los minutos de estudio, y los minutos de descanso se suben de a uno wuajajajaj.
+  const [intervalId, setIntervalId] = useState(null) // Para guardar el intervalo
+
+  const startAdjustingTime = (change: number)  => {
+    // Inicia el ajuste de tiempo al mantener presionado
+    const id = setInterval(() => {
+      setSessionSeconds(prev => {
+        const newValue = prev + change
+        return newValue > 60 ? newValue : 60 // Evita bajar de 60 segundos
+      })
+    }, 150) //Es lo rapido que cambia 
+    setIntervalId(id)
+  }
+
+  const stopAdjustingTime = () => {
+
+    clearInterval(intervalId)
+    setIntervalId(null)
+  }
+
   return (
     <>
       <h1 className='mt-4 text-center text-4xl font-bold'>Capydoro!</h1>
@@ -272,6 +294,9 @@ export default function Pomodoro() {
                     <h3>Minutos de Estudio</h3>
                     <div className='flex items-center justify-center gap-4 text-lg'>
                       <Button
+                        onMouseDown={() => startAdjustingTime(-60)}
+                        onMouseUp={stopAdjustingTime}
+                        onMouseLeave={stopAdjustingTime}
                         onClick={() => setSessionSeconds(prev => prev - 60)}
                         disabled={sessionSeconds <= 60 || isActive || isSetted}
                       >
@@ -279,7 +304,10 @@ export default function Pomodoro() {
                       </Button>
                       <p>{sessionSeconds / 60}</p>
                       <Button
-                        onClick={() => setSessionSeconds(prev => prev + 60)}
+                        onMouseDown={() => startAdjustingTime(60)}
+                        onClick={() => setSessionSeconds(prev => prev - 60)}
+                        onMouseUp={stopAdjustingTime}
+                        onMouseLeave={stopAdjustingTime}
                         disabled={isActive || isSetted}
                       >
                         +
