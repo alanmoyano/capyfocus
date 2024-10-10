@@ -118,7 +118,6 @@ type Motivacion = {
   descripcion?: string
 }
 
-
 export default function Inicio() {
   const [open, setOpen] = useState(false)
   const [value] = useState('')
@@ -203,8 +202,6 @@ export default function Inicio() {
     setIndex(index)
     setInputValue(objetivos[index]) // Set the input value to the current objective
   }
-
-  
 
   const handleSaveEdit = (
     e: KeyboardEvent<HTMLInputElement>,

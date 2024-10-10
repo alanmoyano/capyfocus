@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Button } from "react-day-picker";
+import { Button } from 'react-day-picker'
 
 const eventillo = {
   summary: 'Pruebitas',
@@ -14,9 +14,7 @@ const eventillo = {
   description: 'Gonza pudo hacer un evento',
 }
 
-
 export default function GoogleTest() {
-  
   // @ts-expect-error no seas molesto typescript
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const gapi = window.gapi
@@ -26,30 +24,28 @@ export default function GoogleTest() {
       console.log('loaded client')
 
       gapi.client.init({
-        apiKey:'AIzaSyCi1OgmfS7oJ-Ebin6GU7ASy2zNX-xDCCs',
-        clientId: '530796160525-slc3f0td20il4jb052knhqvh0347nu4i.apps.googleusercontent.com',
-        discoveryDocs: 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
-        scope: 'https://www.googleapis.com/auth/calendar'
+       
+          'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
+        scope: 'https://www.googleapis.com/auth/calendar',
       })
 
       gapi.client.load('calendar', 'v3', () => console.log('bam!'))
 
-
-      gapi.auth2.getAuthInstance().signIn()
-      .then(
-        () => {
-          gapi.client.calendar.events.insert({'calendarId': 'primary', 'resource': eventillo})
-        }
-      )
+      gapi.auth2
+        .getAuthInstance()
+        .signIn()
+        .then(() => {
+          gapi.client.calendar.events.insert({
+            calendarId: 'primary',
+            resource: eventillo,
+          })
+        })
     })
-
   }
-  
+
   return (
     <>
-    <Button onClick={handleTest}>
-      Test
-    </Button>
+      <Button onClick={handleTest}>Test</Button>
     </>
   )
 }

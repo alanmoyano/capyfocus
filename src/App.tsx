@@ -61,7 +61,7 @@ function App() {
 
                   <Route path='/prueba' component={Prueba} />
                   <Route path='/calprugon'>
-                    <GoogleTest/>
+                    <GoogleTest />
                   </Route>
                   <Route>
                     <NotFound />
