@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Button } from "react-day-picker";
 
 const eventillo = {
@@ -15,6 +17,8 @@ const eventillo = {
 
 export default function GoogleTest() {
   
+  // @ts-expect-error no seas molesto typescript
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const gapi = window.gapi
 
   const handleTest = () => {

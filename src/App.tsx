@@ -21,7 +21,6 @@ import { Helmet } from 'react-helmet'
 import NotFound from './components/NotFound'
 import Prueba from './components/Prueba'
 import { Toaster } from '@/components/ui/sonner'
-import GoogleTest from './components/GoogleTest'
 
 function App() {
   return (
@@ -62,7 +61,7 @@ function App() {
 
                   <Route path='/prueba' component={Prueba} />
                   <Route path='/calprugon'>
-                  <GoogleTest
+                    <GoogleTest/>
                   </Route>
                   <Route>
                     <NotFound />
