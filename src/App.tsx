@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/react'
 import { Route, Switch } from 'wouter'
 
 import Login from './components/AuthForm'
+import GoogleTest from './components/GoogleTest'
 import Pomodoro from './components/Pomodoro'
 import Timer from './components/Timer'
 import CapyInsignias from './components/CapyInsignias'
@@ -20,6 +21,7 @@ import { Helmet } from 'react-helmet'
 import NotFound from './components/NotFound'
 import Prueba from './components/Prueba'
 import { Toaster } from '@/components/ui/sonner'
+import GoogleTest from './components/GoogleTest'
 
 function App() {
   return (
@@ -59,6 +61,9 @@ function App() {
                   <Route path='/usuario' component={Usuario} />
 
                   <Route path='/prueba' component={Prueba} />
+                  <Route path='/calprugon'>
+                  <GoogleTest
+                  </Route>
                   <Route>
                     <NotFound />
                   </Route>
