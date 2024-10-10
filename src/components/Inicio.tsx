@@ -118,24 +118,16 @@ type Motivacion = {
   descripcion?: string
 }
 
-const eventillo = {
-  summary: 'Pruebitas',
-  start: {
-    date: '2024-10-10',
-  },
-  end: {
-    date: '2024-10-11',
-  },
-
-  description: 'Gonza pudo hacer un evento',
-}
-
 export default function Inicio() {
   const [open, setOpen] = useState(false)
   const [value] = useState('')
   const [inputValue, setInputValue] = useState('')
   const [index, setIndex] = useState<number | null>(null)
   const [selectedPlaylist, setSelectedPlaylist] = useState(-1)
+
+  // @ts-expect-error  no seas molesto typescript
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const gapi = window.gapi
 
   const { objetivos, setObjetivos, objetivosFav, setObjetivosFav } =
     useObjetivos()
