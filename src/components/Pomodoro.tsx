@@ -3,7 +3,7 @@ import { Button } from './ui/button'
 import { Checkbox } from './ui/checkbox'
 import { useLocation } from 'wouter'
 import { useObjetivos } from './contexts/ObjetivosContext'
-import { Star, Play, Pause, Ghost, icons } from 'lucide-react'
+import { Star, Play, Pause } from 'lucide-react'
 import CapySound from '../assets/Sonido_de_caripincho.mp3'
 import Confetti from 'react-confetti-boom'
 import useSound from 'use-sound'
@@ -12,6 +12,7 @@ import { useMotivation } from './contexts/MotivationContext'
 import { useSesion } from './contexts/SesionContext'
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
 import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
+import ExperimentandoBrenda from './ExperimentandoBrenda'
 import { Volume2, VolumeOff } from 'lucide-react'
 type Mode = 'Estudiando' | 'Descansando'
 
@@ -303,20 +304,22 @@ export default function Pomodoro() {
             </>
           )}
 
-          {/* Reloj*/}
+
+
           {sessionStart && (
             <>
               <div className='px-4'>
-                <div className='mt-32 flex justify-center'>
-                  <span className='rounded-xl bg-secondary/90 px-12 py-4 text-center text-black'>
+                <div className='mt-16 flex justify-center'>
+            <ExperimentandoBrenda time={countdown} mode={mode} play={isActive} />
+            {pomodoroCount.current >= 1 && (
+              <Confetti mode='boom' particleCount={150} />
+            )}
+{/*                   <span className='rounded-xl bg-secondary/90 px-12 py-4 text-center text-black'>
                     <ActualTimer mode={mode} time={countdown} />
-                    {pomodoroCount.current >= 1 && (
-                      <Confetti mode='boom' particleCount={150} />
-                    )}
                     <p className='text-2xl font-bold text-black'>
                       Capydoros: {Math.floor(pomodoroCount.current)}
                     </p>
-                  </span>
+                    </span> */}
                 </div>
               </div>
             </>
