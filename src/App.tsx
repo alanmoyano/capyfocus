@@ -4,7 +4,6 @@ import { Analytics } from '@vercel/analytics/react'
 import { Route, Switch } from 'wouter'
 
 import Login from './components/AuthForm'
-import GoogleTest from './components/GoogleTest'
 import Pomodoro from './components/Pomodoro'
 import Timer from './components/Timer'
 import CapyInsignias from './components/CapyInsignias'
@@ -22,6 +21,7 @@ import NotFound from './components/NotFound'
 import Prueba from './components/Prueba'
 import { Toaster } from '@/components/ui/sonner'
 import ExperimentandoBrenda from './components/ExperimentandoBrenda'
+import Alendario from './components/AlanPruebaCalendario'
 
 function App() {
   return (
@@ -65,9 +65,8 @@ function App() {
                   <Route path='/usuario' component={Usuario} />
 
                   <Route path='/prueba' component={Prueba} />
-                  <Route path='/calprugon'>
-                    <GoogleTest />
-                  </Route>
+                  <Route path='/calendario' component={Alendario} />
+
                   <Route>
                     <NotFound />
                   </Route>
