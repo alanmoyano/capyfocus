@@ -1,6 +1,19 @@
 /* Estilo de letra (fea) de CapyInsignias */
 @import url('https://fonts.googleapis.com/css2?family=Jomolhari&display=swap');
 
+
+.slider-container {
+  height: 3rem; /* Cambia la altura del componente */
+}
+
+.toggle-dot {
+  width: 2rem; /* Cambia el ancho del punto */
+  height: 2rem;
+}
+
+
+
+
 .card {
   width: 180px;
   height: 330px;

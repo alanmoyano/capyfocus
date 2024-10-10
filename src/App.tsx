@@ -20,6 +20,7 @@ import { Helmet } from 'react-helmet'
 import NotFound from './components/NotFound'
 import Prueba from './components/Prueba'
 import { Toaster } from '@/components/ui/sonner'
+import ExperimentandoBrenda from './components/ExperimentandoBrenda'
 
 function App() {
   return (
@@ -48,6 +49,10 @@ function App() {
                   </Route>
                   <Route path='/capymetro'>
                     <Timer />
+                  </Route>
+
+                  <Route path='/brenda'>
+                    <ExperimentandoBrenda />
                   </Route>
 
                   <Route path='/capyInsignias' component={CapyInsignias} />
