@@ -54,7 +54,6 @@ export default function Eventos() {
         description: '"' + eventTitle + '"' + ' en el dia: ' + dateString,
       })
       setEventTitle('') // Limpiar el título después de añadir el evento
-      
     } else {
       toast.error('No se ha podido crear el evento:', {
         description: 'Por favor, ingresa un título para el evento.',

@@ -13,7 +13,7 @@ import { useSesion } from './contexts/SesionContext'
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
 import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
 import ExperimentandoBrenda from './ExperimentandoBrenda'
-import { Volume2, VolumeOff} from 'lucide-react'
+import { Volume2, VolumeOff } from 'lucide-react'
 import { formatTime } from '@/lib/utils'
 
 type Mode = 'Estudiando' | 'Descansando'
@@ -21,7 +21,6 @@ type Mode = 'Estudiando' | 'Descansando'
 function addZeroIfNeeded(value: number) {
   return value.toString().padStart(2, '0')
 }
-
 
 export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
   return (
@@ -137,14 +136,11 @@ export default function Pomodoro() {
         setMode('Descansando')
         setIsActive(false)
         pomodoroCount.current += 0.5
-        
       } else {
-        console.log('soy 0 y termino la sesion')
         setBreakSeconds(
           pomodorosRealizados[pomodorosRealizados.length - 1].tiempoDescanso
         )
         setIsActive(prev => !prev)
-        setSessionStart(prev => !prev)
         setIsSetted(prev => !prev)
         pomodoroCount.current += 0.5
       }
@@ -165,13 +161,6 @@ export default function Pomodoro() {
     capySound,
     objCumplidos,
   ])
-
-  useEffect(() => {
-    if (!isSetted){
-      setMode('Estudiando')
-    }
-
-  }, [isSetted])
 
   useEffect(() => {
     setCountdown(mode === 'Estudiando' ? sessionSeconds : breakSeconds)
@@ -204,11 +193,17 @@ export default function Pomodoro() {
   }
 
   const handleSetted = (Sessioncountup: number, Breakcountup: number) => {
-    setSessionStart(prev => !prev)
+    if (!sessionStart) {
+      setAcumuladorTiempoPausa(0)
+      setTiempoTotal(0)
+      setCantidadPausas(0)
+      setSessionStart(true)
+    }
+
     setIsSetted(prev => !prev)
     setIsActive(prev => !prev)
-    setTiempoTotal(prev => (prev += tiempoEstudio))
-    setAcumuladorTiempoPausa(prev => (prev += tiempoDescanso))
+    setMode('Estudiando')
+
     const tiempoEstudio = Sessioncountup
     const tiempoDescanso = Breakcountup
 
@@ -221,6 +216,8 @@ export default function Pomodoro() {
     } else {
       setPomodorosRealizados([...pomodorosRealizados, pomodoro])
     }
+    setTiempoTotal(prev => (prev += tiempoEstudio))
+    setAcumuladorTiempoPausa(prev => (prev += tiempoDescanso))
   }
 
   const handlePause = (value: boolean) => {
@@ -234,7 +231,6 @@ export default function Pomodoro() {
     setObjetivosPend(objetivos)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
 
   return (
     <>
@@ -265,7 +261,7 @@ export default function Pomodoro() {
         {/* Columna 2  */}
         <div className='col-span-1'>
           {/* Seteadores de tiempo */}
-          {!sessionStart && (
+          {!isSetted && (
             <>
               <p className='mt-8 text-center text-xl font-semibold'>
                 Coloca el tiempo a estudiar y descansar
@@ -315,17 +311,20 @@ export default function Pomodoro() {
             </>
           )}
 
-
-
-          {sessionStart && (
+          {isSetted && (
             <>
               <div className='px-4'>
                 <div className='mt-16 flex justify-center'>
-            <ExperimentandoBrenda studyTime={sessionSeconds} breakTime={breakSeconds} mode={mode} play={isActive} />
-            {pomodoroCount.current >= 1 && (
-              <Confetti mode='boom' particleCount={150} />
-            )}
-{/*                   <span className='rounded-xl bg-secondary/90 px-12 py-4 text-center text-black'>
+                  <ExperimentandoBrenda
+                    studyTime={sessionSeconds}
+                    breakTime={breakSeconds}
+                    mode={mode}
+                    play={isActive}
+                  />
+                  {pomodoroCount.current >= 1 && (
+                    <Confetti mode='boom' particleCount={150} />
+                  )}
+                  {/*                   <span className='rounded-xl bg-secondary/90 px-12 py-4 text-center text-black'>
                     <ActualTimer mode={mode} time={countdown} />
                     <p className='text-2xl font-bold text-black'>
                       Capydoros: {Math.floor(pomodoroCount.current)}

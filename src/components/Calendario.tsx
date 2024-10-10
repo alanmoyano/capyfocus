@@ -1,10 +1,13 @@
-import { AddToCalendarButton, atcb_action, AddToCalendarActionType } from 'add-to-calendar-button-react'
+import {
+  AddToCalendarButton,
+  atcb_action,
+  AddToCalendarActionType,
+} from 'add-to-calendar-button-react'
 import { Button } from '@/components/ui/button'
 
 // {fecha, }: {fecha: Date}
 
 export default function Calendario() {
-
   const hoy = new Date()
 
   const formattedDate = hoy.toISOString().split('T')[0]
@@ -18,9 +21,7 @@ export default function Calendario() {
     <section>
       <h2>Calendario</h2>
       <p>Prueba de calendario</p>
-      <Button onClick={handleClick}>
-        Agregar
-      </Button>
+      <Button onClick={handleClick}>Agregar</Button>
       <AddToCalendarButton
         name='Eventos fáciles!'
         options={['Apple', 'Google']}
