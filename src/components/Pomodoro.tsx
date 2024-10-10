@@ -13,7 +13,7 @@ import { useSesion } from './contexts/SesionContext'
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
 import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
 import ExperimentandoBrenda from './ExperimentandoBrenda'
-import { Volume2, VolumeOff } from 'lucide-react'
+import { Volume2, VolumeOff, TimerReset } from 'lucide-react'
 type Mode = 'Estudiando' | 'Descansando'
 
 function addZeroIfNeeded(value: number) {
@@ -84,6 +84,11 @@ export default function Pomodoro() {
   const finalizarSesion = () => {
     clearInterval(timer.current)
 
+    if(pomodoroCount.current % 1 === 0){
+      setSessionSeconds(0)
+      setBreakSeconds(0)
+    }
+
     if (countdown > 0 && mode === 'Estudiando') {
       console.log('entre en el primero')
       setTiempoTotal(prev => (prev -= countdown))
@@ -137,14 +142,17 @@ export default function Pomodoro() {
         )
         setMode('Descansando')
         setIsActive(false)
+        pomodoroCount.current += 0.5
+        
       } else {
         setMode('Estudiando')
         setBreakSeconds(
           pomodorosRealizados[pomodorosRealizados.length - 1].tiempoDescanso
         )
         setIsActive(prev => !prev)
+        setSessionStart(prev => !prev)
         setIsSetted(prev => !prev)
-        pomodoroCount.current += 1
+        pomodoroCount.current += 0.5
       }
     }
 
@@ -194,7 +202,7 @@ export default function Pomodoro() {
   }
 
   const handleSetted = (Sessioncountup: number, Breakcountup: number) => {
-    setSessionStart(true)
+    setSessionStart(prev => !prev)
     setIsSetted(prev => !prev)
     const tiempoEstudio = Sessioncountup
     const tiempoDescanso = Breakcountup
@@ -265,7 +273,7 @@ export default function Pomodoro() {
                     <h3>Minutos de Estudio</h3>
                     <div className='flex items-center justify-center gap-4 text-lg'>
                       <Button
-                        onClick={() => setSessionSeconds(prev => prev - 60)}
+                        onClick={() => setSessionSeconds(3)}
                         disabled={sessionSeconds <= 60 || isActive || isSetted}
                       >
                         -
@@ -285,7 +293,7 @@ export default function Pomodoro() {
                     <h3>Minutos de descanso</h3>
                     <div className='flex items-center justify-center gap-4 text-lg'>
                       <Button
-                        onClick={() => setBreakSeconds(prev => prev - 60)}
+                        onClick={() => setBreakSeconds(3)}
                         disabled={breakSeconds <= 60 || isActive || isSetted}
                       >
                         -
@@ -309,8 +317,11 @@ export default function Pomodoro() {
           {sessionStart && (
             <>
               <div className='px-4'>
+                  {/* <Button type='button' size='icon' variant='ghost' className='mt-8 ' disabled={pomodoroCount.current % 1 !== 0 || isActive} onClick={() => handleSetted(sessionSeconds, breakSeconds)}>
+                    <TimerReset/>
+                  </Button> */}
                 <div className='mt-16 flex justify-center'>
-            <ExperimentandoBrenda time={countdown} mode={mode} play={isActive} />
+            <ExperimentandoBrenda studyTime={sessionSeconds} breakTime={breakSeconds} mode={mode} play={isActive} />
             {pomodoroCount.current >= 1 && (
               <Confetti mode='boom' particleCount={150} />
             )}

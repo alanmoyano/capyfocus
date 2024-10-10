@@ -262,7 +262,7 @@ export default function Inicio() {
       .catch((error: unknown) => console.error(error))
 
       setAcumuladorTiempoPausa(0)
-      setTiempoTotal(-1)
+      setTiempoTotal(0)
       setCantidadPausas(0)
   }, [])
 
