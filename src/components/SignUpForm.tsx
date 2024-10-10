@@ -276,6 +276,7 @@ function SignupForm() {
         <Button className='w-1/2' form='signUp' type='submit'>
           Guardar
         </Button>
+        
       </CardFooter>
     </Card>
   )
