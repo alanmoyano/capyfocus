@@ -24,8 +24,8 @@ export default function GoogleTest() {
       console.log('loaded client')
 
       gapi.client.init({
-       
-          'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
+        // gonza esto no anda
+        // 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
         scope: 'https://www.googleapis.com/auth/calendar',
       })
 

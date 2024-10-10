@@ -35,7 +35,7 @@ export function ModeToggle({ className }: { className?: string }) {
           />
           <label
             htmlFor='toggle'
-            className='flex h-7 w-14 cursor-pointer items-center rounded-full bg-gray-200 p-1 '
+            className='flex h-7 w-14 cursor-pointer items-center rounded-full bg-gray-200 p-1'
           >
             <div
               className='toggle-dot flex h-6 w-6 items-center justify-center rounded-full bg-primary/60 shadow-md dark:bg-black'

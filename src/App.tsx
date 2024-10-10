@@ -22,6 +22,7 @@ import NotFound from './components/NotFound'
 import Prueba from './components/Prueba'
 import { Toaster } from '@/components/ui/sonner'
 import ExperimentandoBrenda from './components/ExperimentandoBrenda'
+import Alendario from './components/AlanPruebaCalendario'
 
 function App() {
   return (
@@ -68,6 +69,8 @@ function App() {
                   <Route path='/calprugon'>
                     <GoogleTest />
                   </Route>
+                  <Route path='/calendario' component={Alendario} />
+
                   <Route>
                     <NotFound />
                   </Route>
