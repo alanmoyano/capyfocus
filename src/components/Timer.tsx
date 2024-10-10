@@ -13,27 +13,14 @@ import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
 import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
 import useTimer from '@/hooks/useTimer'
 import { Helmet } from 'react-helmet'
+import { formatTime } from '@/lib/utils'	
 
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Sesión' | 'Descanso'
 type Accion = 'Estudiar' | 'Descansar'
 
-function addZeroIfNeeded(value: number) {
-  return value.toString().padStart(2, '0')
-}
 
-function formatTime(time: number) {
-  const hours = Math.floor(time / 3600) // Calcula las horas
-  const minutes = Math.floor((time % 3600) / 60) // Calcula los minutos restantes
-  const remainingSeconds = time % 60 // Calcula los segundos restantes
-
-  if (hours > 0) {
-    return `${addZeroIfNeeded(hours)}:${addZeroIfNeeded(minutes)}:${addZeroIfNeeded(remainingSeconds)}`
-  } else {
-    return `${addZeroIfNeeded(minutes)}:${addZeroIfNeeded(remainingSeconds)}`
-  }
-}
 
 export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
   return (
