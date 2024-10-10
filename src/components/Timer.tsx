@@ -13,14 +13,12 @@ import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
 import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
 import useTimer from '@/hooks/useTimer'
 import { Helmet } from 'react-helmet'
-import { formatTime } from '@/lib/utils'	
+import { formatTime } from '@/lib/utils'
 
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Sesión' | 'Descanso'
 type Accion = 'Estudiar' | 'Descansar'
-
-
 
 export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
   return (

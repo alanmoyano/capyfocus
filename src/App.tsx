@@ -21,7 +21,6 @@ import NotFound from './components/NotFound'
 import Prueba from './components/Prueba'
 import { Toaster } from '@/components/ui/sonner'
 import ExperimentandoBrenda from './components/ExperimentandoBrenda'
-import Calendario from './components/Calendario'
 
 function App() {
   return (
@@ -66,7 +65,6 @@ function App() {
                   <Route path='/usuario' component={Usuario} />
 
                   <Route path='/prueba' component={Prueba} />
-                  <Route path='/calendario' component={Calendario} />
 
                   <Route>
                     <NotFound />

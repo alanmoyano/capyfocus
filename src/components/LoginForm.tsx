@@ -60,7 +60,7 @@ export default function LoginForm() {
         {/* <Button variant={'link'} className='border-none text-sm font-normal'>
           Recuperar
         </Button> */}
-        <PasswordRecovery/>
+        <PasswordRecovery />
       </CardContent>
       <CardFooter>
         <Button className='w-1/2'>Iniciar</Button>
