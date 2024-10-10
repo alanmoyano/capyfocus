@@ -140,7 +140,12 @@ export default function Inicio() {
 
   const { setSelectedMusic } = useMusic()
 
-  const { setTecnicaEstudio, setTiempoTotal, setAcumuladorTiempoPausa, setCantidadPausas } = useSesion()
+  const {
+    setTecnicaEstudio,
+    setTiempoTotal,
+    setAcumuladorTiempoPausa,
+    setCantidadPausas,
+  } = useSesion()
 
   const [motivaciones, setMotivaciones] = useState<Motivacion[]>([])
 
@@ -260,10 +265,6 @@ export default function Inicio() {
       })
 
       .catch((error: unknown) => console.error(error))
-
-      setAcumuladorTiempoPausa(0)
-      setTiempoTotal(0)
-      setCantidadPausas(0)
   }, [])
 
   return (
