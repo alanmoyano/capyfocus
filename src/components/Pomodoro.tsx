@@ -125,7 +125,9 @@ export default function Pomodoro() {
         }
       }, 1000)
     } else {
-      if (volumen)  {capySound()}
+      if (volumen) {
+        capySound()
+      }
       clearInterval(timer.current)
       if (mode === 'Estudiando') {
         console.log('La countdown 3 es la culpable')
@@ -232,24 +234,24 @@ export default function Pomodoro() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-
-  //Esto es para subir y bajar rapido los minutos de estudio, lo hice con la maldad de subir y bajar rapido 
+  //Esto es para subir y bajar rapido los minutos de estudio, lo hice con la maldad de subir y bajar rapido
   //los minutos de estudio, y los minutos de descanso se suben de a uno wuajajajaj.
   const [intervalId, setIntervalId] = useState(null) // Para guardar el intervalo
 
-  const startAdjustingTime = (change: number)  => {
+  const startAdjustingTime = (change: number) => {
     // Inicia el ajuste de tiempo al mantener presionado
     const id = setInterval(() => {
       setSessionSeconds(prev => {
         const newValue = prev + change
         return newValue > 60 ? newValue : 60 // Evita bajar de 60 segundos
       })
-    }, 150) //Es lo rapido que cambia 
+    }, 150) //Es lo rapido que cambia
+    //@ts-expect-error 2345 Aca no hace falta typescript
     setIntervalId(id)
   }
 
   const stopAdjustingTime = () => {
-
+    //@ts-expect-error 2769 Aca no hace falta typescript
     clearInterval(intervalId)
     setIntervalId(null)
   }
