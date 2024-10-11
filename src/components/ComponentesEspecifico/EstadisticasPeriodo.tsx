@@ -76,7 +76,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
     <>
       <Card
         ref={cardRefs[period]}
-        className='container md:flex-row mt-4 rounded-lg  bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg dark:from-gray-800 dark:to-gray-900 dark:shadow-gray-800'
+        className='container mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg md:flex-row dark:from-gray-800 dark:to-gray-900 dark:shadow-gray-800'
       >
         <CardHeader>
           <CardTitle>
