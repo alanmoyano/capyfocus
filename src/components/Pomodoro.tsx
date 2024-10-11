@@ -15,6 +15,8 @@ import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
 import ExperimentandoBrenda from './ExperimentandoBrenda'
 import { Volume2, VolumeOff } from 'lucide-react'
 import { formatTime } from '@/lib/utils'
+import CountdownStudy from './ComponentesEspecifico/CountDown/CountdownStudy'
+import CountdownBreak from './ComponentesEspecifico/CountDown/CountdownBreak'
 
 type Mode = 'Estudiando' | 'Descansando'
 
@@ -345,12 +347,12 @@ export default function Pomodoro() {
             <>
               <div className='px-4'>
                 <div className='mt-16 flex justify-center'>
-                  <ExperimentandoBrenda
-                    studyTime={sessionSeconds}
-                    breakTime={breakSeconds}
-                    mode={mode}
-                    play={isActive}
-                  />
+                  {mode === 'Estudiando' ? (
+                    <CountdownStudy studyTime={sessionSeconds} />
+
+                  ):(
+                    <CountdownBreak breakTime={breakSeconds} />
+                  )}
                   {pomodoroCount.current >= 1 && (
                     <Confetti mode='boom' particleCount={150} />
                   )}

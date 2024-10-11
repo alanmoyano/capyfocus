@@ -41,8 +41,9 @@ export default function ExperimentandoBrenda({
           {/* Contados descansando */}
 
           <CountdownCircleTimer
+            isPlaying={play}
             duration={breakTime} //Aca va el tiempo en segundos
-            colors={['#f1aa57', '#F7B801', '#A30000', '#A30000']}
+            colors={['#96afb3', '#F7B801', '#A30000', '#A30000']}
             colorsTime={[10, 6, 3, 0]}
             size={200}
           >
