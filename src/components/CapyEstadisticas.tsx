@@ -121,7 +121,7 @@ const chartData1 = [
   { month: 'Junio', desktop: 214, mobile: 140 },
 ]
 
-const chartConfig4 = {
+/* const chartConfig4 = {
   desktop: {
     label: 'Desktop',
     color: 'hsl(var(--chart-1))',
@@ -130,7 +130,7 @@ const chartConfig4 = {
     label: 'Mobile',
     color: 'hsl(var(--chart-2))',
   },
-} satisfies ChartConfig
+} satisfies ChartConfig */
 
 export default function CapyEstadisticas() {
   const queryParams = useSearch()

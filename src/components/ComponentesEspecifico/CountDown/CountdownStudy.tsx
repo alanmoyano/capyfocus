@@ -1,12 +1,12 @@
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import { formatTime } from '@/lib/utils'
 
-export default function CountdownStudy({ studyTime }: { studyTime: number }) {
+export default function CountdownStudy({ studyTime, play }: { studyTime: number, play: boolean }) {
   return(
 
     <div>
     <CountdownCircleTimer
-      isPlaying={true}
+      isPlaying={play}
       duration={studyTime} //Aca va el tiempo en segundos
       colors={['#7fb283', '#F7B801', '#A30000', '#A30000']}
       colorsTime={[10, 6, 3, 0]}

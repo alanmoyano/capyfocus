@@ -17,6 +17,7 @@ import { Volume2, VolumeOff } from 'lucide-react'
 import { formatTime } from '@/lib/utils'
 import CountdownStudy from './ComponentesEspecifico/CountDown/CountdownStudy'
 import CountdownBreak from './ComponentesEspecifico/CountDown/CountdownBreak'
+import { set } from 'date-fns'
 
 type Mode = 'Estudiando' | 'Descansando'
 
@@ -224,6 +225,7 @@ export default function Pomodoro() {
     setAcumuladorTiempoPausa(prev => (prev += tiempoDescanso))
   }
 
+
   const handlePause = (value: boolean) => {
     if (!value) {
       setCantidadPausas(prev => (prev += 1))
@@ -348,14 +350,25 @@ export default function Pomodoro() {
               <div className='px-4'>
                 <div className='mt-16 flex justify-center'>
                   {mode === 'Estudiando' ? (
-                    <CountdownStudy studyTime={sessionSeconds} />
-
-                  ):(
-                    <CountdownBreak breakTime={breakSeconds} />
+                    <div>
+                      <CountdownStudy
+                        studyTime={sessionSeconds}
+                        play={isActive}
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <CountdownBreak
+                        breakTime={breakSeconds}
+                        play={isActive}
+                      />
+                    
+                    </div>
                   )}
                   {pomodoroCount.current >= 1 && (
                     <Confetti mode='boom' particleCount={150} />
                   )}
+
                   {/*                   <span className='rounded-xl bg-secondary/90 px-12 py-4 text-center text-black'>
                     <ActualTimer mode={mode} time={countdown} />
                     <p className='text-2xl font-bold text-black'>

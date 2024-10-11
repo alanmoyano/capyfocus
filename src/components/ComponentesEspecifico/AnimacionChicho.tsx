@@ -75,12 +75,12 @@ export default function AnimacionChicho({
     if (motivacion === 1) {
       intervalIdRef.current = window.setInterval(() => {
         setAnimation(animacionesPositivas[getRandomIndex(animacionesPositivas)])
-      }, 5000)
+      }, 300000)
     }
     if (motivacion === 2) {
       intervalIdRef.current = window.setInterval(() => {
         setAnimation(animacionesNegativas[getRandomIndex(animacionesNegativas)])
-      }, 10000)
+      }, 300000)
     }
     return () => {
       if (intervalIdRef.current !== null) {
