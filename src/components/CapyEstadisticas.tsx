@@ -112,14 +112,6 @@ const chartConfig1: ChartConfig = {
   },
 }
 
-const chartData1 = [
-  { month: 'Enero', desktop: 186, mobile: 80 },
-  { month: 'Febrero', desktop: 305, mobile: 200 },
-  { month: 'Marzo', desktop: 237, mobile: 120 },
-  { month: 'Abril', desktop: 73, mobile: 190 },
-  { month: 'Mayo', desktop: 209, mobile: 130 },
-  { month: 'Junio', desktop: 214, mobile: 140 },
-]
 
 /* const chartConfig4 = {
   desktop: {
@@ -291,6 +283,7 @@ export default function CapyEstadisticas() {
       {/* Pagina se sesion */}
       {tiempoTotal > 0 && selectedPeriod === 'sesion' && (
         <>
+        {/* Boton Screen */}
           <div className='mr-12 flex w-full justify-end'>
             <Button
               variant='ghost'
@@ -301,10 +294,10 @@ export default function CapyEstadisticas() {
               Capturar
             </Button>
           </div>
-
+          {/* Info sesion */}
           <Card
             ref={cardRefs.sesion}
-            className='container mx-auto mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg dark:from-gray-800 dark:to-gray-600 dark:shadow-gray-700'
+            className='container md:flex-row mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg dark:from-gray-800 dark:to-gray-600 dark:shadow-gray-700'
           >
             <CardHeader>
               <CardTitle className=''>
@@ -313,8 +306,8 @@ export default function CapyEstadisticas() {
                 </h1>
               </CardTitle>
             </CardHeader>
-            <CardContent className='flex justify-between gap-4'>
-              <div className='w-1/2'>
+            <CardContent className='flex justify-between gap-4 md:flex-row'>
+              <div className='md:w-1/2'>
                 <div className='grid grid-cols-2 gap-6'>
                   {[
                     {
@@ -365,91 +358,93 @@ export default function CapyEstadisticas() {
               </div>
 
               {/* Chart */}
-              <Card className='h-1/2 w-5/12 overflow-hidden rounded-lg shadow-lg'>
-                <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 text-gray-900'>
-                  <CardTitle className='text-xl font-bold'>
-                    Tiempo dedicado a objetivos en la sesión actual
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className='h-[300px] p-4'>
-                  {objetivos.length === 0 && (
-                    <div className='flex h-full w-full items-center justify-center'>
-                      <p className='rounded-lg bg-accent p-4 text-center'>
-                        Para tener el gráfico de los objetivos de la sesión,
-                        coloque objetivos antes de empezar la sesión.
-                      </p>
-                    </div>
-                  )}
-                  {objetivos.length - objetivosPend.length === 0 && (
-                    <div className='flex h-full w-full items-center justify-center'>
-                      <p className='rounded-lg bg-accent p-4 text-center'>
-                        Oh, en esta sesion no has completado objetivos, entonces
-                        no podrás ver las CapyEstadísticas.
-                      </p>
-                    </div>
-                  )}
+              <div className='space-y-6 md:w-1/2'>
+                <Card className='h-1/2 w-5/12 overflow-hidden rounded-lg shadow-lg'>
+                  <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 text-gray-900'>
+                    <CardTitle className='text-xl font-bold'>
+                      Tiempo dedicado a objetivos en la sesión actual
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className='h-[300px] p-4'>
+                    {objetivos.length === 0 && (
+                      <div className='flex h-full w-full items-center justify-center'>
+                        <p className='rounded-lg bg-accent p-4 text-center'>
+                          Para tener el gráfico de los objetivos de la sesión,
+                          coloque objetivos antes de empezar la sesión.
+                        </p>
+                      </div>
+                    )}
+                    {objetivos.length - objetivosPend.length === 0 && (
+                      <div className='flex h-full w-full items-center justify-center'>
+                        <p className='rounded-lg bg-accent p-4 text-center'>
+                          Oh, en esta sesion no has completado objetivos,
+                          entonces no podrás ver las CapyEstadísticas.
+                        </p>
+                      </div>
+                    )}
 
-                  {objetivos.length > 0 && (
-                    <div>
-                      <ChartContainer config={chartConfig1}>
-                        <ResponsiveContainer width='100%' height={400}>
-                          <PieChart>
-                            {/* Agregue un filtro para que no se muestren los objetivos que no se han cumplido */}
-                            <Pie
-                              data={objetivos
-                                .filter(objetivo => tiempo[objetivo] > 0)
-                                .map(objetivo => ({
-                                  name: objetivo,
-                                  value: tiempo[objetivo] ?? 0,
-                                }))}
-                              labelLine={false}
-                              outerRadius='80%'
-                              dataKey='value'
-                              label={({ name, percent }) =>
-                                `${name} ${(percent * 100).toFixed(0)}%`
-                              }
-                            >
-                              {objetivos
-                                .filter(objetivo => tiempo[objetivo] > 0)
-                                .map((objetivo, index) => (
-                                  <Cell
-                                    key={`cell-${index}`}
-                                    fill={
-                                      chartConfig1[
-                                        Object.keys(chartConfig1)[index + 1]
-                                      ].color ?? `hsl(${index * 90}, 70%, 60%)`
-                                    }
-                                    name={objetivo}
+                    {objetivos.length > 0 && (
+                      <div>
+                        <ChartContainer config={chartConfig1}>
+                          <ResponsiveContainer width='100%' height={400}>
+                            <PieChart>
+                              {/* Agregue un filtro para que no se muestren los objetivos que no se han cumplido */}
+                              <Pie
+                                data={objetivos
+                                  .filter(objetivo => tiempo[objetivo] > 0)
+                                  .map(objetivo => ({
+                                    name: objetivo,
+                                    value: tiempo[objetivo] ?? 0,
+                                  }))}
+                                labelLine={false}
+                                outerRadius='80%'
+                                dataKey='value'
+                                label={({ name, percent }) =>
+                                  `${name} ${(percent * 100).toFixed(0)}%`
+                                }
+                              >
+                                {objetivos
+                                  .filter(objetivo => tiempo[objetivo] > 0)
+                                  .map((objetivo, index) => (
+                                    <Cell
+                                      key={`cell-${index}`}
+                                      fill={
+                                        chartConfig1[
+                                          Object.keys(chartConfig1)[index + 1]
+                                        ].color ??
+                                        `hsl(${index * 90}, 70%, 60%)`
+                                      }
+                                      name={objetivo}
+                                    />
+                                  ))}
+                              </Pie>
+                              <ChartTooltip
+                                content={
+                                  <ChartTooltipContent
+                                    indicator='dot'
+                                    formatType='time'
                                   />
-                                ))}
-                            </Pie>
-                            <ChartTooltip
-                              content={
-                                <ChartTooltipContent
-                                  indicator='dot'
-                                  formatType='time'
-                                />
-                              }
-                            />
-                            <ChartLegend content={<ChartLegendContent />} />
-                          </PieChart>
-                        </ResponsiveContainer>
-                      </ChartContainer>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                                }
+                              />
+                              <ChartLegend content={<ChartLegendContent />} />
+                            </PieChart>
+                          </ResponsiveContainer>
+                        </ChartContainer>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
             </CardContent>
             {/* Aca estaria bueno agregar el nombre del evento si se estudio para uno  */}
             {/* Tabla de objetivos de la sesión */}
             {objetivos.length > 0 && (
-              <div>
+              <div className='px-6 pb-6'>
                 <h2 className='ml-4 flex w-full justify-start text-2xl font-bold'>
                   Objetivos de la sesión
                 </h2>
 
-                <Table className=''>
-                  <TableCaption></TableCaption>
+                <Table >
                   <TableHeader>
                     <TableRow>
                       <TableHead className='w-[100px]'>Objetivo</TableHead>
