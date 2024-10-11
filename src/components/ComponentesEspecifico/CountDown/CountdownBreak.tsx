@@ -1,9 +1,13 @@
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import { formatTime } from '@/lib/utils'
 
-export default function CountdownStudy({ breakTime, play }: { breakTime: number, play: boolean}) {
-
-
+export default function CountdownStudy({
+  breakTime,
+  play,
+}: {
+  breakTime: number
+  play: boolean
+}) {
   return (
     <div>
       <CountdownCircleTimer
@@ -19,7 +23,6 @@ export default function CountdownStudy({ breakTime, play }: { breakTime: number,
             <p>Descansando</p>
             <div className='text-5xl font-semibold'>
               {formatTime(remainingTime)}
-              
             </div>
           </div>
         )}

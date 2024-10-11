@@ -83,11 +83,9 @@ export default function Pomodoro() {
     clearInterval(timer.current)
 
     if (countdown > 0 && mode === 'Estudiando') {
-      console.log('entre en el primero')
       setTiempoTotal(prev => (prev -= countdown))
       setAcumuladorTiempoPausa(prev => (prev -= breakSeconds))
     } else if (countdown > 0 && mode === 'Descansando') {
-      console.log('entre en el segundo')
       setAcumuladorTiempoPausa(prev => (prev -= countdown))
     }
 
@@ -121,7 +119,6 @@ export default function Pomodoro() {
     if (countdown >= 0) {
       timer.current = setInterval(() => {
         //console.log(`Hola! actualizando, tiempo: ${formatTime(countdown)}`)
-        console.log('La countdown 2 es la culpable')
         setCountdown(prev => prev - 1)
         if (mode === 'Estudiando') {
           setObjStudyTime(prev => prev + 1)
@@ -133,7 +130,6 @@ export default function Pomodoro() {
       }
       clearInterval(timer.current)
       if (mode === 'Estudiando') {
-        console.log('La countdown 3 es la culpable')
         setCountdown(breakSeconds)
         setSessionSeconds(
           pomodorosRealizados[pomodorosRealizados.length - 1].tiempoEstudio
@@ -169,7 +165,7 @@ export default function Pomodoro() {
 
   useEffect(() => {
     setCountdown(mode === 'Estudiando' ? sessionSeconds : breakSeconds)
-  }, [mode, sessionSeconds, breakSeconds])
+  }, [mode, sessionSeconds, breakSeconds, isSetted])
   /* 
   const handleAccept = () => {
     setLocation('/')
@@ -207,7 +203,6 @@ export default function Pomodoro() {
 
     setIsSetted(prev => !prev)
     setIsActive(prev => !prev)
-    setMode('Estudiando')
 
     const tiempoEstudio = Sessioncountup
     const tiempoDescanso = Breakcountup
@@ -224,7 +219,6 @@ export default function Pomodoro() {
     setTiempoTotal(prev => (prev += tiempoEstudio))
     setAcumuladorTiempoPausa(prev => (prev += tiempoDescanso))
   }
-
 
   const handlePause = (value: boolean) => {
     if (!value) {
@@ -247,7 +241,7 @@ export default function Pomodoro() {
     const id = setInterval(() => {
       setSessionSeconds(prev => {
         const newValue = prev + change
-        return newValue > 60 ? newValue : 60 // Evita bajar de 60 segundos
+        return newValue > 3 ? newValue : 3 // Evita bajar de 60 segundos
       })
     }, 150) //Es lo rapido que cambia
     //@ts-expect-error 2345 Aca no hace falta typescript
@@ -362,7 +356,6 @@ export default function Pomodoro() {
                         breakTime={breakSeconds}
                         play={isActive}
                       />
-                    
                     </div>
                   )}
                   {pomodoroCount.current >= 1 && (
