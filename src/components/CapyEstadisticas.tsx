@@ -112,7 +112,6 @@ const chartConfig1: ChartConfig = {
   },
 }
 
-
 /* const chartConfig4 = {
   desktop: {
     label: 'Desktop',
@@ -283,12 +282,11 @@ export default function CapyEstadisticas() {
       {/* Pagina se sesion */}
       {tiempoTotal > 0 && selectedPeriod === 'sesion' && (
         <>
-        {/* Boton Screen */}
+          {/* Boton Screen */}
           <div className='mr-12 flex w-full justify-end'>
             <Button
               variant='ghost'
               onClick={() => captureScreenshot('sesion')}
-              className=''
             >
               <ImageDown className='mr-2 h-4 w-4' />
               Capturar
@@ -297,7 +295,7 @@ export default function CapyEstadisticas() {
           {/* Info sesion */}
           <Card
             ref={cardRefs.sesion}
-            className='container md:flex-row mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg dark:from-gray-800 dark:to-gray-600 dark:shadow-gray-700'
+            className='container mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg md:flex-row dark:from-gray-800 dark:to-gray-600 dark:shadow-gray-700'
           >
             <CardHeader>
               <CardTitle className=''>
@@ -306,7 +304,7 @@ export default function CapyEstadisticas() {
                 </h1>
               </CardTitle>
             </CardHeader>
-            <CardContent className='flex justify-between gap-4 md:flex-row'>
+            <CardContent className='flex flex-col justify-between gap-8 md:flex-row'>
               <div className='md:w-1/2'>
                 <div className='grid grid-cols-2 gap-6'>
                   {[
@@ -360,12 +358,12 @@ export default function CapyEstadisticas() {
               {/* Chart */}
               <div className='space-y-6 md:w-1/2'>
                 <Card className='h-1/2 w-5/12 overflow-hidden rounded-lg shadow-lg'>
-                  <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 text-gray-900'>
-                    <CardTitle className='text-xl font-bold'>
+                  <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 text-gray-900 p-2'>
+                    <CardTitle className='text-lg font-bold text-gray-900'>
                       Tiempo dedicado a objetivos en la sesión actual
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className='h-[300px] p-4'>
+                  <CardContent className='p-3'>
                     {objetivos.length === 0 && (
                       <div className='flex h-full w-full items-center justify-center'>
                         <p className='rounded-lg bg-accent p-4 text-center'>
@@ -440,11 +438,11 @@ export default function CapyEstadisticas() {
             {/* Tabla de objetivos de la sesión */}
             {objetivos.length > 0 && (
               <div className='px-6 pb-6'>
-                <h2 className='ml-4 flex w-full justify-start text-2xl font-bold'>
+                <h2 className='mb-4 text-2xl font-bold'>
                   Objetivos de la sesión
                 </h2>
 
-                <Table >
+                <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead className='w-[100px]'>Objetivo</TableHead>
