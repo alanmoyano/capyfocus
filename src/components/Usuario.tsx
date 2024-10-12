@@ -28,6 +28,7 @@ import { Label } from '@/components/ui/label'
 import { useLocation } from 'wouter'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import ChichoHablaPerfil from './ComponentesEspecifico/ChichoHablaPerfil'
+import { Switch } from "@/components/ui/switch"
 
 const formSchema = z.object({
   username: z
@@ -100,7 +101,7 @@ export default function Usuario() {
 
   return (
     <>
-      <h1 className='mb-4 text-4xl font-bold'>Capy Datos</h1>
+      <h1 className='mt-4 text-4xl font-bold'>CapyDatos!</h1>
       <div className='mt-10 flex flex-col gap-20 p-10 md:flex-row'>
         <div className='grid grid-cols-2 gap-10'>
           <div className='flex h-full w-full items-center justify-center'>
@@ -222,6 +223,23 @@ export default function Usuario() {
               </div>
               <div className='m-2'>
                 <p className='text-lg font-normal'>{currentEmail}</p>
+              </div>
+              <div className='w-full'>
+                <h3 className='mt-8 text-left text-xl font-bold'>
+                  Personalizar
+                </h3>
+                <span className='flex justify-between mt-2 items-center'>
+                  Modo oscuro predeterminado: 
+                  <Switch />
+                </span>
+                <span className='flex justify-between items-center mt-2'>
+                  Recibir notificaciones: 
+                  <Switch />
+                </span>
+                <span className='flex justify-between items-center mt-2'>
+                  Recordarme en esta página
+                  <Switch />
+                </span>
               </div>
             </CardContent>
             <CardFooter className='mt-auto flex justify-end'>

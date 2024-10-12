@@ -341,6 +341,7 @@ export default function Pomodoro() {
             </>
           )}
 
+
           {isSetted && (
             <>
               <div className='px-4'>
@@ -374,7 +375,11 @@ export default function Pomodoro() {
             </>
           )}
 
-          {boom && <Confetti mode='boom' particleCount={250} />}
+          {boom && (
+            <div className='w-1/2 justify-start'>
+              <Confetti mode='boom' particleCount={250} />
+            </div>
+          )}
 
           {/* Boton de inicio */}
           <div className='mt-4 flex justify-center'>

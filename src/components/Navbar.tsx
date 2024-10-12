@@ -7,6 +7,8 @@ import { ModeToggle } from './ModeToggle'
 
 import { Menu } from 'lucide-react'
 
+import { Avatar, AvatarImage, AvatarFallback, } from "@/components/ui/avatar"
+
 import {
   // NavigationMenu,
   // NavigationMenuContent,
@@ -42,6 +44,17 @@ function NavbarLink({ to, children }: NavbarLinkProps) {
   )
 }
 
+function AvatarLink() {
+  return (
+    <Link to='/usuario'>
+      <Avatar className='mx-auto'>
+        <AvatarImage src='./FotoPerfil/CapyBoss.jpg' className='' />
+        <AvatarFallback className='border border-accent-foreground bg-accent text-4xl font-medium'>CN</AvatarFallback>
+      </Avatar>
+    </Link>
+  )
+}
+
 function LogoLink() {
   return (
     <Link to='/' className={navigationMenuTriggerStyle()}>
@@ -56,7 +69,7 @@ function LogoLink() {
 function NavItems() {
   return (
     <>
-      <NavbarLink to='/login'>Login</NavbarLink>
+
 
       <NavbarLink to='/'>Inicio</NavbarLink>
 
@@ -75,7 +88,7 @@ function NavItems() {
   )
 }
 
-function NuevoBoton() {
+/* function NuevoBoton() {
   return (
     <>
       <Button variant='ghost' type='button' size='icon' className=''>
@@ -83,7 +96,7 @@ function NuevoBoton() {
       </Button>
     </>
   )
-}
+} */
 
 export default function Navbar() {
   const [abierto, setAbierto] = React.useState(false)
@@ -121,7 +134,7 @@ export default function Navbar() {
               </div>
             </SheetContent>
           </Sheet>
-          <NuevoBoton />
+
           <LogoLink />
         </div>
 
@@ -129,8 +142,11 @@ export default function Navbar() {
           <NavItems />
         </nav>
 
-        <div className='flex items-center md:absolute md:right-4'>
+        <div className='flex items-center md:absolute md:right-16'>
           <ModeToggle />
+        </div>
+        <div className='flex items-center md:absolute md:right-4'>
+          <AvatarLink />
         </div>
       </div>
     </header>
