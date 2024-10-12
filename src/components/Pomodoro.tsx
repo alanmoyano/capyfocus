@@ -47,8 +47,8 @@ export default function Pomodoro() {
   const [breakSeconds, setBreakSeconds] = useState(5 * 60)
   const [objCumplidos, setObjCumplidos] = useState(0)
   const [countdown, setCountdown] = useState(sessionSeconds)
-  const [isActive, setIsActive] = useState(false)   //Aca se cambia el estado de play y pause
-  const [isSetted, setIsSetted] = useState(false) //Aca se cambia el estado de si estan los datos cargados 
+  const [isActive, setIsActive] = useState(false) //Aca se cambia el estado de play y pause
+  const [isSetted, setIsSetted] = useState(false) //Aca se cambia el estado de si estan los datos cargados
   const [mode, setMode] = useState<Mode>('Estudiando')
   const timer = useRef<NodeJS.Timeout>()
   const pomodoroCount = useRef(0)
@@ -59,6 +59,7 @@ export default function Pomodoro() {
   const { motivationType } = useMotivation()
   const [sessionStart, setSessionStart] = useState(false)
   const [volumen, setVolumen] = useState(true)
+  const [boom, setBoom] = useState(false)
   const {
     objetivos,
     setObjetivos,
@@ -134,15 +135,17 @@ export default function Pomodoro() {
         )
         setMode('Descansando')
         setIsActive(false)
+        setBoom(false) //para el confetti
         pomodoroCount.current += 0.5
       } else {
         setBreakSeconds(
           pomodorosRealizados[pomodorosRealizados.length - 1].tiempoDescanso
         )
         setMode('Estudiando')
-        setIsActive(prev => !prev)   
+        setIsActive(prev => !prev)
         setIsSetted(prev => !prev)
         pomodoroCount.current += 0.5
+        setBoom(true)
       }
     }
 
@@ -200,9 +203,8 @@ export default function Pomodoro() {
       setSessionStart(true)
     }
 
-    setIsSetted(prev => !prev) 
-    setIsActive(prev => !prev) 
-    
+    setIsSetted(prev => !prev)
+    setIsActive(prev => !prev)
 
     const tiempoEstudio = Sessioncountup
     const tiempoDescanso = Breakcountup
@@ -294,10 +296,10 @@ export default function Pomodoro() {
                     <h3>Minutos de Estudio</h3>
                     <div className='flex items-center justify-center gap-4 text-lg'>
                       <Button
-                        onMouseDown={() => startAdjustingTime(-60)}//-60
+                        onMouseDown={() => startAdjustingTime(-60)} //-60
                         onMouseUp={stopAdjustingTime}
                         onMouseLeave={stopAdjustingTime}
-                        onClick={() => setSessionSeconds(prev => prev - 1490)} //-60
+                        onClick={() => setSessionSeconds(prev => prev - 1497)} //-60
                         disabled={sessionSeconds <= 60 || isActive || isSetted}
                       >
                         -
@@ -320,7 +322,7 @@ export default function Pomodoro() {
                     <h3>Minutos de descanso</h3>
                     <div className='flex items-center justify-center gap-4 text-lg'>
                       <Button
-                        onClick={() => setBreakSeconds(prev => prev - 290)} //60
+                        onClick={() => setBreakSeconds(prev => prev - 298)} //60
                         disabled={breakSeconds <= 60 || isActive || isSetted}
                       >
                         -
@@ -360,20 +362,19 @@ export default function Pomodoro() {
                       />
                     </div>
                   )}
-                  {pomodoroCount.current >= 1 && (
-                    <Confetti mode='boom' particleCount={150} />
-                  )}
 
                   {/*                   <span className='rounded-xl bg-secondary/90 px-12 py-4 text-center text-black'>
                     <ActualTimer mode={mode} time={countdown} />
                     <p className='text-2xl font-bold text-black'>
-                      Capydoros: {Math.floor(pomodoroCount.current)}
+                    Capydoros: {Math.floor(pomodoroCount.current)}
                     </p>
                     </span> */}
                 </div>
               </div>
             </>
           )}
+
+          {boom && <Confetti mode='boom' particleCount={250} />}
 
           {/* Boton de inicio */}
           <div className='mt-4 flex justify-center'>
