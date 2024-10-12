@@ -12,12 +12,10 @@ import { useMotivation } from './contexts/MotivationContext'
 import { useSesion } from './contexts/SesionContext'
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
 import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
-import ExperimentandoBrenda from './ExperimentandoBrenda'
 import { Volume2, VolumeOff } from 'lucide-react'
 import { formatTime } from '@/lib/utils'
 import CountdownStudy from './ComponentesEspecifico/CountDown/CountdownStudy'
 import CountdownBreak from './ComponentesEspecifico/CountDown/CountdownBreak'
-import { set } from 'date-fns'
 
 type Mode = 'Estudiando' | 'Descansando'
 
@@ -49,8 +47,8 @@ export default function Pomodoro() {
   const [breakSeconds, setBreakSeconds] = useState(5 * 60)
   const [objCumplidos, setObjCumplidos] = useState(0)
   const [countdown, setCountdown] = useState(sessionSeconds)
-  const [isActive, setIsActive] = useState(false)
-  const [isSetted, setIsSetted] = useState(false)
+  const [isActive, setIsActive] = useState(false)   //Aca se cambia el estado de play y pause
+  const [isSetted, setIsSetted] = useState(false) //Aca se cambia el estado de si estan los datos cargados 
   const [mode, setMode] = useState<Mode>('Estudiando')
   const timer = useRef<NodeJS.Timeout>()
   const pomodoroCount = useRef(0)
@@ -141,7 +139,8 @@ export default function Pomodoro() {
         setBreakSeconds(
           pomodorosRealizados[pomodorosRealizados.length - 1].tiempoDescanso
         )
-        setIsActive(prev => !prev)
+        setMode('Estudiando')
+        setIsActive(prev => !prev)   
         setIsSetted(prev => !prev)
         pomodoroCount.current += 0.5
       }
@@ -201,8 +200,9 @@ export default function Pomodoro() {
       setSessionStart(true)
     }
 
-    setIsSetted(prev => !prev)
-    setIsActive(prev => !prev)
+    setIsSetted(prev => !prev) 
+    setIsActive(prev => !prev) 
+    
 
     const tiempoEstudio = Sessioncountup
     const tiempoDescanso = Breakcountup
@@ -294,10 +294,10 @@ export default function Pomodoro() {
                     <h3>Minutos de Estudio</h3>
                     <div className='flex items-center justify-center gap-4 text-lg'>
                       <Button
-                        onMouseDown={() => startAdjustingTime(-60)}
+                        onMouseDown={() => startAdjustingTime(-60)}//-60
                         onMouseUp={stopAdjustingTime}
                         onMouseLeave={stopAdjustingTime}
-                        onClick={() => setSessionSeconds(prev => prev - 60)}
+                        onClick={() => setSessionSeconds(prev => prev - 1490)} //-60
                         disabled={sessionSeconds <= 60 || isActive || isSetted}
                       >
                         -
@@ -320,7 +320,7 @@ export default function Pomodoro() {
                     <h3>Minutos de descanso</h3>
                     <div className='flex items-center justify-center gap-4 text-lg'>
                       <Button
-                        onClick={() => setBreakSeconds(prev => prev - 60)}
+                        onClick={() => setBreakSeconds(prev => prev - 290)} //60
                         disabled={breakSeconds <= 60 || isActive || isSetted}
                       >
                         -
@@ -348,6 +348,7 @@ export default function Pomodoro() {
                       <CountdownStudy
                         studyTime={sessionSeconds}
                         play={isActive}
+                        num={pomodoroCount.current}
                       />
                     </div>
                   ) : (
@@ -355,6 +356,7 @@ export default function Pomodoro() {
                       <CountdownBreak
                         breakTime={breakSeconds}
                         play={isActive}
+                        num={pomodoroCount.current}
                       />
                     </div>
                   )}
