@@ -4,7 +4,7 @@ import { formatTime } from '@/lib/utils'
 export default function CountdownStudy({
   studyTime,
   play,
-  num
+  num,
 }: {
   studyTime: number
   play: boolean
@@ -26,7 +26,7 @@ export default function CountdownStudy({
             <div className='text-5xl font-semibold'>
               {formatTime(remainingTime)}
             </div>
-            <p className='text-xl '>{Math.floor(num)}</p>
+            <p className='text-xl'>{Math.floor(num)}</p>
           </div>
         )}
       </CountdownCircleTimer>

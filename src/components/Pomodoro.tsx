@@ -82,9 +82,11 @@ export default function Pomodoro() {
     clearInterval(timer.current)
 
     if (countdown > 0 && mode === 'Estudiando') {
+      console.log('Entre en el primero')
       setTiempoTotal(prev => (prev -= countdown))
       setAcumuladorTiempoPausa(prev => (prev -= breakSeconds))
     } else if (countdown > 0 && mode === 'Descansando') {
+      console.log('Entre en el segundo')
       setAcumuladorTiempoPausa(prev => (prev -= countdown))
     }
 
@@ -165,9 +167,9 @@ export default function Pomodoro() {
     objCumplidos,
   ])
 
-  useEffect(() => {
-    setCountdown(mode === 'Estudiando' ? sessionSeconds : breakSeconds)
-  }, [mode, sessionSeconds, breakSeconds, isSetted])
+  // useEffect(() => {
+  //   setCountdown(mode === 'Estudiando' ? sessionSeconds : breakSeconds)
+  // }, [mode, sessionSeconds, breakSeconds, isSetted])
   /* 
   const handleAccept = () => {
     setLocation('/')
@@ -202,12 +204,13 @@ export default function Pomodoro() {
       setCantidadPausas(0)
       setSessionStart(true)
     }
-
     setIsSetted(prev => !prev)
     setIsActive(prev => !prev)
 
     const tiempoEstudio = Sessioncountup
     const tiempoDescanso = Breakcountup
+
+    setCountdown(tiempoEstudio)
 
     const pomodoro: Pomodoro = {
       tiempoEstudio: tiempoEstudio,
@@ -299,7 +302,7 @@ export default function Pomodoro() {
                         onMouseDown={() => startAdjustingTime(-60)} //-60
                         onMouseUp={stopAdjustingTime}
                         onMouseLeave={stopAdjustingTime}
-                        onClick={() => setSessionSeconds(prev => prev - 1497)} //-60
+                        onClick={() => setSessionSeconds(prev => prev - 60)} //-60
                         disabled={sessionSeconds <= 60 || isActive || isSetted}
                       >
                         -
@@ -307,7 +310,7 @@ export default function Pomodoro() {
                       <p>{sessionSeconds / 60}</p>
                       <Button
                         onMouseDown={() => startAdjustingTime(60)}
-                        onClick={() => setSessionSeconds(prev => prev - 60)}
+                        onClick={() => setSessionSeconds(prev => prev + 60)}
                         onMouseUp={stopAdjustingTime}
                         onMouseLeave={stopAdjustingTime}
                         disabled={isActive || isSetted}
@@ -322,7 +325,7 @@ export default function Pomodoro() {
                     <h3>Minutos de descanso</h3>
                     <div className='flex items-center justify-center gap-4 text-lg'>
                       <Button
-                        onClick={() => setBreakSeconds(prev => prev - 298)} //60
+                        onClick={() => setBreakSeconds(prev => prev - 60)} //60
                         disabled={breakSeconds <= 60 || isActive || isSetted}
                       >
                         -
@@ -340,7 +343,6 @@ export default function Pomodoro() {
               </div>
             </>
           )}
-
 
           {isSetted && (
             <>

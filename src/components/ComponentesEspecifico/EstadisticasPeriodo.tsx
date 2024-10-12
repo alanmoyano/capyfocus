@@ -187,14 +187,13 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
               </CardHeader>
               <CardContent className='p-2'>
                 <div className='flex flex-col md:flex-row'>
-                  
-                    <Calendar
-                      mode='single'
-                      selected={date}
-                      onSelect={setDate}
-                      className='rounded-md border text-sm shadow-sm'
-                    />
-                  
+                  <Calendar
+                    mode='single'
+                    selected={date}
+                    onSelect={setDate}
+                    className='rounded-md border text-sm shadow-sm'
+                  />
+
                   <div className='pl-4 md:w-1/2'>
                     <h1 className='mb-2 text-lg font-semibold'>Eventos</h1>
                     {/* Lista de eventos */}

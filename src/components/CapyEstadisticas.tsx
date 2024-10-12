@@ -284,10 +284,7 @@ export default function CapyEstadisticas() {
         <>
           {/* Boton Screen */}
           <div className='mr-12 flex w-full justify-end'>
-            <Button
-              variant='ghost'
-              onClick={() => captureScreenshot('sesion')}
-            >
+            <Button variant='ghost' onClick={() => captureScreenshot('sesion')}>
               <ImageDown className='mr-2 h-4 w-4' />
               Capturar
             </Button>
@@ -357,8 +354,8 @@ export default function CapyEstadisticas() {
 
               {/* Chart */}
               <div className='space-y-6 md:w-1/2'>
-                <Card className=' overflow-hidden rounded-lg shadow-lg'>
-                  <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 text-gray-900 p-2'>
+                <Card className='overflow-hidden rounded-lg shadow-lg'>
+                  <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-2 text-gray-900'>
                     <CardTitle className='text-lg font-bold text-gray-900'>
                       Tiempo dedicado a objetivos en la sesión actual
                     </CardTitle>
@@ -372,14 +369,15 @@ export default function CapyEstadisticas() {
                         </p>
                       </div>
                     )}
-                    {objetivos.length - objetivosPend.length === 0 &&  objetivos.length !== 0 && (
-                      <div className='flex h-full w-full items-center justify-center'>
-                        <p className='rounded-lg bg-accent p-4 text-center'>
-                          Oh, en esta sesion no has completado objetivos,
-                          entonces no podrás ver las CapyEstadísticas.
-                        </p>
-                      </div>
-                    )}
+                    {objetivos.length - objetivosPend.length === 0 &&
+                      objetivos.length !== 0 && (
+                        <div className='flex h-full w-full items-center justify-center'>
+                          <p className='rounded-lg bg-accent p-4 text-center'>
+                            Oh, en esta sesion no has completado objetivos,
+                            entonces no podrás ver las CapyEstadísticas.
+                          </p>
+                        </div>
+                      )}
 
                     {objetivos.length > 0 && (
                       <div>

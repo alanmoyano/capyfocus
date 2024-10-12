@@ -7,7 +7,7 @@ import { ModeToggle } from './ModeToggle'
 
 import { Menu } from 'lucide-react'
 
-import { Avatar, AvatarImage, AvatarFallback, } from "@/components/ui/avatar"
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 
 import {
   // NavigationMenu,
@@ -49,7 +49,9 @@ function AvatarLink() {
     <Link to='/usuario'>
       <Avatar className='mx-auto'>
         <AvatarImage src='./FotoPerfil/CapyBoss.jpg' className='' />
-        <AvatarFallback className='border border-accent-foreground bg-accent text-4xl font-medium'>CN</AvatarFallback>
+        <AvatarFallback className='border border-accent-foreground bg-accent text-4xl font-medium'>
+          CN
+        </AvatarFallback>
       </Avatar>
     </Link>
   )
@@ -69,8 +71,6 @@ function LogoLink() {
 function NavItems() {
   return (
     <>
-
-
       <NavbarLink to='/'>Inicio</NavbarLink>
 
       <span className='relative inline-flex'>
