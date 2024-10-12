@@ -357,7 +357,7 @@ export default function CapyEstadisticas() {
 
               {/* Chart */}
               <div className='space-y-6 md:w-1/2'>
-                <Card className='h-1/2 w-5/12 overflow-hidden rounded-lg shadow-lg'>
+                <Card className=' overflow-hidden rounded-lg shadow-lg'>
                   <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 text-gray-900 p-2'>
                     <CardTitle className='text-lg font-bold text-gray-900'>
                       Tiempo dedicado a objetivos en la sesión actual
@@ -372,7 +372,7 @@ export default function CapyEstadisticas() {
                         </p>
                       </div>
                     )}
-                    {objetivos.length - objetivosPend.length === 0 && (
+                    {objetivos.length - objetivosPend.length === 0 &&  objetivos.length !== 0 && (
                       <div className='flex h-full w-full items-center justify-center'>
                         <p className='rounded-lg bg-accent p-4 text-center'>
                           Oh, en esta sesion no has completado objetivos,

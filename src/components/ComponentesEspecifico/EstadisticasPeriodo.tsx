@@ -136,7 +136,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
 
           {/* chart */}
           <div className='space-y-6 md:w-1/2'>
-            <Card className='h-1/2 w-5/12 overflow-hidden rounded-lg shadow-lg'>
+            <Card className=' overflow-hidden rounded-lg shadow-md'>
               <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-2'>
                 <CardTitle className='text-lg font-bold text-gray-900'>
                   Registro de objetivos
@@ -181,29 +181,29 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
           </div>
           Calendario
           <Card className='overflow-hidden rounded-lg shadow-sm'>
-            <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-3'>
-              <CardTitle className='text-lg font-bold text-gray-900'>
-                Días Conectado
-              </CardTitle>
-            </CardHeader>
-            <CardContent className='p-2'>
-              <div className='flex flex-col md:flex-row'>
-                <div className='md:w-1/2'>
-                  <Calendar
-                    mode='single'
-                    selected={date}
-                    onSelect={setDate}
-                    className='rounded-md border text-sm shadow-sm'
-                  />
+              <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-3'>
+                <CardTitle className='text-lg font-bold text-gray-900'>
+                  Días Conectado
+                </CardTitle>
+              </CardHeader>
+              <CardContent className='p-2'>
+                <div className='flex flex-col md:flex-row'>
+                  <div className='md:w-1/2'>
+                    <Calendar
+                      mode='single'
+                      selected={date}
+                      onSelect={setDate}
+                      className='rounded-md border text-sm shadow-sm'
+                    />
+                  </div>
+                  <div className='pl-4 md:w-1/2'>
+                    <h1 className='mb-2 text-lg font-semibold' >Eventos</h1>
+                    {/* Lista de eventos */}
+                    <p>11/07 Brenda conquista el mundo</p>
+                  </div>
                 </div>
-                <div className='pl-4 md:w-1/2'>
-                  <h1 className='mb-2 text-lg font-semibold'>Eventos</h1>
-                  {/* Lista de eventos */}
-                  <p>11/07 Brenda conquista el mundo</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
         </CardContent>
 
         <div className='px-6 pb-6'>
@@ -213,7 +213,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead  className='w-[100px]'>Evento</TableHead>
+                <TableHead  className=''>Evento</TableHead>
                 <TableHead>Objetivo</TableHead>
                 <TableHead>Estado</TableHead>
                 <TableHead>Fecha Creado</TableHead>
