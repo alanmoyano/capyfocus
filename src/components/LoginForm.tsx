@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
+import PasswordRecovery from './ComponentesEspecifico/PasswordRecovery'
 
 export default function LoginForm() {
   const [verContraseña, setVerContraseña] = useState(false)
@@ -56,9 +57,10 @@ export default function LoginForm() {
           </div>
         </div>
         <Label>¿Olvidaste tu contraseña?</Label>
-        <Button variant={'link'} className='border-none text-sm font-normal'>
+        {/* <Button variant={'link'} className='border-none text-sm font-normal'>
           Recuperar
-        </Button>
+        </Button> */}
+        <PasswordRecovery />
       </CardContent>
       <CardFooter>
         <Button className='w-1/2'>Iniciar</Button>

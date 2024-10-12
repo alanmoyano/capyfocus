@@ -1,40 +1,56 @@
 import { Moon, Sun } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-
 import { useTheme } from '@/components/contexts/ThemeContext'
+import { useState } from 'react'
 
 export function ModeToggle({ className }: { className?: string }) {
-  const { setTheme } = useTheme()
+  const { theme, setTheme } = useTheme()
+
+  const toggleTheme = (checked: boolean) => {
+    setTheme(checked ? 'dark' : 'light')
+  }
+
+  const [isChecked, setIsChecked] = useState(theme === 'light')
+
+  const handleToggle = () => {
+    setIsChecked(!isChecked)
+    toggleTheme(isChecked)
+  }
+
+  const toggleDotStyle = {
+    transform: isChecked ? 'translateX(100%)' : 'translateX(0%)',
+    transition: 'transform 0.3s ease-in-out',
+  }
 
   return (
-    <div className={className}>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant='outline' size='icon'>
-            <Sun className='h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0' />
-            <Moon className='absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100' />
-            <span className='sr-only'>Toggle theme</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align='end'>
-          <DropdownMenuItem onClick={() => setTheme('light')}>
-            Light
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setTheme('dark')}>
-            Dark
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setTheme('system')}>
-            System
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+    <div className='flex h-full w-full items-center justify-center'>
+      <div className=''>
+        <div className='relative'>
+          <input
+            type='checkbox'
+            id='toggle'
+            className='sr-only'
+            checked={isChecked}
+            onChange={handleToggle}
+          />
+          <label
+            htmlFor='toggle'
+            className='flex h-7 w-14 cursor-pointer items-center rounded-full bg-gray-200 p-1'
+          >
+            <div
+              className='toggle-dot flex h-6 w-6 items-center justify-center rounded-full bg-primary/60 shadow-md dark:bg-black'
+              style={toggleDotStyle}
+            >
+              <span className='dark:hidden'>
+                <Sun />
+              </span>
+              <span className='hidden dark:inline'>
+                <Moon />
+              </span>
+            </div>
+          </label>
+        </div>
+      </div>
     </div>
   )
 }

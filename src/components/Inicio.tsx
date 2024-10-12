@@ -125,6 +125,10 @@ export default function Inicio() {
   const [index, setIndex] = useState<number | null>(null)
   const [selectedPlaylist, setSelectedPlaylist] = useState(-1)
 
+  // @ts-expect-error  no seas molesto typescript
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const gapi = window.gapi
+
   const { objetivos, setObjetivos, objetivosFav, setObjetivosFav } =
     useObjetivos()
 
@@ -136,7 +140,12 @@ export default function Inicio() {
 
   const { setSelectedMusic } = useMusic()
 
-  const { setTecnicaEstudio } = useSesion()
+  const {
+    setTecnicaEstudio,
+    setTiempoTotal,
+    setAcumuladorTiempoPausa,
+    setCantidadPausas,
+  } = useSesion()
 
   const [motivaciones, setMotivaciones] = useState<Motivacion[]>([])
 
@@ -151,13 +160,17 @@ export default function Inicio() {
         setTecnicaEstudio(description)
         break
       case undefined:
-      toast.error('CapyError', {
-        description: 'Selecciona un método de estudio antes.',
-        duration: 5000,
-        action: { label: 'Aceptar', onClick: () => {toast.dismiss()} },
-      })
-      break
-      
+        toast.error('CapyError', {
+          description: 'Selecciona un método de estudio antes.',
+          duration: 5000,
+          action: {
+            label: 'Aceptar',
+            onClick: () => {
+              toast.dismiss()
+            },
+          },
+        })
+        break
     }
   }
 

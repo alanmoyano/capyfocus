@@ -7,6 +7,8 @@ import { ModeToggle } from './ModeToggle'
 
 import { Menu } from 'lucide-react'
 
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+
 import {
   // NavigationMenu,
   // NavigationMenuContent,
@@ -42,6 +44,19 @@ function NavbarLink({ to, children }: NavbarLinkProps) {
   )
 }
 
+function AvatarLink() {
+  return (
+    <Link to='/usuario'>
+      <Avatar className='mx-auto'>
+        <AvatarImage src='./FotoPerfil/CapyBoss.jpg' className='' />
+        <AvatarFallback className='border border-accent-foreground bg-accent text-4xl font-medium'>
+          CN
+        </AvatarFallback>
+      </Avatar>
+    </Link>
+  )
+}
+
 function LogoLink() {
   return (
     <Link to='/' className={navigationMenuTriggerStyle()}>
@@ -56,8 +71,6 @@ function LogoLink() {
 function NavItems() {
   return (
     <>
-      <NavbarLink to='/login'>Login</NavbarLink>
-
       <NavbarLink to='/'>Inicio</NavbarLink>
 
       <span className='relative inline-flex'>
@@ -70,10 +83,20 @@ function NavItems() {
 
       <NavbarLink to='/capyEstadisticas'>CapyEstadisticas</NavbarLink>
 
-      <NavbarLink to='/usuario'>CapyDatos</NavbarLink>
+      {/* <NavbarLink to='/usuario'>CapyDatos</NavbarLink> */}
     </>
   )
 }
+
+/* function NuevoBoton() {
+  return (
+    <>
+      <Button variant='ghost' type='button' size='icon' className=''>
+        <Menu />
+      </Button>
+    </>
+  )
+} */
 
 export default function Navbar() {
   const [abierto, setAbierto] = React.useState(false)
@@ -93,7 +116,7 @@ export default function Navbar() {
                 className='px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden'
                 onClick={() => setAbierto(prev => !prev)}
               >
-                <Menu className='size-5' />
+                <Menu className='' />
                 <span className='sr-only'>Toggle Menu</span>
               </Button>
             </SheetTrigger>
@@ -119,8 +142,11 @@ export default function Navbar() {
           <NavItems />
         </nav>
 
-        <div className='flex items-center md:absolute md:right-4'>
+        <div className='flex items-center md:absolute md:right-16'>
           <ModeToggle />
+        </div>
+        <div className='flex items-center md:absolute md:right-4'>
+          <AvatarLink />
         </div>
       </div>
     </header>

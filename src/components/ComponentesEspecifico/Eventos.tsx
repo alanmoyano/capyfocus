@@ -31,6 +31,32 @@ type Event = {
   title: string
 }
 
+const formatDate = (date: Date) => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${year}${month}${day}`
+}
+
+const createGoogleCalendarLink = (name: string, date: Date) => {
+  const formattedStartDate = formatDate(date)
+
+  const endDate = new Date(date)
+  endDate.setDate(date.getDate() + 1)
+  const formattedEndDate = formatDate(endDate)
+
+  const baseUrl = 'https://www.google.com/calendar/render'
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: name,
+    dates: `${formattedStartDate}/${formattedEndDate}`,
+    details: 'Evento creado por la pagina web de CapyFocus',
+  })
+
+  return `${baseUrl}?${params.toString()}`
+}
+
 export default function Eventos() {
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [, setLocation] = useLocation()
@@ -42,18 +68,22 @@ export default function Eventos() {
     setLocation('/')
   }
 
-  const addEvent = () => {
+  const addEvent = (googleCalendar: boolean) => {
     if (date && eventTitle) {
       const dateString = date.toLocaleDateString('es-ES', {
         weekday: 'long',
         month: 'numeric',
         day: 'numeric',
       })
+
       setEvents([...events, { date, title: eventTitle }])
       toast.success('Se ha creado el evento:', {
         description: '"' + eventTitle + '"' + ' en el dia: ' + dateString,
       })
       setEventTitle('') // Limpiar el título después de añadir el evento
+      if (googleCalendar) {
+        window.open(createGoogleCalendarLink(eventTitle, date))
+      }
     } else {
       toast.error('No se ha podido crear el evento:', {
         description: 'Por favor, ingresa un título para el evento.',
@@ -63,7 +93,7 @@ export default function Eventos() {
 
   const handleAdd = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key == 'Enter' && eventTitle.trim() != '' && date) {
-      addEvent()
+      addEvent(false)
     }
   }
 
@@ -177,12 +207,21 @@ export default function Eventos() {
               <div className='mt-4'>
                 <Button
                   onClick={() => {
-                    addEvent()
+                    addEvent(false)
                   }}
                   variant={'accent'}
                   className='w-full sm:w-auto'
                 >
                   Agregar
+                </Button>
+                <Button
+                  onClick={() => {
+                    addEvent(true)
+                  }}
+                  variant={'accent'}
+                  className='ml-2 w-full sm:w-auto'
+                >
+                  Crear en Calendar
                 </Button>
               </div>
               <hr className='my-4' />

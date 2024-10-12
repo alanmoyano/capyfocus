@@ -81,7 +81,7 @@
     --chart-7: 12 45% 40%;
     --chart-8: 27 90% 40%;
     --chart-9: 12 20% 40%;
-    --chart-10: 50 40% 85%; 
+    --chart-10: 50 40% 85%;
   }
 }
 
@@ -96,6 +96,7 @@ main {
 
   flex-direction: column;
 }
+
 /* .dark {
   --background: 30 31% 3%;
   --foreground: 29 84% 95%;

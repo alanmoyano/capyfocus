@@ -74,9 +74,10 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
 
   return (
     <>
+      {/* info de periodo */}
       <Card
         ref={cardRefs[period]}
-        className='container mx-auto mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg dark:from-gray-800 dark:to-gray-900 dark:shadow-gray-800'
+        className='container mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg md:flex-row dark:from-gray-800 dark:to-gray-900 dark:shadow-gray-800'
       >
         <CardHeader>
           <CardTitle>
@@ -133,6 +134,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
             </div>
           </div>
 
+          {/* chart */}
           <div className='space-y-6 md:w-1/2'>
             <Card className='overflow-hidden rounded-lg shadow-md'>
               <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-2'>
@@ -176,7 +178,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
                 </ChartContainer>
               </CardContent>
             </Card>
-
+            {/* Calendario */}
             <Card className='overflow-hidden rounded-lg shadow-sm'>
               <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-3'>
                 <CardTitle className='text-lg font-bold text-gray-900'>
@@ -185,14 +187,13 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
               </CardHeader>
               <CardContent className='p-2'>
                 <div className='flex flex-col md:flex-row'>
-                  <div className='md:w-1/2'>
-                    <Calendar
-                      mode='single'
-                      selected={date}
-                      onSelect={setDate}
-                      className='rounded-md border text-sm shadow-sm'
-                    />
-                  </div>
+                  <Calendar
+                    mode='single'
+                    selected={date}
+                    onSelect={setDate}
+                    className='rounded-md border text-sm shadow-sm'
+                  />
+
                   <div className='pl-4 md:w-1/2'>
                     <h1 className='mb-2 text-lg font-semibold'>Eventos</h1>
                     {/* Lista de eventos */}
@@ -211,7 +212,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Evento</TableHead>
+                <TableHead className=''>Evento</TableHead>
                 <TableHead>Objetivo</TableHead>
                 <TableHead>Estado</TableHead>
                 <TableHead>Fecha Creado</TableHead>

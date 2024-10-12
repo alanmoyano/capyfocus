@@ -58,7 +58,7 @@ export default function DialogoChicho({ motivation }: { motivation?: string }) {
         if (motivacion === null) {
           intervalIdRef.current = window.setInterval(() => {
             setDialogo(selectRandomDialogo(data).mensaje)
-          }, 30000)
+          }, 120000)
         } else {
           intervalIdRef.current = window.setInterval(() => {
             setDialogo(selectRandomDialogo(data).mensaje)

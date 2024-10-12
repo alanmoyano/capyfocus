@@ -20,6 +20,7 @@ import { Helmet } from 'react-helmet'
 import NotFound from './components/NotFound'
 import Prueba from './components/Prueba'
 import { Toaster } from '@/components/ui/sonner'
+import ExperimentandoBrenda from './components/ExperimentandoBrenda'
 
 function App() {
   return (
@@ -50,6 +51,11 @@ function App() {
                     <Timer />
                   </Route>
 
+                  <Route path='/brenda'>
+                    {/*@ts-expect-error ya se va ir de aca typescript */}
+                    <ExperimentandoBrenda />
+                  </Route>
+
                   <Route path='/capyInsignias' component={CapyInsignias} />
                   <Route
                     path='/capyEstadisticas'
@@ -59,6 +65,7 @@ function App() {
                   <Route path='/usuario' component={Usuario} />
 
                   <Route path='/prueba' component={Prueba} />
+
                   <Route>
                     <NotFound />
                   </Route>
