@@ -307,7 +307,7 @@ export default function Pomodoro() {
                         onMouseDown={() => startAdjustingTime(-60)} //-60
                         onMouseUp={stopAdjustingTime}
                         onMouseLeave={stopAdjustingTime}
-                        onClick={() => setSessionSeconds(prev => prev - 60)} //-60
+                        onClick={() => setSessionSeconds(3)} //-60
                         disabled={sessionSeconds <= 60 || isActive || isSetted}
                       >
                         -
@@ -330,7 +330,7 @@ export default function Pomodoro() {
                     <h3>Minutos de descanso</h3>
                     <div className='flex items-center justify-center gap-4 text-lg'>
                       <Button
-                        onClick={() => setBreakSeconds(prev => prev - 60)} //60
+                        onClick={() => setBreakSeconds(3)} //60
                         disabled={breakSeconds <= 60 || isActive || isSetted}
                       >
                         -
