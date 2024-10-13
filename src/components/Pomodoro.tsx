@@ -16,6 +16,7 @@ import { Volume2, VolumeOff } from 'lucide-react'
 import { formatTime } from '@/lib/utils'
 import CountdownStudy from './ComponentesEspecifico/CountDown/CountdownStudy'
 import CountdownBreak from './ComponentesEspecifico/CountDown/CountdownBreak'
+import { SkipForward } from 'lucide-react';
 
 type Mode = 'Estudiando' | 'Descansando'
 
