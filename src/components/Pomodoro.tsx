@@ -103,6 +103,11 @@ export default function Pomodoro() {
   const volumenHandler = () => {
     setVolumen(!volumen)
   }
+
+  const handleVolver = () => {
+    setLocation('/')
+  }
+
   //Revisar el funcionamiento de esta cosa!!!
 
   // useEffect(() => {
@@ -429,9 +434,15 @@ export default function Pomodoro() {
             </ul>
           </div>
           <div className='container mt-4 flex flex-col justify-end md:flex-row'>
-            <Button variant={'destructive'} onClick={finalizarSesion}>
-              Finalizar Sesion
-            </Button>
+            {sessionStart ? (
+              <Button variant={'destructive'} onClick={finalizarSesion}>
+                Finalizar Sesion
+              </Button>
+            ) : (
+              <Button variant={'default'} onClick={handleVolver}>
+                Volver
+              </Button>
+            )}
           </div>
           <div className='container mt-8 w-full'></div>
         </div>
