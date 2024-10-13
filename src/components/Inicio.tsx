@@ -125,9 +125,14 @@ export default function Inicio() {
   const [index, setIndex] = useState<number | null>(null)
   const [selectedPlaylist, setSelectedPlaylist] = useState(-1)
 
-
-  const { objetivos, setObjetivos, objetivosFav, setObjetivosFav, setTiempo, setTiempoSesion } =
-    useObjetivos()
+  const {
+    objetivos,
+    setObjetivos,
+    objetivosFav,
+    setObjetivosFav,
+    setTiempo,
+    setTiempoSesion,
+  } = useObjetivos()
 
   const [description, setDescription] = useState<CapyMetodos>()
 

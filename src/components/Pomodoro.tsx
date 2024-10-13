@@ -16,7 +16,7 @@ import { Volume2, VolumeOff } from 'lucide-react'
 import { formatTime } from '@/lib/utils'
 import CountdownStudy from './ComponentesEspecifico/CountDown/CountdownStudy'
 import CountdownBreak from './ComponentesEspecifico/CountDown/CountdownBreak'
-import { SkipForward } from 'lucide-react';
+import { SkipForward } from 'lucide-react'
 
 type Mode = 'Estudiando' | 'Descansando'
 
@@ -184,6 +184,23 @@ export default function Pomodoro() {
     )
   } */
 
+  const handleSaltar = () => {
+    clearInterval(timer.current)
+    if (mode === 'Estudiando') {
+      setTiempoTotal(prev => prev - countdown)
+      setCountdown(0)
+      setIsActive(false)
+      setMode('Descansando')
+      setCountdown(breakSeconds)
+    } else {
+      setAcumuladorTiempoPausa(prev => prev - countdown)
+      setCountdown(0)
+      setIsActive(false)
+      setIsSetted(false)
+      setMode('Estudiando')
+    }
+  }
+
   const handleCheckbox = (objetivo: string) => {
     if (marked.includes(objetivo)) {
       return
@@ -308,7 +325,7 @@ export default function Pomodoro() {
                         onMouseDown={() => startAdjustingTime(-60)} //-60
                         onMouseUp={stopAdjustingTime}
                         onMouseLeave={stopAdjustingTime}
-                        onClick={() => setSessionSeconds(3)} //-60
+                        onClick={() => setSessionSeconds(prev => prev - 60)} //-60
                         disabled={sessionSeconds <= 60 || isActive || isSetted}
                       >
                         -
@@ -331,7 +348,7 @@ export default function Pomodoro() {
                     <h3>Minutos de descanso</h3>
                     <div className='flex items-center justify-center gap-4 text-lg'>
                       <Button
-                        onClick={() => setBreakSeconds(3)} //60
+                        onClick={() => setBreakSeconds(prev => prev - 60)} //60
                         disabled={breakSeconds <= 60 || isActive || isSetted}
                       >
                         -
@@ -398,12 +415,22 @@ export default function Pomodoro() {
                 Empezar
               </Button>
             ) : (
-              <Button
-                className='flex items-center justify-center rounded-full p-6'
-                onClick={() => handlePause(!isActive)}
-              >
-                {isActive ? <Pause /> : <Play />}
-              </Button>
+              <>
+                <Button
+                  className='flex items-center justify-center rounded-full p-6'
+                  onClick={() => handlePause(!isActive)}
+                >
+                  {isActive ? <Pause /> : <Play />}
+                </Button>
+                <Button
+                  className='flex items-center justify-center'
+                  variant='ghost'
+                  type='button'
+                  onClick={handleSaltar}
+                >
+                  <SkipForward />
+                </Button>
+              </>
             )}
           </div>
           {/* Volumen */}
