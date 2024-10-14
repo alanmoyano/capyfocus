@@ -29,6 +29,7 @@ import { useLocation } from 'wouter'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import ChichoHablaPerfil from './ComponentesEspecifico/ChichoHablaPerfil'
 import { Switch } from '@/components/ui/switch'
+import { useSession } from './contexts/SessionContext'
 
 const formSchema = z.object({
   username: z
@@ -41,6 +42,7 @@ type FormValues = z.infer<typeof formSchema>
 
 export default function Usuario() {
   const [, setLocation] = useLocation()
+  const { session } = useSession()
 
   const handleLogin = () => {
     setLocation('/login')
@@ -48,7 +50,7 @@ export default function Usuario() {
 
   // que los default sean los anteriores, ver cuando este la DB
   const [currentUsername, setCurrentUsername] = useState('Chicho')
-  const currentEmail = 'chicho@capymail.com'
+  const currentEmail = session?.user.email ?? 'chicho@capymail.com'
 
   const [selectedPicture, setSelectedPicture] = useState<string | undefined>(
     undefined
