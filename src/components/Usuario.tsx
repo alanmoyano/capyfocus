@@ -30,6 +30,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import ChichoHablaPerfil from './ComponentesEspecifico/ChichoHablaPerfil'
 import { Switch } from '@/components/ui/switch'
 import { useSession } from './contexts/SessionContext'
+import { supabase } from './supabase/client'
 
 const formSchema = z.object({
   username: z
@@ -45,6 +46,7 @@ export default function Usuario() {
   const { session } = useSession()
 
   const handleLogin = () => {
+    supabase.auth.signOut().catch((error: unknown) => console.error(error))
     setLocation('/login')
   }
 
