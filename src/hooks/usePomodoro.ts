@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 
-export default function useTimer() {
-  const [studyTime, setStudyTime] = useState(0)
-  const [breakTime, setBreakTime] = useState(0)
-  const [isStudying, setIsStudying] = useState(true)
+type props = {
+  timeLeft: number
+  isWorking: boolean
+}
+
+export default function usePomodoro() {
+  const [time, setTime] = useState(-1)
+  const [isStudying, setIsStudying] = useState(false)
 
   const workerRef = useRef<Worker | null>()
 
@@ -13,9 +17,9 @@ export default function useTimer() {
     )
 
     workerRef.current.onmessage = event => {
-      const { timer1, timer2 } = event.data as Record<string, number>
-      setStudyTime(timer1)
-      setBreakTime(timer2)
+      const { timeLeft, isWorking } = event.data as props
+      setTime(timeLeft)
+      setIsStudying(isWorking)
     }
 
     return () => {
@@ -24,37 +28,36 @@ export default function useTimer() {
     }
   }, [])
 
-  function startStudy() {
-    workerRef.current?.postMessage('startTimer1')
+  function startStudy({
+    studyTime,
+    breakTime,
+  }: {
+    studyTime: number
+    breakTime: number
+  }) {
+    setTime(studyTime)
+    workerRef.current?.postMessage({ action: 'start', studyTime, breakTime })
 
     setIsStudying(true)
   }
 
   function pauseStudy() {
-    workerRef.current?.postMessage('pauseTimer1')
+    workerRef.current?.postMessage({ action: 'pause' })
 
     setIsStudying(false)
   }
 
-  function resetTimers() {
-    workerRef.current?.postMessage('reset')
+  function resumeStudy() {
+    workerRef.current?.postMessage({ action: 'resume' })
 
-    setStudyTime(0)
-    setBreakTime(0)
-    setIsStudying(false)
-  }
-
-  function finalizeTimers() {
-    workerRef.current?.postMessage('finalize')
+    setIsStudying(true)
   }
 
   return {
-    studyTime,
-    breakTime,
+    time,
     isStudying,
     startStudy,
     pauseStudy,
-    resetTimers,
-    finalizeTimers,
+    resumeStudy,
   }
 }
