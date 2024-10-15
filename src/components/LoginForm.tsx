@@ -26,6 +26,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { supabase } from './supabase/client'
 import { useSession } from './contexts/SessionContext'
+import { useLocation } from 'wouter'
 
 const formSchema = z.object({
   email: z.string().min(2),
@@ -35,6 +36,7 @@ const formSchema = z.object({
 export default function LoginForm() {
   const [verContraseña, setVerContraseña] = useState(false)
   const { setSession } = useSession()
+  const setLocation = useLocation()[1]
 
   const handlePassword = () => {
     setVerContraseña(!verContraseña)
@@ -58,9 +60,11 @@ export default function LoginForm() {
       if (data.session) setSession(data.session)
       console.log(data)
     }
-    logIn().catch((error: unknown) => {
-      console.error(error)
-    })
+    logIn()
+      .then(() => setLocation('/usuario'))
+      .catch((error: unknown) => {
+        console.error(error)
+      })
   }
 
   return (

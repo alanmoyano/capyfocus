@@ -93,7 +93,7 @@ function SignupForm() {
         options: {
           data: {
             name: values.name,
-            birthdate: values.birthdate,
+            birthdate: values.birthdate.toISOString().split('T')[0],
           },
         },
       })
