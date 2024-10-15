@@ -134,7 +134,14 @@ export default function CapyEstadisticas() {
     setSelectedPeriod(value)
   }
 
-  const { objetivos, objetivosPend, tiempo, tiempoSesion, objetivosFav, tiempoFavorito } = useObjetivos()
+  const {
+    objetivos,
+    objetivosPend,
+    tiempo,
+    tiempoSesion,
+    objetivosFav,
+    tiempoFavorito,
+  } = useObjetivos()
   const { motivationType } = useMotivation()
   const { selectedMusic } = useMusic()
   const [date, setDate] = useState<Date | undefined>(new Date())
@@ -469,15 +476,11 @@ export default function CapyEstadisticas() {
                           )}
                         </TableCell>
                         <TableCell className='text-right'>
-                          {objetivosFav.includes(objetivo) ? (<>
-                            {formatTime(tiempoFavorito[objetivo] || 0)}
-                          </>
-                          ): (
-                            <>
-                              {formatTime(tiempo[objetivo] || 0)}
-                            </>
+                          {objetivosFav.includes(objetivo) ? (
+                            <>{formatTime(tiempoFavorito[objetivo] || 0)}</>
+                          ) : (
+                            <>{formatTime(tiempo[objetivo] || 0)}</>
                           )}
-                          
                         </TableCell>
                         <TableCell className='text-right'>
                           {formatTime(tiempoSesion[objetivo] || 0)}
