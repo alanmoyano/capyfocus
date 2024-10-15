@@ -41,6 +41,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { es } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
+import { supabase } from './supabase/client'
 
 const now = new Date()
 
@@ -74,7 +75,6 @@ function SignupForm() {
     setVerContraseña(!verContraseña)
   }
   const form = useForm<z.infer<typeof formSchema>>({
-    // eslint-disable-next-line
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
@@ -86,6 +86,23 @@ function SignupForm() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
+    async function signUp() {
+      const { data, error } = await supabase.auth.signUp({
+        email: values.email,
+        password: values.password,
+        options: {
+          data: {
+            name: values.name,
+            birthdate: values.birthdate.toISOString().split('T')[0],
+          },
+        },
+      })
+      console.log(data)
+      if (error) console.error(error)
+    }
+    signUp().catch((error: unknown) => {
+      console.error(error)
+    })
   }
 
   return (
@@ -255,6 +272,7 @@ function SignupForm() {
                         placeholder='********'
                         type={verContraseña ? 'text' : 'password'}
                         className='dark:placeholder:text-gray-500'
+                        {...field}
                       />
                       <Button
                         variant={'icon'}

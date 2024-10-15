@@ -2,22 +2,22 @@
 
 let intervalId: NodeJS.Timeout
 let isWorking = true
-let workTime: number, breakTime: number
+let workTime: number, restTime: number
 let timeLeft: number
 let isPaused = false // Nueva variable para pausar el temporizador
 
 type props = {
   action: string
   studyTime: number
-  restTime: number
+  breakTime: number
 }
 
 onmessage = function (e) {
-  const { action, studyTime, restTime } = e.data as props
+  const { action, studyTime, breakTime } = e.data as props
 
   if (action === 'start') {
     workTime = studyTime
-    breakTime = restTime
+    restTime = breakTime
     timeLeft = workTime
     isPaused = false
 
@@ -50,9 +50,9 @@ function startTimer() {
       timeLeft--
       postMessage({ timeLeft, isWorking })
 
-      if (timeLeft <= 0) {
+      if (timeLeft < 0) {
         isWorking = !isWorking
-        timeLeft = isWorking ? workTime : breakTime
+        timeLeft = isWorking ? workTime : restTime
         postMessage({ timeLeft, isWorking })
       }
     }

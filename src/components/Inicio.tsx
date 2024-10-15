@@ -125,12 +125,14 @@ export default function Inicio() {
   const [index, setIndex] = useState<number | null>(null)
   const [selectedPlaylist, setSelectedPlaylist] = useState(-1)
 
-  // @ts-expect-error  no seas molesto typescript
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const gapi = window.gapi
-
-  const { objetivos, setObjetivos, objetivosFav, setObjetivosFav } =
-    useObjetivos()
+  const {
+    objetivos,
+    setObjetivos,
+    objetivosFav,
+    setObjetivosFav,
+    setTiempo,
+    setTiempoSesion,
+  } = useObjetivos()
 
   const [description, setDescription] = useState<CapyMetodos>()
 
@@ -248,6 +250,9 @@ export default function Inicio() {
 
   useEffect(() => {
     setSelectedMusic(null)
+    setObjetivos([])
+    setTiempo({})
+    setTiempoSesion({})
   }, [])
 
   useEffect(() => {

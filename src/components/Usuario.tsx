@@ -1,5 +1,5 @@
 import FotoSelector from './FotoSelector'
-import { SetStateAction, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -29,6 +29,8 @@ import { useLocation } from 'wouter'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import ChichoHablaPerfil from './ComponentesEspecifico/ChichoHablaPerfil'
 import { Switch } from '@/components/ui/switch'
+import { supabase } from './supabase/client'
+import { useSession } from './contexts/SessionContext'
 
 const formSchema = z.object({
   username: z
@@ -42,13 +44,32 @@ type FormValues = z.infer<typeof formSchema>
 export default function Usuario() {
   const [, setLocation] = useLocation()
 
+  const { session } = useSession()
+  const user = session?.user
+
   const handleLogin = () => {
+    supabase.auth.signOut().catch((error: unknown) => console.error(error))
     setLocation('/login')
   }
 
   // que los default sean los anteriores, ver cuando este la DB
-  const [currentUsername, setCurrentUsername] = useState('Chicho')
-  const currentEmail = 'chicho@capymail.com'
+  const [currentUsername, setCurrentUsername] = useState(
+    () => (user?.user_metadata.name as string | undefined) ?? 'Chicho'
+  )
+  const [currentEmail, setCurrentEmail] = useState(
+    () => user?.email ?? 'chicho@capymail.com'
+  )
+
+  supabase.auth
+    .getUser()
+    .then(({ data: { user } }) => {
+      if (user?.user_metadata) {
+        setCurrentUsername(user.user_metadata.name as string)
+        setConfirmedUsername(user.user_metadata.name as string)
+      }
+      if (user?.email) setCurrentEmail(user.email)
+    })
+    .catch((error: unknown) => console.error(error))
 
   const [selectedPicture, setSelectedPicture] = useState<string | undefined>(
     undefined
@@ -62,6 +83,14 @@ export default function Usuario() {
 
   const handleConfirm = (data: FormValues) => {
     setConfirmedUsername(data.username)
+    supabase.auth
+      .updateUser({
+        data: {
+          name: data.username,
+        },
+      })
+      .catch((error: unknown) => console.error(error))
+
     if (selectedPicture) {
       setConfirmedPicture(selectedPicture)
     }
