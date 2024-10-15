@@ -147,17 +147,29 @@ export default function Timer() {
     )
 
     if (lastCheckedObj === null) {
+      console.log('entre al if equivocado')
       // clearInterval(timer.current)
       setTiempo(prev => ({ ...prev, [objetivo]: studyTime }))
       setTiempoSesion(prev => ({ ...prev, [objetivo]: studyTime }))
 
       if (objetivosFav.includes(objetivo)) {
-        const tiempoAnterior = tiempoFavorito[objetivo]
-        console.log(tiempo)
-        setTiempoFavorito(prev => ({
-          ...prev,
-          [objetivo]: tiempoAnterior + studyTime,
-        }))
+        if (!tiempoFavorito[objetivo]) {
+          console.log('entre por undefined 1')
+          console.log(studyTime)
+          setTiempoFavorito(prev => ({ ...prev, [objetivo]: studyTime }))
+        } else {
+          console.log('entre por defined')
+          setTiempoFavorito(prev => ({
+            ...prev,
+            [objetivo]: studyTime + (tiempoFavorito[objetivo] ?? 0),
+          }))
+        }
+        // const tiempoAnterior = tiempoFavorito[objetivo] ?? 0
+        // console.log(tiempo)
+        // setTiempoFavorito(prev => ({
+        //   ...prev,
+        //   [objetivo]: tiempoAnterior + studyTime,
+        // }))
       }
     } else {
       setTiempo(prev => ({
@@ -166,15 +178,26 @@ export default function Timer() {
       }))
       setTiempoSesion(prev => ({ ...prev, [objetivo]: studyTime }))
       if (objetivosFav.includes(objetivo)) {
-        setTiempoFavorito(prev => ({
-          ...prev,
-          [objetivo]:
-            parseInt([objetivo][0]) + (studyTime - tiempoObjAcumulado),
-        }))
+        if (!tiempoFavorito[objetivo]) {
+          console.log(studyTime)
+          console.log(tiempoObjAcumulado)
+          setTiempoFavorito(prev => ({
+            ...prev,
+            [objetivo]: studyTime - tiempoObjAcumulado,
+          }))
+        } else {
+          setTiempoFavorito(prev => ({
+            ...prev,
+            [objetivo]:
+              studyTime + (tiempoFavorito[objetivo] ?? 0) - tiempoObjAcumulado,
+          }))
+        }
       }
     }
     setLastCheckedObj(key)
   }
+
+  console.log(tiempoFavorito)
 
   return (
     <>

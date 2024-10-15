@@ -454,7 +454,10 @@ export default function CapyEstadisticas() {
                       <TableHead>Estado</TableHead>
                       <TableHead className='text-right'>Tiempo</TableHead>
                       <TableHead className='text-right'>
-                        Tiempo acumulado
+                        Tiempo Acumulado Favorito
+                      </TableHead>
+                      <TableHead className='text-right'>
+                        Tiempo Cumplido en sesion
                       </TableHead>
                     </TableRow>
                   </TableHeader>
@@ -476,14 +479,17 @@ export default function CapyEstadisticas() {
                           )}
                         </TableCell>
                         <TableCell className='text-right'>
+                          {formatTime(tiempo[objetivo] || 0)}
+                        </TableCell>
+                        <TableCell className='text-right'>
                           {objetivosFav.includes(objetivo) ? (
                             <>{formatTime(tiempoFavorito[objetivo] || 0)}</>
                           ) : (
-                            <>{formatTime(tiempo[objetivo] || 0)}</>
+                            <>--|--</>
                           )}
                         </TableCell>
                         <TableCell className='text-right'>
-                          {formatTime(tiempoSesion[objetivo] || 0)}
+                          <>{formatTime(tiempoSesion[objetivo] || 0)}</>
                         </TableCell>
                       </TableRow>
                     ))}
