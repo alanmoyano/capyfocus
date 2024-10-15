@@ -6,6 +6,7 @@ type ObjetivosContextData = {
   objetivosFav: string[]
   tiempo: Record<string, number>
   tiempoSesion: Record<string, number>
+  tiempoFavorito: Record<string, number>
 
   // funcion que despacha una accion de tipo state con un string[]
   setObjetivos: React.Dispatch<React.SetStateAction<string[]>>
@@ -13,6 +14,8 @@ type ObjetivosContextData = {
   setObjetivosFav: React.Dispatch<React.SetStateAction<string[]>>
   setTiempo: React.Dispatch<React.SetStateAction<Record<string, number>>>
   setTiempoSesion: React.Dispatch<React.SetStateAction<Record<string, number>>>
+  setTiempoFavorito: React.Dispatch<React.SetStateAction<Record<string, number>>>
+
 }
 
 // datos que va a manejar, valor predeterminado x si no hay provider
@@ -33,6 +36,7 @@ export const ObjetivosProvider = ({ children }: { children: ReactNode }) => {
 
   const [tiempo, setTiempo] = useState<Record<string, number>>({})
   const [tiempoSesion, setTiempoSesion] = useState<Record<string, number>>({})
+  const [tiempoFavorito, setTiempoFavorito] = useState<Record<string,number>>({})
 
   return (
     <ObjetivosContext.Provider
@@ -50,6 +54,8 @@ export const ObjetivosProvider = ({ children }: { children: ReactNode }) => {
         },
         tiempoSesion,
         setTiempoSesion,
+        tiempoFavorito,
+        setTiempoFavorito
       }}
     >
       {children}

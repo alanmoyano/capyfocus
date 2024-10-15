@@ -51,6 +51,7 @@ export default function Timer() {
   const [, setDescription] = useState<Accion>('Estudiar')
   const [, setLocation] = useLocation()
   const [lastCheckedObj, setLastCheckedObj] = useState<number | null>(null)
+  const [sessionStart, setSessionStart] = useState(false)
   const {
     objetivos,
     setObjetivos,
@@ -59,6 +60,8 @@ export default function Timer() {
     tiempo,
     setTiempoSesion,
     setObjetivosPend,
+    setTiempoFavorito,
+    tiempoFavorito
   } = useObjetivos()
   const [marked, setMarked] = useState<string[]>([])
   const { selectedMusic } = useMusic()
@@ -82,6 +85,12 @@ export default function Timer() {
   }
 
   useEffect(() => {
+    if(!sessionStart){
+      setAcumuladorTiempoPausa(0)
+      setTiempoTotal(0)
+      setCantidadPausas(0)
+      setSessionStart(true)
+    }
     setObjetivosPend(objetivos)
     startStudy()
   }, [])
@@ -141,12 +150,21 @@ export default function Timer() {
       // clearInterval(timer.current)
       setTiempo(prev => ({ ...prev, [objetivo]: studyTime }))
       setTiempoSesion(prev => ({ ...prev, [objetivo]: studyTime }))
+      
+      if(objetivosFav.includes(objetivo)){
+        const tiempoAnterior = tiempoFavorito[objetivo]
+        console.log(tiempo)
+        setTiempoFavorito(prev => ({...prev, [objetivo]: tiempoAnterior + studyTime}))
+      }
     } else {
       setTiempo(prev => ({
         ...prev,
         [objetivo]: studyTime - tiempoObjAcumulado,
       }))
       setTiempoSesion(prev => ({ ...prev, [objetivo]: studyTime }))
+      if(objetivosFav.includes(objetivo)){
+        setTiempoFavorito(prev => ({...prev, [objetivo]: parseInt([objetivo][0]) + (studyTime - tiempoObjAcumulado)}))
+      }
     }
     setLastCheckedObj(key)
   }
