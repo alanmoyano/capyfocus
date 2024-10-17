@@ -14,11 +14,37 @@ import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
 import useTimer from '@/hooks/useTimer'
 import { Helmet } from 'react-helmet'
 import { formatTime } from '@/lib/utils'
+import { useSession } from './contexts/SessionContext'
+import { supabase } from './supabase/client'
 
 //import Confetti from 'react-confetti-boom'
 
 type Mode = 'Sesión' | 'Descanso'
 type Accion = 'Estudiar' | 'Descansar'
+
+type SessionAGuardar = {
+  uuid: string
+  horaInicioSesion: string
+  fecha: Date
+  horaFinSesion: string
+  tecnicaEstudio: number
+  tipoMotivacion: number
+  finalizada: boolean
+  cantidadObjetivosCumplidos: number
+  cantidadObjetivos: number
+}
+
+function dateToTimetz(date: Date | null): string {
+  // Obtiene la parte de la hora y la zona horaria
+  const options: Intl.DateTimeFormatOptions = {
+    timeZone: 'UTC', // Cambia esto a la zona horaria que necesites
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    timeZoneName: 'short',
+  }
+  return date.toLocaleString('en-US', options)
+}
 
 export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
   return (
@@ -52,6 +78,8 @@ export default function Timer() {
   const [, setLocation] = useLocation()
   const [lastCheckedObj, setLastCheckedObj] = useState<number | null>(null)
   const [sessionStart, setSessionStart] = useState(false)
+  const [InicioSesion, setInicioSesion] = useState<Date | null>(null)
+  const { session } = useSession()
   const {
     objetivos,
     setObjetivos,
@@ -69,6 +97,38 @@ export default function Timer() {
     useSesion()
 
   const finalizarSesion = () => {
+    const hoy = new Date()
+    async function saveSession() {
+      const sessionToSave: SessionAGuardar = {
+        uuid: session?.user.id,
+        horaInicioSesion: dateToTimetz(InicioSesion),
+        fecha: InicioSesion,
+        horaFinSesion: dateToTimetz(hoy),
+        tecnicaEstudio: 2,
+        tipoMotivacion: motivationType === 'Positiva' ? 1 : 2,
+        finalizada: true,
+        cantidadObjetivosCumplidos: objCumplidos,
+        cantidadObjetivos: objetivos.length,
+      }
+
+      const { data, error } = await supabase.from('SesionesDeEstudio').insert([
+        {
+          idUsuario: sessionToSave.uuid,
+          horaInicioSesion: sessionToSave.horaInicioSesion,
+          fecha: sessionToSave.fecha,
+          horaFinSesion: sessionToSave.horaFinSesion,
+          tecnicaEstudio: sessionToSave.tecnicaEstudio,
+          tipoMotivacion: sessionToSave.tipoMotivacion,
+          finalizada: sessionToSave.finalizada,
+          cantidadObjetivosCumplidos: sessionToSave.cantidadObjetivosCumplidos,
+          cantidadObjetivos: sessionToSave.cantidadObjetivos,
+        },
+      ])
+
+      if (error) console.log(error)
+      else console.log(data)
+    }
+
     finalizeTimers()
     setTiempoTotal(studyTime)
     setAcumuladorTiempoPausa(breakTime)
@@ -81,7 +141,9 @@ export default function Timer() {
         setTiempoSesion(prev => ({ ...prev, [objetivo]: 0 }))
       }
     })
-    setLocation('/capyEstadisticas?period=sesion')
+    saveSession()
+      .then(() => setLocation('/capyEstadisticas?period=sesion'))
+      .catch((error: unknown) => console.log(error))
   }
 
   useEffect(() => {
@@ -93,6 +155,8 @@ export default function Timer() {
     }
     setObjetivosPend(objetivos)
     startStudy()
+    const hoy = new Date()
+    setInicioSesion(hoy)
   }, [])
 
   useEffect(() => {
@@ -147,18 +211,14 @@ export default function Timer() {
     )
 
     if (lastCheckedObj === null) {
-      console.log('entre al if equivocado')
       // clearInterval(timer.current)
       setTiempo(prev => ({ ...prev, [objetivo]: studyTime }))
       setTiempoSesion(prev => ({ ...prev, [objetivo]: studyTime }))
 
       if (objetivosFav.includes(objetivo)) {
         if (!tiempoFavorito[objetivo]) {
-          console.log('entre por undefined 1')
-          console.log(studyTime)
           setTiempoFavorito(prev => ({ ...prev, [objetivo]: studyTime }))
         } else {
-          console.log('entre por defined')
           setTiempoFavorito(prev => ({
             ...prev,
             [objetivo]: studyTime + (tiempoFavorito[objetivo] ?? 0),
@@ -179,8 +239,6 @@ export default function Timer() {
       setTiempoSesion(prev => ({ ...prev, [objetivo]: studyTime }))
       if (objetivosFav.includes(objetivo)) {
         if (!tiempoFavorito[objetivo]) {
-          console.log(studyTime)
-          console.log(tiempoObjAcumulado)
           setTiempoFavorito(prev => ({
             ...prev,
             [objetivo]: studyTime - tiempoObjAcumulado,
@@ -196,8 +254,6 @@ export default function Timer() {
     }
     setLastCheckedObj(key)
   }
-
-  console.log(tiempoFavorito)
 
   return (
     <>

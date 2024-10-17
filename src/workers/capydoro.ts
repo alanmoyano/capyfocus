@@ -4,6 +4,7 @@ let intervalId: NodeJS.Timeout
 let isWorking = true
 let workTime: number, restTime: number
 let timeLeft: number
+let objStudyTime: number
 let isPaused = false // Nueva variable para pausar el temporizador
 
 type props = {

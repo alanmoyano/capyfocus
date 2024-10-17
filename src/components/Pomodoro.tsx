@@ -70,6 +70,8 @@ export default function Pomodoro() {
     tiempo,
     setTiempoSesion,
     setObjetivosPend,
+    tiempoFavorito,
+    setTiempoFavorito,
   } = useObjetivos()
   const [marked, setMarked] = useState<string[]>([])
   const [, setLocation] = useLocation()
@@ -213,6 +215,16 @@ export default function Pomodoro() {
       [objetivo]: ObjStudyTime,
     }))
     setTiempoSesion(prev => ({ ...prev, [objetivo]: tiempoTotal - time }))
+    if (objetivosFav.includes(objetivo)) {
+      if (!tiempoFavorito[objetivo]) {
+        setTiempoFavorito(prev => ({ ...prev, [objetivo]: ObjStudyTime }))
+      } else {
+        setTiempoFavorito(prev => ({
+          ...prev,
+          [objetivo]: ObjStudyTime + (tiempoFavorito[objetivo] ?? 0),
+        }))
+      }
+    }
 
     setObjStudyTime(0)
   }
