@@ -32,6 +32,7 @@ type SessionAGuardar = {
   finalizada: boolean
   cantidadObjetivosCumplidos: number
   cantidadObjetivos: number
+  tiempoEstudio: number
 }
 
 function dateToTimetz(date: Date | null): string {
@@ -97,6 +98,8 @@ export default function Timer() {
     useSesion()
 
   const finalizarSesion = () => {
+    console.log(session)
+    
     const hoy = new Date()
     async function saveSession() {
       const sessionToSave: SessionAGuardar = {
@@ -109,6 +112,7 @@ export default function Timer() {
         finalizada: true,
         cantidadObjetivosCumplidos: objCumplidos,
         cantidadObjetivos: objetivos.length,
+        tiempoEstudio: studyTime
       }
 
       const { data, error } = await supabase.from('SesionesDeEstudio').insert([
@@ -122,6 +126,7 @@ export default function Timer() {
           finalizada: sessionToSave.finalizada,
           cantidadObjetivosCumplidos: sessionToSave.cantidadObjetivosCumplidos,
           cantidadObjetivos: sessionToSave.cantidadObjetivos,
+          tiempoEstudio: sessionToSave.tiempoEstudio
         },
       ])
 
