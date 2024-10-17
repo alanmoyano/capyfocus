@@ -29,7 +29,6 @@ type SessionAGuardar = {
   horaFinSesion: string
   tecnicaEstudio: number
   tipoMotivacion: number
-  finalizada: boolean
   cantidadObjetivosCumplidos: number
   cantidadObjetivos: number
   tiempoEstudio: number
@@ -111,7 +110,6 @@ export default function Timer() {
           horaFinSesion: dateToTimetz(hoy),
           tecnicaEstudio: 2,
           tipoMotivacion: motivationType === 'Positiva' ? 1 : 2,
-          finalizada: true,
           cantidadObjetivosCumplidos: objCumplidos,
           cantidadObjetivos: objetivos.length,
           tiempoEstudio: studyTime,
@@ -127,7 +125,6 @@ export default function Timer() {
               horaFinSesion: sessionToSave.horaFinSesion,
               tecnicaEstudio: sessionToSave.tecnicaEstudio,
               tipoMotivacion: sessionToSave.tipoMotivacion,
-              finalizada: sessionToSave.finalizada,
               cantidadObjetivosCumplidos:
                 sessionToSave.cantidadObjetivosCumplidos,
               cantidadObjetivos: sessionToSave.cantidadObjetivos,
