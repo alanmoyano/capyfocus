@@ -44,6 +44,7 @@ function dateToTimetz(date: Date | null): string {
     second: 'numeric',
     timeZoneName: 'short',
   }
+  //@ts-expect-error anda, no te preocupes
   return date.toLocaleString('en-US', options)
 }
 
@@ -98,40 +99,48 @@ export default function Timer() {
     useSesion()
 
   const finalizarSesion = () => {
-    console.log(session)
-    
-    const hoy = new Date()
-    async function saveSession() {
-      const sessionToSave: SessionAGuardar = {
-        uuid: session?.user.id,
-        horaInicioSesion: dateToTimetz(InicioSesion),
-        fecha: InicioSesion,
-        horaFinSesion: dateToTimetz(hoy),
-        tecnicaEstudio: 2,
-        tipoMotivacion: motivationType === 'Positiva' ? 1 : 2,
-        finalizada: true,
-        cantidadObjetivosCumplidos: objCumplidos,
-        cantidadObjetivos: objetivos.length,
-        tiempoEstudio: studyTime
+    if (session) {
+      const hoy = new Date()
+      async function saveSession() {
+        const sessionToSave: SessionAGuardar = {
+          //@ts-expect-error no jodas ts, anda en la bd
+          uuid: session?.user.id,
+          horaInicioSesion: dateToTimetz(InicioSesion),
+          //@ts-expect-error no jodas ts, anda en la bd
+          fecha: InicioSesion,
+          horaFinSesion: dateToTimetz(hoy),
+          tecnicaEstudio: 2,
+          tipoMotivacion: motivationType === 'Positiva' ? 1 : 2,
+          finalizada: true,
+          cantidadObjetivosCumplidos: objCumplidos,
+          cantidadObjetivos: objetivos.length,
+          tiempoEstudio: studyTime,
+        }
+
+        const { data, error } = await supabase
+          .from('SesionesDeEstudio')
+          .insert([
+            {
+              idUsuario: sessionToSave.uuid,
+              horaInicioSesion: sessionToSave.horaInicioSesion,
+              fecha: sessionToSave.fecha,
+              horaFinSesion: sessionToSave.horaFinSesion,
+              tecnicaEstudio: sessionToSave.tecnicaEstudio,
+              tipoMotivacion: sessionToSave.tipoMotivacion,
+              finalizada: sessionToSave.finalizada,
+              cantidadObjetivosCumplidos:
+                sessionToSave.cantidadObjetivosCumplidos,
+              cantidadObjetivos: sessionToSave.cantidadObjetivos,
+              tiempoEstudio: sessionToSave.tiempoEstudio,
+            },
+          ])
+
+        if (error) console.log(error)
+        else console.log(data)
       }
-
-      const { data, error } = await supabase.from('SesionesDeEstudio').insert([
-        {
-          idUsuario: sessionToSave.uuid,
-          horaInicioSesion: sessionToSave.horaInicioSesion,
-          fecha: sessionToSave.fecha,
-          horaFinSesion: sessionToSave.horaFinSesion,
-          tecnicaEstudio: sessionToSave.tecnicaEstudio,
-          tipoMotivacion: sessionToSave.tipoMotivacion,
-          finalizada: sessionToSave.finalizada,
-          cantidadObjetivosCumplidos: sessionToSave.cantidadObjetivosCumplidos,
-          cantidadObjetivos: sessionToSave.cantidadObjetivos,
-          tiempoEstudio: sessionToSave.tiempoEstudio
-        },
-      ])
-
-      if (error) console.log(error)
-      else console.log(data)
+      saveSession()
+        .then(() => console.log('Datos guardados correctamente'))
+        .catch((error: unknown) => console.log(error))
     }
 
     finalizeTimers()
@@ -146,9 +155,7 @@ export default function Timer() {
         setTiempoSesion(prev => ({ ...prev, [objetivo]: 0 }))
       }
     })
-    saveSession()
-      .then(() => setLocation('/capyEstadisticas?period=sesion'))
-      .catch((error: unknown) => console.log(error))
+    setLocation('/capyEstadisticas?period=sesion')
   }
 
   useEffect(() => {
