@@ -11,6 +11,9 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
+//TODO agregar pasos para recuperar contraseña y enviar mail
+
+
 export default function PasswordRecovery() {
   return (
     <>

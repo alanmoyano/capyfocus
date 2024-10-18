@@ -72,7 +72,7 @@ export default function LoginForm() {
       <CardHeader>
         <CardTitle>Inicie Sesión</CardTitle>
         <CardDescription>
-          Bienvenido de vuelta, ingresa tus datos para iniciar sesión.
+          Te damos la CapyBienvenida, ingresa tus datos para iniciar sesión.
         </CardDescription>
       </CardHeader>
       <CardContent className='space-y-2'>
@@ -132,15 +132,16 @@ export default function LoginForm() {
           </form>
         </Form>
         <Label>¿Olvidaste tu contraseña?</Label>
-        {/* <Button variant={'link'} className='border-none text-sm font-normal'>
-          Recuperar
-        </Button> */}
         <PasswordRecovery />
       </CardContent>
       <CardFooter>
-        <Button className='w-1/2' form='login' type='submit'>
-          Iniciar
-        </Button>
+        <div className='w-full'>
+          <div className='flex justify-end'>
+            <Button className='w-1/2' form='login' type='submit'>
+              Iniciar
+            </Button>
+          </div>
+        </div>
       </CardFooter>
     </Card>
   )

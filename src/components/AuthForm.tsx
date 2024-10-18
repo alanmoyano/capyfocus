@@ -16,7 +16,7 @@ export default function Login() {
 
         <div className='m-auto w-full max-w-[400px] px-4 sm:px-0'>
           <div className='mb-4 mt-2'>
-            <Tabs defaultValue='signUp' className='w-full'>
+            <Tabs defaultValue='login' className='w-full'>
               <TabsList className='grid w-full grid-cols-2'>
                 <TabsTrigger value='login'>Ingrese</TabsTrigger>
                 <TabsTrigger value='signUp'>Registrarse</TabsTrigger>

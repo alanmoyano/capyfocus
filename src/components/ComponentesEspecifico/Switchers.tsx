@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Label } from '@/components/ui/label'
 
-//TODO: Cambiar los colores de los switchers en modo oscuro 
+//TODO: Cambiar los colores de los switchers en modo oscuro
 
 export default function Switchers() {
   /* Maneja los Switch */
@@ -28,7 +28,6 @@ export default function Switchers() {
         {/* Switch Modo oscuro */}
         <div
           onClick={handleToggleDark}
-            
           className={`${
             isDark ? 'bg-[#ac99eb]' : 'bg-[#433323]'
           } relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full`}
@@ -43,16 +42,15 @@ export default function Switchers() {
 
       {/* Notificaciones */}
       <div className='mt-2 flex items-center justify-between'>
-        <Label className='text-left' >
+        <Label className='text-left'>
           Recibir notificaciones: {isNotificaction ? 'Sí' : 'No'}
         </Label>
-       
+
         <div
           onClick={handleToggleNotification}
-            
           className={`${
             isNotificaction ? 'bg-[#728fe6]' : 'bg-[#433323]'
-          } relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full `}
+          } relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full`}
         >
           <span
             className={`${
@@ -69,10 +67,9 @@ export default function Switchers() {
         </Label>
         <div
           onClick={handleToggle}
-          
           className={`${
             isPositive ? 'bg-[#e78282]' : 'bg-[#433323]'
-          } relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full `}
+          } relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full`}
         >
           <span
             className={`${
