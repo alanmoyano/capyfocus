@@ -73,7 +73,7 @@ import { supabase } from './supabase/client'
 import { Helmet } from 'react-helmet'
 
 import Reproductor from './ComponentesEspecifico/Reproductor'
-import CapyInfo from './ComponentesEspecifico/CapyInfo'
+import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
 
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 

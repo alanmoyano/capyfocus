@@ -49,6 +49,7 @@ import { toast } from 'sonner'
 //TODO: Dar nagevabilidad a la pagina de usuario.
 //TODO: Agregar boton para ir a la pagina de inicio sin registrarse.
 //TODO: Cambiar boton de color rojo letras blancas.
+//TODO: Verificar si el usuario no esta registrado
 //BUG toast no andan bien 
 
 const now = new Date()
@@ -85,12 +86,10 @@ function SignupForm() {
     if (registrado) {
       toast.error('CapyError', {
         description:
-          'El mail ya esta registrado con una CapyCuenta',
-
-        descriptionClassName: 'text-white',
+          'El mail ya esta registrado con una CapyCuenta'
       })
     }
-    }) 
+    },[registrado]) 
 
   function handleRegistrado(){
     setRegistrado(true)
