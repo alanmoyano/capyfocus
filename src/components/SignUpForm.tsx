@@ -50,7 +50,6 @@ import { toast } from 'sonner'
 //TODO: Agregar boton para ir a la pagina de inicio sin registrarse.
 //TODO: Cambiar boton de color rojo letras blancas.
 //TODO: Verificar si el usuario no esta registrado
-//BUG toast no andan bien 
 
 const now = new Date()
 
