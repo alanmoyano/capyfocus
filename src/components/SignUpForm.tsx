@@ -40,8 +40,14 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { es } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from './supabase/client'
+import { toast } from 'sonner'
+
+//TODO: Colocar Toast de usuario ya registrado
+//TODO: revisar que un usuario este registrardo 
+//TODO: Dar nagevabilidad a la pagina de usuario.
+//TODO: Agregar boton para ir a la pagina de inicio sin registrarse.
 
 const now = new Date()
 
@@ -70,6 +76,23 @@ function SignupForm() {
   const [year, setYear] = useState<number>(now.getFullYear() - 10)
   const [isOpen, setIsOpen] = useState(false)
   const [verContraseña, setVerContraseña] = useState(false)
+  const [registrado, setRegistrado] = useState(false)
+
+  //Verificar si el usuario ya esta registrado
+  useEffect(() => {
+    if (registrado) {
+      toast.error('CapyError', {
+        description:
+          'El mail ya esta registrado con una CapyCuenta',
+
+        descriptionClassName: 'text-white',
+      })
+    }
+    }) 
+
+  function handleRegistrado(){
+    setRegistrado(true)
+  }
 
   const handlePassword = () => {
     setVerContraseña(!verContraseña)
@@ -291,7 +314,7 @@ function SignupForm() {
         </Form>
       </CardContent>
       <CardFooter>
-        <Button className='w-1/2' form='signUp' type='submit'>
+        <Button className='w-1/2' form='signUp' type='submit' onClick={handleRegistrado}>
           Guardar
         </Button>
       </CardFooter>

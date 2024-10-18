@@ -28,9 +28,11 @@ import { Label } from '@/components/ui/label'
 import { useLocation } from 'wouter'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import ChichoHablaPerfil from './ComponentesEspecifico/ChichoHablaPerfil'
-import { Switch } from '@/components/ui/switch'
 import { supabase } from './supabase/client'
 import { useSession } from './contexts/SessionContext'
+import Switchers from './ComponentesEspecifico/Switchers'
+
+//TODO: Agregar Switchers.
 
 const formSchema = z.object({
   username: z
@@ -96,15 +98,6 @@ export default function Usuario() {
     }
     setSheetOpen(false)
   }
-
-  const [bandera, setBandera] = useState<boolean>(false)
-
-  useEffect(() => {
-    function cambiarBandera() {
-      setBandera(!bandera)
-    }
-  })
-
   const {
     register,
     handleSubmit,
@@ -257,18 +250,8 @@ export default function Usuario() {
                 <h3 className='mt-8 text-left text-xl font-bold'>
                   Personalizar
                 </h3>
-                <span className='mt-2 flex items-center justify-between'>
-                  <p className='text-left'>Modo oscuro predeterminado:</p>
-                  <Switch />
-                </span>
-                <span className='mt-2 flex items-center justify-between'>
-                  <p className='text-left'>Recibir notificaciones:</p>
-                  <Switch />
-                </span>
-                <span className='mt-2 flex items-center justify-between'>
-                  <p className='text-left'>Recordarme en esta página</p>
-                  <Switch />
-                </span>
+                {/* Switch: */}
+                <Switchers />
               </div>
             </CardContent>
             <CardFooter className='mt-auto flex justify-end'>

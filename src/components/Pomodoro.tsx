@@ -18,7 +18,6 @@ import CountdownStudy from './ComponentesEspecifico/CountDown/CountdownStudy'
 import CountdownBreak from './ComponentesEspecifico/CountDown/CountdownBreak'
 import { SkipForward } from 'lucide-react'
 import usePomodoro from '@/hooks/usePomodoro'
-import { Console } from 'console'
 
 type Mode = 'Estudiando' | 'Descansando'
 
