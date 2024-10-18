@@ -18,6 +18,7 @@ import CountdownStudy from './ComponentesEspecifico/CountDown/CountdownStudy'
 import CountdownBreak from './ComponentesEspecifico/CountDown/CountdownBreak'
 import { SkipForward } from 'lucide-react'
 import usePomodoro from '@/hooks/usePomodoro'
+import { Console } from 'console'
 
 type Mode = 'Estudiando' | 'Descansando'
 
@@ -48,7 +49,15 @@ export default function Pomodoro() {
   const [sessionSeconds, setSessionSeconds] = useState(25 * 60)
   const [breakSeconds, setBreakSeconds] = useState(5 * 60)
   const [objCumplidos, setObjCumplidos] = useState(0)
-  const { time, startStudy, isStudying } = usePomodoro()
+  const {
+    time,
+    startStudy,
+    isStudying,
+    pauseStudy,
+    resumeStudy,
+    startBreak,
+    stopStudy,
+  } = usePomodoro()
   const [isActive, setIsActive] = useState(false) //Aca se cambia el estado de play y pause
   const [isSetted, setIsSetted] = useState(false) //Aca se cambia el estado de si estan los datos cargados
   const [mode, setMode] = useState<Mode>('Estudiando')
@@ -62,6 +71,8 @@ export default function Pomodoro() {
   const [sessionStart, setSessionStart] = useState(false)
   const [volumen, setVolumen] = useState(true)
   const [boom, setBoom] = useState(false)
+  const [breakStarted, setBreakStarted] = useState(false)
+
   const {
     objetivos,
     setObjetivos,
@@ -87,11 +98,11 @@ export default function Pomodoro() {
 
     if (time > 0 && mode === 'Estudiando') {
       console.log('Entre en el primero')
-      setTiempoTotal(prev => (prev -= time))
-      setAcumuladorTiempoPausa(prev => (prev -= breakSeconds))
+      setTiempoTotal(prev => prev - time)
+      setAcumuladorTiempoPausa(prev => prev - breakSeconds)
     } else if (time > 0 && mode === 'Descansando') {
       console.log('Entre en el segundo')
-      setAcumuladorTiempoPausa(prev => (prev -= time))
+      setAcumuladorTiempoPausa(prev => prev - time)
     }
 
     objetivos.forEach(objetivo => {
@@ -127,18 +138,13 @@ export default function Pomodoro() {
     if (!isActive) return () => clearInterval(timer.current)
 
     if (time >= 0 && isStudying) {
-      timer.current = setInterval(() => {
-        //console.log(`Hola! actualizando, tiempo: ${formatTime(countdown)}`)
-        if (mode === 'Estudiando') {
-          setObjStudyTime(prev => prev + 1)
-        }
-      }, 1000)
+      console.log('hola')
     } else {
       if (volumen) {
         capySound()
       }
-      clearInterval(timer.current)
       if (mode === 'Estudiando') {
+        stopStudy()
         setSessionSeconds(
           pomodorosRealizados[pomodorosRealizados.length - 1].tiempoEstudio
         )
@@ -147,7 +153,7 @@ export default function Pomodoro() {
         setBoom(false) //para el confetti
         pomodoroCount.current += 0.5
       } else {
-        if (time > 0) return
+        // if (time > 0) return
         setBreakSeconds(
           pomodorosRealizados[pomodorosRealizados.length - 1].tiempoDescanso
         )
@@ -162,18 +168,8 @@ export default function Pomodoro() {
     if (objetivos.length === objCumplidos && objetivos.length > 0) {
       finalizarSesion()
     }
-
-    return () => clearInterval(timer.current)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    isActive,
-    time,
-    sessionSeconds,
-    breakSeconds,
-    mode,
-    capySound,
-    objCumplidos,
-  ])
+  }, [isActive, sessionSeconds, breakSeconds, mode, objCumplidos, isStudying])
 
   // useEffect(() => {
   //   setCountdown(mode === 'Estudiando' ? sessionSeconds : breakSeconds)
@@ -258,6 +254,15 @@ export default function Pomodoro() {
   const handlePause = (value: boolean) => {
     if (!value) {
       setCantidadPausas(prev => (prev += 1))
+      pauseStudy()
+    } else {
+      if (mode === 'Descansando' && !breakStarted) {
+        setBreakStarted(true)
+        startBreak()
+        console.log(value)
+      } else {
+        resumeStudy()
+      }
     }
     setIsActive(value)
   }

@@ -53,11 +53,24 @@ export default function usePomodoro() {
     setIsStudying(true)
   }
 
+  function stopStudy() {
+    workerRef.current?.postMessage({ action: 'stop' })
+
+    setIsStudying(false)
+  }
+
+  function startBreak() {
+    workerRef.current?.postMessage({ action: 'startBr' })
+    setIsStudying(true)
+  }
+
   return {
     time,
     isStudying,
     startStudy,
     pauseStudy,
     resumeStudy,
+    stopStudy,
+    startBreak,
   }
 }
