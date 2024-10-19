@@ -51,7 +51,7 @@ function AvatarLink() {
     <Link to='/usuario'>
       <Avatar className='mx-auto'>
         <AvatarImage src={profilePic} className='' />
-        <AvatarFallback className='border border-accent-foreground bg-accent text-4xl font-medium'>
+        <AvatarFallback className='border border-accent-foreground bg-accent text-xl font-medium'>
           C
         </AvatarFallback>
       </Avatar>
