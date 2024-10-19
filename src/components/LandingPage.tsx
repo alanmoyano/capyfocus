@@ -25,7 +25,7 @@ export default function LandingPage() {
             <span className='text-[#f2b76a]'>CapyFocus</span>
           </h1>
           <p className='mb-6 text-2xl text-gray-700'>
-            Capydoros y Capymetro, dos técnicas que te ayudarán a lograr tus
+            Capydoro y Capymetro, dos técnicas que te ayudarán a lograr tus
             objetivos.
           </p>
           <div className='flex items-center justify-around py-12'>
