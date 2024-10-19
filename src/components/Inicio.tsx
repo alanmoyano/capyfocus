@@ -249,10 +249,6 @@ export default function Inicio() {
   }
 
   useEffect(() => {
-    setSelectedMusic(null)
-  }, [])
-
-  useEffect(() => {
     async function getMotivaciones() {
       const { data } = await supabase.from('TiposMotivacion').select('*')
       return data
