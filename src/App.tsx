@@ -24,70 +24,76 @@ import ExperimentandoBrenda from './components/ExperimentandoBrenda'
 import { SessionProvider } from './components/contexts/SessionContext'
 import { EventsProvider } from './components/contexts/EventsContext'
 import { ProfilePicProvider } from './components/contexts/ProfilePicContext'
+import { PostHogProvider } from 'posthog-js/react'
 
 function App() {
   return (
     <ThemeProvider defaultTheme='light' storageKey='theme'>
       <SpeedInsights />
       <Analytics />
-      <SessionProvider>
-        <ProfilePicProvider>
-          <ObjetivosProvider>
-            <MotivationProvider>
-              <SesionProvider>
-                <MusicProvider>
-                  <EventsProvider>
-                    <Navbar />
+      <PostHogProvider
+        options={{ api_host: import.meta.env.VITE_POSTHOG_HOST }}
+        apiKey={import.meta.env.VITE_POSTHOG_KEY}
+      >
+        <SessionProvider>
+          <ProfilePicProvider>
+            <ObjetivosProvider>
+              <MotivationProvider>
+                <SesionProvider>
+                  <MusicProvider>
+                    <EventsProvider>
+                      <Navbar />
 
-                    <Helmet>
-                      <title>Capyfocus</title>
-                    </Helmet>
+                      <Helmet>
+                        <title>Capyfocus</title>
+                      </Helmet>
 
-                    <main>
-                      <Switch>
-                        <Route path='/'>
-                          <Inicio />
-                        </Route>
-                        <Route path='/login' component={Login} />
+                      <main>
+                        <Switch>
+                          <Route path='/'>
+                            <Inicio />
+                          </Route>
+                          <Route path='/login' component={Login} />
 
-                        <Route path='/capydoro'>
-                          <Pomodoro />
-                        </Route>
-                        <Route path='/capymetro'>
-                          <Timer />
-                        </Route>
+                          <Route path='/capydoro'>
+                            <Pomodoro />
+                          </Route>
+                          <Route path='/capymetro'>
+                            <Timer />
+                          </Route>
 
-                        <Route path='/brenda'>
-                          <ExperimentandoBrenda />
-                        </Route>
+                          <Route path='/brenda'>
+                            <ExperimentandoBrenda />
+                          </Route>
 
-                        <Route
-                          path='/capyInsignias'
-                          component={CapyInsignias}
-                        />
-                        <Route
-                          path='/capyEstadisticas'
-                          component={CapyEstadisticas}
-                        />
+                          <Route
+                            path='/capyInsignias'
+                            component={CapyInsignias}
+                          />
+                          <Route
+                            path='/capyEstadisticas'
+                            component={CapyEstadisticas}
+                          />
 
-                        <Route path='/usuario' component={Usuario} />
+                          <Route path='/usuario' component={Usuario} />
 
-                        <Route path='/prueba' component={Prueba} />
+                          <Route path='/prueba' component={Prueba} />
 
-                        <Route>
-                          <NotFound />
-                        </Route>
-                      </Switch>
-                    </main>
+                          <Route>
+                            <NotFound />
+                          </Route>
+                        </Switch>
+                      </main>
 
-                    <Toaster richColors closeButton />
-                  </EventsProvider>
-                </MusicProvider>
-              </SesionProvider>
-            </MotivationProvider>
-          </ObjetivosProvider>
-        </ProfilePicProvider>
-      </SessionProvider>
+                      <Toaster richColors closeButton />
+                    </EventsProvider>
+                  </MusicProvider>
+                </SesionProvider>
+              </MotivationProvider>
+            </ObjetivosProvider>
+          </ProfilePicProvider>
+        </SessionProvider>
+      </PostHogProvider>
     </ThemeProvider>
   )
 }
