@@ -54,7 +54,6 @@ function App() {
                     </Route>
 
                     <Route path='/brenda'>
-                      {/*@ts-expect-error ya se va ir de aca typescript */}
                       <ExperimentandoBrenda />
                     </Route>
 
