@@ -34,7 +34,6 @@ import Switchers from './ComponentesEspecifico/Switchers'
 import { profilePictures } from '@/constants/profilePictures'
 import { useProfilePic } from './contexts/ProfilePicContext'
 import { useEvents } from './contexts/EventsContext'
-
 //TODO: si no tiene una sesion abierta no se deberia poder personalizar, ni cambiar perfil
 
 const formSchema = z.object({
@@ -202,83 +201,91 @@ export default function Usuario() {
               <div className='items-center'>
                 <p className='flex items-center text-3xl font-semibold'>
                   {confirmedUsername}
-                  <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-                    <SheetTrigger asChild>
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        width='24'
-                        height='24'
-                        viewBox='0 0 24 24'
-                        fill='none'
-                        stroke='currentColor'
-                        strokeWidth='2'
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        className='lucide lucide-pencil ml-2 hover:cursor-pointer'
-                      >
-                        <path d='M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z' />
-                        <path d='m15 5 4 4' />
-                      </svg>
-                    </SheetTrigger>
-                    <SheetContent className='w-full sm:max-w-md'>
-                      <SheetHeader className='pb-7'>
-                        <SheetTitle className='text-2xl font-bold'>
-                          Modificar perfil
-                        </SheetTitle>
-                      </SheetHeader>
-                      {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-                      <form onSubmit={handleSubmit(handleConfirm)}>
-                        <ScrollArea className='h-[80vh] pr-4'>
-                          <SheetTitle className='text-lg font-semibold'>
-                            Datos del usuario
-                          </SheetTitle>
-                          <hr className='py-2' />
-                          <div className='grid gap-7'>
-                            <div className='grid gap-2 px-1'>
-                              <Label htmlFor='username' className='text-left'>
-                                Nombre de usuario
-                              </Label>
-                              <Input
-                                id='username'
-                                placeholder='Ingrese un nuevo nombre'
-                                {...register('username')}
-                                className='w-full dark:placeholder:text-gray-400'
-                              />
-                              {errors.username && (
-                                <p className='text-sm text-red-500'>
-                                  {errors.username.message}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                          <SheetTitle className='pt-4 text-lg font-semibold'>
-                            Foto de perfil
-                          </SheetTitle>
-                          <hr className='py-2' />
-                          <div className='flex h-[80vh] flex-col'>
-                            <div>
-                              <FotoSelector
-                                onSelect={handleProfilePictureSelect}
-                              />
-                            </div>
-                          </div>
-                        </ScrollArea>
-                        <SheetFooter className='mt-4 flex justify-end'>
-                          <SheetClose asChild>
-                            <Button
-                              type='submit'
-                              disabled={
-                                Object.keys(errors).length > 0 || !hasChanges
-                              }
-                              onClick={() => ''}
-                            >
-                              Confirmar
-                            </Button>
-                          </SheetClose>
-                        </SheetFooter>
-                      </form>
-                    </SheetContent>
-                  </Sheet>
+                  {session && (
+                    <div>
+                      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+                        <SheetTrigger asChild>
+                          <svg
+                            xmlns='http://www.w3.org/2000/svg'
+                            width='24'
+                            height='24'
+                            viewBox='0 0 24 24'
+                            fill='none'
+                            stroke='currentColor'
+                            strokeWidth='2'
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            className='lucide lucide-pencil ml-2 hover:cursor-pointer'
+                          >
+                            <path d='M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z' />
+                            <path d='m15 5 4 4' />
+                          </svg>
+                        </SheetTrigger>
+                        <SheetContent className='w-full sm:max-w-md'>
+                          <SheetHeader className='pb-7'>
+                            <SheetTitle className='text-2xl font-bold'>
+                              Modificar perfil
+                            </SheetTitle>
+                          </SheetHeader>
+                          {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+                          <form onSubmit={handleSubmit(handleConfirm)}>
+                            <ScrollArea className='h-[80vh] pr-4'>
+                              <SheetTitle className='text-lg font-semibold'>
+                                Datos del usuario
+                              </SheetTitle>
+                              <hr className='py-2' />
+                              <div className='grid gap-7'>
+                                <div className='grid gap-2 px-1'>
+                                  <Label
+                                    htmlFor='username'
+                                    className='text-left'
+                                  >
+                                    Nombre de usuario
+                                  </Label>
+                                  <Input
+                                    id='username'
+                                    placeholder='Ingrese un nuevo nombre'
+                                    {...register('username')}
+                                    className='w-full dark:placeholder:text-gray-400'
+                                  />
+                                  {errors.username && (
+                                    <p className='text-sm text-red-500'>
+                                      {errors.username.message}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                              <SheetTitle className='pt-4 text-lg font-semibold'>
+                                Foto de perfil
+                              </SheetTitle>
+                              <hr className='py-2' />
+                              <div className='flex h-[80vh] flex-col'>
+                                <div>
+                                  <FotoSelector
+                                    onSelect={handleProfilePictureSelect}
+                                  />
+                                </div>
+                              </div>
+                            </ScrollArea>
+                            <SheetFooter className='mt-4 flex justify-end'>
+                              <SheetClose asChild>
+                                <Button
+                                  type='submit'
+                                  disabled={
+                                    Object.keys(errors).length > 0 ||
+                                    !hasChanges
+                                  }
+                                  onClick={() => ''}
+                                >
+                                  Confirmar
+                                </Button>
+                              </SheetClose>
+                            </SheetFooter>
+                          </form>
+                        </SheetContent>
+                      </Sheet>
+                    </div>
+                  )}
                 </p>
               </div>
               <div className='m-2'>
