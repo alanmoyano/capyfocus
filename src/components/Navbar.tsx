@@ -9,6 +9,8 @@ import { Menu } from 'lucide-react'
 
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 
+import { useSession } from './contexts/SessionContext'
+
 import {
   // NavigationMenu,
   // NavigationMenuContent,
@@ -37,7 +39,7 @@ type NavbarLinkProps = {
 
 function NavbarLink({ to, children }: NavbarLinkProps) {
   // const isActive = useRoute(to)[0]
-
+  
   return (
     <Link className={navigationMenuTriggerStyle()} href={to}>
       {children}
@@ -71,10 +73,11 @@ function LogoLink() {
 }
 
 function NavItems() {
+  const { session } = useSession()
   return (
     <>
       <NavbarLink to='/'>Inicio</NavbarLink>
-
+{ session  && (
       <span className='relative inline-flex'>
         <NavbarLink to='/capyInsignias'>CapyInsiginas</NavbarLink>
         <span className='absolute right-0 top-0 -mr-1 -mt-1 flex h-3 w-3'>
@@ -82,6 +85,8 @@ function NavItems() {
           <span className='relative inline-flex h-3 w-3 rounded-full bg-secondary'></span>
         </span>
       </span>
+
+)}
 
       <NavbarLink to='/capyEstadisticas'>CapyEstadisticas</NavbarLink>
 
