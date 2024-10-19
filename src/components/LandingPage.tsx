@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Timer, Hourglass } from 'lucide-react'
 import { useLocation } from 'wouter'
 
-export default function ExperimentandoBrenda() {
+export default function LandingPage() {
   const [, setLocation] = useLocation()
 
   function handleNavigateInicio() {
@@ -13,15 +13,16 @@ export default function ExperimentandoBrenda() {
     setLocation('/login')
   }
   //TODO Agregar Esta pagina como landing page
+  //TODO hacer responsive
 //TODO agregar contenido en about us.
   return (
     <div>
       <div className='bg-white'>
         {/* Comienzo */}
-        <section className='my-10 bg-gradient-to-r from-blue-50 to-purple-50 p-10 text-center'>
+        <section className='py-12 bg-gradient-to-r from-yellow-50 to-purple-50 text-center'>
           <h1 className='mb-4 text-5xl font-extrabold text-gray-800'>
             Optimiza tu tiempo de estudio con{' '}
-            <span className='text-[#76aab4]'>CapyFocus</span>
+            <span className='text-[#f2b76a]'>CapyFocus</span>
           </h1>
           <p className='mb-6 text-2xl text-gray-700'>
             Capydoros y Capymetro, dos técnicas que te ayudarán a lograr tus
@@ -29,7 +30,7 @@ export default function ExperimentandoBrenda() {
           </p>
           <div className='flex items-center justify-around py-12'>
             <div className='max-w-md transform transition-transform duration-300 hover:scale-105'>
-              <h2 className='mb-2 text-3xl font-bold text-[#76aab4]'>
+              <h2 className='mb-2 text-3xl font-bold text-[#f2b76a]'>
                 <span className='flex items-center justify-center gap-4'>
                   <Timer />
                   Capydoro
@@ -41,7 +42,7 @@ export default function ExperimentandoBrenda() {
               </p>
             </div>
             <div className='max-w-md transform transition-transform duration-300 hover:scale-105'>
-              <h2 className='mb-2 text-3xl font-bold text-[#76aab4]'>
+              <h2 className='mb-2 text-3xl font-bold text-[#f2b76a]'>
                 <span className='flex items-center justify-center gap-4'>
                   <Hourglass />
                   Capymetro
@@ -76,9 +77,9 @@ export default function ExperimentandoBrenda() {
               Registrate
             </Button>
             <Button
-              className='rounded-lg bg-[#76aab4] p-8 text-xl text-white shadow-md transition-all duration-300 hover:shadow-lg'
+              className='rounded-lg bg-[#f2b76a] p-8 text-xl text-white shadow-md transition-all duration-300 hover:shadow-lg'
               onClick={handleNavigateInicio}
-              variant={'accent'}
+              
             >
               Empieza ahora
             </Button>
@@ -87,7 +88,7 @@ export default function ExperimentandoBrenda() {
 
         {/* Eventos y Estadisticas */}
 
-        <section className='bg-gradient-to-r from-blue-50 to-purple-50 py-10 text-center'>
+        <section className='bg-gradient-to-r from-yellow-50 to-purple-50 py-10 text-center'>
           <h2 className='mb-4 text-4xl font-bold text-gray-700'>
             Crea eventos y alcanza tus metas
           </h2>

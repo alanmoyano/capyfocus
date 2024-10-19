@@ -25,8 +25,13 @@ import { SessionProvider } from './components/contexts/SessionContext'
 import { EventsProvider } from './components/contexts/EventsContext'
 import { ProfilePicProvider } from './components/contexts/ProfilePicContext'
 import { PostHogProvider } from 'posthog-js/react'
+import LandingPage from './components/LandingPage'
+import { useLocation } from 'wouter'
 
 function App() {
+  const [location] = useLocation();
+
+
   return (
     <ThemeProvider defaultTheme='light' storageKey='theme'>
       <SpeedInsights />
@@ -45,7 +50,7 @@ function App() {
                 <SesionProvider>
                   <MusicProvider>
                     <EventsProvider>
-                      <Navbar />
+                      {location !== '/landing' && <Navbar />}
 
                       <Helmet>
                         <title>Capyfocus</title>
@@ -53,6 +58,9 @@ function App() {
 
                       <main>
                         <Switch>
+                        <Route path='/landing'>
+                            <LandingPage />
+                          </Route>
                           <Route path='/'>
                             <Inicio />
                           </Route>
