@@ -31,8 +31,8 @@ import { toast } from 'sonner'
 import { AuthError } from '@supabase/supabase-js'
 
 const formSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
+  email: z.string().email('El email no es válido'),
+  password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
 })
 
 export default function LoginForm() {
@@ -75,7 +75,9 @@ export default function LoginForm() {
 
         switch (error?.message) {
           case 'Email not confirmed':
-            return 'Debes confirmar tu email primero!'
+            return 'Debés confirmar tu email primero!'
+          case 'Invalid login credentials':
+            return 'Credenciales de inicio de sesión inválidas'
           default:
             return error?.message
         }

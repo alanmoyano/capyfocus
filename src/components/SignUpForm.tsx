@@ -59,7 +59,7 @@ const formSchema = z.object({
       required_error: 'El nombre es requerido',
     })
     .min(2, 'El nombre debe tener al menos 2 caracteres'),
-  email: z.string().email('El correo no es válido'),
+  email: z.string().email('El email no es válido'),
   birthdate: z
     .date()
     .min(new Date(now.getFullYear() - 100))
