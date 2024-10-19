@@ -250,9 +250,6 @@ export default function Inicio() {
 
   useEffect(() => {
     setSelectedMusic(null)
-    setObjetivos([])
-    setTiempo({})
-    setTiempoSesion({})
   }, [])
 
   useEffect(() => {

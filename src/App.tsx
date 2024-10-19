@@ -22,6 +22,7 @@ import Prueba from './components/Prueba'
 import { Toaster } from '@/components/ui/sonner'
 import ExperimentandoBrenda from './components/ExperimentandoBrenda'
 import { SessionProvider } from './components/contexts/SessionContext'
+import {EventsProvider} from './components/contexts/EventsContext'
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <MotivationProvider>
             <SesionProvider>
               <MusicProvider>
+                <EventsProvider>
                 <Navbar />
 
                 <Helmet>
@@ -75,6 +77,7 @@ function App() {
                 </main>
 
                 <Toaster richColors closeButton />
+                </EventsProvider>
               </MusicProvider>
             </SesionProvider>
           </MotivationProvider>

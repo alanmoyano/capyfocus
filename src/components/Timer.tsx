@@ -161,6 +161,8 @@ export default function Timer() {
       setTiempoTotal(0)
       setCantidadPausas(0)
       setSessionStart(true)
+      setTiempo({})
+      setTiempoSesion({})
     }
     setObjetivosPend(objetivos)
     startStudy()

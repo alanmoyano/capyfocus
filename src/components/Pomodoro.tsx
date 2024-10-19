@@ -230,6 +230,8 @@ export default function Pomodoro() {
       setTiempoTotal(0)
       setCantidadPausas(0)
       setSessionStart(true)
+      setTiempo({})
+      setTiempoSesion({})
     }
     setIsSetted(prev => !prev)
     setIsActive(prev => !prev)

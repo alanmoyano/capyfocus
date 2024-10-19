@@ -27,8 +27,9 @@ import { useState, KeyboardEvent } from 'react'
 import { useLocation } from 'wouter'
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
+import {useMotivation} from '../contexts/EventsContext'
 
-type Event = {
+export type Event = {
   date: Date
   title: string
 }
@@ -100,7 +101,7 @@ const createGoogleCalendarLink = (name: string, date: Date) => {
 export default function Eventos() {
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [, setLocation] = useLocation()
-  const [events, setEvents] = useState<Event[]>([]) //todos los eventos
+  const {events, setEvents} = useEvents() //todos los eventos
   const [eventTitle, setEventTitle] = useState<string>('') //el titulos del evento
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null) //el evento seleccionado
   const { session } = useSession()
