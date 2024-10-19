@@ -6,8 +6,6 @@ import Reproductor from './ComponentesEspecifico/Reproductor'
 import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
 
 export default function Login() {
-
-
   return (
     <section className='mt-4 flex h-full w-[80vw] items-center justify-center rounded-[10rem] bg-secondary/60 p-4 text-current md:h-[90vh] dark:bg-secondary/85'>
       <div className='xl:gap-30 flex flex-col p-10 sm:gap-10 md:flex-row lg:gap-20 2xl:gap-40'>
@@ -22,7 +20,6 @@ export default function Login() {
             <div className='flex justify-end'>
               <span className='flex items-center'>
                 <CapyInfo desc='Un invitado es un usuario que no se ha registrado en la plataforma, por lo que no podrá acceder a todas las funcionalidades de la misma. ¡Regístrate para disfrutar de todos los beneficios!' />
-
               </span>
             </div>
           </div>
