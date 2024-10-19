@@ -14,12 +14,12 @@ export default function LandingPage() {
   }
   //TODO Agregar Esta pagina como landing page
   //TODO hacer responsive
-//TODO agregar contenido en about us.
+  //TODO agregar contenido en about us.
   return (
     <div>
       <div className='bg-white'>
         {/* Comienzo */}
-        <section className='py-12 bg-gradient-to-r from-yellow-50 to-purple-50 text-center'>
+        <section className='bg-gradient-to-r from-yellow-50 to-purple-50 py-12 text-center'>
           <h1 className='mb-4 text-5xl font-extrabold text-gray-800'>
             Optimiza tu tiempo de estudio con{' '}
             <span className='text-[#f2b76a]'>CapyFocus</span>
@@ -55,7 +55,7 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
- {/* Botones */}
+        {/* Botones */}
         <section className='py-8'>
           <p className='text-center text-2xl font-semibold text-gray-800'>
             ¡El momento es ahora! ¿Listo para tomar el control de tu tiempo de
@@ -79,14 +79,13 @@ export default function LandingPage() {
             <Button
               className='rounded-lg bg-[#f2b76a] p-8 text-xl text-white shadow-md transition-all duration-300 hover:shadow-lg'
               onClick={handleNavigateInicio}
-              
             >
               Empieza ahora
             </Button>
           </span>
         </section>
 
-        {/* Eventos y Estadisticas */}
+        {/* Eventos y Estadisticas e Insgignias!  */}
 
         <section className='bg-gradient-to-r from-yellow-50 to-purple-50 py-10 text-center'>
           <h2 className='mb-4 text-4xl font-bold text-gray-700'>
@@ -100,11 +99,11 @@ export default function LandingPage() {
             específicos para estar siempre en control de tu progreso.
           </p>
           <div className='flex justify-center space-x-6'>
-            <div className='max-w-sm transform rounded-lg bg-accent/60 p-6 shadow-xl transition duration-300 hover:scale-105'>
+            <div className='max-w-sm transform rounded-lg bg-accent/60 p-1 shadow-xl transition duration-300 hover:scale-105'>
               <img
                 src='/FotosLanding/eventos2.png'
                 alt='Eventos'
-                className='mx-auto mb-6 h-40 w-full rounded-lg object-cover'
+                className='mx-auto mb-6 h-44 w-full rounded-lg object-cover'
               />
               <h3 className='mb-4 text-2xl font-semibold text-gray-700'>
                 Organiza tus exámenes
@@ -114,11 +113,11 @@ export default function LandingPage() {
                 objetivos personalizados.
               </p>
             </div>
-            <div className='max-w-sm transform rounded-lg bg-accent/60 p-6 shadow-xl transition duration-300 hover:scale-105'>
+            <div className='max-w-sm transform rounded-lg bg-accent/60 p-1 shadow-xl transition duration-300 hover:scale-105'>
               <img
                 src='/FotosLanding/estadisticas.png'
                 alt='Objetivos'
-                className='mx-auto mb-6 h-40 w-full rounded-lg object-cover'
+                className='mx-auto mb-6 h-44 w-full rounded-lg object-cover'
               />
               <h3 className='mb-4 text-2xl font-semibold text-gray-700'>
                 Sigue tu progreso
@@ -128,26 +127,26 @@ export default function LandingPage() {
                 real.
               </p>
             </div>
-            <div className='max-w-sm transform rounded-lg bg-accent/60 p-6 shadow-xl transition duration-300 hover:scale-105'>
+            <div className='max-w-sm transform rounded-lg bg-accent/60 p-1 shadow-xl transition duration-300 hover:scale-105'>
               <img
                 src='\FotosLanding\CapyInsignias.png'
                 alt='Insignia 1'
-                className='mx-auto mb-6 h-40 w-full rounded-lg object-cover'
+                className='mx-auto mb-6 h-44 w-full rounded-lg object-cover'
               />
               <h3 className='mb-4 text-2xl font-semibold text-gray-700'>
                 Desbloquea CapyInsignias
               </h3>
-              <p className='text-lg text-gray-600'>
+              <p className='text-lg mb-8 text-gray-600'>
                 A medida que avances en tus estudios, irás desbloqueando
                 insignias que representan tu progreso.
               </p>
             </div>
           </div>
         </section>
-{/* Chicho! */}
-        <section className='my-16  flex items-center justify-center'>
+        {/* Chicho! */}
+        <section className='my-16 flex items-center justify-center'>
           {/* Columna 1 */}
-          <div className='w-2/3 text-left ml-16'>
+          <div className='ml-16 w-2/3 text-left'>
             <p className='text-2xl font-semibold text-gray-800'>
               ¡Chicho te ayudara a mantenerte enfocado!
             </p>
@@ -163,7 +162,7 @@ export default function LandingPage() {
           </div>
 
           {/* Columna 2 */}
-          <div className='w-1/3 flex text-center'>
+          <div className='flex w-1/3 text-center'>
             <img
               src='\Chicho\OtrasAcciones\CapyOk.gif'
               alt='Chicho'
@@ -171,8 +170,8 @@ export default function LandingPage() {
             />
           </div>
         </section>
-  
-          {/* Sobre Nosotros */}
+
+        {/* Sobre Nosotros */}
         <section className='bg-gradient-to-r from-blue-50 to-purple-50 py-12'>
           <div className='mx-auto max-w-7xl text-center'>
             <h2 className='mb-6 text-3xl font-bold'>Sobre Nosotros</h2>
