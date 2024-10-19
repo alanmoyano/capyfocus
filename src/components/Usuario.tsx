@@ -32,7 +32,7 @@ import { supabase } from './supabase/client'
 import { useSession } from './contexts/SessionContext'
 import Switchers from './ComponentesEspecifico/Switchers'
 
-//TODO: si no tiene  sesion abierta no se deberia poder personalizar, ni cambiar perfil 
+//TODO: si no tiene  sesion abierta no se deberia poder personalizar, ni cambiar perfil
 
 const formSchema = z.object({
   username: z
@@ -247,14 +247,14 @@ export default function Usuario() {
                 <p className='text-lg font-normal'>{currentEmail}</p>
               </div>
               <div className='w-full'>
-                <h3 className='mt-8 text-left text-xl font-bold select-none'>
+                <h3 className='mt-8 select-none text-left text-xl font-bold'>
                   Personalizar
                 </h3>
                 {/* Switch: */}
                 <Switchers />
               </div>
             </CardContent>
-            <CardFooter className='mt-auto flex justify-end select-none'>
+            <CardFooter className='mt-auto flex select-none justify-end'>
               <div className='space-x-4'>
                 <Button
                   variant={'destructive'}

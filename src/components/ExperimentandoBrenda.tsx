@@ -2,7 +2,6 @@ import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import { formatTime } from '@/lib/utils'
 import Switchers from './ComponentesEspecifico/Switchers'
 
-
 type Mode = 'Estudiando' | 'Descansando'
 export default function ExperimentandoBrenda({
   studyTime,
@@ -15,8 +14,6 @@ export default function ExperimentandoBrenda({
   mode: Mode
   play: boolean
 }) {
-
-
   return (
     <div>
       {mode === 'Estudiando' ? (
@@ -64,7 +61,6 @@ export default function ExperimentandoBrenda({
       )}
 
       <Switchers />
-
     </div>
   )
 }

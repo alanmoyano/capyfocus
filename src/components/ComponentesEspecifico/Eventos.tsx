@@ -25,10 +25,49 @@ import { es } from 'date-fns/locale'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useState, KeyboardEvent } from 'react'
 import { useLocation } from 'wouter'
+import { supabase } from '../supabase/client'
+import { useSession } from '../contexts/SessionContext'
 
 type Event = {
   date: Date
   title: string
+}
+
+type EventToSave = {
+  nombre: string
+  uuid: string
+  fechaLimite: Date
+}
+
+async function saveEvent(name: string, uuid: string, limitDate: Date) {
+  const eventToSave: EventToSave = {
+    nombre: name,
+    uuid: uuid,
+    fechaLimite: limitDate,
+  }
+  const { data, error } = await supabase.from('Eventos').insert([
+    {
+      nombre: eventToSave.nombre,
+      idUsuario: eventToSave.uuid,
+      fechaLimite: eventToSave.fechaLimite,
+    },
+  ])
+}
+
+async function deleteEvent(date: Date, name: string) {
+  const { data, error } = await supabase
+    .from('Eventos')
+    .delete()
+    .eq('nombre', name)
+    .eq('fechaLimite', formatDateDash(date))
+}
+
+const formatDateDash = (date: Date) => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
 }
 
 const formatDate = (date: Date) => {
@@ -63,6 +102,7 @@ export default function Eventos() {
   const [events, setEvents] = useState<Event[]>([]) //todos los eventos
   const [eventTitle, setEventTitle] = useState<string>('') //el titulos del evento
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null) //el evento seleccionado
+  const { session } = useSession()
 
   const handleVolver = () => {
     setLocation('/')
@@ -84,10 +124,32 @@ export default function Eventos() {
       if (googleCalendar) {
         window.open(createGoogleCalendarLink(eventTitle, date))
       }
+      if (session) {
+        saveEvent(eventTitle, session.user.id, date)
+          .then(() => console.log('Evento guardado correctamente'))
+          .catch((error: unknown) => console.log(error))
+      } else {
+        toast.error('ADVERTENCIA', {
+          description:
+            'Si no tienes sesion iniciada tu evento se borrará de la pagina',
+        })
+      }
     } else {
       toast.error('No se ha podido crear el evento:', {
         description: 'Por favor, ingresa un título para el evento.',
       })
+    }
+  }
+
+  const handleDelete = (event: Event, index: number) => {
+    setEvents(events.filter((_, i) => i !== index))
+    if (selectedEvent === event) {
+      setSelectedEvent(null)
+    }
+    if (session) {
+      deleteEvent(event.date, event.title)
+        .then(() => console.log('Evento borrado con exito'))
+        .catch((error: unknown) => console.log('Ocurrio un error', error))
     }
   }
 
@@ -260,10 +322,7 @@ export default function Eventos() {
                         variant='ghost'
                         size='sm'
                         onClick={() => {
-                          setEvents(events.filter((_, i) => i !== index))
-                          if (selectedEvent === event) {
-                            setSelectedEvent(null)
-                          }
+                          handleDelete(event, index)
                         }}
                       >
                         <Trash size={16} />

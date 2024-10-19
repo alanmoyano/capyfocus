@@ -45,7 +45,7 @@ import { supabase } from './supabase/client'
 import { toast } from 'sonner'
 
 //TODO: Colocar Toast de usuario ya registrado
-//TODO: revisar que un usuario este registrardo 
+//TODO: revisar que un usuario este registrardo
 //TODO: Dar nagevabilidad a la pagina de usuario.
 //TODO: Agregar boton para ir a la pagina de inicio sin registrarse.
 //TODO: Cambiar boton de color rojo letras blancas.
@@ -84,13 +84,12 @@ function SignupForm() {
   useEffect(() => {
     if (registrado) {
       toast.error('CapyError', {
-        description:
-          'El mail ya esta registrado con una CapyCuenta'
+        description: 'El mail ya esta registrado con una CapyCuenta',
       })
     }
-    },[registrado]) 
+  }, [registrado])
 
-  function handleRegistrado(){
+  function handleRegistrado() {
     setRegistrado(true)
   }
 
@@ -314,7 +313,12 @@ function SignupForm() {
         </Form>
       </CardContent>
       <CardFooter>
-        <Button className='w-1/2' form='signUp' type='submit' onClick={handleRegistrado}>
+        <Button
+          className='w-1/2'
+          form='signUp'
+          type='submit'
+          onClick={handleRegistrado}
+        >
           Guardar
         </Button>
       </CardFooter>

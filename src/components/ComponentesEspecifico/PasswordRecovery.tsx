@@ -13,7 +13,6 @@ import { Label } from '@/components/ui/label'
 
 //TODO agregar pasos para recuperar contraseña y enviar mail
 
-
 export default function PasswordRecovery() {
   return (
     <>
