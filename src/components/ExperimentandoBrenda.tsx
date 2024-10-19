@@ -19,23 +19,23 @@ import Reproductor from './ComponentesEspecifico/Reproductor'
 export default function ExperimentandoBrenda() {
   const [step, setStep] = useState(1)
   const [isLast, setIsLast] = useState(false)
-  const [nuevaContraseñaSeteada, setNuevaContraseñaSeteada] = useState(false)
+  const [nuevaContraseñaSeteada, ] = useState(false)
 
-  const handleNuevaContraseñaSeteada = () => {
+  /*   const handleNuevaContraseñaSeteada = () => {
     setNuevaContraseñaSeteada(true)
   }
-
+ */
   const handleNext = () => {
     if (step < 3) {
       setStep(step + 1)
     }
   }
 
-  const handleBack = () => {
+  /*   const handleBack = () => {
     if (step > 1) {
       setStep(step - 1)
     }
-  }
+  } */
   const StepIndicator = ({
     step,
     currentStep,
@@ -128,9 +128,12 @@ export default function ExperimentandoBrenda() {
         ) : (
           <div>
             <h2 className='mb-4 text-xl font-bold'>Ups, hubo un error!</h2>
-            <p className='mb-4'>Tu contraseña no se pudo reestablecer con éxito, por favor vuelve a intentarlo.</p>
+            <p className='mb-4'>
+              Tu contraseña no se pudo reestablecer con éxito, por favor vuelve
+              a intentarlo.
+            </p>
             <div className='h-1/2'>
-            <Reproductor src='/Chicho/CapyDesilucionado.webm' />
+              <Reproductor src='/Chicho/CapyDesilucionado.webm' />
             </div>
           </div>
         )}
