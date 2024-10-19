@@ -27,9 +27,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { supabase } from './supabase/client'
 import { useSession } from './contexts/SessionContext'
 import { useLocation } from 'wouter'
+import { toast } from 'sonner'
+import { AuthError } from '@supabase/supabase-js'
 
 const formSchema = z.object({
-  email: z.string().min(2),
+  email: z.string().email(),
   password: z.string().min(8),
 })
 
@@ -56,15 +58,29 @@ export default function LoginForm() {
         email: values.email,
         password: values.password,
       })
-      if (error) console.error(error)
-      if (data.session) setSession(data.session)
+      if (error) throw error
+
+      setSession(data.session)
       console.log(data)
     }
-    logIn()
-      .then(() => setLocation('/usuario'))
-      .catch((error: unknown) => {
+
+    toast.promise(logIn, {
+      loading: 'Iniciando sesión...',
+      success: () => {
+        setLocation('/usuario')
+        return 'Sesión iniciada correctamente'
+      },
+      error: (error: AuthError | null) => {
         console.error(error)
-      })
+
+        switch (error?.message) {
+          case 'Email not confirmed':
+            return 'Debes confirmar tu email primero!'
+          default:
+            return error?.message
+        }
+      },
+    })
   }
 
   return (
