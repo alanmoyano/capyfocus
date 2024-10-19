@@ -138,27 +138,29 @@ export default function Eventos() {
   }
 
   const recoverEvents = () => {
-    if (events.length === 0) {
-      gatherEventsOfUser(session?.user.id)
-        .then(data =>
-          data?.forEach(evento => {
-            if (evento) {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-              const fechaParsed = evento.fechaLimite.replaceAll(
-                '-',
-                '/'
-              ) as string
+    if (session) {
+      if (events.length === 0) {
+        gatherEventsOfUser(session.user.id)
+          .then(data =>
+            data?.forEach(evento => {
+              if (evento) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+                const fechaParsed = evento.fechaLimite.replaceAll(
+                  '-',
+                  '/'
+                ) as string
 
-              const date = new Date(fechaParsed)
+                const date = new Date(fechaParsed)
 
-              const title = evento.nombre as string
+                const title = evento.nombre as string
 
-              console.log(date, title)
-              setEvents(prev => [...prev, { date, title: title }])
-            }
-          })
-        )
-        .catch((error: unknown) => console.log(error))
+                console.log(date, title)
+                setEvents(prev => [...prev, { date, title: title }])
+              }
+            })
+          )
+          .catch((error: unknown) => console.log(error))
+      }
     }
   }
 

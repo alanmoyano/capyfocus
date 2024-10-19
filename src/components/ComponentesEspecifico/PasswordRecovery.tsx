@@ -27,8 +27,6 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-
-
 const formSchema = z.object({
   email: z.string().email('El email no es válido'),
   password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
@@ -91,7 +89,7 @@ export default function PasswordRecovery() {
       password: '',
     },
   })
-  function onSubmit(){
+  function onSubmit() {
     console.log('submit') //TODO agregar validacion de mail
   }
 
