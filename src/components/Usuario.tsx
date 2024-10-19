@@ -173,6 +173,9 @@ export default function Usuario() {
                 <AvatarFallback className='border border-accent-foreground bg-accent text-4xl font-medium'>
                   {confirmedUsername
                     .split(' ')
+                    .filter(
+                      palabra => palabra.at(0)?.toUpperCase() === palabra.at(0)
+                    )
                     .map(palabra => palabra.at(0)?.toUpperCase())
                     .join('')
                     .slice(0, 2)}
