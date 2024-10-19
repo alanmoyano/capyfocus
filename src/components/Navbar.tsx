@@ -28,6 +28,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
+import { useProfilePic } from './contexts/ProfilePicContext'
 
 type NavbarLinkProps = {
   to: string
@@ -45,12 +46,13 @@ function NavbarLink({ to, children }: NavbarLinkProps) {
 }
 
 function AvatarLink() {
+  const { profilePic } = useProfilePic()
   return (
     <Link to='/usuario'>
       <Avatar className='mx-auto'>
-        <AvatarImage src='./FotoPerfil/CapyBoss.jpg' className='' />
+        <AvatarImage src={profilePic} className='' />
         <AvatarFallback className='border border-accent-foreground bg-accent text-4xl font-medium'>
-          CN
+          C
         </AvatarFallback>
       </Avatar>
     </Link>

@@ -31,6 +31,8 @@ import ChichoHablaPerfil from './ComponentesEspecifico/ChichoHablaPerfil'
 import { supabase } from './supabase/client'
 import { useSession } from './contexts/SessionContext'
 import Switchers from './ComponentesEspecifico/Switchers'
+import { profilePictures } from '@/constants/profilePictures'
+import { useProfilePic } from './contexts/ProfilePicContext'
 
 //TODO: si no tiene una sesion abierta no se deberia poder personalizar, ni cambiar perfil
 
@@ -56,7 +58,8 @@ export default function Usuario() {
 
   // que los default sean los anteriores, ver cuando este la DB
   const [currentUsername, setCurrentUsername] = useState(
-    () => (user?.user_metadata.name as string | undefined) ?? 'Invitado de Chicho'
+    () =>
+      (user?.user_metadata.name as string | undefined) ?? 'Invitado de Chicho'
   )
   const [currentEmail, setCurrentEmail] = useState(
     () => user?.email ?? 'invchicho@cmail.capy'
@@ -94,7 +97,15 @@ export default function Usuario() {
       .catch((error: unknown) => console.error(error))
 
     if (selectedPicture) {
+      console.log(user?.id)
       setConfirmedPicture(selectedPicture)
+      supabase
+        .from('Usuarios')
+        .update({ fotoPerfil: profilePictures.indexOf(selectedPicture) })
+        .eq('id', user?.id)
+        .then(res => {
+          console.log(res)
+        })
     }
     setSheetOpen(false)
   }
@@ -121,6 +132,23 @@ export default function Usuario() {
     setSelectedPicture(picture)
   }
 
+  const { profilePic, setProfilePic } = useProfilePic()
+
+  function getProfilePicture() {
+    supabase
+      .from('Usuarios')
+      .select('fotoPerfil')
+      .eq('id', user?.id)
+      .then(({ data }) => {
+        if (!data) return
+        const fotoSrc = profilePictures[data[0].fotoPerfil as number]
+        setConfirmedPicture(fotoSrc)
+        setProfilePic(fotoSrc)
+      })
+
+    return profilePic
+  }
+
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyDatos!</h1>
@@ -135,7 +163,10 @@ export default function Usuario() {
           <Card className='flex h-full w-full flex-col bg-secondary shadow-md dark:bg-secondary/80'>
             <CardHeader className='text-center'>
               <Avatar className='mx-auto h-40 w-40'>
-                <AvatarImage src={confirmedPicture} className='h-full w-full' />
+                <AvatarImage
+                  src={getProfilePicture()}
+                  className='h-full w-full'
+                />
                 <AvatarFallback className='border border-accent-foreground bg-accent text-4xl font-medium'>
                   {confirmedUsername
                     .split(' ')
@@ -233,6 +264,7 @@ export default function Usuario() {
                               disabled={
                                 Object.keys(errors).length > 0 || !hasChanges
                               }
+                              onClick={() => ''}
                             >
                               Confirmar
                             </Button>
