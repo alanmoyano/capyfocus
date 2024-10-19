@@ -40,9 +40,10 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { es } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { supabase } from './supabase/client'
 import { toast } from 'sonner'
+import { AuthError } from '@supabase/supabase-js'
 
 //TODO: Colocar Toast de usuario ya registrado
 //TODO: revisar que un usuario este registrardo
@@ -78,20 +79,6 @@ function SignupForm() {
   const [year, setYear] = useState<number>(now.getFullYear() - 10)
   const [isOpen, setIsOpen] = useState(false)
   const [verContraseña, setVerContraseña] = useState(false)
-  const [registrado, setRegistrado] = useState(false)
-
-  //Verificar si el usuario ya esta registrado
-  useEffect(() => {
-    if (registrado) {
-      toast.error('CapyError', {
-        description: 'El mail ya esta registrado con una CapyCuenta',
-      })
-    }
-  }, [registrado])
-
-  function handleRegistrado() {
-    setRegistrado(true)
-  }
 
   const handlePassword = () => {
     setVerContraseña(!verContraseña)
@@ -120,10 +107,22 @@ function SignupForm() {
         },
       })
       console.log(data)
-      if (error) console.error(error)
+      if (error) throw error
     }
-    signUp().catch((error: unknown) => {
-      console.error(error)
+    toast.promise(signUp, {
+      loading: 'Registrando...',
+      success: 'Usuario registrado correctamente',
+      error: (error: AuthError | null) => {
+        console.error(error)
+
+        if (error?.message === 'User already registered')
+          return 'Usuario ya registrado'
+
+        if (error?.name === 'AuthWeakPasswordError')
+          return 'La contraseña debe tener al menos 1 minúscula, 1 mayúscula, 1 número y 1 símbolo'
+
+        return 'Error al registrar el usuario'
+      },
     })
   }
 
@@ -313,12 +312,7 @@ function SignupForm() {
         </Form>
       </CardContent>
       <CardFooter>
-        <Button
-          className='w-1/2'
-          form='signUp'
-          type='submit'
-          onClick={handleRegistrado}
-        >
+        <Button className='w-1/2' form='signUp' type='submit'>
           Guardar
         </Button>
       </CardFooter>

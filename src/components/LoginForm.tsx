@@ -79,7 +79,7 @@ export default function LoginForm() {
           case 'Invalid login credentials':
             return 'Credenciales de inicio de sesión inválidas'
           default:
-            return error?.message
+            return 'Error al iniciar sesión'
         }
       },
     })
