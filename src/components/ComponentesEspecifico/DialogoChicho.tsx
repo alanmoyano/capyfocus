@@ -78,7 +78,7 @@ export default function DialogoChicho({ motivation }: { motivation?: string }) {
     <>
       {dialogos.length > 0 && (
         <div className='flex w-full justify-end'>
-          <div className='relative max-w-xs rounded-xl border-[2px] border-gray-800 bg-gray-100 p-6 text-gray-800 shadow-md'>
+          <div className='relative min-w-56 max-w-xs rounded-xl border-[2px] border-gray-800 bg-gray-100 p-6 text-center text-gray-800 shadow-md'>
             <p>{dialogo}</p>
             <div className='absolute bottom-[-10px] translate-x-[150px] transform'>
               <div className='absolute'>

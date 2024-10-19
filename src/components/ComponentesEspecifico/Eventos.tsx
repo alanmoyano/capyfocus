@@ -54,12 +54,13 @@ async function saveEvent(name: string, uuid: string, limitDate: Date) {
   ])
 }
 
-async function deleteEvent(date: Date, name: string) {
+async function deleteEvent(date: Date, name: string, uuid: string) {
   const { data, error } = await supabase
     .from('Eventos')
     .delete()
     .eq('nombre', name)
     .eq('fechaLimite', formatDateDash(date))
+    .eq('idUsuario', uuid)
 }
 
 const formatDateDash = (date: Date) => {
@@ -147,7 +148,7 @@ export default function Eventos() {
       setSelectedEvent(null)
     }
     if (session) {
-      deleteEvent(event.date, event.title)
+      deleteEvent(event.date, event.title, session.user.id)
         .then(() => console.log('Evento borrado con exito'))
         .catch((error: unknown) => console.log('Ocurrio un error', error))
     }
