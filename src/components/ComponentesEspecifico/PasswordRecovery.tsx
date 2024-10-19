@@ -27,7 +27,7 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-//TODO agregar Form a recuperar contraseña
+
 
 const formSchema = z.object({
   email: z.string().email('El email no es válido'),
@@ -200,7 +200,7 @@ export default function PasswordRecovery() {
           <DialogHeader>
             <DialogTitle>Recuperar contraseña</DialogTitle>
             <DialogDescription>
-              Para recuperar la contraseña sigue los siguientes pasos.
+              Para recuperar la contraseña sigue los siguientes pasos:
             </DialogDescription>
           </DialogHeader>
 

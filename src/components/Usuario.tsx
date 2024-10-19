@@ -32,7 +32,7 @@ import { supabase } from './supabase/client'
 import { useSession } from './contexts/SessionContext'
 import Switchers from './ComponentesEspecifico/Switchers'
 
-//TODO: si no tiene  sesion abierta no se deberia poder personalizar, ni cambiar perfil
+//TODO: si no tiene una sesion abierta no se deberia poder personalizar, ni cambiar perfil
 
 const formSchema = z.object({
   username: z
@@ -56,10 +56,10 @@ export default function Usuario() {
 
   // que los default sean los anteriores, ver cuando este la DB
   const [currentUsername, setCurrentUsername] = useState(
-    () => (user?.user_metadata.name as string | undefined) ?? 'Chicho'
+    () => (user?.user_metadata.name as string | undefined) ?? 'Invitado de Chicho'
   )
   const [currentEmail, setCurrentEmail] = useState(
-    () => user?.email ?? 'chicho@capymail.com'
+    () => user?.email ?? 'invchicho@cmail.capy'
   )
 
   supabase.auth

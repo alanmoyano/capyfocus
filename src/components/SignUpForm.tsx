@@ -45,12 +45,11 @@ import { supabase } from './supabase/client'
 import { toast } from 'sonner'
 import { AuthError } from '@supabase/supabase-js'
 
-//TODO: Colocar Toast de usuario ya registrado
-//TODO: revisar que un usuario este registrardo
-//TODO: Dar nagevabilidad a la pagina de usuario.
+
+
 //TODO: Agregar boton para ir a la pagina de inicio sin registrarse.
-//TODO: Cambiar boton de color rojo letras blancas.
-//TODO: Verificar si el usuario no esta registrado
+//Agregar las cosas que puede ver y las cosas que no si es usuario y si es invitado
+
 
 const now = new Date()
 
@@ -116,7 +115,7 @@ function SignupForm() {
         console.error(error)
 
         if (error?.message === 'User already registered')
-          return 'Usuario ya registrado'
+          return 'El mail que esta utilizando ya esta vinculado a una cuenta'
 
         if (error?.name === 'AuthWeakPasswordError')
           return 'La contraseña debe tener al menos 1 minúscula, 1 mayúscula, 1 número y 1 símbolo'
