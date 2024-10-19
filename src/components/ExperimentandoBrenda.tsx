@@ -133,7 +133,7 @@ export default function ExperimentandoBrenda() {
               a intentarlo.
             </p>
             <div className='h-1/2'>
-              <Reproductor src='/Chicho/CapyDesilucionado.webm' />
+              <Reproductor src='/Chicho/OtrasAcciones/CapyDesilucionado.webm' className='mx-auto h-[100px] w-[100px]' />
             </div>
           </div>
         )}

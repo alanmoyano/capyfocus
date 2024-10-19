@@ -9,7 +9,7 @@ export default function NotFound() {
       <h1 className='mt-4 text-4xl font-semibold'>
         Lo sentimos la página no ha sido encontrada
       </h1>
-      <Reproductor src='/Chicho/CapyDesilucionado.webm' />
+      <Reproductor src='/Chicho/OtrasAcciones/CapyDesilucionado.webm' />
       <div className='w-1/2 content-center justify-center rounded-lg bg-red-600 p-8 text-white shadow-lg dark:bg-red-500'>
         <p>
           Lo sentimos! La pagina que buscas no existe. Por favor, verifica la
