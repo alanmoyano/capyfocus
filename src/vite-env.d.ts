@@ -7,6 +7,7 @@ interface ImportMetaEnv {
   readonly VITE_SUPABASE_ANON_KEY: string
   readonly VITE_POSTHOG_KEY: string
   readonly VITE_POSTHOG_HOST: string
+  readonly VITE_POSTHOG_API_URL: string
 }
 
 interface ImportMeta {

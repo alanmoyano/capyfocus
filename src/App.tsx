@@ -32,7 +32,10 @@ function App() {
       <SpeedInsights />
       <Analytics />
       <PostHogProvider
-        options={{ api_host: import.meta.env.VITE_POSTHOG_HOST }}
+        options={{
+          api_host: import.meta.env.VITE_POSTHOG_API_URL,
+          ui_host: import.meta.env.VITE_POSTHOG_HOST,
+        }}
         apiKey={import.meta.env.VITE_POSTHOG_KEY}
       >
         <SessionProvider>
