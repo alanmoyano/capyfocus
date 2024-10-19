@@ -2,16 +2,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import LoginForm from './LoginForm'
 import SignupForm from './SignUpForm'
 import Reproductor from './ComponentesEspecifico/Reproductor'
-import { Button } from '@/components/ui/button'
-import { useLocation } from 'wouter'
-import { Info } from 'lucide-react'
+
 import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
 
 export default function Login() {
-  const [, setLocation] = useLocation()
-  function handleNavigate() {
-    setLocation('/')
-  }
+
 
   return (
     <section className='mt-4 flex h-full w-[80vw] items-center justify-center rounded-[10rem] bg-secondary/60 p-4 text-current md:h-[90vh] dark:bg-secondary/85'>
@@ -27,9 +22,7 @@ export default function Login() {
             <div className='flex justify-end'>
               <span className='flex items-center'>
                 <CapyInfo desc='Un invitado es un usuario que no se ha registrado en la plataforma, por lo que no podrá acceder a todas las funcionalidades de la misma. ¡Regístrate para disfrutar de todos los beneficios!' />
-                <Button onClick={handleNavigate} className='px-6'>
-                  Invitado
-                </Button>
+
               </span>
             </div>
           </div>
