@@ -127,6 +127,18 @@ type ObjectiveToAdd = {
   idUsuario: string
 }
 
+type ObjectiveRecovered = {
+  descripcion: string
+  created_at: string
+  idUsuario: string
+  id: number
+  horaInicioObjetivo: string
+  horaFinObjetivo: string
+  idEstado: number
+  idEvento: number
+  horasAcumuladas: number
+}
+
 async function gatherUserPendingObjectives(uuid: string) {
   const { data, error } = await supabase
     .from('ObjetivosFavoritos')
@@ -175,6 +187,7 @@ export default function Inicio() {
   const [index, setIndex] = useState<number | null>(null)
   const [selectedPlaylist, setSelectedPlaylist] = useState(-1)
   const { session } = useSession()
+  const [objectivesRecovered, setObjectivesRecovered] = useState(false)
 
   const {
     objetivos,
@@ -183,6 +196,7 @@ export default function Inicio() {
     setObjetivosFav,
     setTiempo,
     setTiempoSesion,
+    setTiempoFavorito,
   } = useObjetivos()
 
   const [description, setDescription] = useState<CapyMetodos>()
@@ -203,10 +217,21 @@ export default function Inicio() {
   const [motivaciones, setMotivaciones] = useState<Motivacion[]>([])
 
   const recoverObjectives = () => {
-    if (session) {
-      gatherUserPendingObjectives(session.user.id).then(data =>
-        data?.forEach(objetivo => {})
-      )
+    if (session && !objectivesRecovered) {
+      setObjectivesRecovered(true)
+      gatherUserPendingObjectives(session.user.id)
+        .then(data =>
+          data?.forEach((objetivo: ObjectiveRecovered) => {
+            setTiempoFavorito(prev => ({
+              ...prev,
+              [objetivo.descripcion]: objetivo.horasAcumuladas,
+            }))
+            setObjetivosFav(prev => [...prev, objetivo.descripcion])
+          })
+        )
+        .catch((error: unknown) => {
+          console.log('Ocurrio un error recuperando los objetivos', error)
+        })
     }
   }
 
