@@ -20,6 +20,7 @@ import { dateToTimetz } from '@/constants/supportFunctions'
 
 //import Confetti from 'react-confetti-boom'
 
+//TODO: arreglar tema de animaciones
 type Mode = 'Sesión' | 'Descanso'
 type Accion = 'Estudiar' | 'Descansar'
 
@@ -49,14 +50,14 @@ async function acumulateHoursInFavouriteObj(
   if (error) console.log(error)
   else console.log(data)
 }
-
 export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
   return (
-    <>
-      <h2 className='text-xl font-semibold'>{mode}</h2>
-
-      <span className='text-lg'>Tiempo: {formatTime(time)}</span>
-    </>
+    <div className='select-none'>
+      <h2 className='text-xl font-semibold'>{mode}:</h2>
+      <div className='mt-4 text-center'>
+        <span className='text-5xl font-bold'>{formatTime(time)}</span>
+      </div>
+    </div>
   )
 }
 
@@ -303,15 +304,14 @@ export default function Timer() {
 
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
         {/* Columna 1:  */}
-        <div className='col-span-1 p-4'>
+        <div className='col-span-1 p-2'>
           {/* <AnimacionChicho2 motivation={motivationType} /> */}
           <DialogoChicho motivation={motivationType} />
-          <AnimacionChicho motivation={motivationType} />
-
-          <div className='mb-4 rounded-lg bg-primary p-2'>
-            Tu tipo de motivación es:{' '}
-            <span className='font-semibold'>{motivationType}</span>
+          <div className='relative flex h-full max-h-[450px]  w-full min-w-[450px] max-w-[450px] items-center justify-center overflow-hidden'>
+             <AnimacionChicho motivation={motivationType} /> 
           </div>
+
+
           <div>
             {selectedMusic && (
               <iframe
@@ -330,6 +330,9 @@ export default function Timer() {
 
         {/* Columna 2:*/}
         <div className='col-span-1'>
+        <div className='mb-4 w-7/12 rounded-lg bg-accent p-2 mt-4'>
+            Motivación: <span className='font-semibold'>{motivationType}</span>
+          </div>
           {/* Contadores */}
           <div className='mt-6 flex w-full flex-col items-center justify-center gap-2 text-black sm:flex-row'>
             <div className='mb-2 w-full rounded-xl bg-accent/90 p-6 sm:mb-0 sm:mr-2'>
@@ -339,6 +342,7 @@ export default function Timer() {
               <ActualTimer mode={'Descanso'} time={breakTime} />
             </div>
           </div>
+          
           <div className='mt-8 sm:mt-16'>
             <div className='flex justify-center'>
               <ToggleGroup
@@ -366,7 +370,7 @@ export default function Timer() {
             </div>
           </div>
           <div className='mt-8 rounded-xl bg-primary/90 p-4'>
-            <h1 className='text-xl'>Objetivos de la sesión</h1>
+            <h1 className='text-xl mb-2 font-semibold'>Objetivos de la sesión</h1>
             <ul className='list-inside list-disc space-y-2 text-black'>
               {objetivos.map((objetivo, key) => (
                 <li key={key} className='flex items-center space-x-2'>
@@ -388,6 +392,9 @@ export default function Timer() {
             </ul>
           </div>
           <div className='mt-6 flex flex-col items-center justify-between sm:flex-row'>
+            <Button className='w-full sm:w-auto' onClick={handleAccept}>
+              Volver
+            </Button>
             <Button
               className='mb-2 w-full sm:mb-0 sm:w-auto'
               variant={'destructive'}
@@ -395,10 +402,7 @@ export default function Timer() {
                 finalizarSesion()
               }}
             >
-              Finalizar Sesion
-            </Button>
-            <Button className='w-full sm:w-auto' onClick={handleAccept}>
-              Volver
+              Finalizar sesión
             </Button>
           </div>
         </div>
