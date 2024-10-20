@@ -437,6 +437,7 @@ export default function Inicio() {
                     aria-expanded={open}
                     className='justify-between'
                     disabled={objetivos.length >= 10}
+                    onClick={() => {recoverObjectives()}}
                   >
                     {value ? (
                       objetivosFav.find(objetivoFav => objetivoFav === value)
@@ -482,7 +483,6 @@ export default function Inicio() {
                   </Command>
                 </PopoverContent>
               </Popover>
-              <Button onClick={() => recoverObjectives()}>Pruebas</Button>
             </div>
             <div className='mt-4'>
               <ul className='list-inside list-disc space-y-2 text-base text-black'>
