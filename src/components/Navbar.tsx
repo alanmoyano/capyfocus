@@ -9,6 +9,8 @@ import { Menu } from 'lucide-react'
 
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 
+import { useSession } from './contexts/SessionContext'
+
 import {
   // NavigationMenu,
   // NavigationMenuContent,
@@ -28,6 +30,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
+import { useProfilePic } from './contexts/ProfilePicContext'
 
 type NavbarLinkProps = {
   to: string
@@ -45,12 +48,13 @@ function NavbarLink({ to, children }: NavbarLinkProps) {
 }
 
 function AvatarLink() {
+  const { profilePic } = useProfilePic()
   return (
     <Link to='/usuario'>
       <Avatar className='mx-auto'>
-        <AvatarImage src='./FotoPerfil/CapyBoss.jpg' className='' />
-        <AvatarFallback className='border border-accent-foreground bg-accent text-4xl font-medium'>
-          CN
+        <AvatarImage src={profilePic} className='' />
+        <AvatarFallback className='border border-accent-foreground bg-accent text-xl font-medium'>
+          C
         </AvatarFallback>
       </Avatar>
     </Link>
@@ -69,17 +73,19 @@ function LogoLink() {
 }
 
 function NavItems() {
+  const { session } = useSession()
   return (
     <>
       <NavbarLink to='/'>Inicio</NavbarLink>
-
-      <span className='relative inline-flex'>
-        <NavbarLink to='/capyInsignias'>CapyInsiginas</NavbarLink>
-        <span className='absolute right-0 top-0 -mr-1 -mt-1 flex h-3 w-3'>
-          <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-secondary opacity-75'></span>
-          <span className='relative inline-flex h-3 w-3 rounded-full bg-secondary'></span>
+      {session && (
+        <span className='relative inline-flex'>
+          <NavbarLink to='/capyInsignias'>CapyInsiginas</NavbarLink>
+          <span className='absolute right-0 top-0 -mr-1 -mt-1 flex h-3 w-3'>
+            <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-secondary opacity-75'></span>
+            <span className='relative inline-flex h-3 w-3 rounded-full bg-secondary'></span>
+          </span>
         </span>
-      </span>
+      )}
 
       <NavbarLink to='/capyEstadisticas'>CapyEstadisticas</NavbarLink>
 

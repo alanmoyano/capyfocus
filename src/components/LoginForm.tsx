@@ -27,10 +27,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { supabase } from './supabase/client'
 import { useSession } from './contexts/SessionContext'
 import { useLocation } from 'wouter'
+import { toast } from 'sonner'
+import { AuthError } from '@supabase/supabase-js'
 
 const formSchema = z.object({
-  email: z.string().min(2),
-  password: z.string().min(8),
+  email: z.string().email('El email no es válido'),
+  password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
 })
 
 export default function LoginForm() {
@@ -56,15 +58,31 @@ export default function LoginForm() {
         email: values.email,
         password: values.password,
       })
-      if (error) console.error(error)
-      if (data.session) setSession(data.session)
+      if (error) throw error
+
+      setSession(data.session)
       console.log(data)
     }
-    logIn()
-      .then(() => setLocation('/usuario'))
-      .catch((error: unknown) => {
+
+    toast.promise(logIn, {
+      loading: 'Iniciando sesión...',
+      success: () => {
+        setLocation('/usuario')
+        return 'Sesión iniciada correctamente'
+      },
+      error: (error: AuthError | null) => {
         console.error(error)
-      })
+
+        switch (error?.message) {
+          case 'Email not confirmed':
+            return 'Debés confirmar tu email primero!'
+          case 'Invalid login credentials':
+            return 'Credenciales de inicio de sesión inválidas'
+          default:
+            return 'Error al iniciar sesión'
+        }
+      },
+    })
   }
 
   return (
@@ -72,7 +90,7 @@ export default function LoginForm() {
       <CardHeader>
         <CardTitle>Inicie Sesión</CardTitle>
         <CardDescription>
-          Bienvenido de vuelta, ingresa tus datos para iniciar sesión.
+          Te damos la CapyBienvenida, ingresa tus datos para iniciar sesión.
         </CardDescription>
       </CardHeader>
       <CardContent className='space-y-2'>
@@ -132,15 +150,16 @@ export default function LoginForm() {
           </form>
         </Form>
         <Label>¿Olvidaste tu contraseña?</Label>
-        {/* <Button variant={'link'} className='border-none text-sm font-normal'>
-          Recuperar
-        </Button> */}
         <PasswordRecovery />
       </CardContent>
       <CardFooter>
-        <Button className='w-1/2' form='login' type='submit'>
-          Iniciar
-        </Button>
+        <div className='w-full'>
+          <div className='flex justify-end'>
+            <Button className='w-1/2' form='login' type='submit'>
+              Iniciar
+            </Button>
+          </div>
+        </div>
       </CardFooter>
     </Card>
   )

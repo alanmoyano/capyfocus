@@ -5,6 +5,8 @@ import { useLocation } from 'wouter'
 import Eventos from './ComponentesEspecifico/Eventos'
 import { toast } from 'sonner'
 
+import { useSession } from './contexts/SessionContext'
+
 import {
   Edit3,
   Hourglass,
@@ -73,7 +75,7 @@ import { supabase } from './supabase/client'
 import { Helmet } from 'react-helmet'
 
 import Reproductor from './ComponentesEspecifico/Reproductor'
-import CapyInfo from './ComponentesEspecifico/CapyInfo'
+import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
 
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
@@ -124,6 +126,7 @@ export default function Inicio() {
   const [inputValue, setInputValue] = useState('')
   const [index, setIndex] = useState<number | null>(null)
   const [selectedPlaylist, setSelectedPlaylist] = useState(-1)
+  const { session } = useSession()
 
   const {
     objetivos,
@@ -249,13 +252,6 @@ export default function Inicio() {
   }
 
   useEffect(() => {
-    setSelectedMusic(null)
-    setObjetivos([])
-    setTiempo({})
-    setTiempoSesion({})
-  }, [])
-
-  useEffect(() => {
     async function getMotivaciones() {
       const { data } = await supabase.from('TiposMotivacion').select('*')
       return data
@@ -313,12 +309,14 @@ export default function Inicio() {
             </ToggleGroupItem>
           </ToggleGroup>
           {/* Agregar evento  */}
+          { session && (
           <div className='flex h-auto w-1/2 items-center space-x-4'>
             <Eventos />
             <div className='mt-6'>
               <CapyInfo desc='Organiza tus sesiones de estudio con eventos y objetivos. Selecciona el evento, haz clic en "Aceptar", añade los objetivos de la sesión y ¡Controla tu progreso en las CapyEstadísticas!' />
             </div>
           </div>
+          )}
 
           {/* Objetivos */}
           <div className='mt-4 rounded-xl bg-secondary/70 p-4 dark:bg-secondary/90'>

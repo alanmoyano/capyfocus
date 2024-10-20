@@ -42,6 +42,10 @@ import { es } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
 import { supabase } from './supabase/client'
+import { toast } from 'sonner'
+import { AuthError } from '@supabase/supabase-js'
+
+//Agregar las cosas que puede ver y las cosas que no si es usuario y si es invitado
 
 const now = new Date()
 
@@ -51,7 +55,7 @@ const formSchema = z.object({
       required_error: 'El nombre es requerido',
     })
     .min(2, 'El nombre debe tener al menos 2 caracteres'),
-  email: z.string().email('El correo no es válido'),
+  email: z.string().email('El email no es válido'),
   birthdate: z
     .date()
     .min(new Date(now.getFullYear() - 100))
@@ -98,10 +102,22 @@ function SignupForm() {
         },
       })
       console.log(data)
-      if (error) console.error(error)
+      if (error) throw error
     }
-    signUp().catch((error: unknown) => {
-      console.error(error)
+    toast.promise(signUp, {
+      loading: 'Registrando...',
+      success: 'Usuario registrado correctamente',
+      error: (error: AuthError | null) => {
+        console.error(error)
+
+        if (error?.message === 'User already registered')
+          return 'El mail que esta utilizando ya esta vinculado a una cuenta'
+
+        if (error?.name === 'AuthWeakPasswordError')
+          return 'La contraseña debe tener al menos 1 minúscula, 1 mayúscula, 1 número y 1 símbolo'
+
+        return 'Error al registrar el usuario'
+      },
     })
   }
 

@@ -57,6 +57,7 @@ import { useSesion } from '@contexts/SesionContext'
 import { formatTime } from '@/lib/utils'
 import useSearchParams from '@hooks/useSearchParams'
 import Reproductor from './ComponentesEspecifico/Reproductor'
+import { useSession } from './contexts/SessionContext'
 
 // const chartData = [
 //   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -127,6 +128,7 @@ export default function CapyEstadisticas() {
   const queryParams = useSearch()
   const { period } = useSearchParams()
   const [selectedPeriod, setSelectedPeriod] = useState(period ?? '')
+  const { session } = useSession()
 
   console.log(queryParams)
 
@@ -134,7 +136,14 @@ export default function CapyEstadisticas() {
     setSelectedPeriod(value)
   }
 
-  const { objetivos, objetivosPend, tiempo, tiempoSesion } = useObjetivos()
+  const {
+    objetivos,
+    objetivosPend,
+    tiempo,
+    tiempoSesion,
+    objetivosFav,
+    tiempoFavorito,
+  } = useObjetivos()
   const { motivationType } = useMotivation()
   const { selectedMusic } = useMusic()
   const [date, setDate] = useState<Date | undefined>(new Date())
@@ -194,70 +203,74 @@ export default function CapyEstadisticas() {
                 </TooltipProvider>
               </SelectItem>
 
-              <SelectItem key={1} value='semanal'>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <p>Semana</p>
-                    </TooltipTrigger>
-                    <TooltipContent className='ml-40'>
-                      <p>Estadísticas de la última semana</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </SelectItem>
+              {session && (
+                <>
+                  <SelectItem key={1} value='semanal'>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <p>Semana</p>
+                        </TooltipTrigger>
+                        <TooltipContent className='ml-40'>
+                          <p>Estadísticas de la última semana</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </SelectItem>
 
-              <SelectItem key={2} value='mensual'>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <p>Mensual</p>
-                    </TooltipTrigger>
-                    <TooltipContent className='ml-40'>
-                      <p>Estadísticas del último mes</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </SelectItem>
+                  <SelectItem key={2} value='mensual'>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <p>Mensual</p>
+                        </TooltipTrigger>
+                        <TooltipContent className='ml-40'>
+                          <p>Estadísticas del último mes</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </SelectItem>
 
-              <SelectItem key={3} value='bimestral'>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <p>Bimestral</p>
-                    </TooltipTrigger>
-                    <TooltipContent className='ml-40'>
-                      <p>Estadísticas de los últimos dos meses</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </SelectItem>
+                  <SelectItem key={3} value='bimestral'>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <p>Bimestral</p>
+                        </TooltipTrigger>
+                        <TooltipContent className='ml-40'>
+                          <p>Estadísticas de los últimos dos meses</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </SelectItem>
 
-              <SelectItem key={4} value='semestral'>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <p>6 Meses</p>
-                    </TooltipTrigger>
-                    <TooltipContent className='ml-40'>
-                      <p>Estadísticas de los últimos seis meses</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </SelectItem>
+                  <SelectItem key={4} value='semestral'>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <p>6 Meses</p>
+                        </TooltipTrigger>
+                        <TooltipContent className='ml-40'>
+                          <p>Estadísticas de los últimos seis meses</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </SelectItem>
 
-              <SelectItem key={5} value='evento'>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <p>Evento</p>
-                    </TooltipTrigger>
-                    <TooltipContent className='ml-40'>
-                      <p>Estadísticas de un evento específico</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </SelectItem>
+                  <SelectItem key={5} value='evento'>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <p>Evento</p>
+                        </TooltipTrigger>
+                        <TooltipContent className='ml-40'>
+                          <p>Estadísticas de un evento específico</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </SelectItem>
+                </>
+              )}
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -270,7 +283,7 @@ export default function CapyEstadisticas() {
       {/* Pagina de sesion */}
       {selectedPeriod === 'sesion' && tiempoTotal === 0 && (
         <>
-          <Reproductor src='/Chicho/CapyDesilucionado.webm' />
+          <Reproductor src='/Chicho/OtrasAcciones/CapyDesilucionado.webm' />
           <div className='flex w-1/2 content-center justify-center rounded-lg bg-red-700 p-8 text-white shadow-lg'>
             <p>
               Primero inicia una sesión para tener estadísticas de la sesión!!
@@ -447,7 +460,10 @@ export default function CapyEstadisticas() {
                       <TableHead>Estado</TableHead>
                       <TableHead className='text-right'>Tiempo</TableHead>
                       <TableHead className='text-right'>
-                        Tiempo acumulado
+                        Tiempo Acumulado Favorito
+                      </TableHead>
+                      <TableHead className='text-right'>
+                        Tiempo Cumplido en sesion
                       </TableHead>
                     </TableRow>
                   </TableHeader>
@@ -472,7 +488,14 @@ export default function CapyEstadisticas() {
                           {formatTime(tiempo[objetivo] || 0)}
                         </TableCell>
                         <TableCell className='text-right'>
-                          {formatTime(tiempoSesion[objetivo] || 0)}
+                          {objetivosFav.includes(objetivo) ? (
+                            <>{formatTime(tiempoFavorito[objetivo] || 0)}</>
+                          ) : (
+                            <>--|--</>
+                          )}
+                        </TableCell>
+                        <TableCell className='text-right'>
+                          <>{formatTime(tiempoSesion[objetivo] || 0)}</>
                         </TableCell>
                       </TableRow>
                     ))}

@@ -23,12 +23,80 @@ import { Calendar } from '@/components/ui/calendar'
 import { es } from 'date-fns/locale'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useState, KeyboardEvent } from 'react'
+import { useState, KeyboardEvent, useEffect } from 'react'
 import { useLocation } from 'wouter'
+import { supabase } from '../supabase/client'
+import { useSession } from '../contexts/SessionContext'
+import { useEvents } from '../contexts/EventsContext'
 
-type Event = {
+export type Event = {
   date: Date
   title: string
+}
+
+type EventToSave = {
+  nombre: string
+  uuid: string
+  fechaLimite: Date
+}
+
+type EventAddContext = 'New' | 'Existing'
+
+async function saveEvent(name: string, uuid: string, limitDate: Date) {
+  const eventToSave: EventToSave = {
+    nombre: name,
+    uuid: uuid,
+    fechaLimite: limitDate,
+  }
+  const { data, error } = await supabase.from('Eventos').insert([
+    {
+      nombre: eventToSave.nombre,
+      idUsuario: eventToSave.uuid,
+      fechaLimite: eventToSave.fechaLimite,
+    },
+  ])
+}
+
+async function deleteEvent(date: Date, name: string, uuid: string) {
+  const { data, error } = await supabase
+    .from('Eventos')
+    .delete()
+    .eq('nombre', name)
+    .eq('fechaLimite', formatDateDash(date))
+    .eq('idUsuario', uuid)
+}
+
+async function gatherEventsOfUser(uuid: string, date?: Date) {
+  if (date) {
+    const { data, error } = await supabase
+      .from('Eventos')
+      .select()
+      .eq('idUsuario', uuid)
+      .gt('fechaLimite', formatDateSlash(date))
+    return data
+  } else {
+    const { data, error } = await supabase
+      .from('Eventos')
+      .select()
+      .eq('idUsuario', uuid)
+    return data
+  }
+}
+
+const formatDateSlash = (date: Date) => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${year}/${month}/${day}`
+}
+
+const formatDateDash = (date: Date) => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
 }
 
 const formatDate = (date: Date) => {
@@ -60,15 +128,43 @@ const createGoogleCalendarLink = (name: string, date: Date) => {
 export default function Eventos() {
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [, setLocation] = useLocation()
-  const [events, setEvents] = useState<Event[]>([]) //todos los eventos
+  const { events, setEvents } = useEvents() //todos los eventos
   const [eventTitle, setEventTitle] = useState<string>('') //el titulos del evento
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null) //el evento seleccionado
+  const { session } = useSession()
 
   const handleVolver = () => {
     setLocation('/')
   }
 
-  const addEvent = (googleCalendar: boolean) => {
+  const recoverEvents = () => {
+    if (session) {
+      if (events.length === 0) {
+        gatherEventsOfUser(session.user.id)
+          .then(data =>
+            data?.forEach(evento => {
+              if (evento) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+                const fechaParsed = evento.fechaLimite.replaceAll(
+                  '-',
+                  '/'
+                ) as string
+
+                const date = new Date(fechaParsed)
+
+                const title = evento.nombre as string
+
+                console.log(date, title)
+                setEvents(prev => [...prev, { date, title: title }])
+              }
+            })
+          )
+          .catch((error: unknown) => console.log(error))
+      }
+    }
+  }
+
+  const addEvent = (googleCalendar: boolean, context: EventAddContext) => {
     if (date && eventTitle) {
       const dateString = date.toLocaleDateString('es-ES', {
         weekday: 'long',
@@ -77,12 +173,24 @@ export default function Eventos() {
       })
 
       setEvents([...events, { date, title: eventTitle }])
-      toast.success('Se ha creado el evento:', {
-        description: '"' + eventTitle + '"' + ' en el dia: ' + dateString,
-      })
       setEventTitle('') // Limpiar el título después de añadir el evento
-      if (googleCalendar) {
-        window.open(createGoogleCalendarLink(eventTitle, date))
+      if (context === 'New') {
+        toast.success('Se ha creado el evento:', {
+          description: '"' + eventTitle + '"' + ' en el dia: ' + dateString,
+        })
+        if (googleCalendar) {
+          window.open(createGoogleCalendarLink(eventTitle, date))
+        }
+        if (session) {
+          saveEvent(eventTitle, session.user.id, date)
+            .then(() => console.log('Evento guardado correctamente'))
+            .catch((error: unknown) => console.log(error))
+        } else {
+          toast.error('ADVERTENCIA', {
+            description:
+              'Si no tienes sesion iniciada tu evento se borrará de la pagina',
+          })
+        }
       }
     } else {
       toast.error('No se ha podido crear el evento:', {
@@ -91,9 +199,21 @@ export default function Eventos() {
     }
   }
 
+  const handleDelete = (event: Event, index: number) => {
+    setEvents(events.filter((_, i) => i !== index))
+    if (selectedEvent === event) {
+      setSelectedEvent(null)
+    }
+    if (session) {
+      deleteEvent(event.date, event.title, session.user.id)
+        .then(() => console.log('Evento borrado con exito'))
+        .catch((error: unknown) => console.log('Ocurrio un error', error))
+    }
+  }
+
   const handleAdd = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key == 'Enter' && eventTitle.trim() != '' && date) {
-      addEvent(false)
+      addEvent(false, 'New')
     }
   }
 
@@ -103,6 +223,7 @@ export default function Eventos() {
         <Button
           variant='secondary'
           className='mt-6 w-full bg-secondary sm:w-auto'
+          onClick={recoverEvents}
         >
           Eventos
         </Button>
@@ -207,7 +328,7 @@ export default function Eventos() {
               <div className='mt-4'>
                 <Button
                   onClick={() => {
-                    addEvent(false)
+                    addEvent(false, 'New')
                   }}
                   variant={'accent'}
                   className='w-full sm:w-auto'
@@ -216,7 +337,7 @@ export default function Eventos() {
                 </Button>
                 <Button
                   onClick={() => {
-                    addEvent(true)
+                    addEvent(true, 'New')
                   }}
                   variant={'accent'}
                   className='ml-2 w-full sm:w-auto'
@@ -260,10 +381,7 @@ export default function Eventos() {
                         variant='ghost'
                         size='sm'
                         onClick={() => {
-                          setEvents(events.filter((_, i) => i !== index))
-                          if (selectedEvent === event) {
-                            setSelectedEvent(null)
-                          }
+                          handleDelete(event, index)
                         }}
                       >
                         <Trash size={16} />

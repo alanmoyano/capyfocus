@@ -64,8 +64,6 @@ export default function AnimacionChicho({
     getAnimacion()
   }, [motivacion])
 
-  console.log(motivacion)
-
   function getAnimacion() {
     //Esto si o si va primero!
     if (intervalIdRef.current !== null) {
@@ -88,8 +86,6 @@ export default function AnimacionChicho({
       }
     }
   }
-
-  console.log(`./Chicho/Negativo/Capy${animation}.gif`)
 
   return (
     <>

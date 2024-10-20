@@ -3,6 +3,8 @@ import LoginForm from './LoginForm'
 import SignupForm from './SignUpForm'
 import Reproductor from './ComponentesEspecifico/Reproductor'
 
+import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
+
 export default function Login() {
   return (
     <section className='mt-4 flex h-full w-[80vw] items-center justify-center rounded-[10rem] bg-secondary/60 p-4 text-current md:h-[90vh] dark:bg-secondary/85'>
@@ -13,10 +15,16 @@ export default function Login() {
             className='aspect-[366/301] h-auto w-full object-contain'
           />
         </div>
-
         <div className='m-auto w-full max-w-[400px] px-4 sm:px-0'>
+          <div className='w-full'>
+            <div className='flex justify-end'>
+              <span className='flex items-center'>
+                <CapyInfo desc='Un invitado es un usuario que no se ha registrado en la plataforma, por lo que no podrá acceder a todas las funcionalidades de la misma. ¡Regístrate para disfrutar de todos los beneficios!' />
+              </span>
+            </div>
+          </div>
           <div className='mb-4 mt-2'>
-            <Tabs defaultValue='signUp' className='w-full'>
+            <Tabs defaultValue='login' className='w-full'>
               <TabsList className='grid w-full grid-cols-2'>
                 <TabsTrigger value='login'>Ingrese</TabsTrigger>
                 <TabsTrigger value='signUp'>Registrarse</TabsTrigger>

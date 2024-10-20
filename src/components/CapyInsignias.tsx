@@ -4,9 +4,8 @@ import { useLocation } from 'wouter'
 import CapyInsigniasCards from '@/components/ComponentesEspecifico/ComponenteInsignias'
 import { useEffect, useState } from 'react'
 import { supabase } from './supabase/client'
-import { Info } from 'lucide-react'
-import { toast } from 'sonner'
-import CapyInfo from './ComponentesEspecifico/CapyInfo'
+
+import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
 
 type Insignia = {
   id: string
