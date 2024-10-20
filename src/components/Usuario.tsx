@@ -48,8 +48,8 @@ type FormValues = z.infer<typeof formSchema>
 
 export default function Usuario() {
   const [, setLocation] = useLocation()
-  const { setEvents } = useEvents()
-  const {setObjetivosFav} = useObjetivos()
+  const { setEvents, setSelectedEvent } = useEvents()
+  const { setObjetivosFav } = useObjetivos()
 
   const { session } = useSession()
   const user = session?.user
@@ -58,6 +58,7 @@ export default function Usuario() {
     supabase.auth.signOut().catch((error: unknown) => console.error(error))
     setEvents([])
     setObjetivosFav([])
+    setSelectedEvent(null)
     setLocation('/login')
   }
 

@@ -28,10 +28,15 @@ import { useLocation } from 'wouter'
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
 import { useEvents } from '../contexts/EventsContext'
+import {
+  formatDateDash,
+  formatDateSlash,
+} from '../../constants/supportFunctions'
 
 export type Event = {
   date: Date
   title: string
+  hoursAcumulated?: number
 }
 
 type EventToSave = {
@@ -83,22 +88,6 @@ async function gatherEventsOfUser(uuid: string, date?: Date) {
   }
 }
 
-const formatDateSlash = (date: Date) => {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-
-  return `${year}/${month}/${day}`
-}
-
-const formatDateDash = (date: Date) => {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-
-  return `${year}-${month}-${day}`
-}
-
 const formatDate = (date: Date) => {
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
@@ -128,9 +117,8 @@ const createGoogleCalendarLink = (name: string, date: Date) => {
 export default function Eventos() {
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [, setLocation] = useLocation()
-  const { events, setEvents } = useEvents() //todos los eventos
+  const { events, setEvents, selectedEvent, setSelectedEvent } = useEvents() //todos los eventos
   const [eventTitle, setEventTitle] = useState<string>('') //el titulos del evento
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null) //el evento seleccionado
   const { session } = useSession()
 
   const handleVolver = () => {
@@ -154,8 +142,13 @@ export default function Eventos() {
 
                 const title = evento.nombre as string
 
+                const hours = evento.horasAcumuladas as number
+
                 console.log(date, title)
-                setEvents(prev => [...prev, { date, title: title }])
+                setEvents(prev => [
+                  ...prev,
+                  { date, title: title, hoursAcumulated: hours },
+                ])
               }
             })
           )

@@ -303,10 +303,9 @@ export default function Pomodoro() {
         <div className='col-span-1 p-4'>
           <div className='mt-4 px-4'>
             <DialogoChicho motivation={motivationType} />
-            <div className='relative flex h-full max-h-[450px]  w-full min-w-[450px] max-w-[450px] items-center justify-center overflow-hidden'>
-            <AnimacionChicho motivation={motivationType} />
+            <div className='relative flex h-full max-h-[450px] w-full min-w-[450px] max-w-[450px] items-center justify-center overflow-hidden'>
+              <AnimacionChicho motivation={motivationType} />
             </div>
-
           </div>
           <div className='w-full'>
             {selectedMusic && (
@@ -322,7 +321,7 @@ export default function Pomodoro() {
         </div>
         {/* Columna 2  */}
         <div className='col-span-1'>
-        <div className='mb-4 w-7/12 rounded-lg bg-accent p-2 mt-4'>
+          <div className='mb-4 mt-4 w-7/12 rounded-lg bg-accent p-2'>
             Motivación: <span className='font-semibold'>{motivationType}</span>
           </div>
           {/* Seteadores de tiempo */}
@@ -464,7 +463,9 @@ export default function Pomodoro() {
           </div>
           {/* Objetivos: */}
           <div className='mt-4 rounded-xl bg-accent/90 p-4'>
-            <h1 className='text-xl font-semibold mb-2'>Objetivos de la sesión:</h1>
+            <h1 className='mb-2 text-xl font-semibold'>
+              Objetivos de la sesión:
+            </h1>
             <ul className='list-inside list-disc space-y-2 text-black'>
               {objetivos.map((objetivo, key) => (
                 <li key={key} className='flex items-center space-x-2'>

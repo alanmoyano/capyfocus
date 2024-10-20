@@ -76,7 +76,7 @@ import { Helmet } from 'react-helmet'
 
 import Reproductor from './ComponentesEspecifico/Reproductor'
 import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
-import { dateToTimetz } from '../constants/supportFunctions'
+import { useEvents } from './contexts/EventsContext'
 
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
@@ -188,6 +188,7 @@ export default function Inicio() {
   const [selectedPlaylist, setSelectedPlaylist] = useState(-1)
   const { session } = useSession()
   const [objectivesRecovered, setObjectivesRecovered] = useState(false)
+  const { selectedEvent } = useEvents()
 
   const {
     objetivos,
@@ -418,7 +419,9 @@ export default function Inicio() {
           {/* Objetivos */}
           <div className='mt-4 rounded-xl bg-secondary/70 p-4 dark:bg-secondary/90'>
             {/* Aca si eligio sesion o evento va a ir */}
-            <label htmlFor=''>Objetivos de sesion o evento:</label>
+            <label htmlFor=''>
+              Objetivos de sesion o evento: {selectedEvent?.title}
+            </label>
             <div className='mt-2 flex items-center gap-2'>
               <Input
                 type='text'
@@ -437,7 +440,9 @@ export default function Inicio() {
                     aria-expanded={open}
                     className='justify-between'
                     disabled={objetivos.length >= 10}
-                    onClick={() => {recoverObjectives()}}
+                    onClick={() => {
+                      recoverObjectives()
+                    }}
                   >
                     {value ? (
                       objetivosFav.find(objetivoFav => objetivoFav === value)
