@@ -34,6 +34,7 @@ import Switchers from './ComponentesEspecifico/Switchers'
 import { profilePictures } from '@/constants/profilePictures'
 import { useProfilePic } from './contexts/ProfilePicContext'
 import { useEvents } from './contexts/EventsContext'
+import { useObjetivos } from './contexts/ObjetivosContext'
 //TODO: si no tiene una sesion abierta no se deberia poder personalizar, ni cambiar perfil
 
 const formSchema = z.object({
@@ -48,6 +49,7 @@ type FormValues = z.infer<typeof formSchema>
 export default function Usuario() {
   const [, setLocation] = useLocation()
   const { setEvents } = useEvents()
+  const {setObjetivosFav} = useObjetivos()
 
   const { session } = useSession()
   const user = session?.user
@@ -55,6 +57,7 @@ export default function Usuario() {
   const handleLogin = () => {
     supabase.auth.signOut().catch((error: unknown) => console.error(error))
     setEvents([])
+    setObjetivosFav([])
     setLocation('/login')
   }
 
