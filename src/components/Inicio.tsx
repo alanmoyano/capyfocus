@@ -76,6 +76,7 @@ import { Helmet } from 'react-helmet'
 
 import Reproductor from './ComponentesEspecifico/Reproductor'
 import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
+import { dateToTimetz } from '../constants/supportFunctions'
 
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
@@ -118,6 +119,43 @@ type Motivacion = {
   id: number
   nombre: string
   descripcion?: string
+}
+
+type ObjectiveToAdd = {
+  descripcion: string
+  created_at: string
+  idUsuario: string
+}
+
+async function persistFavoriteObjective(
+  name: string,
+  fechaCreado: Date,
+  uuid: string
+) {
+  const objectiveToAdd: ObjectiveToAdd = {
+    descripcion: name,
+    created_at: fechaCreado.toISOString(),
+    idUsuario: uuid,
+  }
+  const { data, error } = await supabase.from('ObjetivosFavoritos').insert([
+    {
+      descripcion: objectiveToAdd.descripcion,
+      created_at: objectiveToAdd.created_at,
+      idUsuario: objectiveToAdd.idUsuario,
+      idEstado: 1,
+    },
+  ])
+}
+
+async function deletePersistedObjective(nombre: string, uuid: string) {
+  const { data, error } = await supabase
+    .from('ObjetivosFavoritos')
+    .update({ idEstado: 2 })
+    .eq('descripcion', nombre)
+    .eq('idUsuario', uuid)
+
+  if (data) console.log(data)
+  else console.log(error)
 }
 
 export default function Inicio() {
@@ -180,8 +218,6 @@ export default function Inicio() {
   }
 
   const handleSelect = (value: string) => {
-    console.log(value)
-
     setMotivationType(value)
   }
 
@@ -230,8 +266,27 @@ export default function Inicio() {
       setObjetivosFav(
         objetivosFav.filter(objetivoFav => objetivoFav !== objetivo)
       )
+      if (session) {
+        deletePersistedObjective(objetivo, session.user.id)
+          .then(() => {
+            console.log('Objetivo completado, felicitaciones')
+          })
+          .catch((error: unknown) => {
+            console.log('Ocurrio un error', error)
+          })
+      }
     } else {
       setObjetivosFav([...objetivosFav, objetivo])
+      if (session) {
+        const hoy = new Date()
+        persistFavoriteObjective(objetivo, hoy, session.user.id)
+          .then(() => {
+            console.log('Objetivo persistido correctamente')
+          })
+          .catch((error: unknown) => {
+            console.log('Ocurrio un error: ', error)
+          })
+      }
     }
   }
 
@@ -261,7 +316,6 @@ export default function Inicio() {
       .then(data => {
         if (!data) return
 
-        console.log(data)
         setMotivaciones(data)
       })
 
@@ -309,13 +363,13 @@ export default function Inicio() {
             </ToggleGroupItem>
           </ToggleGroup>
           {/* Agregar evento  */}
-          { session && (
-          <div className='flex h-auto w-1/2 items-center space-x-4'>
-            <Eventos />
-            <div className='mt-6'>
-              <CapyInfo desc='Organiza tus sesiones de estudio con eventos y objetivos. Selecciona el evento, haz clic en "Aceptar", añade los objetivos de la sesión y ¡Controla tu progreso en las CapyEstadísticas!' />
+          {session && (
+            <div className='flex h-auto w-1/2 items-center space-x-4'>
+              <Eventos />
+              <div className='mt-6'>
+                <CapyInfo desc='Organiza tus sesiones de estudio con eventos y objetivos. Selecciona el evento, haz clic en "Aceptar", añade los objetivos de la sesión y ¡Controla tu progreso en las CapyEstadísticas!' />
+              </div>
             </div>
-          </div>
           )}
 
           {/* Objetivos */}

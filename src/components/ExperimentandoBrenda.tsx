@@ -1,9 +1,3 @@
-
 export default function ExperimentandoBrenda() {
-
-  return (
-    <div>
-
-    </div>
-  )
+  return <div></div>
 }

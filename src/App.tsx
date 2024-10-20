@@ -29,8 +29,7 @@ import LandingPage from './components/LandingPage'
 import { useLocation } from 'wouter'
 
 function App() {
-  const [location] = useLocation();
-
+  const [location] = useLocation()
 
   return (
     <ThemeProvider defaultTheme='light' storageKey='theme'>
@@ -58,7 +57,7 @@ function App() {
 
                       <main>
                         <Switch>
-                        <Route path='/landing'>
+                          <Route path='/landing'>
                             <LandingPage />
                           </Route>
                           <Route path='/'>

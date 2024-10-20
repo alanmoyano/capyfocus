@@ -136,7 +136,7 @@ export default function LandingPage() {
               <h3 className='mb-4 text-2xl font-semibold text-gray-700'>
                 Desbloquea CapyInsignias
               </h3>
-              <p className='text-lg mb-8 text-gray-600'>
+              <p className='mb-8 text-lg text-gray-600'>
                 A medida que avances en tus estudios, irás desbloqueando
                 insignias que representan tu progreso.
               </p>
