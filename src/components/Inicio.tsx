@@ -127,6 +127,16 @@ type ObjectiveToAdd = {
   idUsuario: string
 }
 
+async function gatherUserPendingObjectives(uuid: string) {
+  const { data, error } = await supabase
+    .from('ObjetivosFavoritos')
+    .select()
+    .eq('idUsuario', uuid)
+    .eq('idEstado', 1)
+  if (data) return data
+  else console.log(error)
+}
+
 async function persistFavoriteObjective(
   name: string,
   fechaCreado: Date,
@@ -191,6 +201,14 @@ export default function Inicio() {
   } = useSesion()
 
   const [motivaciones, setMotivaciones] = useState<Motivacion[]>([])
+
+  const recoverObjectives = () => {
+    if (session) {
+      gatherUserPendingObjectives(session.user.id).then(data =>
+        data?.forEach(objetivo => {})
+      )
+    }
+  }
 
   const handleAccept = () => {
     switch (description) {
@@ -439,6 +457,7 @@ export default function Inicio() {
                   </Command>
                 </PopoverContent>
               </Popover>
+              <Button onClick={() => recoverObjectives()}>Pruebas</Button>
             </div>
             <div className='mt-4'>
               <ul className='list-inside list-disc space-y-2 text-base text-black'>

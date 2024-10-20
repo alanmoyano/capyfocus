@@ -35,6 +35,21 @@ type SessionAGuardar = {
   tiempoEstudio: number
 }
 
+async function acumulateHoursInFavouriteObj(
+  objName: string,
+  time: number,
+  uuid: string
+) {
+  const { data, error } = await supabase
+    .from('ObjetivosFavoritos')
+    .update({ horasAcumuladas: time })
+    .eq('descripcion', objName)
+    .eq('idUsuario', uuid)
+
+  if (error) console.log(error)
+  else console.log(data)
+}
+
 export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
   return (
     <>
@@ -215,17 +230,37 @@ export default function Timer() {
       setTiempoSesion(prev => ({ ...prev, [objetivo]: studyTime }))
 
       if (objetivosFav.includes(objetivo)) {
+        const timeToSave = studyTime
         if (!tiempoFavorito[objetivo]) {
-          setTiempoFavorito(prev => ({ ...prev, [objetivo]: studyTime }))
+          setTiempoFavorito(prev => ({ ...prev, [objetivo]: timeToSave }))
+          if (session) {
+            acumulateHoursInFavouriteObj(objetivo, timeToSave, session.user.id)
+              .then(() => {
+                console.log('Datos actualizados correctamente')
+              })
+              .catch((error: unknown) => {
+                console.log('Ocurrio un error', error)
+              })
+          }
         } else {
+          const timeToSave = studyTime + (tiempoFavorito[objetivo] ?? 0)
           setTiempoFavorito(prev => ({
             ...prev,
-            [objetivo]: studyTime + (tiempoFavorito[objetivo] ?? 0),
+            [objetivo]: timeToSave,
           }))
+          if (session) {
+            acumulateHoursInFavouriteObj(objetivo, timeToSave, session.user.id)
+              .then(() => {
+                console.log('Datos actualizados correctamente')
+              })
+              .catch((error: unknown) => {
+                console.log('Ocurrio un error', error)
+              })
+          }
         }
         // const tiempoAnterior = tiempoFavorito[objetivo] ?? 0
         // console.log(tiempo)
-        // setTiempoFavorito(prev => ({
+        // setTiempoFavorito(prev => (
         //   ...prev,
         //   [objetivo]: tiempoAnterior + studyTime,
         // }))
