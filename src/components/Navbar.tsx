@@ -31,6 +31,8 @@ import {
 } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { useProfilePic } from './contexts/ProfilePicContext'
+import { profilePictures } from '@/constants/profilePictures'
+import { supabase } from './supabase/client'
 
 type NavbarLinkProps = {
   to: string
@@ -48,11 +50,28 @@ function NavbarLink({ to, children }: NavbarLinkProps) {
 }
 
 function AvatarLink() {
-  const { profilePic } = useProfilePic()
+  const { profilePic, setProfilePic } = useProfilePic()
+  const { session } = useSession()
+
+  function getProfilePicture() {
+    if (!session) return undefined
+    
+    supabase
+      .from('Usuarios')
+      .select('fotoPerfil')
+      .eq('id', session.user.id)
+      .then(({ data }) => {
+        if (!data) return
+        const fotoSrc = profilePictures[data[0].fotoPerfil as number]
+        setProfilePic(fotoSrc)
+      })
+
+    return profilePic
+  }
   return (
     <Link to='/usuario'>
       <Avatar className='mx-auto'>
-        <AvatarImage src={profilePic} className='' />
+        <AvatarImage src={getProfilePicture()} className='' />
         <AvatarFallback className='border border-accent-foreground bg-accent text-xl font-medium'>
           C
         </AvatarFallback>
