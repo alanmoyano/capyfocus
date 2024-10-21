@@ -285,7 +285,7 @@ export default function Timer() {
   // }, [mode, sessionSeconds, breakSeconds])
 
   const handleAccept = () => {
-    setLocation('/')
+    setLocation('/inicio')
     setObjetivos(prevObjetivos =>
       prevObjetivos.filter(obj => !marked.includes(obj))
     )

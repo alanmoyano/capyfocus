@@ -35,7 +35,7 @@ export default function CapyInsignias() {
   }, [])
 
   const handleVolver = () => {
-    setLocation('/')
+    setLocation('/inicio')
   }
 
   return (

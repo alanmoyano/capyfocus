@@ -119,7 +119,7 @@ export default function Pomodoro() {
   }
 
   const handleVolver = () => {
-    setLocation('/')
+    setLocation('/inicio')
   }
 
   //Revisar el funcionamiento de esta cosa!!!
@@ -175,7 +175,7 @@ export default function Pomodoro() {
   // }, [mode, sessionSeconds, breakSeconds, isSetted])
   /* 
   const handleAccept = () => {
-    setLocation('/')
+    setLocation('/inicio')
     setObjetivos(prevObjetivos =>
       prevObjetivos.filter(obj => !marked.includes(obj))
     )
