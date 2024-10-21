@@ -35,6 +35,7 @@ type SessionAGuardar = {
   cantidadObjetivosCumplidos: number
   cantidadObjetivos: number
   tiempoEstudio: number
+  musicaSeleccionada: number
 }
 
 async function acumulateHoursInSelectedEvent(
@@ -77,6 +78,39 @@ export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
       </div>
     </div>
   )
+}
+
+function getSelectedMusic(title: string) {
+  let musicaSeleccionada = 0
+  switch (title) {
+    case 'CapyEpic': {
+      const musicID = 1
+      musicaSeleccionada = musicID
+      break
+    }
+    case 'CapySynthwave': {
+      const musicID = 2
+      musicaSeleccionada = musicID
+      break
+    }
+    case 'CapyChill': {
+      const musicID = 3
+      musicaSeleccionada = musicID
+      break
+    }
+    case 'CapyAmbiente': {
+      const musicID = 4
+      musicaSeleccionada = musicID
+      break
+    }
+    default: {
+      const musicID = 0
+      musicaSeleccionada = musicID
+      break
+    }
+  }
+
+  return musicaSeleccionada
 }
 
 export default function Timer() {
@@ -137,6 +171,9 @@ export default function Timer() {
           cantidadObjetivosCumplidos: objCumplidos,
           cantidadObjetivos: objetivos.length,
           tiempoEstudio: studyTime,
+          musicaSeleccionada: getSelectedMusic(
+            selectedMusic ? selectedMusic.title : ''
+          ),
         }
 
         const { data, error } = await supabase
@@ -153,6 +190,7 @@ export default function Timer() {
                 sessionToSave.cantidadObjetivosCumplidos,
               cantidadObjetivos: sessionToSave.cantidadObjetivos,
               tiempoEstudio: sessionToSave.tiempoEstudio,
+              musicaSeleccionada: sessionToSave.musicaSeleccionada,
             },
           ])
 

@@ -511,8 +511,7 @@ export default function CapyEstadisticas() {
 
       {selectedPeriod === 'semanal' && (
         <>
-          <p className='mt-4 text-xl font-bold'>Trabajando</p>
-          <img src='/Chicho/Negativo/CapyComputadora.gif' />
+          <EstadisticasPeriodo period='evento'></EstadisticasPeriodo>
         </>
       )}
 
@@ -529,16 +528,14 @@ export default function CapyEstadisticas() {
             </Button>
           </div>
           <>
-            <p className='mt-4 text-xl font-bold'>Trabajando</p>
-            <img src='/Chicho/Negativo/CapyComputadora.gif' />
+            <EstadisticasPeriodo period='mensual'></EstadisticasPeriodo>
           </>
         </>
       )}
 
       {selectedPeriod === 'bimestral' && (
         <>
-          <p className='mt-4 text-xl font-bold'>Trabajando</p>
-          <img src='/Chicho/Negativo/CapyComputadora.gif' />
+          <EstadisticasPeriodo period='bimestral'></EstadisticasPeriodo>
         </>
       )}
 

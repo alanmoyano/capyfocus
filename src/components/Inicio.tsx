@@ -93,7 +93,7 @@ const playlists = [
     key: 2,
     src: './CapyAmbiente.jpg',
     alt: 'CapyAmbiente',
-    title: 'CapyAmbiente',
+    title: '  ',
     description: 'Sonidos ambientales para mejorar la concentración',
     spotifyUri: '4Pi6DScPJfg1RTGVZuxTZV',
   },
