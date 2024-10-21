@@ -55,7 +55,7 @@ function AvatarLink() {
 
   function getProfilePicture() {
     if (!session) return undefined
-    
+
     supabase
       .from('Usuarios')
       .select('fotoPerfil')
@@ -73,7 +73,7 @@ function AvatarLink() {
       <Avatar className='mx-auto'>
         <AvatarImage src={getProfilePicture()} className='' />
         <AvatarFallback className='border border-accent-foreground bg-accent text-xl font-medium'>
-          C
+          IC
         </AvatarFallback>
       </Avatar>
     </Link>
