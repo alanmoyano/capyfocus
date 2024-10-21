@@ -122,7 +122,7 @@ export default function Eventos() {
   const { session } = useSession()
 
   const handleVolver = () => {
-    setLocation('/')
+    setLocation('/inicio')
   }
 
   const recoverEvents = () => {
@@ -135,7 +135,7 @@ export default function Eventos() {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
                 const fechaParsed = evento.fechaLimite.replaceAll(
                   '-',
-                  '/'
+                  '/inicio'
                 ) as string
 
                 const date = new Date(fechaParsed)

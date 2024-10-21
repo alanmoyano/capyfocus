@@ -49,7 +49,7 @@ function App() {
                 <SesionProvider>
                   <MusicProvider>
                     <EventsProvider>
-                      {location !== '/landing' && <Navbar />}
+                      {location !== '/' && <Navbar />}
 
                       <Helmet>
                         <title>Capyfocus</title>
@@ -57,10 +57,10 @@ function App() {
 
                       <main>
                         <Switch>
-                          <Route path='/landing'>
+                          <Route path='/'>
                             <LandingPage />
                           </Route>
-                          <Route path='/'>
+                          <Route path='/inicio'>
                             <Inicio />
                           </Route>
                           <Route path='/login' component={Login} />

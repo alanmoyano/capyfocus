@@ -6,7 +6,7 @@ export default function LandingPage() {
   const [, setLocation] = useLocation()
 
   function handleNavigateInicio() {
-    setLocation('/')
+    setLocation('/inicio')
   }
 
   function handleNavigateRegistrar() {

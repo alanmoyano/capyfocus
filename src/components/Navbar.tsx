@@ -63,7 +63,7 @@ function AvatarLink() {
 
 function LogoLink() {
   return (
-    <Link to='/' className={navigationMenuTriggerStyle()}>
+    <Link to='/inicio' className={navigationMenuTriggerStyle()}>
       <div className='flex items-center justify-center gap-2'>
         <img src='/logo.webp' height={30} width={30} />
         <p>Capyfocus</p>
@@ -76,7 +76,7 @@ function NavItems() {
   const { session } = useSession()
   return (
     <>
-      <NavbarLink to='/'>Inicio</NavbarLink>
+      <NavbarLink to='/inicio'>Inicio</NavbarLink>
       {session && (
         <span className='relative inline-flex'>
           <NavbarLink to='/capyInsignias'>CapyInsiginas</NavbarLink>
