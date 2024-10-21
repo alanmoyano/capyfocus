@@ -42,6 +42,71 @@ import {
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
 
+//TODO: Grafico segun el periodo de tiempo seleccionado 
+
+type Period =
+  | 'sesion'
+  | 'semanal'
+  | 'mensual'
+  | 'bimestral'
+  | 'semestre'
+  | 'evento'
+
+type Motivation =
+  | {
+      id: 1
+      name: 'Positiva'
+    }
+  | { id: 2; name: 'Pasivo Agresiva' }
+
+type StudyTechnique =
+  | {
+      id: 1
+      name: 'CapyDoro'
+    }
+  | {
+      id: 2
+      name: 'CapyMetro'
+    }
+
+    const chartConfig = {
+      cumplidos: {
+        label: 'Cumplidos',
+        color: 'hsl(var(--chart-1))',
+      },
+      pendientes: {
+        label: 'Pendientes',
+        color: 'hsl(var(--chart-2))',
+      },
+    } satisfies ChartConfig
+
+type Music =
+  | { id: 0; name: 'Sin música' }
+  | { id: 1; name: 'CapyEpic' }
+  | { id: 2; name: 'CapySynthwave' }
+  | { id: 3; name: 'CapyChill' }
+  | { id: 4; name: 'CapyAmbiente' }
+
+const motivations: Motivation[] = [
+  { id: 1, name: 'Positiva' },
+  { id: 2, name: 'Pasivo Agresiva' },
+]
+
+const musicList: Music[] = [
+  { id: 0, name: 'Sin música' },
+  { id: 1, name: 'CapyEpic' },
+  { id: 2, name: 'CapySynthwave' },
+  { id: 3, name: 'CapyChill' },
+  { id: 4, name: 'CapyAmbiente' },
+]
+
+const StudyTechniqueList: StudyTechnique[] = [
+  { id: 1, name: 'CapyDoro' },
+  { id: 2, name: 'CapyMetro' },
+]
+
+type Graficos = 'chartDataMeses' | 'chartDataSemana' | 'chartDataMes'
+
 type sessionToRecover = {
   uuid: string
   horaInicioSesion: string
@@ -87,75 +152,8 @@ function getDateOfPeriod(period: Period) {
   return dateToReturn
 }
 
-//Elementos de la gráfica:
-const chartData1 = [
-  { month: 'Enero', desktop: 186, mobile: 80 },
-  { month: 'Febrero', desktop: 305, mobile: 200 },
-  { month: 'Marzo', desktop: 237, mobile: 120 },
-  { month: 'Abril', desktop: 73, mobile: 190 },
-  { month: 'Mayo', desktop: 209, mobile: 130 },
-  { month: 'Junio', desktop: 214, mobile: 140 },
-]
-const chartConfig = {
-  desktop: {
-    label: 'Cumplidos',
-    color: 'hsl(var(--chart-1))',
-  },
-  mobile: {
-    label: 'Pendientes',
-    color: 'hsl(var(--chart-2))',
-  },
-} satisfies ChartConfig
 
-type Period =
-  | 'sesion'
-  | 'semanal'
-  | 'mensual'
-  | 'bimestral'
-  | 'semestre'
-  | 'evento'
 
-type Motivation =
-  | {
-      id: 1
-      name: 'Positiva'
-    }
-  | { id: 2; name: 'Pasivo Agresiva' }
-
-type StudyTechnique =
-  | {
-      id: 1
-      name: 'CapyDoro'
-    }
-  | {
-      id: 2
-      name: 'CapyMetro'
-    }
-
-type Music =
-  | { id: 0; name: 'Sin música' }
-  | { id: 1; name: 'CapyEpic' }
-  | { id: 2; name: 'CapySynthwave' }
-  | { id: 3; name: 'CapyChill' }
-  | { id: 4; name: 'CapyAmbiente' }
-
-const motivations: Motivation[] = [
-  { id: 1, name: 'Positiva' },
-  { id: 2, name: 'Pasivo Agresiva' },
-]
-
-const musicList: Music[] = [
-  { id: 0, name: 'Sin música' },
-  { id: 1, name: 'CapyEpic' },
-  { id: 2, name: 'CapySynthwave' },
-  { id: 3, name: 'CapyChill' },
-  { id: 4, name: 'CapyAmbiente' },
-]
-
-const StudyTechniqueList: StudyTechnique[] = [
-  { id: 1, name: 'CapyDoro' },
-  { id: 2, name: 'CapyMetro' },
-]
 
 export default function EstadisticasPeriodo({ period }: { period: Period }) {
   const cardRefs = {
@@ -273,6 +271,12 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
   const [tecnicaEstudio, setTecnicaEstudio] = useState<string>()
 
   console.log(sessionsRecovered.current)
+//Aca estan las cosas de la grafica 
+  const MyChart = () => {
+    const [periodoSeleccionado, setPeriodoSeleccionado] = useState<Period>('mensual');
+    const [tipoGrafico, setTipoGrafico] = useState<Graficos>('chartDataMeses');
+  
+
 
   return (
     <>
@@ -347,7 +351,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
               <CardContent className='p-3'>
                 <ChartContainer config={chartConfig}>
                   <ResponsiveContainer width='100%' height={250}>
-                    <BarChart accessibilityLayer data={chartData1}>
+                    <BarChart accessibilityLayer data={chartDataMeses}>
                       <CartesianGrid vertical={false} />
                       <XAxis
                         dataKey='month'
@@ -366,13 +370,13 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
                         }
                       />
                       <Bar
-                        dataKey='desktop'
-                        fill='var(--color-desktop)'
+                        dataKey='cumplidos'
+                        fill='var(--color-cumplidos)'
                         radius={4}
                       />
                       <Bar
-                        dataKey='mobile'
-                        fill='var(--color-mobile)'
+                        dataKey='pendientes '
+                        fill='var(--color-pendientes )'
                         radius={4}
                       />
                     </BarChart>
