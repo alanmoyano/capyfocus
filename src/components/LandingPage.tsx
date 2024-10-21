@@ -173,69 +173,86 @@ export default function LandingPage() {
 
         {/* Sobre Nosotros */}
         <section className='bg-gradient-to-r from-blue-50 to-purple-50 py-12'>
-          <div className='mx-auto max-w-7xl text-center p-6'>
+          <div className='mx-auto max-w-7xl p-6 text-center'>
             <h2 className='mb-6 text-3xl font-bold'>Sobre Nosotros</h2>
 
-            
-
-            <div className='flex items-center justify-center mb-8'>
-              <p className='text-lg text-center mr-10'>
-                CapyFocus nació de un grupo de amigos estudiantes. Nos conocimos mientras estudiábamos, y pronto
-                descubrimos que teníamos un desafío en común: encontrar una forma eficiente y llevadera
-                de gestionar nuestro tiempo de estudio.<br /><br />
-                Además de estudiar, algo que nos une es nuestra debilidad con los capybaras. Son animales tranquilos,
-                sociables y con un carisma particular, ¡perfectos para inspirar nuestro proyecto! Así nació <span className='font-bold'>Chicho</span>, una representación
-                de esa filosofía capybara que combina compañerismo, humor y un toque de picardía.<br /><br />
-                Para nosotros, Chicho no es solo una mascota virtual: es un recordatorio de que podemos tomarnos las cosas con calma,
+            <div className='mb-8 flex items-center justify-center'>
+              <p className='mr-10 text-center text-lg'>
+                CapyFocus nació de un grupo de amigos estudiantes. Nos conocimos
+                mientras estudiábamos, y pronto descubrimos que teníamos un
+                desafío en común: encontrar una forma eficiente y llevadera de
+                gestionar nuestro tiempo de estudio.
+                <br />
+                <br />
+                Además de estudiar, algo que nos une es nuestra debilidad con
+                los capybaras. Son animales tranquilos, sociables y con un
+                carisma particular, ¡perfectos para inspirar nuestro proyecto!
+                Así nació <span className='font-bold'>Chicho</span>, una
+                representación de esa filosofía capybara que combina
+                compañerismo, humor y un toque de picardía.
+                <br />
+                <br />
+                Para nosotros, Chicho no es solo una mascota virtual: es un
+                recordatorio de que podemos tomarnos las cosas con calma,
                 disfrutar el proceso y acompañarnos mutuamente en el camino.
               </p>
               <img
                 src='\Chicho\Positivo\CapyPiano.gif'
                 alt='Chicho'
-                className='w-80 '
+                className='w-80'
               />
             </div>
 
-            <div className='flex items-center mb-8 mr-10'>
-            <img
+            <div className='mb-8 mr-10 flex items-center'>
+              <img
                 src='\Chicho\Positivo\CapyLibro.gif'
                 alt='Chicho'
-                className='w-80 '
-              /> 
-            <p className='mb-8 text-lg text-center'>
-              En este equipo, cada uno aporta algo especial. Desde las ideas locas, las bromas interminables, hasta la seriedad requerida al
-              momento de resolver los problemas que se presentan. Pero al final del día, compartimos la creencia de que estudiar no tiene por
-              qué ser una tarea solitaria o estresante. Nos gusta pensar que eso es lo que hace único a CapyFocus: no es solo una plataforma, es el 
-              reflejo de nuestro viaje como estudiantes y como amigos. <br /><br />
-              Nuestra historia es una de amistad, perseverancia y risas. Y aunque las técnicas de estudio fueron nuestra excusa para crear CapyFocus, lo
-              que realmente nos impulsó fue el deseo de compartir algo auténtico, algo que refleje quiénes somos.
-            </p>
-            
+                className='w-80'
+              />
+              <p className='mb-8 text-center text-lg'>
+                En este equipo, cada uno aporta algo especial. Desde las ideas
+                locas, las bromas interminables, hasta la seriedad requerida al
+                momento de resolver los problemas que se presentan. Pero al
+                final del día, compartimos la creencia de que estudiar no tiene
+                por qué ser una tarea solitaria o estresante. Nos gusta pensar
+                que eso es lo que hace único a CapyFocus: no es solo una
+                plataforma, es el reflejo de nuestro viaje como estudiantes y
+                como amigos. <br />
+                <br />
+                Nuestra historia es una de amistad, perseverancia y risas. Y
+                aunque las técnicas de estudio fueron nuestra excusa para crear
+                CapyFocus, lo que realmente nos impulsó fue el deseo de
+                compartir algo auténtico, algo que refleje quiénes somos.
+              </p>
             </div>
 
-            <h2 className='mt-6 text-2xl font-bold text-[#f2b76a]'>¡Gracias por acompañarnos en esta aventura!  </h2>
-            <h2 className='mb-8 text-lg '>Esperamos que te sientas parte de nuestra pequeña comunidad.</h2>
+            <h2 className='mt-6 text-2xl font-bold text-[#f2b76a]'>
+              ¡Gracias por acompañarnos en esta aventura!{' '}
+            </h2>
+            <h2 className='mb-8 text-lg'>
+              Esperamos que te sientas parte de nuestra pequeña comunidad.
+            </h2>
 
-            <div className='flex m-6 justify-center space-x-8'>
+            <div className='m-6 flex justify-center space-x-8'>
               <img
                 src='./FotosLanding/ZTMNComiendoAlfajor.jpg'
                 alt='Equipo comiendo alfajor'
-                className='h-56 w-56 rounded-lg object-cover v border-accent/60 transition duration-300 hover:scale-105 shadow-lg'
+                className='v h-56 w-56 rounded-lg border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
               />
               <img
                 src='./FotosLanding/presentandoCapyfocus2.jpg'
                 alt='Equipo presentando'
-                className='h-56 w-56 rounded-lg object-cover border-4 border-accent/60 transition duration-300 hover:scale-105 shadow-lg'
+                className='h-56 w-56 rounded-lg border-4 border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
               />
               <img
                 src='./FotosLanding/amigos.png'
                 alt='Equipo en una juntada'
-                className='h-56 w-56 rounded-lg object-cover border-4 border-accent/60 transition duration-300 hover:scale-105 shadow-lg'
+                className='h-56 w-56 rounded-lg border-4 border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
               />
               <img
                 src='./FotosLanding/ZTMNSonriendo.jpg'
                 alt='Equipo sonriendo'
-                className='h-56 w-56 rounded-lg object-cover border-4 border-accent/60 transition duration-300 hover:scale-105 shadow-lg'
+                className='h-56 w-56 rounded-lg border-4 border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
               />
             </div>
           </div>

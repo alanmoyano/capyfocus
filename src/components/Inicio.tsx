@@ -429,10 +429,10 @@ export default function Inicio() {
                 value={inputValue}
                 onKeyDown={handleAdd}
                 onChange={e => setInputValue(e.target.value)}
-                className='rounded-md p-3 input-placeholder'
+                className='input-placeholder rounded-md p-3'
                 style={{
                   backgroundColor: 'hsl(var(--input-bg))',
-                  border: `1px solid hsl(var(--input-border))`
+                  border: `1px solid hsl(var(--input-border))`,
                 }}
                 disabled={objetivos.length >= 10}
               />
