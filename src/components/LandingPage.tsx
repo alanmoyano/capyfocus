@@ -147,15 +147,15 @@ export default function LandingPage() {
         <section className='my-16 flex items-center justify-center'>
           {/* Columna 1 */}
           <div className='ml-16 w-2/3 text-left'>
-            <p className='text-2xl font-semibold text-gray-800'>
+            <p className='text-2xl font-semibold text-center text-gray-800'>
               ¡Chicho te ayudara a mantenerte enfocado!
             </p>
-            <p className='mt-4 text-lg text-gray-700'>
+            <p className='mt-4 text-lg text-gray-700 text-center'>
               Dependiendo de tu estilo de motivación, Chicho puede ser dulce y
               alentador, o firme y directo para que no pierdas el enfoque.
               ¡Elige cómo te hablará y aprovecha cada sesión al máximo!
             </p>
-            <p className='mt-4 text-lg text-gray-700'>
+            <p className='mt-4 text-lg text-gray-700 text-center'>
               Ajusta su actitud en tu perfil y disfruta de una experiencia de
               estudio totalmente personalizada con CapyFocus.
             </p>
