@@ -511,7 +511,7 @@ export default function CapyEstadisticas() {
 
       {selectedPeriod === 'semanal' && (
         <>
-          <EstadisticasPeriodo period='evento'></EstadisticasPeriodo>
+          <EstadisticasPeriodo period='semanal'></EstadisticasPeriodo>
         </>
       )}
 

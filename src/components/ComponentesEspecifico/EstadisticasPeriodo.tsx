@@ -43,7 +43,7 @@ import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
 import ChartGrafico from './ChartGrafico'
 
-//TODO: Grafico segun el periodo de tiempo seleccionado 
+//TODO: Grafico segun el periodo de tiempo seleccionado
 
 type Period =
   | 'sesion'
@@ -153,9 +153,6 @@ function getDateOfPeriod(period: Period) {
   return dateToReturn
 }
 
-
-
-
 export default function EstadisticasPeriodo({ period }: { period: Period }) {
   const cardRefs = {
     sesion: useRef(null),
@@ -172,20 +169,20 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
       getPeriodSessions(dateToRecover, session.user.id)
         .then(data => {
           if (data) {
-            sessionsRecovered.current = data
+            setStatisticsValues(data)
           }
         })
         .catch((error: unknown) => {
           console.log('Ocurrio un error recuperando las sesiones', error)
         })
     }
-    setStatisticsValues()
   }, [])
 
-  const setStatisticsValues = () => {
+  const setStatisticsValues = (sessionsRecovered: sessionToRecover[]) => {
     let studyTimeAcum = 0
     let objectiveCount = 0
     let objectiveAcomplishedCount = 0
+
     const mapaMotivaciones = new Map<string, number>([
       ['1', 0],
       ['2', 0],
@@ -201,7 +198,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
       ['1', 0],
       ['2', 0],
     ])
-    for (const particularSession of sessionsRecovered.current) {
+    for (const particularSession of sessionsRecovered) {
       studyTimeAcum += particularSession.tiempoEstudio
       objectiveCount += parseInt(
         particularSession.cantidadObjetivos as unknown as string
@@ -209,6 +206,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
       objectiveAcomplishedCount += parseInt(
         particularSession.cantidadObjetivosCumplidos as unknown as string
       )
+
       //@ts-expect-error no joda typescript, anda bien
       console.log(particularSession.musicaSeleccionada.toString())
       const valorActualMotivaciones = mapaMotivaciones.get(
@@ -261,7 +259,6 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
 
   const { objetivos, tiempo } = useObjetivos()
   const [date, setDate] = useState<Date | undefined>(new Date())
-  const sessionsRecovered = useRef<sessionToRecover[]>([])
   const { session } = useSession()
   const [tiempoEstudio, setTiempoEstudio] = useState(0)
   const [objetivosTotales, setObjetivosTotales] = useState(0)
@@ -270,9 +267,6 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
   const [motivacion, setMotivacion] = useState<string>()
   const [musicaFavorita, setMusicaFavorita] = useState<string>()
   const [tecnicaEstudio, setTecnicaEstudio] = useState<string>()
-
-  console.log(sessionsRecovered.current)
-
 
   return (
     <>
@@ -338,10 +332,9 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
 
           {/* chart */}
           <div className='space-y-6 md:w-1/2'>
-          <ChartGrafico period={period} />
+            <ChartGrafico periodo={period} />
 
-
-{/*             <Card className='overflow-hidden rounded-lg shadow-md'>
+            {/*             <Card className='overflow-hidden rounded-lg shadow-md'>
               <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-2'>
                 <CardTitle className='text-lg font-bold text-gray-900'>
                   Registro de objetivos
