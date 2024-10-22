@@ -271,11 +271,6 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
   const [tecnicaEstudio, setTecnicaEstudio] = useState<string>()
 
   console.log(sessionsRecovered.current)
-//Aca estan las cosas de la grafica 
-  const MyChart = () => {
-    const [periodoSeleccionado, setPeriodoSeleccionado] = useState<Period>('mensual');
-    const [tipoGrafico, setTipoGrafico] = useState<Graficos>('chartDataMeses');
-  
 
 
   return (

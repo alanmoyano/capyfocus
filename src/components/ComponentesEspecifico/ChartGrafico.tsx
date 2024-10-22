@@ -168,7 +168,7 @@ import {
     return dateToReturn
   }
   
-  export default function ChartGrafico() {
+  export default function ChartGrafico({periodo}: {periodo: Period}) {
     const [periodoSeleccionado, setPeriodoSeleccionado] =
       useState<Period>('mensual')
     const [tipoGrafico, setTipoGrafico] = useState<Graficos>('chartDataMeses')
@@ -193,6 +193,14 @@ import {
           return []
       }
     }
+    useEffect(() => {
+      try {
+        const datos = obtenerDatosPorPeriodo(periodoSeleccionado)
+        setDatosGrafico(datos)
+      } catch (error) {
+        console.error("Error al obtener los datos del gráfico:", error)
+      }
+    }, [periodoSeleccionado])
   
     // Actualizar los datos del gráfico al cambiar el período
     useEffect(() => {
