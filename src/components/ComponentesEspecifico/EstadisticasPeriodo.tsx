@@ -182,8 +182,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
         )
         if (
           fechaAComparar > ultimaFechaRacha &&
-          fechaAComparar < fecha2VecesPosteriorAnterior &&
-          rachaActual >= racha
+          fechaAComparar < fecha2VecesPosteriorAnterior
         ) {
           ultimaFechaRacha = fechaAComparar
           rachaActual += 1
