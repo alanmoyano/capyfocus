@@ -337,7 +337,9 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
 
           {/* chart */}
           <div className='space-y-6 md:w-1/2'>
-            <Card className='overflow-hidden rounded-lg shadow-md'>
+
+          
+{/*             <Card className='overflow-hidden rounded-lg shadow-md'>
               <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-2'>
                 <CardTitle className='text-lg font-bold text-gray-900'>
                   Registro de objetivos
@@ -378,7 +380,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
                   </ResponsiveContainer>
                 </ChartContainer>
               </CardContent>
-            </Card>
+            </Card> */}
             {/* Calendario */}
             <Card className='overflow-hidden rounded-lg shadow-sm'>
               <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-3'>
