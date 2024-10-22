@@ -77,7 +77,7 @@ async function gatherEventsOfUser(uuid: string, date?: Date) {
       .from('Eventos')
       .select()
       .eq('idUsuario', uuid)
-      .gt('fechaLimite', formatDateSlash(date))
+      .gt('fechaLimite', formatDateDash(date))
     return data
   } else {
     const { data, error } = await supabase
@@ -135,7 +135,7 @@ export default function Eventos() {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
                 const fechaParsed = evento.fechaLimite.replaceAll(
                   '-',
-                  '/inicio'
+                  '/'
                 ) as string
 
                 const date = new Date(fechaParsed)
