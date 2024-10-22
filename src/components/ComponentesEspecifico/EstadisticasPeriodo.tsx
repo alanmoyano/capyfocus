@@ -41,6 +41,7 @@ import {
 } from '../../constants/supportFunctions'
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
+import ChartGrafico from './ChartGrafico'
 
 //TODO: Grafico segun el periodo de tiempo seleccionado 
 
@@ -69,7 +70,7 @@ type StudyTechnique =
       name: 'CapyMetro'
     }
 
-    const chartConfig = {
+/*     const chartConfig = {
       cumplidos: {
         label: 'Cumplidos',
         color: 'hsl(var(--chart-1))',
@@ -78,7 +79,7 @@ type StudyTechnique =
         label: 'Pendientes',
         color: 'hsl(var(--chart-2))',
       },
-    } satisfies ChartConfig
+    } satisfies ChartConfig */
 
 type Music =
   | { id: 0; name: 'Sin música' }
@@ -337,8 +338,9 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
 
           {/* chart */}
           <div className='space-y-6 md:w-1/2'>
+          <ChartGrafico period={period} />
 
-          
+
 {/*             <Card className='overflow-hidden rounded-lg shadow-md'>
               <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-2'>
                 <CardTitle className='text-lg font-bold text-gray-900'>
