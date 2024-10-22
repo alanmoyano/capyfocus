@@ -50,10 +50,26 @@ function getElementNameById(id: number, list: any[]): string {
   return element.name
 }
 
+function convertirAFecha(fechaStr: string): Date {
+  // Reemplazar los separadores / o - por un solo formato (ej. -)
+  const formatoNormalizado: string = fechaStr.replace('-', '/')
+
+  // Crear el objeto Date
+  const fecha = new Date(formatoNormalizado)
+
+  // Verificar si la fecha es válida
+  if (isNaN(fecha.getTime())) {
+    throw new Error('Fecha no válida')
+  }
+
+  return fecha
+}
+
 export {
   dateToTimetz,
   formatDateDash,
   formatDateSlash,
   obtenerClaveMayorValor,
   getElementNameById,
+  convertirAFecha,
 }

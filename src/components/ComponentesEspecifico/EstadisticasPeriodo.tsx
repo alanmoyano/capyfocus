@@ -38,6 +38,7 @@ import {
   formatDateDash,
   obtenerClaveMayorValor,
   getElementNameById,
+  convertirAFecha,
 } from '../../constants/supportFunctions'
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
@@ -163,6 +164,39 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
     evento: useRef(null),
   }
 
+  function getRachaPorPeriodo(fechasSesiones: string[]) {
+    let rachaActual = 0
+    let ultimaFechaRacha: Date
+
+    for (const fechaActual of fechasSesiones) {
+      const fechaAComparar = convertirAFecha(fechaActual)
+      //@ts-expect-error No va a ser referenciado antes de ser asignado
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (!ultimaFechaRacha) {
+        ultimaFechaRacha = fechaAComparar
+        rachaActual += 1
+      } else {
+        const fecha2VecesPosteriorAnterior = new Date(ultimaFechaRacha)
+        fecha2VecesPosteriorAnterior.setDate(
+          fecha2VecesPosteriorAnterior.getDate() + 2
+        )
+        if (
+          fechaAComparar > ultimaFechaRacha &&
+          fechaAComparar < fecha2VecesPosteriorAnterior &&
+          rachaActual >= racha
+        ) {
+          ultimaFechaRacha = fechaAComparar
+          rachaActual += 1
+        } else {
+          ultimaFechaRacha = fechaAComparar
+          setRacha(rachaActual)
+          rachaActual = 1
+        }
+      }
+    }
+    setRacha(rachaActual)
+  }
+
   useEffect(() => {
     const dateToRecover = getDateOfPeriod(period)
     if (session) {
@@ -182,6 +216,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
     let studyTimeAcum = 0
     let objectiveCount = 0
     let objectiveAcomplishedCount = 0
+    const setFechas = new Set()
 
     const mapaMotivaciones = new Map<string, number>([
       ['1', 0],
@@ -232,7 +267,20 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
         particularSession.tecnicaEstudio.toString(),
         valorActualTecnicaEstudio + 1
       )
+      setFechas.add(particularSession.fecha)
     }
+
+    const fechasOrdenadas = Array.from(setFechas).sort((a, b) => {
+      //@ts-expect-error no jodas ts, funca bien
+      const dateA = new Date(a)
+      //@ts-expect-error no jodas ts, funca bien
+      const dateB = new Date(b)
+      return dateA.getTime() - dateB.getTime()
+    })
+
+    fechasOrdenadas.forEach(f => console.log(f))
+    getRachaPorPeriodo(fechasOrdenadas as string[])
+
     setTiempoEstudio(studyTimeAcum)
     setObjetivosTotales(objectiveCount)
     setObjetivosCumplidos(objectiveAcomplishedCount)
@@ -267,6 +315,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
   const [motivacion, setMotivacion] = useState<string>()
   const [musicaFavorita, setMusicaFavorita] = useState<string>()
   const [tecnicaEstudio, setTecnicaEstudio] = useState<string>()
+  const [racha, setRacha] = useState(0)
 
   return (
     <>
@@ -314,7 +363,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
                 },
                 {
                   label: 'Mayor racha de días',
-                  value: 5,
+                  value: `${racha} ${racha > 1 ? 'días seguidos' : 'dia'}`,
                 },
               ].map(({ label, value }, index) => (
                 <div key={index} className='rounded-lg bg-white p-2 shadow-md'>
