@@ -36,6 +36,7 @@ type SessionAGuardar = {
   cantidadObjetivos: number
   tiempoEstudio: number
   musicaSeleccionada: number
+  eventoSeleccionado: number
 }
 
 async function acumulateHoursInSelectedEvent(
@@ -55,10 +56,23 @@ async function acumulateHoursInSelectedEvent(
   return data
 }
 
+async function getObjectiveIdByName(objectiveName: string, uuid: string) {
+  const { data, error } = await supabase
+    .from('ObjetivosFavoritos')
+    .select()
+    .eq('descripcion', objectiveName)
+    .eq('idUsuario', uuid)
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  if (data) return data
+  else console.log(error)
+}
+
 async function acumulateHoursInFavouriteObj(
   objName: string,
   time: number,
-  uuid: string
+  uuid: string,
+  eventId?: number
 ) {
   const { data, error } = await supabase
     .from('ObjetivosFavoritos')
@@ -67,7 +81,18 @@ async function acumulateHoursInFavouriteObj(
     .eq('idUsuario', uuid)
 
   if (error) console.log(error)
-  else console.log(data)
+  console.log(eventId)
+  if (eventId) {
+    const ObjetivoMarcado = await getObjectiveIdByName(objName, uuid)
+    //@ts-expect-error no te preocupes ts, confia en nosotros
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    const idObjetivoMarcado = ObjetivoMarcado[0].id
+    const { data, error } = await supabase
+      .from('ObjetivosFavoritosXEventos')
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      .insert([{ idEvento: eventId, idObjetivoFavorito: idObjetivoMarcado }])
+    if (error) console.log(error)
+  }
 }
 export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
   return (
@@ -174,6 +199,7 @@ export default function Timer() {
           musicaSeleccionada: getSelectedMusic(
             selectedMusic ? selectedMusic.title : ''
           ),
+          eventoSeleccionado: selectedEvent?.id,
         }
 
         const { data, error } = await supabase
@@ -191,6 +217,7 @@ export default function Timer() {
               cantidadObjetivos: sessionToSave.cantidadObjetivos,
               tiempoEstudio: sessionToSave.tiempoEstudio,
               musicaSeleccionada: sessionToSave.musicaSeleccionada,
+              eventoSeleccionado: sessionToSave.eventoSeleccionado,
             },
           ])
 
@@ -313,13 +340,32 @@ export default function Timer() {
         if (!tiempoFavorito[objetivo]) {
           setTiempoFavorito(prev => ({ ...prev, [objetivo]: timeToSave }))
           if (session) {
-            acumulateHoursInFavouriteObj(objetivo, timeToSave, session.user.id)
-              .then(() => {
-                console.log('Datos actualizados correctamente')
-              })
-              .catch((error: unknown) => {
-                console.log('Ocurrio un error', error)
-              })
+            if (selectedEvent) {
+              acumulateHoursInFavouriteObj(
+                objetivo,
+                timeToSave,
+                session.user.id,
+                selectedEvent.id
+              )
+                .then(() => {
+                  console.log('Datos actualizados correctamente')
+                })
+                .catch((error: unknown) => {
+                  console.log('Ocurrio un error', error)
+                })
+            } else {
+              acumulateHoursInFavouriteObj(
+                objetivo,
+                timeToSave,
+                session.user.id
+              )
+                .then(() => {
+                  console.log('Datos actualizados correctamente')
+                })
+                .catch((error: unknown) => {
+                  console.log('Ocurrio un error', error)
+                })
+            }
           }
         } else {
           const timeToSave = studyTime + (tiempoFavorito[objetivo] ?? 0)
@@ -328,13 +374,32 @@ export default function Timer() {
             [objetivo]: timeToSave,
           }))
           if (session) {
-            acumulateHoursInFavouriteObj(objetivo, timeToSave, session.user.id)
-              .then(() => {
-                console.log('Datos actualizados correctamente')
-              })
-              .catch((error: unknown) => {
-                console.log('Ocurrio un error', error)
-              })
+            if (selectedEvent) {
+              acumulateHoursInFavouriteObj(
+                objetivo,
+                timeToSave,
+                session.user.id,
+                selectedEvent.id
+              )
+                .then(() => {
+                  console.log('Datos actualizados correctamente')
+                })
+                .catch((error: unknown) => {
+                  console.log('Ocurrio un error', error)
+                })
+            } else {
+              acumulateHoursInFavouriteObj(
+                objetivo,
+                timeToSave,
+                session.user.id
+              )
+                .then(() => {
+                  console.log('Datos actualizados correctamente')
+                })
+                .catch((error: unknown) => {
+                  console.log('Ocurrio un error', error)
+                })
+            }
           }
         }
         // const tiempoAnterior = tiempoFavorito[objetivo] ?? 0
@@ -367,6 +432,8 @@ export default function Timer() {
     }
     setLastCheckedObj(key)
   }
+
+  console.log(selectedEvent)
 
   return (
     <>

@@ -1,3 +1,5 @@
+import { supabase } from "@/components/supabase/client"
+
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 function dateToTimetz(date: Date | null): string {
   // Obtiene la parte de la hora y la zona horaria
@@ -65,6 +67,23 @@ function convertirAFecha(fechaStr: string): Date {
   return fecha
 }
 
+async function gatherEventsOfUser(uuid: string, date?: Date) {
+  if (date) {
+    const { data, error } = await supabase
+      .from('Eventos')
+      .select()
+      .eq('idUsuario', uuid)
+      .gt('fechaLimite', formatDateDash(date))
+    return data
+  } else {
+    const { data, error } = await supabase
+      .from('Eventos')
+      .select()
+      .eq('idUsuario', uuid)
+    return data
+  }
+}
+
 export {
   dateToTimetz,
   formatDateDash,
@@ -72,4 +91,5 @@ export {
   obtenerClaveMayorValor,
   getElementNameById,
   convertirAFecha,
+  gatherEventsOfUser
 }

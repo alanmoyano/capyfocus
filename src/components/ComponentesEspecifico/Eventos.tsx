@@ -31,9 +31,11 @@ import { useEvents } from '../contexts/EventsContext'
 import {
   formatDateDash,
   formatDateSlash,
+  gatherEventsOfUser
 } from '../../constants/supportFunctions'
 
 export type Event = {
+  id: number
   date: Date
   title: string
   hoursAcumulated?: number
@@ -69,23 +71,6 @@ async function deleteEvent(date: Date, name: string, uuid: string) {
     .eq('nombre', name)
     .eq('fechaLimite', formatDateDash(date))
     .eq('idUsuario', uuid)
-}
-
-async function gatherEventsOfUser(uuid: string, date?: Date) {
-  if (date) {
-    const { data, error } = await supabase
-      .from('Eventos')
-      .select()
-      .eq('idUsuario', uuid)
-      .gt('fechaLimite', formatDateDash(date))
-    return data
-  } else {
-    const { data, error } = await supabase
-      .from('Eventos')
-      .select()
-      .eq('idUsuario', uuid)
-    return data
-  }
 }
 
 const formatDate = (date: Date) => {
@@ -139,6 +124,9 @@ export default function Eventos() {
                 ) as string
 
                 const date = new Date(fechaParsed)
+                
+                const id = evento.idEvento
+                console.log(id)
 
                 const title = evento.nombre as string
 
@@ -147,7 +135,7 @@ export default function Eventos() {
                 console.log(date, title)
                 setEvents(prev => [
                   ...prev,
-                  { date, title: title, hoursAcumulated: hours },
+                  { date, title: title, hoursAcumulated: hours, id: id },
                 ])
               }
             })
