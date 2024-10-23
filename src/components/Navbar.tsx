@@ -1,8 +1,5 @@
 import React from 'react'
-import {
-  Link,
-  // useRoute
-} from 'wouter'
+import { Link } from 'wouter'
 import { ModeToggle } from './ModeToggle'
 
 import { Menu } from 'lucide-react'
@@ -95,33 +92,23 @@ function NavItems() {
   const { session } = useSession()
   return (
     <>
-      <NavbarLink to='/inicio'>Inicio</NavbarLink>
       {session && (
-        <span className='relative inline-flex'>
-          <NavbarLink to='/capyInsignias'>CapyInsiginas</NavbarLink>
-          <span className='absolute right-0 top-0 -mr-1 -mt-1 flex h-3 w-3'>
-            <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-secondary opacity-75'></span>
-            <span className='relative inline-flex h-3 w-3 rounded-full bg-secondary'></span>
+        <>
+          <NavbarLink to='/inicio'>Inicio</NavbarLink>
+          <span className='relative inline-flex'>
+            <NavbarLink to='/capyInsignias'>CapyInsiginas</NavbarLink>
+            <span className='absolute right-0 top-0 -mr-1 -mt-1 flex h-3 w-3'>
+              <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-secondary opacity-75'></span>
+              <span className='relative inline-flex h-3 w-3 rounded-full bg-secondary'></span>
+            </span>
           </span>
-        </span>
+
+          <NavbarLink to='/capyEstadisticas'>CapyEstadisticas</NavbarLink>
+        </>
       )}
-
-      <NavbarLink to='/capyEstadisticas'>CapyEstadisticas</NavbarLink>
-
-      {/* <NavbarLink to='/usuario'>CapyDatos</NavbarLink> */}
     </>
   )
 }
-
-/* function NuevoBoton() {
-  return (
-    <>
-      <Button variant='ghost' type='button' size='icon' className=''>
-        <Menu />
-      </Button>
-    </>
-  )
-} */
 
 export default function Navbar() {
   const [abierto, setAbierto] = React.useState(false)
