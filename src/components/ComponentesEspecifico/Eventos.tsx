@@ -318,7 +318,7 @@ export default function Eventos() {
                 }}
               />
 
-              <div className='mt-4'>
+              <div className='mt-4 flex flex-row items-center justify-center gap-2'>
                 <Button
                   onClick={() => {
                     addEvent(false, 'New')
@@ -410,7 +410,7 @@ export default function Eventos() {
         </ScrollArea>
         <SheetFooter className='flex w-full justify-between'>
           <SheetClose asChild>
-            <div className='flex w-full justify-between'>
+            <div className='flex w-full items-center justify-between gap-2'>
               <Button
                 variant={'accent'}
                 className='w-full sm:mr-2 sm:w-auto'
