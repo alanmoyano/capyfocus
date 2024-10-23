@@ -49,7 +49,11 @@ export default function CapyInsiginiasCards({
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <Card className='group cursor-pointer overflow-hidden bg-primary transition-all duration-200 ease-in-out hover:scale-105 hover:shadow-lg'>
+          <Card
+            className={`group cursor-pointer overflow-hidden transition-all duration-200 ease-in-out hover:scale-105 hover:shadow-lg ${
+              progress === 100 ? 'bg-primary' : 'bg-gray-400'
+            } `}
+          >
             <CardHeader>
               <CardTitle className='text-center text-xl'>{capyName}</CardTitle>
             </CardHeader>
@@ -64,7 +68,7 @@ export default function CapyInsiginiasCards({
               </div>
             </CardContent>
             <CardFooter
-              className={`flex justify-center font-medium italic ${!isUnlocked && 'text-muted'}`}
+              className={`flex justify-center font-medium italic ${!isUnlocked && 'text-muted dark:text-slate-100'} `}
             >
               {isUnlocked ? 'Desbloqueada!' : 'CapyBloqueada'}
             </CardFooter>
