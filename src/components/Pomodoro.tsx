@@ -159,8 +159,8 @@ export default function Pomodoro() {
           pomodorosRealizados[pomodorosRealizados.length - 1].tiempoDescanso
         )
         setMode('Estudiando')
-        setIsActive(prev => !prev)
-        setIsSetted(prev => !prev)
+        setIsActive(false)
+        setIsSetted(false)
         pomodoroCount.current += 0.5
         setBoom(true)
       }
@@ -437,7 +437,7 @@ export default function Pomodoro() {
                 Empezar
               </Button>
             ) : (
-              <>
+              <div className='flex flex-row items-center justify-center'>
                 <Button
                   className='flex items-center justify-center rounded-full p-6'
                   onClick={() => handlePause(!isActive)}
@@ -452,7 +452,7 @@ export default function Pomodoro() {
                 >
                   <SkipForward />
                 </Button>
-              </>
+              </div>
             )}
           </div>
           {/* Volumen */}
