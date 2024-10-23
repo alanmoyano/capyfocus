@@ -46,13 +46,14 @@ type Pomodoro = {
 }
 
 export default function Pomodoro() {
-  const [sessionSeconds, setSessionSeconds] = useState(10)
-  const [breakSeconds, setBreakSeconds] = useState(5)
+  const [sessionSeconds, setSessionSeconds] = useState(25 * 60)
+  const [breakSeconds, setBreakSeconds] = useState(5 * 60)
   const [objCumplidos, setObjCumplidos] = useState(0)
   const {
     time,
     startStudy,
     isStudying,
+    isPaused,
     pauseStudy,
     resumeStudy,
     startBreak,
@@ -172,6 +173,10 @@ export default function Pomodoro() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isActive, sessionSeconds, breakSeconds, mode, objCumplidos, isStudying])
 
+  useEffect(() => {
+    setIsActive(isPaused)
+  }, [isPaused])
+
   // useEffect(() => {
   //   setCountdown(mode === 'Estudiando' ? sessionSeconds : breakSeconds)
   // }, [mode, sessionSeconds, breakSeconds, isSetted])
@@ -254,19 +259,18 @@ export default function Pomodoro() {
     setAcumuladorTiempoPausa(prev => (prev += tiempoDescanso))
   }
 
-  const handlePause = (value: boolean) => {
+  const handlePause = () => {
+    const value = !isActive
+
     if (!value) {
       setCantidadPausas(prev => (prev += 1))
       pauseStudy()
     } else {
-      if (mode === 'Descansando' && !breakStarted) {
-        setBreakStarted(true)
-        startBreak()
-        console.log(value)
-      } else {
-        resumeStudy()
-      }
+      resumeStudy()
+      resumeStudy()
     }
+    resumeStudy()
+
     setIsActive(value)
   }
 
@@ -440,7 +444,7 @@ export default function Pomodoro() {
               <div className='flex flex-row items-center justify-center'>
                 <Button
                   className='flex items-center justify-center rounded-full p-6'
-                  onClick={() => handlePause(!isActive)}
+                  onClick={() => handlePause()}
                 >
                   {isActive ? <Pause /> : <Play />}
                 </Button>

@@ -310,7 +310,7 @@ export default function Usuario() {
                   onClick={() => handleLogin()}
                   className='mt-4'
                 >
-                  {session ? 'Cerrar sesión': 'Iniciar Sesión'}
+                  {session ? 'Cerrar sesión' : 'Iniciar Sesión'}
                 </Button>
               </div>
             </CardFooter>
