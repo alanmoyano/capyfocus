@@ -4,7 +4,6 @@ let intervalId: NodeJS.Timeout
 let isWorking = true
 let workTime: number, restTime: number
 let timeLeft: number
-let objStudyTime: number
 let isPaused = false // Nueva variable para pausar el temporizador
 // let isStopped = false // Variable de control para gestionar el stop
 
@@ -42,9 +41,9 @@ onmessage = function (e) {
   }
 
   if (action === 'stop') {
-    // isStopped = true
     clearInterval(intervalId)
     isWorking = true
+    console.log('me detuvieron')
   }
 
   if (action === 'startBr') {
