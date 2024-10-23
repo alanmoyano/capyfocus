@@ -304,12 +304,12 @@ export default function Pomodoro() {
   return (
     <>
       <h1 className='mt-4 text-center text-4xl font-bold'>Capydoro!</h1>
-      <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+      <div className='grid grid-cols-1 sm:gap-20 md:grid-cols-2'>
         {/*  Columna 1 */}
         <div className='col-span-1 p-4'>
           <div className='mt-4 px-4'>
             <DialogoChicho motivation={motivationType} />
-            <div className='relative flex h-full max-h-[450px] w-full min-w-[450px] max-w-[450px] items-center justify-center overflow-hidden'>
+            <div className='relative flex sm:h-full sm:max-h-[450px] w-full sm:min-w-[450px] sm:max-w-[450px] items-center max-h-[320px]  min-w-[250px] max-w-[250px] justify-center overflow-hidden'>
               <AnimacionChicho motivation={motivationType} />
             </div>
           </div>
@@ -327,7 +327,7 @@ export default function Pomodoro() {
         </div>
         {/* Columna 2  */}
         <div className='col-span-1'>
-          <div className='mb-4 mt-4 w-7/12 rounded-lg bg-accent p-2'>
+          <div className='mb-4 sm:mt-4 w-7/12 rounded-lg bg-accent p-2'>
             Motivación: <span className='font-semibold'>{motivationType}</span>
           </div>
           {/* Seteadores de tiempo */}
@@ -390,7 +390,7 @@ export default function Pomodoro() {
           {isSetted && (
             <>
               <div className='px-4'>
-                <div className='mt-16 flex justify-center'>
+                <div className='sm:mt-16 flex justify-center'>
                   {mode === 'Estudiando' ? (
                     <div>
                       <CountdownStudy
