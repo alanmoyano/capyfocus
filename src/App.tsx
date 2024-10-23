@@ -49,7 +49,7 @@ function App() {
                 <SesionProvider>
                   <MusicProvider>
                     <EventsProvider>
-                      {location !== '/' && <Navbar />}
+                      <Navbar />
 
                       <Helmet>
                         <title>Capyfocus</title>

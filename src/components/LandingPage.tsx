@@ -1,6 +1,13 @@
 import { Button } from '@/components/ui/button'
 import { Timer, Hourglass } from 'lucide-react'
 import { useLocation } from 'wouter'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from './ui/carousel'
 
 export default function LandingPage() {
   const [, setLocation] = useLocation()
@@ -19,7 +26,7 @@ export default function LandingPage() {
     <div>
       <div className='bg-white'>
         {/* Comienzo */}
-        <section className='bg-gradient-to-r from-yellow-50 to-purple-50 py-12 text-center'>
+        {/* <section className='bg-gradient-to-r from-yellow-50 to-purple-50 py-12 text-center'>
           <h1 className='mb-4 text-5xl font-extrabold text-gray-800'>
             Optimiza tu tiempo de estudio con{' '}
             <span className='text-[#f2b76a]'>CapyFocus</span>
@@ -54,7 +61,8 @@ export default function LandingPage() {
               </p>
             </div>
           </div>
-        </section>
+        </section> */}
+
         {/* Botones */}
         <section className='py-8'>
           <p className='text-center text-2xl font-semibold text-gray-800'>
@@ -86,7 +94,6 @@ export default function LandingPage() {
         </section>
 
         {/* Eventos y Estadisticas e Insgignias!  */}
-
         <section className='bg-gradient-to-r from-yellow-50 to-purple-50 py-10 text-center'>
           <h2 className='mb-4 text-4xl font-bold text-gray-700'>
             Crea eventos y alcanza tus metas
@@ -143,6 +150,7 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+
         {/* Chicho! */}
         <section className='my-16 flex items-center justify-center'>
           {/* Columna 1 */}
@@ -233,30 +241,43 @@ export default function LandingPage() {
               Esperamos que te sientas parte de nuestra pequeña comunidad.
             </h2>
 
-            <div className='m-6 flex justify-center space-x-8'>
-              <img
-                src='./FotosLanding/ZTMNComiendoAlfajor.jpg'
-                alt='Equipo comiendo alfajor'
-                className='v h-56 w-56 rounded-lg border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
-              />
-              <img
-                src='./FotosLanding/presentandoCapyfocus2.jpg'
-                alt='Equipo presentando'
-                className='h-56 w-56 rounded-lg border-4 border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
-              />
-              <img
-                src='./FotosLanding/amigos.png'
-                alt='Equipo en una juntada'
-                className='h-56 w-56 rounded-lg border-4 border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
-              />
-              <img
-                src='./FotosLanding/ZTMNSonriendo.jpg'
-                alt='Equipo sonriendo'
-                className='h-56 w-56 rounded-lg border-4 border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
-              />
-            </div>
+            <Carousel>
+              <CarouselContent>
+                <CarouselItem className='basis-1/2 lg:basis-1/4'>
+                  <img
+                    src='./FotosLanding/ZTMNComiendoAlfajor.jpg'
+                    alt='Equipo comiendo alfajor'
+                    className='v h-56 w-56 rounded-lg border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
+                  />
+                </CarouselItem>
+                <CarouselItem className='basis-1/2 lg:basis-1/4'>
+                  <img
+                    src='./FotosLanding/presentandoCapyfocus2.jpg'
+                    alt='Equipo presentando'
+                    className='h-56 w-56 rounded-lg border-4 border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
+                  />
+                </CarouselItem>
+                <CarouselItem className='basis-1/2 lg:basis-1/4'>
+                  <img
+                    src='./FotosLanding/amigos.png'
+                    alt='Equipo en una juntada'
+                    className='h-56 w-56 rounded-lg border-4 border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
+                  />
+                </CarouselItem>
+                <CarouselItem className='basis-1/2 lg:basis-1/4'>
+                  <img
+                    src='./FotosLanding/ZTMNSonriendo.jpg'
+                    alt='Equipo sonriendo'
+                    className='h-56 w-56 rounded-lg border-4 border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
+                  />
+                </CarouselItem>
+              </CarouselContent>
+              <CarouselPrevious className='-left-8' />
+              <CarouselNext className='-right-8' />
+            </Carousel>
           </div>
         </section>
+
         <footer className='bg-gray-100 p-6 text-center'>
           <p>&copy; 2024 CapyFocus. Todos los derechos reservados a ZTMN.</p>
         </footer>
