@@ -1,7 +1,13 @@
 import { Button } from '@/components/ui/button'
 import { Timer, Hourglass } from 'lucide-react'
 import { useLocation } from 'wouter'
-import { Carousel, CarouselContent, CarouselItem } from './ui/carousel'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from './ui/carousel'
 
 export default function LandingPage() {
   const [, setLocation] = useLocation()
@@ -147,6 +153,8 @@ export default function LandingPage() {
                 </div>
               </CarouselItem>
             </CarouselContent>
+            <CarouselPrevious className='left-4' />
+            <CarouselNext className='right-4' />
           </Carousel>
         </section>
 
@@ -179,12 +187,12 @@ export default function LandingPage() {
         </section>
 
         {/* Sobre Nosotros */}
-        <section className='bg-gradient-to-r from-blue-50 to-purple-50 py-12'>
+        <section className='flex items-center justify-center bg-gradient-to-r from-blue-50 to-purple-50 py-12'>
           <div className='mx-auto max-w-7xl p-6 text-center'>
             <h2 className='mb-6 text-3xl font-bold'>Sobre Nosotros</h2>
 
             <div className='mb-8 flex flex-col-reverse items-center justify-center sm:flex-row'>
-              <p className='mr-10 text-center text-lg'>
+              <p className='text-center text-lg sm:mr-10'>
                 CapyFocus nació de un grupo de amigos estudiantes. Nos conocimos
                 mientras estudiábamos, y pronto descubrimos que teníamos un
                 desafío en común: encontrar una forma eficiente y llevadera de
@@ -210,7 +218,7 @@ export default function LandingPage() {
               />
             </div>
 
-            <div className='mb-8 mr-10 flex flex-col items-center sm:flex-row'>
+            <div className='mb-8 flex flex-col items-center sm:mr-10 sm:flex-row'>
               <img
                 src='\Chicho\Positivo\CapyLibro.gif'
                 alt='Chicho'
@@ -274,6 +282,8 @@ export default function LandingPage() {
                   />
                 </CarouselItem>
               </CarouselContent>
+              <CarouselPrevious className='left-4' />
+              <CarouselNext className='right-4' />
             </Carousel>
           </div>
         </section>
