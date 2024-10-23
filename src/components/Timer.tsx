@@ -380,13 +380,15 @@ export default function Timer() {
 
       <h1 className='mt-4 text-4xl font-bold'>CapyMetro!</h1>
 
-      <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+      <div className='grid grid-cols-1 sm:gap-20 md:grid-cols-2'>
         {/* Columna 1:  */}
         <div className='col-span-1 p-2'>
           {/* <AnimacionChicho2 motivation={motivationType} /> */}
-          <DialogoChicho motivation={motivationType} />
-          <div className='relative flex h-full max-h-[450px] w-full min-w-[450px] max-w-[450px] items-center justify-center overflow-hidden'>
-            <AnimacionChicho motivation={motivationType} />
+          <div className='mt-4 px-4'>
+            <DialogoChicho motivation={motivationType} />
+            <div className='relative flex sm:h-full sm:max-h-[450px] w-full sm:min-w-[450px] sm:max-w-[450px] items-center max-h-[320px]  min-w-[300px] max-w-[250px] justify-center overflow-hidden'>
+              <AnimacionChicho motivation={motivationType} />
+            </div>
           </div>
 
           <div>
@@ -470,12 +472,12 @@ export default function Timer() {
               ))}
             </ul>
           </div>
-          <div className='mt-6 flex flex-col items-center justify-between sm:flex-row'>
-            <Button className='w-full sm:w-auto' onClick={handleAccept}>
+          <div className='mt-6 flex mb-2 sm:mb-0 items-center justify-between  sm:flex-row'>
+            <Button className='w-auto ' onClick={handleAccept}>
               Volver
             </Button>
             <Button
-              className='mb-2 w-full sm:mb-0 sm:w-auto'
+              className=' w-auto'
               variant={'destructive'}
               onClick={() => {
                 finalizarSesion()

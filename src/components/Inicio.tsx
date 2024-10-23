@@ -377,15 +377,17 @@ export default function Inicio() {
           type='image/webp'
         />
       </Helmet>
-      <section className='mt-10 flex flex-col gap-20 p-10 md:flex-row'>
-        <div>
-          <DialogoChicho />
+      <section className='sm:mt-10 flex flex-col sm:gap-20 sm:p-10 md:flex-row'>
+      <div className='mt-4 px-16 sm:px-4'>
+            <DialogoChicho />
+            <div className='relative flex sm:h-full sm:max-h-[450px] w-full sm:min-w-[450px] sm:max-w-[450px] items-center max-h-[300px]  min-w-[200px] max-w-[250px] justify-center overflow-hidden'>
           <Reproductor src='/idle.webm' />
-        </div>
-
-        <div className='m-auto'>
+            </div>
+          </div>
+        {/* columna 2 */}
+        <div className='m-auto p-2 sm:p-0'>
           <h1 className='text-4xl font-bold'>Hola!</h1>
-          <p>Elige tu método de estudio:</p>
+          <p className='mt-2'>Elige tu método de estudio:</p>
           <ToggleGroup
             type='single'
             className='rounded-xl bg-primary/60 p-2 dark:bg-primary'
@@ -662,8 +664,8 @@ export default function Inicio() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className='-left-8' />
-              <CarouselNext className='-right-8' />
+              <CarouselPrevious className='hidden sm:inline-flex -left-8' />
+              <CarouselNext className='hidden sm:inline-flex -right-8' />
             </Carousel>
           </div>
 

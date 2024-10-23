@@ -304,12 +304,12 @@ export default function Pomodoro() {
   return (
     <>
       <h1 className='mt-4 text-center text-4xl font-bold'>Capydoro!</h1>
-      <div className='grid grid-cols-1 sm:gap-6 md:grid-cols-2'>
+      <div className='grid grid-cols-1 sm:gap-20 md:grid-cols-2'>
         {/*  Columna 1 */}
         <div className='col-span-1 p-4'>
           <div className='mt-4 px-4'>
             <DialogoChicho motivation={motivationType} />
-            <div className='relative flex sm:h-full sm:max-h-[450px] w-full sm:min-w-[450px] sm:max-w-[450px] items-center max-h-[300px]  min-w-[200px] max-w-[250px] justify-center overflow-hidden'>
+            <div className='relative flex sm:h-full sm:max-h-[450px] w-full sm:min-w-[450px] sm:max-w-[450px] items-center max-h-[320px]  min-w-[250px] max-w-[250px] justify-center overflow-hidden'>
               <AnimacionChicho motivation={motivationType} />
             </div>
           </div>
