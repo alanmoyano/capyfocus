@@ -8,6 +8,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from './ui/carousel'
+import Reproductor from './ComponentesEspecifico/Reproductor'
 
 export default function LandingPage() {
   const [, setLocation] = useLocation()
@@ -102,7 +103,7 @@ export default function LandingPage() {
             Con CapyFocus puedes crear eventos y asignarles objetivos
             específicos para estar siempre en control de tu progreso.
           </p>
-          <Carousel>
+          <Carousel opts={{ loop: true }}>
             <CarouselContent>
               <CarouselItem className='basis-full lg:basis-1/3'>
                 <div>
@@ -178,9 +179,8 @@ export default function LandingPage() {
 
           {/* Columna 2 */}
           <div className='flex text-center sm:w-1/3'>
-            <img
-              src='\Chicho\OtrasAcciones\CapyOk.gif'
-              alt='Chicho'
+            <Reproductor
+              src='\Chicho\OtrasAcciones\CapyOk.webm'
               className='mx-auto w-60'
             />
           </div>
@@ -211,17 +211,15 @@ export default function LandingPage() {
                 recordatorio de que podemos tomarnos las cosas con calma,
                 disfrutar el proceso y acompañarnos mutuamente en el camino.
               </p>
-              <img
-                src='\Chicho\Positivo\CapyPiano.gif'
-                alt='Chicho'
+              <Reproductor
+                src='\Chicho\Positivo\CapyPiano.webm'
                 className='w-80'
               />
             </div>
 
             <div className='mb-8 flex flex-col items-center sm:mr-10 sm:flex-row'>
-              <img
-                src='\Chicho\Positivo\CapyLibro.gif'
-                alt='Chicho'
+              <Reproductor
+                src='\Chicho\Positivo\CapyLibro.webm'
                 className='w-80'
               />
               <p className='mb-8 text-center text-lg'>
@@ -251,30 +249,30 @@ export default function LandingPage() {
               </h3>
             </div>
 
-            <Carousel>
+            <Carousel opts={{ loop: true }}>
               <CarouselContent>
-                <CarouselItem className='basis-1/2 lg:basis-1/4'>
+                <CarouselItem className='basis-1/2 md:basis-1/4'>
                   <img
                     src='./FotosLanding/ZTMNComiendoAlfajor.jpg'
                     alt='Equipo comiendo alfajor'
                     className='v h-56 w-56 rounded-lg border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
                   />
                 </CarouselItem>
-                <CarouselItem className='basis-1/2 lg:basis-1/4'>
+                <CarouselItem className='basis-1/2 md:basis-1/4'>
                   <img
                     src='./FotosLanding/presentandoCapyfocus2.jpg'
                     alt='Equipo presentando'
                     className='h-56 w-56 rounded-lg border-4 border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
                   />
                 </CarouselItem>
-                <CarouselItem className='basis-1/2 lg:basis-1/4'>
+                <CarouselItem className='basis-1/2 md:basis-1/4'>
                   <img
                     src='./FotosLanding/amigos.png'
                     alt='Equipo en una juntada'
                     className='h-56 w-56 rounded-lg border-4 border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
                   />
                 </CarouselItem>
-                <CarouselItem className='basis-1/2 lg:basis-1/4'>
+                <CarouselItem className='basis-1/2 md:basis-1/4'>
                   <img
                     src='./FotosLanding/ZTMNSonriendo.jpg'
                     alt='Equipo sonriendo'
