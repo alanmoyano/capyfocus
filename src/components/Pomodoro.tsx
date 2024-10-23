@@ -46,8 +46,8 @@ type Pomodoro = {
 }
 
 export default function Pomodoro() {
-  const [sessionSeconds, setSessionSeconds] = useState(25 * 60)
-  const [breakSeconds, setBreakSeconds] = useState(5 * 60)
+  const [sessionSeconds, setSessionSeconds] = useState(10)
+  const [breakSeconds, setBreakSeconds] = useState(5)
   const [objCumplidos, setObjCumplidos] = useState(0)
   const {
     time,
@@ -154,6 +154,7 @@ export default function Pomodoro() {
         pomodoroCount.current += 0.5
       } else {
         // if (time > 0) return
+        stopStudy()
         setBreakSeconds(
           pomodorosRealizados[pomodorosRealizados.length - 1].tiempoDescanso
         )

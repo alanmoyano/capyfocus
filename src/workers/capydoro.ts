@@ -44,6 +44,7 @@ onmessage = function (e) {
   if (action === 'stop') {
     // isStopped = true
     clearInterval(intervalId)
+    isWorking = true
   }
 
   if (action === 'startBr') {
