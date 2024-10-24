@@ -1,8 +1,5 @@
 import React from 'react'
-import {
-  Link,
-  // useRoute
-} from 'wouter'
+import { Link } from 'wouter'
 import { ModeToggle } from './ModeToggle'
 
 import { Menu } from 'lucide-react'
@@ -31,6 +28,8 @@ import {
 } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { useProfilePic } from './contexts/ProfilePicContext'
+import { profilePictures } from '@/constants/profilePictures'
+import { supabase } from './supabase/client'
 
 type NavbarLinkProps = {
   to: string
@@ -48,13 +47,30 @@ function NavbarLink({ to, children }: NavbarLinkProps) {
 }
 
 function AvatarLink() {
-  const { profilePic } = useProfilePic()
+  const { profilePic, setProfilePic } = useProfilePic()
+  const { session } = useSession()
+
+  function getProfilePicture() {
+    if (!session) return undefined
+
+    supabase
+      .from('Usuarios')
+      .select('fotoPerfil')
+      .eq('id', session.user.id)
+      .then(({ data }) => {
+        if (!data) return
+        const fotoSrc = profilePictures[data[0].fotoPerfil as number]
+        setProfilePic(fotoSrc)
+      })
+
+    return profilePic
+  }
   return (
     <Link to='/usuario'>
       <Avatar className='mx-auto'>
-        <AvatarImage src={profilePic} className='' />
+        <AvatarImage src={getProfilePicture()} className='' />
         <AvatarFallback className='border border-accent-foreground bg-accent text-xl font-medium'>
-          C
+          IC
         </AvatarFallback>
       </Avatar>
     </Link>
@@ -63,7 +79,7 @@ function AvatarLink() {
 
 function LogoLink() {
   return (
-    <Link to='/' className={navigationMenuTriggerStyle()}>
+    <Link to='/inicio' className={navigationMenuTriggerStyle()}>
       <div className='flex items-center justify-center gap-2'>
         <img src='/logo.webp' height={30} width={30} />
         <p>Capyfocus</p>
@@ -76,33 +92,23 @@ function NavItems() {
   const { session } = useSession()
   return (
     <>
-      <NavbarLink to='/'>Inicio</NavbarLink>
       {session && (
-        <span className='relative inline-flex'>
-          <NavbarLink to='/capyInsignias'>CapyInsiginas</NavbarLink>
-          <span className='absolute right-0 top-0 -mr-1 -mt-1 flex h-3 w-3'>
-            <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-secondary opacity-75'></span>
-            <span className='relative inline-flex h-3 w-3 rounded-full bg-secondary'></span>
+        <>
+          <NavbarLink to='/inicio'>Inicio</NavbarLink>
+          <span className='relative inline-flex'>
+            <NavbarLink to='/capyInsignias'>CapyInsiginas</NavbarLink>
+            <span className='absolute right-0 top-0 -mr-1 -mt-1 flex h-3 w-3'>
+              <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-secondary opacity-75'></span>
+              <span className='relative inline-flex h-3 w-3 rounded-full bg-secondary'></span>
+            </span>
           </span>
-        </span>
+
+          <NavbarLink to='/capyEstadisticas'>CapyEstadisticas</NavbarLink>
+        </>
       )}
-
-      <NavbarLink to='/capyEstadisticas'>CapyEstadisticas</NavbarLink>
-
-      {/* <NavbarLink to='/usuario'>CapyDatos</NavbarLink> */}
     </>
   )
 }
-
-/* function NuevoBoton() {
-  return (
-    <>
-      <Button variant='ghost' type='button' size='icon' className=''>
-        <Menu />
-      </Button>
-    </>
-  )
-} */
 
 export default function Navbar() {
   const [abierto, setAbierto] = React.useState(false)

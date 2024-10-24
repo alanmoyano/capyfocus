@@ -31,8 +31,11 @@ export const ObjetivosProvider = ({ children }: { children: ReactNode }) => {
   const [objetivosFav, setObjetivosFav] = useState<string[]>(() => {
     const savedFav = localStorage.getItem('objetivosFav')
     if (!savedFav) return []
-
-    return JSON.parse(savedFav) as string[]
+    try {
+      return JSON.parse(savedFav) as string[]
+    } catch {
+      return []
+    }
   })
 
   const [tiempo, setTiempo] = useState<Record<string, number>>({})

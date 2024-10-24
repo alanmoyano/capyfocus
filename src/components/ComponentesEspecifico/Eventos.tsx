@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+
 import { Trash } from 'lucide-react'
 import {
   Tooltip,
@@ -23,21 +25,35 @@ import { Calendar } from '@/components/ui/calendar'
 import { es } from 'date-fns/locale'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useState, KeyboardEvent, useEffect } from 'react'
+import { useState, KeyboardEvent } from 'react'
 import { useLocation } from 'wouter'
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
 import { useEvents } from '../contexts/EventsContext'
+import {
+  formatDateDash,
+  gatherEventsOfUser,
+} from '../../constants/supportFunctions'
 
 export type Event = {
+  id: number
   date: Date
   title: string
+  hoursAcumulated?: number
 }
 
 type EventToSave = {
   nombre: string
   uuid: string
   fechaLimite: Date
+}
+
+type EventToRecover = {
+  idEvento: number
+  nombre: string
+  idUsuario: string
+  fechaLimite: string
+  horasAcumuladas: number | null
 }
 
 type EventAddContext = 'New' | 'Existing'
@@ -48,13 +64,18 @@ async function saveEvent(name: string, uuid: string, limitDate: Date) {
     uuid: uuid,
     fechaLimite: limitDate,
   }
-  const { data, error } = await supabase.from('Eventos').insert([
-    {
-      nombre: eventToSave.nombre,
-      idUsuario: eventToSave.uuid,
-      fechaLimite: eventToSave.fechaLimite,
-    },
-  ])
+  const { data, error } = await supabase
+    .from('Eventos')
+    .insert([
+      {
+        nombre: eventToSave.nombre,
+        idUsuario: eventToSave.uuid,
+        fechaLimite: eventToSave.fechaLimite,
+      },
+    ])
+    .select()
+
+  if (data) return data[0] as EventToRecover
 }
 
 async function deleteEvent(date: Date, name: string, uuid: string) {
@@ -64,39 +85,6 @@ async function deleteEvent(date: Date, name: string, uuid: string) {
     .eq('nombre', name)
     .eq('fechaLimite', formatDateDash(date))
     .eq('idUsuario', uuid)
-}
-
-async function gatherEventsOfUser(uuid: string, date?: Date) {
-  if (date) {
-    const { data, error } = await supabase
-      .from('Eventos')
-      .select()
-      .eq('idUsuario', uuid)
-      .gt('fechaLimite', formatDateSlash(date))
-    return data
-  } else {
-    const { data, error } = await supabase
-      .from('Eventos')
-      .select()
-      .eq('idUsuario', uuid)
-    return data
-  }
-}
-
-const formatDateSlash = (date: Date) => {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-
-  return `${year}/${month}/${day}`
-}
-
-const formatDateDash = (date: Date) => {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-
-  return `${year}-${month}-${day}`
 }
 
 const formatDate = (date: Date) => {
@@ -128,13 +116,12 @@ const createGoogleCalendarLink = (name: string, date: Date) => {
 export default function Eventos() {
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [, setLocation] = useLocation()
-  const { events, setEvents } = useEvents() //todos los eventos
+  const { events, setEvents, selectedEvent, setSelectedEvent } = useEvents() //todos los eventos
   const [eventTitle, setEventTitle] = useState<string>('') //el titulos del evento
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null) //el evento seleccionado
   const { session } = useSession()
 
   const handleVolver = () => {
-    setLocation('/')
+    setLocation('/inicio')
   }
 
   const recoverEvents = () => {
@@ -142,21 +129,27 @@ export default function Eventos() {
       if (events.length === 0) {
         gatherEventsOfUser(session.user.id)
           .then(data =>
-            data?.forEach(evento => {
-              if (evento) {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-                const fechaParsed = evento.fechaLimite.replaceAll(
-                  '-',
-                  '/'
-                ) as string
+            data.forEach(evento => {
+              // @ts-expect-error no te preocupes type, anda
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+              const fechaParsed = evento.fechaLimite.replaceAll(
+                '-',
+                '/'
+              ) as string
 
-                const date = new Date(fechaParsed)
+              const id = evento.idEvento
 
-                const title = evento.nombre as string
+              const date = new Date(fechaParsed)
 
-                console.log(date, title)
-                setEvents(prev => [...prev, { date, title: title }])
-              }
+              const title = evento.nombre
+
+              const hours = evento.horasAcumuladas
+
+              // @ts-expect-error no te preocupes type, anda
+              setEvents(prev => [
+                ...prev,
+                { date, title: title, hoursAcumulated: hours, id: id },
+              ])
             })
           )
           .catch((error: unknown) => console.log(error))
@@ -172,8 +165,6 @@ export default function Eventos() {
         day: 'numeric',
       })
 
-      setEvents([...events, { date, title: eventTitle }])
-      setEventTitle('') // Limpiar el título después de añadir el evento
       if (context === 'New') {
         toast.success('Se ha creado el evento:', {
           description: '"' + eventTitle + '"' + ' en el dia: ' + dateString,
@@ -182,8 +173,18 @@ export default function Eventos() {
           window.open(createGoogleCalendarLink(eventTitle, date))
         }
         if (session) {
+          console.log(date)
+          const mañana = new Date('2024/11/2')
+          console.log(mañana)
           saveEvent(eventTitle, session.user.id, date)
-            .then(() => console.log('Evento guardado correctamente'))
+            .then(data => {
+              if (data) {
+                setEvents([
+                  ...events,
+                  { date, title: eventTitle, id: data.idEvento },
+                ])
+              }
+            })
             .catch((error: unknown) => console.log(error))
         } else {
           toast.error('ADVERTENCIA', {
@@ -191,6 +192,9 @@ export default function Eventos() {
               'Si no tienes sesion iniciada tu evento se borrará de la pagina',
           })
         }
+        // setEvents([...events, { date, title: eventTitle }])
+        setEventTitle('') // Limpiar el título después de añadir el evento
+        console.log(events)
       }
     } else {
       toast.error('No se ha podido crear el evento:', {
@@ -325,7 +329,7 @@ export default function Eventos() {
                 }}
               />
 
-              <div className='mt-4'>
+              <div className='mt-4 flex flex-row items-center justify-center gap-2'>
                 <Button
                   onClick={() => {
                     addEvent(false, 'New')
@@ -417,7 +421,16 @@ export default function Eventos() {
         </ScrollArea>
         <SheetFooter className='flex w-full justify-between'>
           <SheetClose asChild>
-            <div className='flex w-full justify-between'>
+            <div className='flex w-full items-center justify-between gap-2'>
+              <Button
+                variant={'secondary'}
+                className='w-full sm:ml-2 sm:w-auto'
+                onClick={() => {
+                  handleVolver()
+                }}
+              >
+                Aceptar
+              </Button>
               <Button
                 variant={'accent'}
                 className='w-full sm:mr-2 sm:w-auto'
@@ -427,15 +440,6 @@ export default function Eventos() {
                 }}
               >
                 Cancelar
-              </Button>
-              <Button
-                variant={'secondary'}
-                className='w-full sm:ml-2 sm:w-auto'
-                onClick={() => {
-                  handleVolver()
-                }}
-              >
-                Aceptar
               </Button>
             </div>
           </SheetClose>

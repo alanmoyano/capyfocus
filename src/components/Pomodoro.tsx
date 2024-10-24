@@ -18,11 +18,44 @@ import CountdownStudy from './ComponentesEspecifico/CountDown/CountdownStudy'
 import CountdownBreak from './ComponentesEspecifico/CountDown/CountdownBreak'
 import { SkipForward } from 'lucide-react'
 import usePomodoro from '@/hooks/usePomodoro'
+import {
+  acumulateHoursInFavouriteObj,
+  acumulateHoursInSelectedEvent,
+  dateToTimetz,
+  getSelectedMusic,
+  SesionAGuardar,
+} from '@/constants/supportFunctions'
+import { supabase } from './supabase/client'
+import { useSession } from './contexts/SessionContext'
+import { useEvents } from './contexts/EventsContext'
+import useTimer from '@/hooks/useTimer'
 
+//BUG: No anda bien el contador de tiempo, no cuenta el tiempo de estudio y descanso.
 type Mode = 'Estudiando' | 'Descansando'
 
 function addZeroIfNeeded(value: number) {
   return value.toString().padStart(2, '0')
+}
+
+async function saveSession(sessionToSave: SesionAGuardar) {
+  const { data, error } = await supabase.from('SesionesDeEstudio').insert([
+    {
+      idUsuario: sessionToSave.uuid,
+      horaInicioSesion: sessionToSave.horaInicioSesion,
+      fecha: sessionToSave.fecha,
+      horaFinSesion: sessionToSave.horaFinSesion,
+      tecnicaEstudio: sessionToSave.tecnicaEstudio,
+      tipoMotivacion: sessionToSave.tipoMotivacion,
+      cantidadObjetivosCumplidos: sessionToSave.cantidadObjetivosCumplidos,
+      cantidadObjetivos: sessionToSave.cantidadObjetivos,
+      tiempoEstudio: sessionToSave.tiempoEstudio,
+      musicaSeleccionada: sessionToSave.musicaSeleccionada,
+      eventoSeleccionado: sessionToSave.eventoSeleccionado,
+    },
+  ])
+
+  if (error) console.log(error)
+  else console.log('Datos guardados correctamente')
 }
 
 export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
@@ -52,6 +85,7 @@ export default function Pomodoro() {
     time,
     startStudy,
     isStudying,
+    isPaused,
     pauseStudy,
     resumeStudy,
     startBreak,
@@ -71,6 +105,15 @@ export default function Pomodoro() {
   const [volumen, setVolumen] = useState(true)
   const [boom, setBoom] = useState(false)
   const [breakStarted, setBreakStarted] = useState(false)
+  const { session } = useSession()
+  const [InicioSesion, setInicioSesion] = useState<Date | null>(null)
+  const { selectedEvent } = useEvents()
+  const {
+    studyTime: objStudyTime,
+    startStudy: startObjTime,
+    pauseStudy: pauseObjectiveTime,
+    resetTimers: resetObjectiveTime,
+  } = useTimer()
 
   const {
     objetivos,
@@ -95,13 +138,60 @@ export default function Pomodoro() {
   const finalizarSesion = () => {
     clearInterval(timer.current)
 
-    if (time > 0 && mode === 'Estudiando') {
+    let studyTime = 0
+    pomodorosRealizados.forEach(
+      pomodoro => (studyTime += pomodoro.tiempoEstudio)
+    )
+
+    if (time > 0 && mode === 'Estudiando' && isSetted) {
+      studyTime -= time
       console.log('Entre en el primero')
       setTiempoTotal(prev => prev - time)
       setAcumuladorTiempoPausa(prev => prev - breakSeconds)
     } else if (time > 0 && mode === 'Descansando') {
       console.log('Entre en el segundo')
       setAcumuladorTiempoPausa(prev => prev - time)
+    }
+
+    if (session) {
+      const hoy = new Date()
+      const sessionToSave: SesionAGuardar = {
+        uuid: session.user.id,
+        horaInicioSesion: dateToTimetz(InicioSesion),
+        //@ts-expect-error no te preocupes ts
+        fecha: InicioSesion,
+        horaFinSesion: dateToTimetz(hoy),
+        tecnicaEstudio: 1,
+        tipoMotivacion: motivationType === 'Positiva' ? 1 : 2,
+        cantidadObjetivos: objetivos.length,
+        cantidadObjetivosCumplidos: objCumplidos,
+        tiempoEstudio: studyTime,
+        musicaSeleccionada: getSelectedMusic(
+          selectedMusic ? selectedMusic.title : ''
+        ),
+        eventoSeleccionado: selectedEvent ? selectedEvent.id : null,
+      }
+
+      saveSession(sessionToSave)
+        .then(() => console.log('Los datos fueron guardados correctamente'))
+        .catch((error: unknown) => {
+          console.log('Ocurrio un error', error)
+        })
+
+      if (selectedEvent) {
+        const nuevoTiempo =
+          (selectedEvent.hoursAcumulated ? selectedEvent.hoursAcumulated : 0) +
+          studyTime
+        selectedEvent.hoursAcumulated = nuevoTiempo
+        acumulateHoursInSelectedEvent(
+          nuevoTiempo,
+          session.user.id,
+          selectedEvent.title,
+          selectedEvent.date
+        )
+          .then(() => console.log('Datos cargados en evento de manera exitosa'))
+          .catch((error: unknown) => console.log('Ocurrio un error', error))
+      }
     }
 
     objetivos.forEach(objetivo => {
@@ -119,7 +209,7 @@ export default function Pomodoro() {
   }
 
   const handleVolver = () => {
-    setLocation('/')
+    setLocation('/inicio')
   }
 
   //Revisar el funcionamiento de esta cosa!!!
@@ -147,18 +237,20 @@ export default function Pomodoro() {
         setSessionSeconds(
           pomodorosRealizados[pomodorosRealizados.length - 1].tiempoEstudio
         )
+        pauseObjectiveTime()
         setMode('Descansando')
         setIsActive(false)
         setBoom(false) //para el confetti
         pomodoroCount.current += 0.5
       } else {
         // if (time > 0) return
+        stopStudy()
         setBreakSeconds(
           pomodorosRealizados[pomodorosRealizados.length - 1].tiempoDescanso
         )
         setMode('Estudiando')
-        setIsActive(prev => !prev)
-        setIsSetted(prev => !prev)
+        setIsActive(false)
+        setIsSetted(false)
         pomodoroCount.current += 0.5
         setBoom(true)
       }
@@ -170,12 +262,16 @@ export default function Pomodoro() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isActive, sessionSeconds, breakSeconds, mode, objCumplidos, isStudying])
 
+  useEffect(() => {
+    setIsActive(isPaused)
+  }, [isPaused])
+
   // useEffect(() => {
   //   setCountdown(mode === 'Estudiando' ? sessionSeconds : breakSeconds)
   // }, [mode, sessionSeconds, breakSeconds, isSetted])
   /* 
   const handleAccept = () => {
-    setLocation('/')
+    setLocation('/inicio')
     setObjetivos(prevObjetivos =>
       prevObjetivos.filter(obj => !marked.includes(obj))
     )
@@ -207,20 +303,72 @@ export default function Pomodoro() {
 
     setTiempo(prev => ({
       ...prev,
-      [objetivo]: ObjStudyTime,
+      [objetivo]: objStudyTime,
     }))
     setTiempoSesion(prev => ({ ...prev, [objetivo]: tiempoTotal - time }))
     if (objetivosFav.includes(objetivo)) {
+      const timeToSave = objStudyTime
       if (!tiempoFavorito[objetivo]) {
-        setTiempoFavorito(prev => ({ ...prev, [objetivo]: ObjStudyTime }))
+        setTiempoFavorito(prev => ({ ...prev, [objetivo]: timeToSave }))
+        if (session) {
+          if (selectedEvent) {
+            acumulateHoursInFavouriteObj(
+              objetivo,
+              timeToSave,
+              session.user.id,
+              selectedEvent.id
+            )
+              .then(() =>
+                console.log('Datos en objetvios actualizados correctamente')
+              )
+              .catch((error: unknown) => console.log('Ocurrio un error', error))
+          } else {
+            acumulateHoursInFavouriteObj(
+              objetivo,
+              objStudyTime,
+              session.user.id
+            )
+              .then(() =>
+                console.log('Datos en objetvios actualizados correctamente')
+              )
+              .catch((error: unknown) => console.log('Ocurrio un error', error))
+          }
+        }
       } else {
+        const timeToSave = objStudyTime + (tiempoFavorito[objetivo] ?? 0)
         setTiempoFavorito(prev => ({
           ...prev,
-          [objetivo]: ObjStudyTime + (tiempoFavorito[objetivo] ?? 0),
+          [objetivo]: timeToSave,
         }))
+        if (session) {
+          if (selectedEvent) {
+            acumulateHoursInFavouriteObj(
+              objetivo,
+              timeToSave,
+              session.user.id,
+              selectedEvent.id
+            )
+              .then(() => {
+                console.log('Datos actualizados correctamente')
+              })
+              .catch((error: unknown) => {
+                console.log('Ocurrio un error', error)
+              })
+          } else {
+            acumulateHoursInFavouriteObj(objetivo, timeToSave, session.user.id)
+              .then(() => {
+                console.log('Datos actualizados correctamente')
+              })
+              .catch((error: unknown) => {
+                console.log('Ocurrio un error', error)
+              })
+          }
+        }
       }
     }
 
+    resetObjectiveTime()
+    startObjTime()
     setObjStudyTime(0)
   }
 
@@ -232,6 +380,8 @@ export default function Pomodoro() {
       setSessionStart(true)
       setTiempo({})
       setTiempoSesion({})
+      const hoy = new Date()
+      setInicioSesion(hoy)
     }
     setIsSetted(prev => !prev)
     setIsActive(prev => !prev)
@@ -250,21 +400,24 @@ export default function Pomodoro() {
     }
     setTiempoTotal(prev => (prev += tiempoEstudio))
     setAcumuladorTiempoPausa(prev => (prev += tiempoDescanso))
+    startObjTime()
   }
 
-  const handlePause = (value: boolean) => {
+  const handlePause = () => {
+    const value = !isActive
+
     if (!value) {
       setCantidadPausas(prev => (prev += 1))
       pauseStudy()
+      pauseObjectiveTime()
     } else {
-      if (mode === 'Descansando' && !breakStarted) {
-        setBreakStarted(true)
-        startBreak()
-        console.log(value)
-      } else {
-        resumeStudy()
-      }
+      resumeStudy()
+      startObjTime()
+
+      // resumeStudy()
     }
+    // resumeStudy()
+
     setIsActive(value)
   }
 
@@ -298,15 +451,13 @@ export default function Pomodoro() {
   return (
     <>
       <h1 className='mt-4 text-center text-4xl font-bold'>Capydoro!</h1>
-      <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+      <div className='grid grid-cols-1 sm:gap-20 md:grid-cols-2'>
         {/*  Columna 1 */}
         <div className='col-span-1 p-4'>
           <div className='mt-4 px-4'>
             <DialogoChicho motivation={motivationType} />
-            <AnimacionChicho motivation={motivationType} />
-            <div className='mb-4 rounded-lg bg-primary p-2 text-center'>
-              Tu tipo de motivación es:{' '}
-              <span className='font-semibold'>{motivationType}</span>
+            <div className='relative flex max-h-[320px] w-full min-w-[250px] max-w-[250px] items-center justify-center overflow-hidden sm:h-full sm:max-h-[450px] sm:min-w-[450px] sm:max-w-[450px]'>
+              <AnimacionChicho motivation={motivationType} />
             </div>
           </div>
           <div className='w-full'>
@@ -323,6 +474,9 @@ export default function Pomodoro() {
         </div>
         {/* Columna 2  */}
         <div className='col-span-1'>
+          <div className='mb-4 w-7/12 rounded-lg bg-accent p-2 sm:mt-4'>
+            Motivación: <span className='font-semibold'>{motivationType}</span>
+          </div>
           {/* Seteadores de tiempo */}
           {!isSetted && (
             <>
@@ -383,7 +537,7 @@ export default function Pomodoro() {
           {isSetted && (
             <>
               <div className='px-4'>
-                <div className='mt-16 flex justify-center'>
+                <div className='flex justify-center sm:mt-16'>
                   {mode === 'Estudiando' ? (
                     <div>
                       <CountdownStudy
@@ -434,10 +588,10 @@ export default function Pomodoro() {
                 Empezar
               </Button>
             ) : (
-              <>
+              <div className='flex flex-row items-center justify-center'>
                 <Button
                   className='flex items-center justify-center rounded-full p-6'
-                  onClick={() => handlePause(!isActive)}
+                  onClick={() => handlePause()}
                 >
                   {isActive ? <Pause /> : <Play />}
                 </Button>
@@ -449,7 +603,7 @@ export default function Pomodoro() {
                 >
                   <SkipForward />
                 </Button>
-              </>
+              </div>
             )}
           </div>
           {/* Volumen */}
@@ -462,7 +616,9 @@ export default function Pomodoro() {
           </div>
           {/* Objetivos: */}
           <div className='mt-4 rounded-xl bg-accent/90 p-4'>
-            <h1 className='text-xl'>Objetivos de la sesión:</h1>
+            <h1 className='mb-2 text-xl font-semibold'>
+              Objetivos de la sesión:
+            </h1>
             <ul className='list-inside list-disc space-y-2 text-black'>
               {objetivos.map((objetivo, key) => (
                 <li key={key} className='flex items-center space-x-2'>

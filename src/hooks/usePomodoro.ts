@@ -3,11 +3,13 @@ import { useEffect, useRef, useState } from 'react'
 type props = {
   timeLeft: number
   isWorking: boolean
+  isPaused: boolean
 }
 
 export default function usePomodoro() {
   const [time, setTime] = useState(-1)
   const [isStudying, setIsStudying] = useState(false)
+  const [isPaused, setIsPaused] = useState(false)
 
   const workerRef = useRef<Worker | null>()
 
@@ -17,9 +19,10 @@ export default function usePomodoro() {
     )
 
     workerRef.current.onmessage = event => {
-      const { timeLeft, isWorking } = event.data as props
+      const { timeLeft, isWorking, isPaused } = event.data as props
       setTime(timeLeft)
       setIsStudying(isWorking)
+      setIsPaused(isPaused)
     }
 
     return () => {
@@ -67,6 +70,7 @@ export default function usePomodoro() {
   return {
     time,
     isStudying,
+    isPaused,
     startStudy,
     pauseStudy,
     resumeStudy,

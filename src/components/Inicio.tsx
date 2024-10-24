@@ -76,6 +76,7 @@ import { Helmet } from 'react-helmet'
 
 import Reproductor from './ComponentesEspecifico/Reproductor'
 import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
+import { useEvents } from './contexts/EventsContext'
 
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
@@ -120,6 +121,65 @@ type Motivacion = {
   descripcion?: string
 }
 
+type ObjectiveToAdd = {
+  descripcion: string
+  created_at: string
+  idUsuario: string
+}
+
+type ObjectiveRecovered = {
+  descripcion: string
+  created_at: string
+  idUsuario: string
+  id: number
+  horaInicioObjetivo: string
+  horaFinObjetivo: string
+  idEstado: number
+  idEvento: number
+  horasAcumuladas: number
+}
+
+async function gatherUserPendingObjectives(uuid: string) {
+  const { data, error } = await supabase
+    .from('ObjetivosFavoritos')
+    .select()
+    .eq('idUsuario', uuid)
+    .eq('idEstado', 1)
+  if (data) return data
+  else console.log(error)
+}
+
+async function persistFavoriteObjective(
+  name: string,
+  fechaCreado: Date,
+  uuid: string
+) {
+  const objectiveToAdd: ObjectiveToAdd = {
+    descripcion: name,
+    created_at: fechaCreado.toISOString(),
+    idUsuario: uuid,
+  }
+  const { data, error } = await supabase.from('ObjetivosFavoritos').insert([
+    {
+      descripcion: objectiveToAdd.descripcion,
+      created_at: objectiveToAdd.created_at,
+      idUsuario: objectiveToAdd.idUsuario,
+      idEstado: 1,
+    },
+  ])
+}
+
+async function deletePersistedObjective(nombre: string, uuid: string) {
+  const { data, error } = await supabase
+    .from('ObjetivosFavoritos')
+    .update({ idEstado: 2 })
+    .eq('descripcion', nombre)
+    .eq('idUsuario', uuid)
+
+  if (data) console.log(data)
+  else console.log(error)
+}
+
 export default function Inicio() {
   const [open, setOpen] = useState(false)
   const [value] = useState('')
@@ -127,6 +187,8 @@ export default function Inicio() {
   const [index, setIndex] = useState<number | null>(null)
   const [selectedPlaylist, setSelectedPlaylist] = useState(-1)
   const { session } = useSession()
+  const [objectivesRecovered, setObjectivesRecovered] = useState(false)
+  const { selectedEvent } = useEvents()
 
   const {
     objetivos,
@@ -135,6 +197,7 @@ export default function Inicio() {
     setObjetivosFav,
     setTiempo,
     setTiempoSesion,
+    setTiempoFavorito,
   } = useObjetivos()
 
   const [description, setDescription] = useState<CapyMetodos>()
@@ -153,6 +216,25 @@ export default function Inicio() {
   } = useSesion()
 
   const [motivaciones, setMotivaciones] = useState<Motivacion[]>([])
+
+  const recoverObjectives = () => {
+    if (session && !objectivesRecovered) {
+      setObjectivesRecovered(true)
+      gatherUserPendingObjectives(session.user.id)
+        .then(data =>
+          data?.forEach((objetivo: ObjectiveRecovered) => {
+            setTiempoFavorito(prev => ({
+              ...prev,
+              [objetivo.descripcion]: objetivo.horasAcumuladas,
+            }))
+            setObjetivosFav(prev => [...prev, objetivo.descripcion])
+          })
+        )
+        .catch((error: unknown) => {
+          console.log('Ocurrio un error recuperando los objetivos', error)
+        })
+    }
+  }
 
   const handleAccept = () => {
     switch (description) {
@@ -180,8 +262,6 @@ export default function Inicio() {
   }
 
   const handleSelect = (value: string) => {
-    console.log(value)
-
     setMotivationType(value)
   }
 
@@ -230,8 +310,27 @@ export default function Inicio() {
       setObjetivosFav(
         objetivosFav.filter(objetivoFav => objetivoFav !== objetivo)
       )
+      if (session) {
+        deletePersistedObjective(objetivo, session.user.id)
+          .then(() => {
+            console.log('Objetivo completado, felicitaciones')
+          })
+          .catch((error: unknown) => {
+            console.log('Ocurrio un error', error)
+          })
+      }
     } else {
       setObjetivosFav([...objetivosFav, objetivo])
+      if (session) {
+        const hoy = new Date()
+        persistFavoriteObjective(objetivo, hoy, session.user.id)
+          .then(() => {
+            console.log('Objetivo persistido correctamente')
+          })
+          .catch((error: unknown) => {
+            console.log('Ocurrio un error: ', error)
+          })
+      }
     }
   }
 
@@ -261,7 +360,6 @@ export default function Inicio() {
       .then(data => {
         if (!data) return
 
-        console.log(data)
         setMotivaciones(data)
       })
 
@@ -279,15 +377,17 @@ export default function Inicio() {
           type='image/webp'
         />
       </Helmet>
-      <section className='mt-10 flex flex-col gap-20 p-10 md:flex-row'>
-        <div>
+      <section className='flex flex-col sm:mt-10 sm:gap-20 sm:p-10 md:flex-row'>
+        <div className='mt-4 px-4 sm:px-4'>
           <DialogoChicho />
-          <Reproductor src='/idle.webm' />
+          <div className='relative flex max-h-[300px] w-full min-w-[290px] max-w-[340px] items-center justify-center overflow-hidden sm:h-full sm:max-h-[450px] sm:min-w-[450px] sm:max-w-[450px]'>
+            <Reproductor src='/idle.webm' />
+          </div>
         </div>
-
-        <div className='m-auto'>
+        {/* columna 2 */}
+        <div className='p-2 sm:p-0'>
           <h1 className='text-4xl font-bold'>Hola!</h1>
-          <p>Elige tu método de estudio:</p>
+          <p className='mt-2'>Elige tu método de estudio:</p>
           <ToggleGroup
             type='single'
             className='rounded-xl bg-primary/60 p-2 dark:bg-primary'
@@ -309,19 +409,26 @@ export default function Inicio() {
             </ToggleGroupItem>
           </ToggleGroup>
           {/* Agregar evento  */}
-          { session && (
-          <div className='flex h-auto w-1/2 items-center space-x-4'>
-            <Eventos />
-            <div className='mt-6'>
-              <CapyInfo desc='Organiza tus sesiones de estudio con eventos y objetivos. Selecciona el evento, haz clic en "Aceptar", añade los objetivos de la sesión y ¡Controla tu progreso en las CapyEstadísticas!' />
+          {session && (
+            <div className='flex h-auto w-1/2 items-center space-x-4'>
+              <Eventos />
+              <div className='mt-6'>
+                <CapyInfo desc='Organiza tus sesiones de estudio con eventos y objetivos. Selecciona el evento, haz clic en "Aceptar", añade los objetivos de la sesión y ¡Controla tu progreso en las CapyEstadísticas!' />
+              </div>
             </div>
-          </div>
           )}
 
           {/* Objetivos */}
           <div className='mt-4 rounded-xl bg-secondary/70 p-4 dark:bg-secondary/90'>
             {/* Aca si eligio sesion o evento va a ir */}
-            <label htmlFor=''>Objetivos de sesion o evento:</label>
+            {selectedEvent ? (
+              <label htmlFor=''>
+                Objetivos del evento: {selectedEvent.title}
+              </label>
+            ) : (
+              <label htmlFor=''>Objetivos de sesion</label>
+            )}
+
             <div className='mt-2 flex items-center gap-2'>
               <Input
                 type='text'
@@ -329,7 +436,11 @@ export default function Inicio() {
                 value={inputValue}
                 onKeyDown={handleAdd}
                 onChange={e => setInputValue(e.target.value)}
-                className='rounded-md border border-secondary bg-white p-3 shadow-md transition-shadow duration-200 ease-in-out hover:shadow-lg focus:outline-none focus:ring-2 dark:bg-[#110d09] dark:placeholder:text-gray-500'
+                className='input-placeholder rounded-md p-3'
+                style={{
+                  backgroundColor: 'hsl(var(--input-bg))',
+                  border: `1px solid hsl(var(--input-border))`,
+                }}
                 disabled={objetivos.length >= 10}
               />
               <Popover open={open} onOpenChange={setOpen}>
@@ -340,6 +451,9 @@ export default function Inicio() {
                     aria-expanded={open}
                     className='justify-between'
                     disabled={objetivos.length >= 10}
+                    onClick={() => {
+                      recoverObjectives()
+                    }}
                   >
                     {value ? (
                       objetivosFav.find(objetivoFav => objetivoFav === value)
@@ -555,8 +669,8 @@ export default function Inicio() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className='-left-8' />
-              <CarouselNext className='-right-8' />
+              <CarouselPrevious className='left-4' />
+              <CarouselNext className='right-4' />
             </Carousel>
           </div>
 

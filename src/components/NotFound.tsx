@@ -18,7 +18,7 @@ export default function NotFound() {
           <Button
             variant={'link'}
             className='text-white'
-            onClick={() => setLocation('/')}
+            onClick={() => setLocation('/inicio')}
           >
             click aquí
           </Button>

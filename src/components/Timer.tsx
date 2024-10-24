@@ -16,44 +16,31 @@ import { Helmet } from 'react-helmet'
 import { formatTime } from '@/lib/utils'
 import { useSession } from './contexts/SessionContext'
 import { supabase } from './supabase/client'
+import {
+  dateToTimetz,
+  formatDateDash,
+  SesionAGuardar,
+  getSelectedMusic,
+  acumulateHoursInSelectedEvent,
+  getObjectiveByName,
+  acumulateHoursInFavouriteObj,
+} from '@/constants/supportFunctions'
+import { useEvents } from './contexts/EventsContext'
 
 //import Confetti from 'react-confetti-boom'
 
+//TODO: arreglar tema de animaciones
 type Mode = 'Sesión' | 'Descanso'
 type Accion = 'Estudiar' | 'Descansar'
 
-type SessionAGuardar = {
-  uuid: string
-  horaInicioSesion: string
-  fecha: Date
-  horaFinSesion: string
-  tecnicaEstudio: number
-  tipoMotivacion: number
-  cantidadObjetivosCumplidos: number
-  cantidadObjetivos: number
-  tiempoEstudio: number
-}
-
-function dateToTimetz(date: Date | null): string {
-  // Obtiene la parte de la hora y la zona horaria
-  const options: Intl.DateTimeFormatOptions = {
-    timeZone: 'UTC', // Cambia esto a la zona horaria que necesites
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-    timeZoneName: 'short',
-  }
-  //@ts-expect-error anda, no te preocupes
-  return date.toLocaleString('en-US', options)
-}
-
 export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
   return (
-    <>
-      <h2 className='text-xl font-semibold'>{mode}</h2>
-
-      <span className='text-lg'>Tiempo: {formatTime(time)}</span>
-    </>
+    <div className='select-none'>
+      <h2 className='text-xl font-semibold'>{mode}:</h2>
+      <div className='mt-4 text-center'>
+        <span className='text-5xl font-bold'>{formatTime(time)}</span>
+      </div>
+    </div>
   )
 }
 
@@ -97,11 +84,13 @@ export default function Timer() {
   const { setTiempoTotal, setAcumuladorTiempoPausa, setCantidadPausas } =
     useSesion()
 
+  const { selectedEvent } = useEvents()
+
   const finalizarSesion = () => {
     if (session) {
       const hoy = new Date()
       async function saveSession() {
-        const sessionToSave: SessionAGuardar = {
+        const sessionToSave: SesionAGuardar = {
           //@ts-expect-error no jodas ts, anda en la bd
           uuid: session?.user.id,
           horaInicioSesion: dateToTimetz(InicioSesion),
@@ -113,6 +102,10 @@ export default function Timer() {
           cantidadObjetivosCumplidos: objCumplidos,
           cantidadObjetivos: objetivos.length,
           tiempoEstudio: studyTime,
+          musicaSeleccionada: getSelectedMusic(
+            selectedMusic ? selectedMusic.title : ''
+          ),
+          eventoSeleccionado: selectedEvent ? selectedEvent.id : null,
         }
 
         const { data, error } = await supabase
@@ -129,6 +122,8 @@ export default function Timer() {
                 sessionToSave.cantidadObjetivosCumplidos,
               cantidadObjetivos: sessionToSave.cantidadObjetivos,
               tiempoEstudio: sessionToSave.tiempoEstudio,
+              musicaSeleccionada: sessionToSave.musicaSeleccionada,
+              eventoSeleccionado: sessionToSave.eventoSeleccionado,
             },
           ])
 
@@ -138,6 +133,26 @@ export default function Timer() {
       saveSession()
         .then(() => console.log('Datos guardados correctamente'))
         .catch((error: unknown) => console.log(error))
+
+      if (selectedEvent) {
+        const nuevoTiempo =
+          (selectedEvent.hoursAcumulated ? selectedEvent.hoursAcumulated : 0) +
+          studyTime
+
+        selectedEvent.hoursAcumulated = nuevoTiempo
+        acumulateHoursInSelectedEvent(
+          nuevoTiempo,
+          session.user.id,
+          selectedEvent.title,
+          selectedEvent.date
+        )
+          .then(() => {
+            console.log('Datos cargados en evento de manera exitosa')
+          })
+          .catch((error: unknown) => {
+            console.log('Ocurrio un error', error)
+          })
+      }
     }
 
     finalizeTimers()
@@ -203,7 +218,7 @@ export default function Timer() {
   // }, [mode, sessionSeconds, breakSeconds])
 
   const handleAccept = () => {
-    setLocation('/')
+    setLocation('/inicio')
     setObjetivos(prevObjetivos =>
       prevObjetivos.filter(obj => !marked.includes(obj))
     )
@@ -227,44 +242,157 @@ export default function Timer() {
       setTiempoSesion(prev => ({ ...prev, [objetivo]: studyTime }))
 
       if (objetivosFav.includes(objetivo)) {
+        const timeToSave = studyTime
         if (!tiempoFavorito[objetivo]) {
-          setTiempoFavorito(prev => ({ ...prev, [objetivo]: studyTime }))
+          setTiempoFavorito(prev => ({ ...prev, [objetivo]: timeToSave }))
+          if (session) {
+            if (selectedEvent) {
+              acumulateHoursInFavouriteObj(
+                objetivo,
+                timeToSave,
+                session.user.id,
+                selectedEvent.id
+              )
+                .then(() => {
+                  console.log('Datos actualizados correctamente')
+                })
+                .catch((error: unknown) => {
+                  console.log('Ocurrio un error', error)
+                })
+            } else {
+              acumulateHoursInFavouriteObj(
+                objetivo,
+                timeToSave,
+                session.user.id
+              )
+                .then(() => {
+                  console.log('Datos actualizados correctamente')
+                })
+                .catch((error: unknown) => {
+                  console.log('Ocurrio un error', error)
+                })
+            }
+          }
         } else {
+          const timeToSave = studyTime + (tiempoFavorito[objetivo] ?? 0)
           setTiempoFavorito(prev => ({
             ...prev,
-            [objetivo]: studyTime + (tiempoFavorito[objetivo] ?? 0),
+            [objetivo]: timeToSave,
           }))
+          if (session) {
+            if (selectedEvent) {
+              acumulateHoursInFavouriteObj(
+                objetivo,
+                timeToSave,
+                session.user.id,
+                selectedEvent.id
+              )
+                .then(() => {
+                  console.log('Datos actualizados correctamente')
+                })
+                .catch((error: unknown) => {
+                  console.log('Ocurrio un error', error)
+                })
+            } else {
+              acumulateHoursInFavouriteObj(
+                objetivo,
+                timeToSave,
+                session.user.id
+              )
+                .then(() => {
+                  console.log('Datos actualizados correctamente')
+                })
+                .catch((error: unknown) => {
+                  console.log('Ocurrio un error', error)
+                })
+            }
+          }
         }
         // const tiempoAnterior = tiempoFavorito[objetivo] ?? 0
         // console.log(tiempo)
-        // setTiempoFavorito(prev => ({
+        // setTiempoFavorito(prev => (
         //   ...prev,
         //   [objetivo]: tiempoAnterior + studyTime,
         // }))
       }
     } else {
+      const timeToSave = studyTime - tiempoObjAcumulado
       setTiempo(prev => ({
         ...prev,
-        [objetivo]: studyTime - tiempoObjAcumulado,
+        [objetivo]: timeToSave,
       }))
-      setTiempoSesion(prev => ({ ...prev, [objetivo]: studyTime }))
+      setTiempoSesion(prev => ({ ...prev, [objetivo]: timeToSave }))
       if (objetivosFav.includes(objetivo)) {
         if (!tiempoFavorito[objetivo]) {
-          setTiempoFavorito(prev => ({
-            ...prev,
-            [objetivo]: studyTime - tiempoObjAcumulado,
-          }))
+          setTiempoFavorito(prev => ({ ...prev, [objetivo]: timeToSave }))
+          if (session) {
+            if (selectedEvent) {
+              acumulateHoursInFavouriteObj(
+                objetivo,
+                timeToSave,
+                session.user.id,
+                selectedEvent.id
+              )
+                .then(() => {
+                  console.log('Datos actualizados correctamente')
+                })
+                .catch((error: unknown) => {
+                  console.log('Ocurrio un error', error)
+                })
+            } else {
+              acumulateHoursInFavouriteObj(
+                objetivo,
+                timeToSave,
+                session.user.id
+              )
+                .then(() => {
+                  console.log('Datos actualizados correctamente')
+                })
+                .catch((error: unknown) => {
+                  console.log('Ocurrio un error', error)
+                })
+            }
+          }
         } else {
           setTiempoFavorito(prev => ({
             ...prev,
-            [objetivo]:
-              studyTime + (tiempoFavorito[objetivo] ?? 0) - tiempoObjAcumulado,
+            [objetivo]: timeToSave + (tiempoFavorito[objetivo] ?? 0),
           }))
+          if (session) {
+            if (selectedEvent) {
+              acumulateHoursInFavouriteObj(
+                objetivo,
+                timeToSave + (tiempoFavorito[objetivo] ?? 0),
+                session.user.id,
+                selectedEvent.id
+              )
+                .then(() => {
+                  console.log('Datos actualizados correctamente')
+                })
+                .catch((error: unknown) => {
+                  console.log('Ocurrio un error', error)
+                })
+            } else {
+              acumulateHoursInFavouriteObj(
+                objetivo,
+                timeToSave + (tiempoFavorito[objetivo] ?? 0),
+                session.user.id
+              )
+                .then(() => {
+                  console.log('Datos actualizados correctamente')
+                })
+                .catch((error: unknown) => {
+                  console.log('Ocurrio un error', error)
+                })
+            }
+          }
         }
       }
     }
     setLastCheckedObj(key)
   }
+
+  console.log(selectedEvent)
 
   return (
     <>
@@ -278,17 +406,17 @@ export default function Timer() {
 
       <h1 className='mt-4 text-4xl font-bold'>CapyMetro!</h1>
 
-      <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+      <div className='grid grid-cols-1 sm:gap-20 md:grid-cols-2'>
         {/* Columna 1:  */}
-        <div className='col-span-1 p-4'>
+        <div className='col-span-1 p-2'>
           {/* <AnimacionChicho2 motivation={motivationType} /> */}
-          <DialogoChicho motivation={motivationType} />
-          <AnimacionChicho motivation={motivationType} />
-
-          <div className='mb-4 rounded-lg bg-primary p-2'>
-            Tu tipo de motivación es:{' '}
-            <span className='font-semibold'>{motivationType}</span>
+          <div className='mt-4 px-4'>
+            <DialogoChicho motivation={motivationType} />
+            <div className='relative flex max-h-[320px] w-full min-w-[300px] max-w-[250px] items-center justify-center overflow-hidden sm:h-full sm:max-h-[450px] sm:min-w-[450px] sm:max-w-[450px]'>
+              <AnimacionChicho motivation={motivationType} />
+            </div>
           </div>
+
           <div>
             {selectedMusic && (
               <iframe
@@ -307,6 +435,9 @@ export default function Timer() {
 
         {/* Columna 2:*/}
         <div className='col-span-1'>
+          <div className='mb-4 mt-4 w-7/12 rounded-lg bg-accent p-2'>
+            Motivación: <span className='font-semibold'>{motivationType}</span>
+          </div>
           {/* Contadores */}
           <div className='mt-6 flex w-full flex-col items-center justify-center gap-2 text-black sm:flex-row'>
             <div className='mb-2 w-full rounded-xl bg-accent/90 p-6 sm:mb-0 sm:mr-2'>
@@ -316,6 +447,7 @@ export default function Timer() {
               <ActualTimer mode={'Descanso'} time={breakTime} />
             </div>
           </div>
+
           <div className='mt-8 sm:mt-16'>
             <div className='flex justify-center'>
               <ToggleGroup
@@ -343,7 +475,9 @@ export default function Timer() {
             </div>
           </div>
           <div className='mt-8 rounded-xl bg-primary/90 p-4'>
-            <h1 className='text-xl'>Objetivos de la sesión</h1>
+            <h1 className='mb-2 text-xl font-semibold'>
+              Objetivos de la sesión
+            </h1>
             <ul className='list-inside list-disc space-y-2 text-black'>
               {objetivos.map((objetivo, key) => (
                 <li key={key} className='flex items-center space-x-2'>
@@ -364,18 +498,18 @@ export default function Timer() {
               ))}
             </ul>
           </div>
-          <div className='mt-6 flex flex-col items-center justify-between sm:flex-row'>
+          <div className='mb-2 mt-6 flex items-center justify-between sm:mb-0 sm:flex-row'>
+            <Button className='w-auto' onClick={handleAccept}>
+              Volver
+            </Button>
             <Button
-              className='mb-2 w-full sm:mb-0 sm:w-auto'
+              className='w-auto'
               variant={'destructive'}
               onClick={() => {
                 finalizarSesion()
               }}
             >
-              Finalizar Sesion
-            </Button>
-            <Button className='w-full sm:w-auto' onClick={handleAccept}>
-              Volver
+              Finalizar sesión
             </Button>
           </div>
         </div>

@@ -1,12 +1,8 @@
-// pomodoro.js (Web Worker)
-
 let intervalId: NodeJS.Timeout
 let isWorking = true
 let workTime: number, restTime: number
 let timeLeft: number
-let objStudyTime: number
-let isPaused = false // Nueva variable para pausar el temporizador
-// let isStopped = false // Variable de control para gestionar el stop
+let isPaused = false
 
 type props = {
   action: string
@@ -37,13 +33,15 @@ onmessage = function (e) {
     if (isPaused) {
       isPaused = false
       startTimer()
+      console.log('me resumieron')
     }
-    console.log('me resumieron')
   }
 
   if (action === 'stop') {
-    // isStopped = true
     clearInterval(intervalId)
+    isWorking = true
+    isPaused = true
+    console.log('me detuvieron')
   }
 
   if (action === 'startBr') {
@@ -55,12 +53,12 @@ function startTimer() {
   intervalId = setInterval(() => {
     if (!isPaused) {
       timeLeft--
-      postMessage({ timeLeft, isWorking })
+      postMessage({ timeLeft, isWorking, isPaused })
       console.log(timeLeft)
       if (timeLeft < 0) {
         isWorking = !isWorking
         timeLeft = isWorking ? workTime : restTime
-        postMessage({ timeLeft, isWorking })
+        postMessage({ timeLeft, isWorking, isPaused })
       }
     }
   }, 1000)

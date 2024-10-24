@@ -29,8 +29,7 @@ import LandingPage from './components/LandingPage'
 import { useLocation } from 'wouter'
 
 function App() {
-  const [location] = useLocation();
-
+  const [location] = useLocation()
 
   return (
     <ThemeProvider defaultTheme='light' storageKey='theme'>
@@ -50,7 +49,7 @@ function App() {
                 <SesionProvider>
                   <MusicProvider>
                     <EventsProvider>
-                      {location !== '/landing' && <Navbar />}
+                      <Navbar />
 
                       <Helmet>
                         <title>Capyfocus</title>
@@ -58,10 +57,10 @@ function App() {
 
                       <main>
                         <Switch>
-                        <Route path='/landing'>
+                          <Route path='/'>
                             <LandingPage />
                           </Route>
-                          <Route path='/'>
+                          <Route path='/inicio'>
                             <Inicio />
                           </Route>
                           <Route path='/login' component={Login} />

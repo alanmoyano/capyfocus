@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import html2canvas from 'html2canvas'
 import { ImageDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -58,6 +58,17 @@ import { formatTime } from '@/lib/utils'
 import useSearchParams from '@hooks/useSearchParams'
 import Reproductor from './ComponentesEspecifico/Reproductor'
 import { useSession } from './contexts/SessionContext'
+import { useEvents } from './contexts/EventsContext'
+import { gatherEventsOfUser } from '@/constants/supportFunctions'
+import EstadisticasEvento from './ComponentesEspecifico/EstadisticasEvento'
+
+type Period =
+  | 'sesion'
+  | 'semanal'
+  | 'mensual'
+  | 'bimestral'
+  | 'semestre'
+  | 'evento'
 
 // const chartData = [
 //   { browser: 'ParcialDSI', visitors: 275, fill: 'var(--color-chrome)' },
@@ -128,12 +139,55 @@ export default function CapyEstadisticas() {
   const queryParams = useSearch()
   const { period } = useSearchParams()
   const [selectedPeriod, setSelectedPeriod] = useState(period ?? '')
+  const [selectedEvent, setSelectedEvent] = useState('')
   const { session } = useSession()
+  const { events, setEvents } = useEvents()
+  const periodos = ['sesion', 'semanal', 'mensual', 'bimestral', 'semestral']
+
+  const recoverEvents = () => {
+    if (session) {
+      if (events.length === 0) {
+        gatherEventsOfUser(session.user.id)
+          .then(data =>
+            data.forEach(evento => {
+              // @ts-expect-error no te preocupes type, anda
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+              const fechaParsed = evento.fechaLimite.replaceAll(
+                '-',
+                '/'
+              ) as string
+
+              const id = evento.idEvento
+
+              const date = new Date(fechaParsed)
+
+              const title = evento.nombre
+
+              const hours = evento.horasAcumuladas
+
+              console.log(date, title)
+              //@ts-expect-error no te preocupes type
+              setEvents(prev => [
+                ...prev,
+                { date, title: title, hoursAcumulated: hours, id: id },
+              ])
+            })
+          )
+          .catch((error: unknown) => console.log(error))
+      }
+      recovered.current = true
+    }
+  }
 
   console.log(queryParams)
 
   const handleSelect = (value: string) => {
-    setSelectedPeriod(value)
+    if (periodos.includes(value)) {
+      setSelectedPeriod(value)
+    } else {
+      setSelectedPeriod('')
+      setSelectedEvent(value)
+    }
   }
 
   const {
@@ -149,6 +203,8 @@ export default function CapyEstadisticas() {
   const [date, setDate] = useState<Date | undefined>(new Date())
   const { tecnicaEstudio, tiempoTotal, acumuladorTiempoPausa, cantidadPausas } =
     useSesion()
+
+  const recovered = useRef(false)
 
   const cardRefs = {
     sesion: useRef(null),
@@ -170,6 +226,12 @@ export default function CapyEstadisticas() {
       link.click()
     }
   }
+
+  useEffect(() => {
+    if (!recovered.current) {
+      recoverEvents()
+    }
+  }, [])
   //Va a quedar lo de las estadisticas de sesion
   //Pero vamos a colocar el tema del mapeo de los eventos
   return (
@@ -257,7 +319,24 @@ export default function CapyEstadisticas() {
                     </TooltipProvider>
                   </SelectItem>
 
-                  <SelectItem key={5} value='evento'>
+                  {events.map(
+                    evento =>
+                      evento.hoursAcumulated && (
+                        <SelectItem key={evento.title} value={evento.title}>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <p>{evento.title}</p>
+                              </TooltipTrigger>
+                              <TooltipContent className='ml-40'>
+                                <p>Estadísticas del evento: {evento.title}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </SelectItem>
+                      )
+                  )}
+                  {/* <SelectItem key={5} value='evento'>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -268,7 +347,7 @@ export default function CapyEstadisticas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                  </SelectItem>
+                  </SelectItem> */}
                 </>
               )}
             </SelectGroup>
@@ -277,7 +356,7 @@ export default function CapyEstadisticas() {
       </div>
 
       {/* Pagina en blanco */}
-      {selectedPeriod === '' && tiempoTotal === 0 && (
+      {selectedPeriod === '' && tiempoTotal === 0 && !selectedEvent && (
         <Reproductor src='/auto.webm' />
       )}
       {/* Pagina de sesion */}
@@ -511,8 +590,17 @@ export default function CapyEstadisticas() {
 
       {selectedPeriod === 'semanal' && (
         <>
-          <p className='mt-4 text-xl font-bold'>Trabajando</p>
-          <img src='/Chicho/Negativo/CapyComputadora.gif' />
+          <div className='mr-12 flex w-full justify-end'>
+            <Button
+              variant='ghost'
+              onClick={() => captureScreenshot('semanal')}
+              className=''
+            >
+              <ImageDown className='mr-2 h-4 w-4' />
+              Capturar
+            </Button>
+          </div>
+          <EstadisticasPeriodo period='semanal'></EstadisticasPeriodo>
         </>
       )}
 
@@ -529,31 +617,50 @@ export default function CapyEstadisticas() {
             </Button>
           </div>
           <>
-            <p className='mt-4 text-xl font-bold'>Trabajando</p>
-            <img src='/Chicho/Negativo/CapyComputadora.gif' />
+            <EstadisticasPeriodo period='mensual'></EstadisticasPeriodo>
           </>
         </>
       )}
 
       {selectedPeriod === 'bimestral' && (
         <>
-          <p className='mt-4 text-xl font-bold'>Trabajando</p>
-          <img src='/Chicho/Negativo/CapyComputadora.gif' />
+          <div className='mr-12 flex w-full justify-end'>
+            <Button
+              variant='ghost'
+              onClick={() => captureScreenshot('bimestral')}
+              className=''
+            >
+              <ImageDown className='mr-2 h-4 w-4' />
+              Capturar
+            </Button>
+          </div>
+          <>
+            <EstadisticasPeriodo period='bimestral'></EstadisticasPeriodo>
+          </>
         </>
       )}
 
       {selectedPeriod === 'semestral' && (
         <>
-          <p className='mt-4 text-xl font-bold'>Trabajando</p>
-          <img src='/Chicho/Negativo/CapyComputadora.gif' />
-          {/* Ver fin de tarjeta, para que se termine antes y no con la pagina*/}
+          <div className='mr-12 flex w-full justify-end'>
+            <Button
+              variant='ghost'
+              onClick={() => captureScreenshot('semestral')}
+              className=''
+            >
+              <ImageDown className='mr-2 h-4 w-4' />
+              Capturar
+            </Button>
+          </div>
+          <>
+            <EstadisticasPeriodo period='semestre'></EstadisticasPeriodo>
+          </>
         </>
       )}
 
-      {selectedPeriod === 'evento' && (
+      {selectedPeriod === '' && selectedEvent && (
         <>
-          <p>Prototipo</p>
-          <EstadisticasPeriodo period='evento'></EstadisticasPeriodo>
+          <EstadisticasEvento name={selectedEvent}></EstadisticasEvento>
         </>
       )}
     </>
