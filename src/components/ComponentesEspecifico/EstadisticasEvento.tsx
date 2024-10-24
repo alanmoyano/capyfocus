@@ -205,23 +205,23 @@ async function gatherObjectivesOfEvent(eventId: number) {
     .select()
     .eq('idEvento', eventId)
 
+  if (error) console.error(error)
+
+  const ObjectivesToRecover: ObjectiveToRecover[] = []
   if (data) {
-    const ObjectivesToRecover: ObjectiveToRecover[] = []
-    if (data.length > 0) {
-      for (const row of data as RowToRecover[]) {
-        recoverObjectiveFromId(row.idObjetivoFavorito)
-          .then(data => {
-            if (data) {
-              ObjectivesToRecover.push(data[0])
-            }
-          })
-          .catch((error: unknown) =>
-            console.log('Ocurrio un error recuperando los objetivos', error)
-          )
-      }
+    for (const row of data as RowToRecover[]) {
+      recoverObjectiveFromId(row.idObjetivoFavorito)
+        .then(data => {
+          if (data) {
+            ObjectivesToRecover.push(data[0])
+          }
+        })
+        .catch((error: unknown) =>
+          console.log('Ocurrio un error recuperando los objetivos', error)
+        )
     }
-    return ObjectivesToRecover
-  } else console.log(error)
+  }
+  return ObjectivesToRecover
 }
 
 export default function EstadisticasEvento({ name }: { name: string }) {
@@ -387,7 +387,6 @@ export default function EstadisticasEvento({ name }: { name: string }) {
     if (evento && session) {
       gatherObjectivesOfEvent(evento.id)
         .then(data => {
-          //@ts-expect-error intente hacerla bien, pero no me entraba al if T-T
           setEventObjectives(data)
         })
         .catch((error: unknown) => {

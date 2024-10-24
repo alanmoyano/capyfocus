@@ -101,8 +101,8 @@ async function recoverObjectiveFromId(objectiveId: number) {
     .select()
     .eq('id', objectiveId)
 
-  if (data) return data
-  else console.log(error)
+  if (error) console.error(error)
+  return data
 }
 
 async function gatherEventsOfUser(uuid: string, date?: Date) {
