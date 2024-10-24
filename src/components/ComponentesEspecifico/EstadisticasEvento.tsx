@@ -481,7 +481,6 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                 </CardTitle>
               </CardHeader>
               <CardContent className='p-2'>
-                <div className='flex flex-col md:flex-row'>
                   <Calendar
                     mode='single'
                     selected={date}
@@ -496,16 +495,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                     modifiersClassNames={{
                       eventDay: 'bg-primary',
                     }}
-                  />
-
-                  <div className='pl-4 md:w-1/2'>
-                    <h1 className='mb-2 text-lg font-semibold'>
-                      dias conectado
-                    </h1>
-                    {/* Lista de eventos */}
-                    <p>11/07 2hs</p>
-                  </div>
-                </div>
+                  />{' '}
               </CardContent>
             </Card>
           </div>
