@@ -19,6 +19,7 @@ import CountdownBreak from './ComponentesEspecifico/CountDown/CountdownBreak'
 import { SkipForward } from 'lucide-react'
 import usePomodoro from '@/hooks/usePomodoro'
 import {
+  acumulateHoursInFavouriteObj,
   acumulateHoursInSelectedEvent,
   dateToTimetz,
   getSelectedMusic,
@@ -27,6 +28,7 @@ import {
 import { supabase } from './supabase/client'
 import { useSession } from './contexts/SessionContext'
 import { useEvents } from './contexts/EventsContext'
+import useTimer from '@/hooks/useTimer'
 
 //BUG: No anda bien el contador de tiempo, no cuenta el tiempo de estudio y descanso.
 type Mode = 'Estudiando' | 'Descansando'
@@ -106,6 +108,12 @@ export default function Pomodoro() {
   const { session } = useSession()
   const [InicioSesion, setInicioSesion] = useState<Date | null>(null)
   const { selectedEvent } = useEvents()
+  const {
+    studyTime: objStudyTime,
+    startStudy: startObjTime,
+    pauseStudy: pauseObjectiveTime,
+    resetTimers: resetObjectiveTime,
+  } = useTimer()
 
   const {
     objetivos,
@@ -135,7 +143,7 @@ export default function Pomodoro() {
       pomodoro => (studyTime += pomodoro.tiempoEstudio)
     )
 
-    if (time > 0 && mode === 'Estudiando') {
+    if (time > 0 && mode === 'Estudiando' && isSetted) {
       studyTime -= time
       console.log('Entre en el primero')
       setTiempoTotal(prev => prev - time)
@@ -229,6 +237,7 @@ export default function Pomodoro() {
         setSessionSeconds(
           pomodorosRealizados[pomodorosRealizados.length - 1].tiempoEstudio
         )
+        pauseObjectiveTime()
         setMode('Descansando')
         setIsActive(false)
         setBoom(false) //para el confetti
@@ -294,20 +303,72 @@ export default function Pomodoro() {
 
     setTiempo(prev => ({
       ...prev,
-      [objetivo]: ObjStudyTime,
+      [objetivo]: objStudyTime,
     }))
     setTiempoSesion(prev => ({ ...prev, [objetivo]: tiempoTotal - time }))
     if (objetivosFav.includes(objetivo)) {
+      const timeToSave = objStudyTime
       if (!tiempoFavorito[objetivo]) {
-        setTiempoFavorito(prev => ({ ...prev, [objetivo]: ObjStudyTime }))
+        setTiempoFavorito(prev => ({ ...prev, [objetivo]: timeToSave }))
+        if (session) {
+          if (selectedEvent) {
+            acumulateHoursInFavouriteObj(
+              objetivo,
+              timeToSave,
+              session.user.id,
+              selectedEvent.id
+            )
+              .then(() =>
+                console.log('Datos en objetvios actualizados correctamente')
+              )
+              .catch((error: unknown) => console.log('Ocurrio un error', error))
+          } else {
+            acumulateHoursInFavouriteObj(
+              objetivo,
+              objStudyTime,
+              session.user.id
+            )
+              .then(() =>
+                console.log('Datos en objetvios actualizados correctamente')
+              )
+              .catch((error: unknown) => console.log('Ocurrio un error', error))
+          }
+        }
       } else {
+        const timeToSave = objStudyTime + (tiempoFavorito[objetivo] ?? 0)
         setTiempoFavorito(prev => ({
           ...prev,
-          [objetivo]: ObjStudyTime + (tiempoFavorito[objetivo] ?? 0),
+          [objetivo]: timeToSave,
         }))
+        if (session) {
+          if (selectedEvent) {
+            acumulateHoursInFavouriteObj(
+              objetivo,
+              timeToSave,
+              session.user.id,
+              selectedEvent.id
+            )
+              .then(() => {
+                console.log('Datos actualizados correctamente')
+              })
+              .catch((error: unknown) => {
+                console.log('Ocurrio un error', error)
+              })
+          } else {
+            acumulateHoursInFavouriteObj(objetivo, timeToSave, session.user.id)
+              .then(() => {
+                console.log('Datos actualizados correctamente')
+              })
+              .catch((error: unknown) => {
+                console.log('Ocurrio un error', error)
+              })
+          }
+        }
       }
     }
 
+    resetObjectiveTime()
+    startObjTime()
     setObjStudyTime(0)
   }
 
@@ -339,6 +400,7 @@ export default function Pomodoro() {
     }
     setTiempoTotal(prev => (prev += tiempoEstudio))
     setAcumuladorTiempoPausa(prev => (prev += tiempoDescanso))
+    startObjTime()
   }
 
   const handlePause = () => {
@@ -347,11 +409,14 @@ export default function Pomodoro() {
     if (!value) {
       setCantidadPausas(prev => (prev += 1))
       pauseStudy()
+      pauseObjectiveTime()
     } else {
       resumeStudy()
-      resumeStudy()
+      startObjTime()
+
+      // resumeStudy()
     }
-    resumeStudy()
+    // resumeStudy()
 
     setIsActive(value)
   }

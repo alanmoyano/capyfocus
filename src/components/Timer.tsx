@@ -316,23 +316,76 @@ export default function Timer() {
         // }))
       }
     } else {
+      const timeToSave = studyTime - tiempoObjAcumulado
       setTiempo(prev => ({
         ...prev,
-        [objetivo]: studyTime - tiempoObjAcumulado,
+        [objetivo]: timeToSave,
       }))
-      setTiempoSesion(prev => ({ ...prev, [objetivo]: studyTime }))
+      setTiempoSesion(prev => ({ ...prev, [objetivo]: timeToSave }))
       if (objetivosFav.includes(objetivo)) {
         if (!tiempoFavorito[objetivo]) {
-          setTiempoFavorito(prev => ({
-            ...prev,
-            [objetivo]: studyTime - tiempoObjAcumulado,
-          }))
+          setTiempoFavorito(prev => ({ ...prev, [objetivo]: timeToSave }))
+          if (session) {
+            if (selectedEvent) {
+              acumulateHoursInFavouriteObj(
+                objetivo,
+                timeToSave,
+                session.user.id,
+                selectedEvent.id
+              )
+                .then(() => {
+                  console.log('Datos actualizados correctamente')
+                })
+                .catch((error: unknown) => {
+                  console.log('Ocurrio un error', error)
+                })
+            } else {
+              acumulateHoursInFavouriteObj(
+                objetivo,
+                timeToSave,
+                session.user.id
+              )
+                .then(() => {
+                  console.log('Datos actualizados correctamente')
+                })
+                .catch((error: unknown) => {
+                  console.log('Ocurrio un error', error)
+                })
+            }
+          }
         } else {
           setTiempoFavorito(prev => ({
             ...prev,
-            [objetivo]:
-              studyTime + (tiempoFavorito[objetivo] ?? 0) - tiempoObjAcumulado,
+            [objetivo]: timeToSave + (tiempoFavorito[objetivo] ?? 0),
           }))
+          if (session) {
+            if (selectedEvent) {
+              acumulateHoursInFavouriteObj(
+                objetivo,
+                timeToSave + (tiempoFavorito[objetivo] ?? 0),
+                session.user.id,
+                selectedEvent.id
+              )
+                .then(() => {
+                  console.log('Datos actualizados correctamente')
+                })
+                .catch((error: unknown) => {
+                  console.log('Ocurrio un error', error)
+                })
+            } else {
+              acumulateHoursInFavouriteObj(
+                objetivo,
+                timeToSave + (tiempoFavorito[objetivo] ?? 0),
+                session.user.id
+              )
+                .then(() => {
+                  console.log('Datos actualizados correctamente')
+                })
+                .catch((error: unknown) => {
+                  console.log('Ocurrio un error', error)
+                })
+            }
+          }
         }
       }
     }
