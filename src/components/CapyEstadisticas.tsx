@@ -7,13 +7,7 @@ import { ImageDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import EstadisticasPeriodo from './ComponentesEspecifico/EstadisticasPeriodo'
 
-import {
-  Tooltip as ChartTooltip,
-  Pie,
-  PieChart,
-  Cell,
-  ResponsiveContainer,
-} from 'recharts'
+import { Tooltip as ChartTooltip, Pie, PieChart, Cell } from 'recharts'
 
 import { useSearch } from 'wouter'
 
@@ -474,49 +468,46 @@ export default function CapyEstadisticas() {
                     {objetivos.length > 0 && (
                       <div>
                         <ChartContainer config={chartConfig1}>
-                          <ResponsiveContainer width='100%' height={400}>
-                            <PieChart>
-                              {/* Agregue un filtro para que no se muestren los objetivos que no se han cumplido */}
-                              <Pie
-                                data={objetivos
-                                  .filter(objetivo => tiempo[objetivo] > 0)
-                                  .map(objetivo => ({
-                                    name: objetivo,
-                                    value: tiempo[objetivo] ?? 0,
-                                  }))}
-                                labelLine={false}
-                                outerRadius='80%'
-                                dataKey='value'
-                                label={({ name, percent }) =>
-                                  `${name} ${(percent * 100).toFixed(0)}%`
-                                }
-                              >
-                                {objetivos
-                                  .filter(objetivo => tiempo[objetivo] > 0)
-                                  .map((objetivo, index) => (
-                                    <Cell
-                                      key={`cell-${index}`}
-                                      fill={
-                                        chartConfig1[
-                                          Object.keys(chartConfig1)[index + 1]
-                                        ].color ??
-                                        `hsl(${index * 90}, 70%, 60%)`
-                                      }
-                                      name={objetivo}
-                                    />
-                                  ))}
-                              </Pie>
-                              <ChartTooltip
-                                content={
-                                  <ChartTooltipContent
-                                    indicator='dot'
-                                    formatType='time'
+                          <PieChart>
+                            {/* Agregue un filtro para que no se muestren los objetivos que no se han cumplido */}
+                            <Pie
+                              data={objetivos
+                                .filter(objetivo => tiempo[objetivo] > 0)
+                                .map(objetivo => ({
+                                  name: objetivo,
+                                  value: tiempo[objetivo] ?? 0,
+                                }))}
+                              labelLine={false}
+                              outerRadius='80%'
+                              dataKey='value'
+                              label={({ name, percent }) =>
+                                `${name} ${(percent * 100).toFixed(0)}%`
+                              }
+                            >
+                              {objetivos
+                                .filter(objetivo => tiempo[objetivo] > 0)
+                                .map((objetivo, index) => (
+                                  <Cell
+                                    key={`cell-${index}`}
+                                    fill={
+                                      chartConfig1[
+                                        Object.keys(chartConfig1)[index + 1]
+                                      ].color ?? `hsl(${index * 90}, 70%, 60%)`
+                                    }
+                                    name={objetivo}
                                   />
-                                }
-                              />
-                              <ChartLegend content={<ChartLegendContent />} />
-                            </PieChart>
-                          </ResponsiveContainer>
+                                ))}
+                            </Pie>
+                            <ChartTooltip
+                              content={
+                                <ChartTooltipContent
+                                  indicator='dot'
+                                  formatType='time'
+                                />
+                              }
+                            />
+                            <ChartLegend content={<ChartLegendContent />} />
+                          </PieChart>
                         </ChartContainer>
                       </div>
                     )}
