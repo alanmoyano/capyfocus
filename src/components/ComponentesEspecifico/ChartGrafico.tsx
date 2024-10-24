@@ -13,6 +13,7 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import { useEffect, useState } from 'react'
+import { useCallback } from 'react'
 
 const chartDataMeses = [
   {
@@ -132,9 +133,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-type Graficos = 'chartDataMeses' | 'chartDataSemana' | 'chartDataMes'
-
-type Period =
+type periodo =
   | 'sesion'
   | 'semanal'
   | 'mensual'
@@ -147,65 +146,56 @@ type ChartData =
   | { month: string; cumplidos: number; pendientes: number; date: Date }
   | { day: string; cumplidos: number; pendientes: number; date: Date }
 
-function getDateOfPeriod(period: Period) {
-  const dateToReturn = new Date()
-  switch (period) {
-    case 'semanal':
-      dateToReturn.setDate(dateToReturn.getDate() - 7)
-      break
-    case 'mensual':
-      dateToReturn.setMonth(dateToReturn.getMonth() - 1)
-      break
-    case 'bimestral':
-      dateToReturn.setMonth(dateToReturn.getMonth() - 2)
-      break
-    case 'semestre':
-      dateToReturn.setMonth(dateToReturn.getMonth() - 6)
-      break
-    default:
-      break
-  }
-  return dateToReturn
-}
+export default function ChartGrafico({ periodo }: { periodo: periodo }) {
+  const [datosGrafico, setDatosGrafico] = useState<ChartData[]>(chartDataMeses) //Esto es para los gráficos
 
-export default function ChartGrafico({ periodo }: { periodo: Period }) {
-  const [periodoSeleccionado, setPeriodoSeleccionado] =
-    useState<Period>('mensual')
-  const [tipoGrafico, setTipoGrafico] = useState<Graficos>('chartDataMeses')
-  const [datosGrafico, setDatosGrafico] = useState<ChartData[]>(chartDataMeses)
-
-  // Obtener datos según el período seleccionado
-  const obtenerDatosPorPeriodo = (period: Period): ChartData[] => {
-    const startDate = getDateOfPeriod(period)
-    switch (period) {
-      case 'mensual':
-        setTipoGrafico('chartDataMeses')
-        return chartDataMeses.filter(data => data.date >= startDate)
+  function getDateOfperiodo(periodo: periodo) {
+    const dateToReturn = new Date()
+    switch (periodo) {
       case 'semanal':
-        setTipoGrafico('chartDataSemana')
-        return chartDataSemana.filter(data => data.date >= startDate)
+        dateToReturn.setDate(dateToReturn.getDate() - 7)
+        break
+      case 'mensual':
+        dateToReturn.setMonth(dateToReturn.getMonth() - 1)
+        break
       case 'bimestral':
-      case 'sesion':
-      case 'evento':
-        setTipoGrafico('chartDataMes')
-        return chartDataMes.filter(data => data.date >= startDate)
+        dateToReturn.setMonth(dateToReturn.getMonth() - 2)
+        break
+      case 'semestre':
+        dateToReturn.setMonth(dateToReturn.getMonth() - 6)
+        break
       default:
-        return []
+        break
     }
+    return dateToReturn
   }
+  // Obtener datos según el período seleccionado
+  const obtenerDatosPorperiodo = useCallback(
+    (periodo: periodo): ChartData[] => {
+      const startDate = getDateOfperiodo(periodo)
+      switch (periodo) {
+        case 'mensual':
+          return chartDataMeses.filter(data => data.date >= startDate)
+        case 'semanal':
+          return chartDataSemana.filter(data => data.date >= startDate)
+        case 'bimestral':
+        case 'sesion':
+        case 'evento':
+          return chartDataMes.filter(data => data.date >= startDate)
+        default:
+          return []
+      }
+    },
+    [] // No tiene dependencias, ya que es independiente del renderizado
+  )
   useEffect(() => {
     try {
-      const datos = obtenerDatosPorPeriodo(periodoSeleccionado)
+      const datos = obtenerDatosPorperiodo(periodo)
       setDatosGrafico(datos)
     } catch (error) {
       console.error('Error al obtener los datos del gráfico:', error)
     }
-  }, [periodoSeleccionado])
-
-  // Actualizar los datos del gráfico al cambiar el período
-  useEffect(() => {
-    setDatosGrafico(obtenerDatosPorPeriodo(periodoSeleccionado))
-  }, [periodoSeleccionado])
+  }, [periodo, obtenerDatosPorperiodo])
 
   return (
     <div>
@@ -217,37 +207,45 @@ export default function ChartGrafico({ periodo }: { periodo: Period }) {
         </CardHeader>
         <CardContent className='p-3'>
           <ChartContainer config={chartConfig}>
-            <ResponsiveContainer width='100%' height={250}>
-              <BarChart accessibilityLayer data={datosGrafico}>
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey={tipoGrafico === 'chartDataSemana' ? 'day' : 'month'} // Cambia 'month' a 'day' si se está mostrando la semana
-                  tickLine={false}
-                  tickMargin={10}
-                  axisLine={false}
-                  tickFormatter={(value: string) => value.slice(0, 3)}
-                />
-                <ChartTooltip
-                  cursor={false}
-                  content={
-                    <ChartTooltipContent
-                      formatType='integer'
-                      indicator='line'
-                    />
-                  }
-                />
-                <Bar
-                  dataKey='cumplidos'
-                  fill='var(--color-cumplidos)'
-                  radius={4}
-                />
-                <Bar
-                  dataKey='pendientes'
-                  fill='var(--color-pendientes)'
-                  radius={4}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+            {datosGrafico.length === 0 ? (
+              <div className='h-full w-full'>
+                <p className='flex items-center justify-center text-xl'>
+                  No hay datos disponibles para el período seleccionado
+                </p>
+              </div>
+            ) : (
+              <ResponsiveContainer width='100%' height={250}>
+                <BarChart accessibilityLayer data={datosGrafico}>
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    dataKey={periodo === 'semanal' ? 'day' : 'month'} // Cambia 'month' a 'day' si se está mostrando la semana
+                    tickLine={false}
+                    tickMargin={10}
+                    axisLine={false}
+                    tickFormatter={(value: string) => value.slice(0, 3)}
+                  />
+                  <ChartTooltip
+                    cursor={false}
+                    content={
+                      <ChartTooltipContent
+                        formatType='integer'
+                        indicator='line'
+                      />
+                    }
+                  />
+                  <Bar
+                    dataKey='cumplidos'
+                    fill='var(--color-cumplidos)'
+                    radius={4}
+                  />
+                  <Bar
+                    dataKey='pendientes'
+                    fill='var(--color-pendientes)'
+                    radius={4}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </ChartContainer>
         </CardContent>
       </Card>

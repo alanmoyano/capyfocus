@@ -378,14 +378,14 @@ export default function Inicio() {
         />
       </Helmet>
       <section className='flex flex-col sm:mt-10 sm:gap-20 sm:p-10 md:flex-row'>
-        <div className='mt-4 px-16 sm:px-4'>
+        <div className='mt-4 px-4 sm:px-4'>
           <DialogoChicho />
-          <div className='relative flex max-h-[300px] w-full min-w-[200px] max-w-[250px] items-center justify-center overflow-hidden sm:h-full sm:max-h-[450px] sm:min-w-[450px] sm:max-w-[450px]'>
+          <div className='relative flex max-h-[300px] w-full min-w-[290px] max-w-[340px] items-center justify-center overflow-hidden sm:h-full sm:max-h-[450px] sm:min-w-[450px] sm:max-w-[450px]'>
             <Reproductor src='/idle.webm' />
           </div>
         </div>
         {/* columna 2 */}
-        <div className='m-auto p-2 sm:p-0'>
+        <div className='p-2 sm:p-0'>
           <h1 className='text-4xl font-bold'>Hola!</h1>
           <p className='mt-2'>Elige tu método de estudio:</p>
           <ToggleGroup
@@ -421,9 +421,14 @@ export default function Inicio() {
           {/* Objetivos */}
           <div className='mt-4 rounded-xl bg-secondary/70 p-4 dark:bg-secondary/90'>
             {/* Aca si eligio sesion o evento va a ir */}
-            <label htmlFor=''>
-              Objetivos de sesion o evento: {selectedEvent?.title}
-            </label>
+            {selectedEvent ? (
+              <label htmlFor=''>
+                Objetivos del evento: {selectedEvent.title}
+              </label>
+            ) : (
+              <label htmlFor=''>Objetivos de sesion</label>
+            )}
+
             <div className='mt-2 flex items-center gap-2'>
               <Input
                 type='text'
