@@ -108,7 +108,7 @@ export default function LandingPage() {
               <CarouselItem className='basis-full lg:basis-1/3'>
                 <div>
                   <img
-                    src='/FotosLanding/eventos2.png'
+                    src='/FotosLanding/eventos2.webp'
                     alt='Eventos'
                     className='mx-auto mb-6 h-44 w-[80%] rounded-lg object-cover'
                   />
@@ -124,7 +124,7 @@ export default function LandingPage() {
               <CarouselItem className='basis-full lg:basis-1/3'>
                 <div>
                   <img
-                    src='/FotosLanding/estadisticas.png'
+                    src='/FotosLanding/estadisticas.webp'
                     alt='Objetivos'
                     className='mx-auto mb-6 h-44 w-[80%] rounded-lg object-cover'
                   />
@@ -140,7 +140,7 @@ export default function LandingPage() {
               <CarouselItem className='basis-full lg:basis-1/3'>
                 <div>
                   <img
-                    src='\FotosLanding\CapyInsignias.png'
+                    src='/FotosLanding/CapyInsignias.webp'
                     alt='Insignia 1'
                     className='mx-auto mb-6 h-44 w-[80%] rounded-lg object-cover'
                   />
@@ -253,28 +253,28 @@ export default function LandingPage() {
               <CarouselContent>
                 <CarouselItem className='basis-1/2 md:basis-1/4'>
                   <img
-                    src='./FotosLanding/ZTMNComiendoAlfajor.jpg'
+                    src='/FotosLanding/ZTMNComiendoAlfajor.webp'
                     alt='Equipo comiendo alfajor'
                     className='v h-56 w-56 rounded-lg border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
                   />
                 </CarouselItem>
                 <CarouselItem className='basis-1/2 md:basis-1/4'>
                   <img
-                    src='./FotosLanding/presentandoCapyfocus2.jpg'
+                    src='/FotosLanding/presentandoCapyfocus2.webp'
                     alt='Equipo presentando'
                     className='h-56 w-56 rounded-lg border-4 border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
                   />
                 </CarouselItem>
                 <CarouselItem className='basis-1/2 md:basis-1/4'>
                   <img
-                    src='./FotosLanding/amigos.png'
+                    src='/FotosLanding/amigos.webp'
                     alt='Equipo en una juntada'
                     className='h-56 w-56 rounded-lg border-4 border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
                   />
                 </CarouselItem>
                 <CarouselItem className='basis-1/2 md:basis-1/4'>
                   <img
-                    src='./FotosLanding/ZTMNSonriendo.jpg'
+                    src='/FotosLanding/ZTMNSonriendo.webp'
                     alt='Equipo sonriendo'
                     className='h-56 w-56 rounded-lg border-4 border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
                   />
