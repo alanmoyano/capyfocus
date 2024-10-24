@@ -8,6 +8,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from './ui/carousel'
+import Reproductor from './ComponentesEspecifico/Reproductor'
 
 export default function LandingPage() {
   const [, setLocation] = useLocation()
@@ -19,14 +20,11 @@ export default function LandingPage() {
   function handleNavigateRegistrar() {
     setLocation('/login')
   }
-  //TODO Agregar Esta pagina como landing page
-  //TODO hacer responsive
-  //TODO agregar contenido en about us.
   return (
-    <div>
+    <div className='w-screen text-pretty'>
       <div className='bg-white'>
         {/* Comienzo */}
-        {/* <section className='bg-gradient-to-r from-yellow-50 to-purple-50 py-12 text-center'>
+        <section className='bg-gradient-to-r from-yellow-50 to-purple-50 py-12 text-center'>
           <h1 className='mb-4 text-5xl font-extrabold text-gray-800'>
             Optimiza tu tiempo de estudio con{' '}
             <span className='text-[#f2b76a]'>CapyFocus</span>
@@ -35,10 +33,10 @@ export default function LandingPage() {
             Capydoro y Capymetro, dos técnicas que te ayudarán a lograr tus
             objetivos.
           </p>
-          <div className='flex items-center justify-around py-12'>
+          <div className='flex flex-col items-center justify-around gap-4 py-8 sm:flex-row'>
             <div className='max-w-md transform transition-transform duration-300 hover:scale-105'>
               <h2 className='mb-2 text-3xl font-bold text-[#f2b76a]'>
-                <span className='flex items-center justify-center gap-4'>
+                <span className='flex items-center justify-center gap-2'>
                   <Timer />
                   Capydoro
                 </span>
@@ -50,7 +48,7 @@ export default function LandingPage() {
             </div>
             <div className='max-w-md transform transition-transform duration-300 hover:scale-105'>
               <h2 className='mb-2 text-3xl font-bold text-[#f2b76a]'>
-                <span className='flex items-center justify-center gap-4'>
+                <span className='flex items-center justify-center gap-2'>
                   <Hourglass />
                   Capymetro
                 </span>
@@ -61,10 +59,10 @@ export default function LandingPage() {
               </p>
             </div>
           </div>
-        </section> */}
+        </section>
 
         {/* Botones */}
-        <section className='py-8'>
+        <section className='flex flex-col items-center justify-center py-8'>
           <p className='text-center text-2xl font-semibold text-gray-800'>
             ¡El momento es ahora! ¿Listo para tomar el control de tu tiempo de
             estudio?
@@ -77,7 +75,7 @@ export default function LandingPage() {
             ¿Qué estás esperando? Únete a nosotros y empieza a disfrutar de un
             estudio más productivo y efectivo.
           </p>
-          <span className='mt-12 flex w-full justify-center gap-10'>
+          <span className='mt-12 flex w-max flex-col items-center justify-center gap-4 sm:w-full sm:flex-row sm:gap-10'>
             <Button
               className='rounded-lg border border-gray-300 bg-white p-8 text-xl text-gray-900 shadow-md transition-all duration-300 hover:bg-gray-100 hover:shadow-lg'
               onClick={handleNavigateRegistrar}
@@ -94,7 +92,7 @@ export default function LandingPage() {
         </section>
 
         {/* Eventos y Estadisticas e Insgignias!  */}
-        <section className='bg-gradient-to-r from-yellow-50 to-purple-50 py-10 text-center'>
+        <section className='flex flex-col bg-gradient-to-r from-yellow-50 to-purple-50 py-10 text-center'>
           <h2 className='mb-4 text-4xl font-bold text-gray-700'>
             Crea eventos y alcanza tus metas
           </h2>
@@ -105,56 +103,66 @@ export default function LandingPage() {
             Con CapyFocus puedes crear eventos y asignarles objetivos
             específicos para estar siempre en control de tu progreso.
           </p>
-          <div className='flex justify-center space-x-6'>
-            <div className='max-w-sm transform rounded-lg bg-accent/60 p-1 shadow-xl transition duration-300 hover:scale-105'>
-              <img
-                src='/FotosLanding/eventos2.png'
-                alt='Eventos'
-                className='mx-auto mb-6 h-44 w-full rounded-lg object-cover'
-              />
-              <h3 className='mb-4 text-2xl font-semibold text-gray-700'>
-                Organiza tus exámenes
-              </h3>
-              <p className='text-lg text-gray-600'>
-                Define eventos importantes como exámenes o entregas y crea
-                objetivos personalizados.
-              </p>
-            </div>
-            <div className='max-w-sm transform rounded-lg bg-accent/60 p-1 shadow-xl transition duration-300 hover:scale-105'>
-              <img
-                src='/FotosLanding/estadisticas.png'
-                alt='Objetivos'
-                className='mx-auto mb-6 h-44 w-full rounded-lg object-cover'
-              />
-              <h3 className='mb-4 text-2xl font-semibold text-gray-700'>
-                Sigue tu progreso
-              </h3>
-              <p className='text-lg text-gray-600'>
-                Asocia objetivos a cada evento y sigue tu evolución en tiempo
-                real.
-              </p>
-            </div>
-            <div className='max-w-sm transform rounded-lg bg-accent/60 p-1 shadow-xl transition duration-300 hover:scale-105'>
-              <img
-                src='\FotosLanding\CapyInsignias.png'
-                alt='Insignia 1'
-                className='mx-auto mb-6 h-44 w-full rounded-lg object-cover'
-              />
-              <h3 className='mb-4 text-2xl font-semibold text-gray-700'>
-                Desbloquea CapyInsignias
-              </h3>
-              <p className='mb-8 text-lg text-gray-600'>
-                A medida que avances en tus estudios, irás desbloqueando
-                insignias que representan tu progreso.
-              </p>
-            </div>
-          </div>
+          <Carousel opts={{ loop: true }}>
+            <CarouselContent>
+              <CarouselItem className='basis-full lg:basis-1/3'>
+                <div>
+                  <img
+                    src='/FotosLanding/eventos2.png'
+                    alt='Eventos'
+                    className='mx-auto mb-6 h-44 w-[80%] rounded-lg object-cover'
+                  />
+                  <h3 className='mb-4 text-2xl font-semibold text-gray-700'>
+                    Organiza tus exámenes
+                  </h3>
+                  <p className='text-lg text-gray-600'>
+                    Define eventos importantes como exámenes o entregas y crea
+                    objetivos personalizados.
+                  </p>
+                </div>
+              </CarouselItem>
+              <CarouselItem className='basis-full lg:basis-1/3'>
+                <div>
+                  <img
+                    src='/FotosLanding/estadisticas.png'
+                    alt='Objetivos'
+                    className='mx-auto mb-6 h-44 w-[80%] rounded-lg object-cover'
+                  />
+                  <h3 className='mb-4 text-2xl font-semibold text-gray-700'>
+                    Sigue tu progreso
+                  </h3>
+                  <p className='text-lg text-gray-600'>
+                    Asocia objetivos a cada evento y sigue tu evolución en
+                    tiempo real.
+                  </p>
+                </div>
+              </CarouselItem>
+              <CarouselItem className='basis-full lg:basis-1/3'>
+                <div>
+                  <img
+                    src='\FotosLanding\CapyInsignias.png'
+                    alt='Insignia 1'
+                    className='mx-auto mb-6 h-44 w-[80%] rounded-lg object-cover'
+                  />
+                  <h3 className='mb-4 text-2xl font-semibold text-gray-700'>
+                    Desbloquea CapyInsignias
+                  </h3>
+                  <p className='mb-8 text-lg text-gray-600'>
+                    A medida que avances en tus estudios, irás desbloqueando
+                    insignias que representan tu progreso.
+                  </p>
+                </div>
+              </CarouselItem>
+            </CarouselContent>
+            <CarouselPrevious className='left-4' />
+            <CarouselNext className='right-4' />
+          </Carousel>
         </section>
 
         {/* Chicho! */}
-        <section className='my-16 flex items-center justify-center'>
+        <section className='my-8 flex flex-col items-center justify-center sm:flex-row'>
           {/* Columna 1 */}
-          <div className='ml-16 w-2/3 text-left'>
+          <div className='sm:ml-16 sm:w-2/3'>
             <p className='text-center text-2xl font-semibold text-gray-800'>
               ¡Chicho te ayudara a mantenerte enfocado!
             </p>
@@ -170,22 +178,21 @@ export default function LandingPage() {
           </div>
 
           {/* Columna 2 */}
-          <div className='flex w-1/3 text-center'>
-            <img
-              src='\Chicho\OtrasAcciones\CapyOk.gif'
-              alt='Chicho'
+          <div className='flex text-center sm:w-1/3'>
+            <Reproductor
+              src='\Chicho\OtrasAcciones\CapyOk.webm'
               className='mx-auto w-60'
             />
           </div>
         </section>
 
         {/* Sobre Nosotros */}
-        <section className='bg-gradient-to-r from-blue-50 to-purple-50 py-12'>
+        <section className='flex items-center justify-center bg-gradient-to-r from-blue-50 to-purple-50 py-12'>
           <div className='mx-auto max-w-7xl p-6 text-center'>
             <h2 className='mb-6 text-3xl font-bold'>Sobre Nosotros</h2>
 
-            <div className='mb-8 flex items-center justify-center'>
-              <p className='mr-10 text-center text-lg'>
+            <div className='mb-8 flex flex-col-reverse items-center justify-center sm:flex-row'>
+              <p className='text-center text-lg sm:mr-10'>
                 CapyFocus nació de un grupo de amigos estudiantes. Nos conocimos
                 mientras estudiábamos, y pronto descubrimos que teníamos un
                 desafío en común: encontrar una forma eficiente y llevadera de
@@ -204,17 +211,15 @@ export default function LandingPage() {
                 recordatorio de que podemos tomarnos las cosas con calma,
                 disfrutar el proceso y acompañarnos mutuamente en el camino.
               </p>
-              <img
-                src='\Chicho\Positivo\CapyPiano.gif'
-                alt='Chicho'
+              <Reproductor
+                src='\Chicho\Positivo\CapyPiano.webm'
                 className='w-80'
               />
             </div>
 
-            <div className='mb-8 mr-10 flex items-center'>
-              <img
-                src='\Chicho\Positivo\CapyLibro.gif'
-                alt='Chicho'
+            <div className='mb-8 flex flex-col items-center sm:mr-10 sm:flex-row'>
+              <Reproductor
+                src='\Chicho\Positivo\CapyLibro.webm'
                 className='w-80'
               />
               <p className='mb-8 text-center text-lg'>
@@ -225,7 +230,8 @@ export default function LandingPage() {
                 por qué ser una tarea solitaria o estresante. Nos gusta pensar
                 que eso es lo que hace único a CapyFocus: no es solo una
                 plataforma, es el reflejo de nuestro viaje como estudiantes y
-                como amigos. <br />
+                como amigos.
+                <br />
                 <br />
                 Nuestra historia es una de amistad, perseverancia y risas. Y
                 aunque las técnicas de estudio fueron nuestra excusa para crear
@@ -234,37 +240,39 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <h2 className='mt-6 text-2xl font-bold text-[#f2b76a]'>
-              ¡Gracias por acompañarnos en esta aventura!{' '}
-            </h2>
-            <h2 className='mb-8 text-lg'>
-              Esperamos que te sientas parte de nuestra pequeña comunidad.
-            </h2>
+            <div>
+              <h2 className='mt-6 text-3xl font-bold text-[#f2b76a]'>
+                ¡Gracias por acompañarnos en esta aventura!{' '}
+              </h2>
+              <h3 className='mb-8 text-lg'>
+                Esperamos que te sientas parte de nuestra pequeña comunidad.
+              </h3>
+            </div>
 
-            <Carousel>
+            <Carousel opts={{ loop: true }}>
               <CarouselContent>
-                <CarouselItem className='basis-1/2 lg:basis-1/4'>
+                <CarouselItem className='basis-1/2 md:basis-1/4'>
                   <img
                     src='./FotosLanding/ZTMNComiendoAlfajor.jpg'
                     alt='Equipo comiendo alfajor'
                     className='v h-56 w-56 rounded-lg border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
                   />
                 </CarouselItem>
-                <CarouselItem className='basis-1/2 lg:basis-1/4'>
+                <CarouselItem className='basis-1/2 md:basis-1/4'>
                   <img
                     src='./FotosLanding/presentandoCapyfocus2.jpg'
                     alt='Equipo presentando'
                     className='h-56 w-56 rounded-lg border-4 border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
                   />
                 </CarouselItem>
-                <CarouselItem className='basis-1/2 lg:basis-1/4'>
+                <CarouselItem className='basis-1/2 md:basis-1/4'>
                   <img
                     src='./FotosLanding/amigos.png'
                     alt='Equipo en una juntada'
                     className='h-56 w-56 rounded-lg border-4 border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
                   />
                 </CarouselItem>
-                <CarouselItem className='basis-1/2 lg:basis-1/4'>
+                <CarouselItem className='basis-1/2 md:basis-1/4'>
                   <img
                     src='./FotosLanding/ZTMNSonriendo.jpg'
                     alt='Equipo sonriendo'
@@ -272,8 +280,8 @@ export default function LandingPage() {
                   />
                 </CarouselItem>
               </CarouselContent>
-              <CarouselPrevious className='-left-8' />
-              <CarouselNext className='-right-8' />
+              <CarouselPrevious className='left-4' />
+              <CarouselNext className='right-4' />
             </Carousel>
           </div>
         </section>

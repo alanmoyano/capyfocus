@@ -125,6 +125,8 @@ export default function Eventos() {
                 '/'
               ) as string
 
+              const id = evento.idEvento 
+
               const date = new Date(fechaParsed)
 
               const title = evento.nombre
@@ -168,7 +170,7 @@ export default function Eventos() {
               'Si no tienes sesion iniciada tu evento se borrará de la pagina',
           })
         }
-        setEvents([...events, { date, title: eventTitle}])
+        setEvents([...events, { date, title: eventTitle }])
         setEventTitle('') // Limpiar el título después de añadir el evento
       }
     } else {
@@ -304,7 +306,7 @@ export default function Eventos() {
                 }}
               />
 
-              <div className='mt-4'>
+              <div className='mt-4 flex flex-row items-center justify-center gap-2'>
                 <Button
                   onClick={() => {
                     addEvent(false, 'New')
@@ -396,7 +398,7 @@ export default function Eventos() {
         </ScrollArea>
         <SheetFooter className='flex w-full justify-between'>
           <SheetClose asChild>
-            <div className='flex w-full justify-between'>
+            <div className='flex w-full items-center justify-between gap-2'>
               <Button
                 variant={'accent'}
                 className='w-full sm:mr-2 sm:w-auto'

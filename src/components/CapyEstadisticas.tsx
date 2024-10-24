@@ -150,25 +150,25 @@ export default function CapyEstadisticas() {
         gatherEventsOfUser(session.user.id)
           .then(data =>
             data.forEach(evento => {
-                // @ts-expect-error no te preocupes type, anda 
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                const fechaParsed = evento.fechaLimite.replaceAll(
-                  '-',
-                  '/'
-                ) as string
+              // @ts-expect-error no te preocupes type, anda
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+              const fechaParsed = evento.fechaLimite.replaceAll(
+                '-',
+                '/'
+              ) as string
 
-                const date = new Date(fechaParsed)
+              const date = new Date(fechaParsed)
 
-                const title = evento.nombre
+              const title = evento.nombre
 
-                const hours = evento.horasAcumuladas
+              const hours = evento.horasAcumuladas
 
-                console.log(date, title)
-                //@ts-expect-error no te preocupes type
-                setEvents(prev => [
-                  ...prev,
-                  { date, title: title, hoursAcumulated: hours },
-                ])
+              console.log(date, title)
+              //@ts-expect-error no te preocupes type
+              setEvents(prev => [
+                ...prev,
+                { date, title: title, hoursAcumulated: hours },
+              ])
             })
           )
           .catch((error: unknown) => console.log(error))

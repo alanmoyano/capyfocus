@@ -93,7 +93,7 @@ const playlists = [
     key: 2,
     src: './CapyAmbiente.jpg',
     alt: 'CapyAmbiente',
-    title: '  ',
+    title: 'CapyAmbiente',
     description: 'Sonidos ambientales para mejorar la concentración',
     spotifyUri: '4Pi6DScPJfg1RTGVZuxTZV',
   },
@@ -664,8 +664,8 @@ export default function Inicio() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className='-left-8 hidden sm:inline-flex' />
-              <CarouselNext className='-right-8 hidden sm:inline-flex' />
+              <CarouselPrevious className='left-4' />
+              <CarouselNext className='right-4' />
             </Carousel>
           </div>
 
