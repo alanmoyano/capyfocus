@@ -114,6 +114,7 @@ export default function Pomodoro() {
     pauseStudy: pauseObjectiveTime,
     resetTimers: resetObjectiveTime,
   } = useTimer()
+  const [timerObjectivesAcum, setTimerObjectivesAcum] = useState(0)
 
   const {
     objetivos,
@@ -245,6 +246,8 @@ export default function Pomodoro() {
       } else {
         // if (time > 0) return
         stopStudy()
+        setTimerObjectivesAcum(prev => prev + objStudyTime)
+        resetObjectiveTime()
         setBreakSeconds(
           pomodorosRealizados[pomodorosRealizados.length - 1].tiempoDescanso
         )
@@ -303,11 +306,11 @@ export default function Pomodoro() {
 
     setTiempo(prev => ({
       ...prev,
-      [objetivo]: objStudyTime,
+      [objetivo]: objStudyTime + timerObjectivesAcum,
     }))
     setTiempoSesion(prev => ({ ...prev, [objetivo]: tiempoTotal - time }))
     if (objetivosFav.includes(objetivo)) {
-      const timeToSave = objStudyTime
+      const timeToSave = objStudyTime + timerObjectivesAcum
       if (!tiempoFavorito[objetivo]) {
         setTiempoFavorito(prev => ({ ...prev, [objetivo]: timeToSave }))
         if (session) {
@@ -335,7 +338,8 @@ export default function Pomodoro() {
           }
         }
       } else {
-        const timeToSave = objStudyTime + (tiempoFavorito[objetivo] ?? 0)
+        const timeToSave =
+          objStudyTime + (tiempoFavorito[objetivo] ?? 0) + timerObjectivesAcum
         setTiempoFavorito(prev => ({
           ...prev,
           [objetivo]: timeToSave,
@@ -369,7 +373,7 @@ export default function Pomodoro() {
 
     resetObjectiveTime()
     startObjTime()
-    setObjStudyTime(0)
+    setTimerObjectivesAcum(0)
   }
 
   const handleSetted = (Sessioncountup: number, Breakcountup: number) => {
@@ -400,6 +404,7 @@ export default function Pomodoro() {
     }
     setTiempoTotal(prev => (prev += tiempoEstudio))
     setAcumuladorTiempoPausa(prev => (prev += tiempoDescanso))
+
     startObjTime()
   }
 
@@ -409,10 +414,14 @@ export default function Pomodoro() {
     if (!value) {
       setCantidadPausas(prev => (prev += 1))
       pauseStudy()
-      pauseObjectiveTime()
+      if (mode === 'Estudiando') {
+        pauseObjectiveTime()
+      }
     } else {
       resumeStudy()
-      startObjTime()
+      if (mode === 'Estudiando') {
+        startObjTime()
+      }
 
       // resumeStudy()
     }
