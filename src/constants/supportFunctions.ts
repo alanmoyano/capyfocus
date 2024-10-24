@@ -50,6 +50,14 @@ const formatDateDash = (date: Date) => {
   return `${year}-${month}-${day}`
 }
 
+const formatDateDashARG = (date: Date) => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${day}-${month}-${year}`
+}
+
 function obtenerClaveMayorValor(map: Map<string, number>): string {
   let claveMax = ''
   let valorMax: number | null = null
@@ -85,6 +93,16 @@ function convertirAFecha(fechaStr: string): Date {
   }
 
   return fecha
+}
+
+async function recoverObjectiveFromId(objectiveId: number) {
+  const { data, error } = await supabase
+    .from('ObjetivosFavoritos')
+    .select()
+    .eq('id', objectiveId)
+
+  if (data) return data
+  else console.log(error)
 }
 
 async function gatherEventsOfUser(uuid: string, date?: Date) {
@@ -161,7 +179,6 @@ async function getObjectiveByName(objectiveName: string, uuid: string) {
     .eq('descripcion', objectiveName)
     .eq('idUsuario', uuid)
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   if (data) return data
   else console.log(error)
 }
@@ -205,4 +222,6 @@ export {
   acumulateHoursInSelectedEvent,
   getObjectiveByName,
   acumulateHoursInFavouriteObj,
+  recoverObjectiveFromId,
+  formatDateDashARG,
 }

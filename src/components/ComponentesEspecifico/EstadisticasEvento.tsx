@@ -39,6 +39,8 @@ import {
   obtenerClaveMayorValor,
   getElementNameById,
   convertirAFecha,
+  recoverObjectiveFromId,
+  formatDateDashARG,
 } from '../../constants/supportFunctions'
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
@@ -84,14 +86,6 @@ type StudyTechnique =
       },
     } satisfies ChartConfig */
 
-type EventToRecover = {
-  idEvento: number
-  nombre: string
-  idUsuario: string
-  fechaLimite: string
-  horasAcumuladas: number
-}
-
 type Music =
   | { id: 0; name: 'Sin música' }
   | { id: 1; name: 'CapyEpic' }
@@ -130,6 +124,23 @@ type sessionToRecover = {
   cantidadObjetivos: number
   tiempoEstudio: number
 }
+
+type RowToRecover = {
+  id: number
+  idEvento: number
+  idObjetivoFavorito: number
+}
+
+type ObjectiveToRecover = {
+  id: number
+  created_at: string
+  idUsuario: string
+  descripcion: string
+  idEstado: number
+  horasAcumuladas: number
+}
+
+const ObjectiveStates = ['Pendiente', 'Cumplido']
 
 async function getEventOfUser(period: Date, uuid: string) {
   const periodFormatted = formatDateDash(period)
@@ -188,6 +199,31 @@ async function gatherSessionsOfEventOfUser(uuid: string, eventName: string) {
   else console.log(error)
 }
 
+async function gatherObjectivesOfEvent(eventId: number) {
+  const { data, error } = await supabase
+    .from('ObjetivosFavoritosXEventos')
+    .select()
+    .eq('idEvento', eventId)
+
+  if (data) {
+    const ObjectivesToRecover: ObjectiveToRecover[] = []
+    if (data.length > 0) {
+      for (const row of data as RowToRecover[]) {
+        recoverObjectiveFromId(row.idObjetivoFavorito)
+          .then(data => {
+            if (data) {
+              ObjectivesToRecover.push(data[0])
+            }
+          })
+          .catch((error: unknown) =>
+            console.log('Ocurrio un error recuperando los objetivos', error)
+          )
+      }
+    }
+    return ObjectivesToRecover
+  } else console.log(error)
+}
+
 export default function EstadisticasEvento({ name }: { name: string }) {
   const cardRefs = {
     sesion: useRef(null),
@@ -196,14 +232,6 @@ export default function EstadisticasEvento({ name }: { name: string }) {
     bimestral: useRef(null),
     semestre: useRef(null),
     evento: useRef(null),
-  }
-
-  async function conseguirIdEvento() {
-    if (session) {
-      //@ts-expect-error no va a pasar nada type
-      setEventId(await getEventIdFromName(name, session.user.id))
-      return
-    }
   }
 
   function getRachaPorPeriodo(fechasSesiones: string[]) {
@@ -269,8 +297,6 @@ export default function EstadisticasEvento({ name }: { name: string }) {
           particularSession.cantidadObjetivosCumplidos as unknown as string
         )
 
-        //@ts-expect-error no joda typescript, anda bien
-        console.log(particularSession.musicaSeleccionada.toString())
         const valorActualMotivaciones = mapaMotivaciones.get(
           particularSession.tipoMotivacion.toString()
         )
@@ -308,7 +334,6 @@ export default function EstadisticasEvento({ name }: { name: string }) {
         return dateA.getTime() - dateB.getTime()
       })
 
-      fechasOrdenadas.forEach(f => console.log(f))
       getRachaPorPeriodo(fechasOrdenadas as string[])
       setFechasOdenadas(fechasOrdenadas as string[])
 
@@ -352,11 +377,25 @@ export default function EstadisticasEvento({ name }: { name: string }) {
   const [racha, setRacha] = useState(0)
   const { events } = useEvents()
   const [fechasOrdenadas, setFechasOdenadas] = useState<string[]>()
+  const [eventObjectives, setEventObjectives] = useState<ObjectiveToRecover[]>(
+    []
+  )
 
   useEffect(() => {
     const evento = events.find(e => e.title === name)
     setEventoSeleccionado(evento)
     if (evento && session) {
+      gatherObjectivesOfEvent(evento.id)
+        .then(data => {
+          //@ts-expect-error intente hacerla bien, pero no me entraba al if T-T
+          setEventObjectives(data)
+        })
+        .catch((error: unknown) => {
+          console.log(
+            'Ocurrio un error a la hora de meter los objetivos al array correspondiente',
+            error
+          )
+        })
       gatherSessionsOfEventOfUser(session.user.id, name)
         //@ts-expect-error no te preocupes type
         .then(data => setStatisticsValues(data, evento))
@@ -365,8 +404,6 @@ export default function EstadisticasEvento({ name }: { name: string }) {
         })
     }
   }, [name])
-
-  console.log(fechasOrdenadas)
 
   return (
     <>
@@ -515,7 +552,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className=''>Evento</TableHead>
+                {/* <TableHead className=''>Evento</TableHead> */}
                 <TableHead>Objetivo</TableHead>
                 <TableHead>Estado</TableHead>
                 <TableHead>Fecha Creado</TableHead>
@@ -523,12 +560,16 @@ export default function EstadisticasEvento({ name }: { name: string }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {objetivos.map((objetivo, index) => (
+              {eventObjectives.map((objetivo, index) => (
                 <TableRow key={index}>
-                  <TableCell className='font-medium'>{objetivo}</TableCell>
-                  <TableCell>{objetivo}</TableCell>
+                  {/* <TableCell className='font-medium'>{objetivo}</TableCell> */}
                   <TableCell>
-                    {tiempo[objetivo] === 0 ? (
+                    <span className='text-blue-700'>
+                      {objetivo.descripcion}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    {objetivo.idEstado === 1 ? (
                       <span className='rounded-full bg-yellow-100 px-2 py-1 text-xs font-semibold text-yellow-800'>
                         Pendiente
                       </span>
@@ -539,10 +580,10 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                     )}
                   </TableCell>
                   <TableCell>
-                    <span className='text-blue-700'>Activo</span>
+                    {formatDateDashARG(new Date(objetivo.created_at))}
                   </TableCell>
                   <TableCell className='text-right font-medium'>
-                    {formatTime(tiempo[objetivo] || 0)}
+                    {formatTime(objetivo.horasAcumuladas)}
                   </TableCell>
                 </TableRow>
               ))}
