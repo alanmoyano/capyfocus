@@ -488,9 +488,9 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                   />
 
                   <div className='pl-4 md:w-1/2'>
-                    <h1 className='mb-2 text-lg font-semibold'>Eventos</h1>
+                    <h1 className='mb-2 text-lg font-semibold'>dias conectado</h1>
                     {/* Lista de eventos */}
-                    <p>11/07 Brenda conquista el mundo</p>
+                    <p>11/07 2hs</p>
                   </div>
                 </div>
               </CardContent>
@@ -500,7 +500,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
 
         <div className='px-6 pb-6'>
           <h2 className='mb-4 text-2xl font-bold'>
-            Objetivos de las Sesiones {'semanal'}
+            Objetivos favoritos y de sesión del evento  {name}
           </h2>
           <Table>
             <TableHeader>

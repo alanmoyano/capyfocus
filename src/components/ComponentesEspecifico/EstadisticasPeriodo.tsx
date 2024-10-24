@@ -450,48 +450,6 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
             </Card>
           </div>
         </CardContent>
-
-        <div className='px-6 pb-6'>
-          <h2 className='mb-4 text-2xl font-bold'>
-            Objetivos de las Sesiones {period}
-          </h2>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className=''>Evento</TableHead>
-                <TableHead>Objetivo</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead>Fecha Creado</TableHead>
-                <TableHead className='text-right'>Tiempo Acumulado</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {objetivos.map((objetivo, index) => (
-                <TableRow key={index}>
-                  <TableCell className='font-medium'>{objetivo}</TableCell>
-                  <TableCell>{objetivo}</TableCell>
-                  <TableCell>
-                    {tiempo[objetivo] === 0 ? (
-                      <span className='rounded-full bg-yellow-100 px-2 py-1 text-xs font-semibold text-yellow-800'>
-                        Pendiente
-                      </span>
-                    ) : (
-                      <span className='rounded-full bg-green-200 px-2 py-1 text-xs font-semibold text-green-800'>
-                        Cumplido
-                      </span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <span className='text-blue-700'>Activo</span>
-                  </TableCell>
-                  <TableCell className='text-right font-medium'>
-                    {formatTime(tiempo[objetivo] || 0)}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
       </Card>
     </>
   )
