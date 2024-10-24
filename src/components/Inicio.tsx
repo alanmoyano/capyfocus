@@ -377,17 +377,15 @@ export default function Inicio() {
           type='image/webp'
         />
       </Helmet>
-      <section className='flex w-full flex-col sm:mt-10 sm:gap-20 sm:p-10 md:flex-row'>
-        <div className='mt-4 sm:px-4'>
-          <div className='px-2'>
-            <DialogoChicho />
-          </div>
-          <div className='relative flex max-h-[320px] w-full max-w-[350px] items-center justify-center overflow-hidden sm:h-full sm:max-h-[450px] sm:min-w-[450px] sm:max-w-[450px]'>
+      <section className='flex flex-col sm:mt-10 sm:gap-20 sm:p-10 md:flex-row'>
+        <div className='mt-4 px-4 sm:px-4'>
+          <DialogoChicho />
+          <div className='relative flex max-h-[300px] w-full min-w-[290px] max-w-[340px] items-center justify-center overflow-hidden sm:h-full sm:max-h-[450px] sm:min-w-[450px] sm:max-w-[450px]'>
             <Reproductor src='/idle.webm' />
           </div>
         </div>
         {/* columna 2 */}
-        <div className='m-auto p-2 sm:p-0'>
+        <div className=' p-2 sm:p-0'>
           <h1 className='text-4xl font-bold'>Hola!</h1>
           <p className='mt-2'>Elige tu método de estudio:</p>
           <ToggleGroup
