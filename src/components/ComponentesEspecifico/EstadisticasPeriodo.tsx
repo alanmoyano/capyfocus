@@ -279,6 +279,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
 
     fechasOrdenadas.forEach(f => console.log(f))
     getRachaPorPeriodo(fechasOrdenadas as string[])
+    setFechasOrdenadas(fechasOrdenadas as string[])
 
     setTiempoEstudio(studyTimeAcum)
     setObjetivosTotales(objectiveCount)
@@ -315,6 +316,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
   const [musicaFavorita, setMusicaFavorita] = useState<string>()
   const [tecnicaEstudio, setTecnicaEstudio] = useState<string>()
   const [racha, setRacha] = useState(0)
+  const [fechasOrdenadas, setFechasOrdenadas] = useState<string[]>()
 
   return (
     <>
@@ -438,6 +440,15 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
                     selected={date}
                     onSelect={setDate}
                     className='rounded-md border text-sm shadow-sm'
+                    modifiers={{
+                      //@ts-expect-error shhh ts, esto funciona as expected
+                      eventDay: fechasOrdenadas?.map(fecha =>
+                        convertirAFecha(fecha)
+                      ),
+                    }}
+                    modifiersClassNames={{
+                      eventDay: 'bg-primary/80 ',
+                    }}
                   />
 
                   <div className='pl-4 md:w-1/2'>

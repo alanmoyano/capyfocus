@@ -157,6 +157,8 @@ export default function CapyEstadisticas() {
                 '/'
               ) as string
 
+              const id = evento.idEvento
+
               const date = new Date(fechaParsed)
 
               const title = evento.nombre
@@ -167,7 +169,7 @@ export default function CapyEstadisticas() {
               //@ts-expect-error no te preocupes type
               setEvents(prev => [
                 ...prev,
-                { date, title: title, hoursAcumulated: hours },
+                { date, title: title, hoursAcumulated: hours, id: id },
               ])
             })
           )

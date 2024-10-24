@@ -310,6 +310,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
 
       fechasOrdenadas.forEach(f => console.log(f))
       getRachaPorPeriodo(fechasOrdenadas as string[])
+      setFechasOdenadas(fechasOrdenadas as string[])
 
       setTiempoEstudio(studyTime)
       setObjetivosTotales(objectiveCount)
@@ -339,8 +340,6 @@ export default function EstadisticasEvento({ name }: { name: string }) {
   const [eventoSeleccionado, setEventoSeleccionado] = useState<Event>()
   const [eventId, setEventId] = useState(0)
   const { objetivos, tiempo } = useObjetivos()
-  const [sessionsRecovered, setSessionsRecovered] =
-    useState<sessionToRecover[]>()
   const [date, setDate] = useState<Date | undefined>(new Date())
   const { session } = useSession()
   const [tiempoEstudio, setTiempoEstudio] = useState(0)
@@ -352,6 +351,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
   const [tecnicaEstudio, setTecnicaEstudio] = useState<string>()
   const [racha, setRacha] = useState(0)
   const { events } = useEvents()
+  const [fechasOrdenadas, setFechasOdenadas] = useState<string[]>()
 
   useEffect(() => {
     const evento = events.find(e => e.title === name)
@@ -365,6 +365,8 @@ export default function EstadisticasEvento({ name }: { name: string }) {
         })
     }
   }, [name])
+
+  console.log(fechasOrdenadas)
 
   return (
     <>
@@ -485,10 +487,21 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                     selected={date}
                     onSelect={setDate}
                     className='rounded-md border text-sm shadow-sm'
+                    modifiers={{
+                      //@ts-expect-error shhh ts, esto funciona as expected
+                      eventDay: fechasOrdenadas?.map(fecha =>
+                        convertirAFecha(fecha)
+                      ),
+                    }}
+                    modifiersClassNames={{
+                      eventDay: 'bg-primary',
+                    }}
                   />
 
                   <div className='pl-4 md:w-1/2'>
-                    <h1 className='mb-2 text-lg font-semibold'>dias conectado</h1>
+                    <h1 className='mb-2 text-lg font-semibold'>
+                      dias conectado
+                    </h1>
                     {/* Lista de eventos */}
                     <p>11/07 2hs</p>
                   </div>
@@ -500,7 +513,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
 
         <div className='px-6 pb-6'>
           <h2 className='mb-4 text-2xl font-bold'>
-            Objetivos favoritos y de sesión del evento  {name}
+            Objetivos favoritos y de sesión del evento {name}
           </h2>
           <Table>
             <TableHeader>

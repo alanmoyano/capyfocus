@@ -148,7 +148,7 @@ export default function Eventos() {
               // @ts-expect-error no te preocupes type, anda
               setEvents(prev => [
                 ...prev,
-                { date, title: title, hoursAcumulated: hours },
+                { date, title: title, hoursAcumulated: hours, id: id },
               ])
             })
           )
@@ -173,6 +173,9 @@ export default function Eventos() {
           window.open(createGoogleCalendarLink(eventTitle, date))
         }
         if (session) {
+          console.log(date)
+          const mañana = new Date('2024/11/2')
+          console.log(mañana)
           saveEvent(eventTitle, session.user.id, date)
             .then(data => {
               if (data) {
