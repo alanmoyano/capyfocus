@@ -16,7 +16,15 @@ import { Helmet } from 'react-helmet'
 import { formatTime } from '@/lib/utils'
 import { useSession } from './contexts/SessionContext'
 import { supabase } from './supabase/client'
-import { dateToTimetz, formatDateDash } from '@/constants/supportFunctions'
+import {
+  dateToTimetz,
+  formatDateDash,
+  SesionAGuardar,
+  getSelectedMusic,
+  acumulateHoursInSelectedEvent,
+  getObjectiveByName,
+  acumulateHoursInFavouriteObj,
+} from '@/constants/supportFunctions'
 import { useEvents } from './contexts/EventsContext'
 
 //import Confetti from 'react-confetti-boom'
@@ -25,75 +33,6 @@ import { useEvents } from './contexts/EventsContext'
 type Mode = 'Sesión' | 'Descanso'
 type Accion = 'Estudiar' | 'Descansar'
 
-type SessionAGuardar = {
-  uuid: string
-  horaInicioSesion: string
-  fecha: Date
-  horaFinSesion: string
-  tecnicaEstudio: number
-  tipoMotivacion: number
-  cantidadObjetivosCumplidos: number
-  cantidadObjetivos: number
-  tiempoEstudio: number
-  musicaSeleccionada: number
-  eventoSeleccionado: number | null
-}
-
-async function acumulateHoursInSelectedEvent(
-  timeToAcumulate: number,
-  uuid: string,
-  name: string,
-  date: Date
-) {
-  const dateFormatted = formatDateDash(date)
-  const { data, error } = await supabase
-    .from('Eventos')
-    .update({ horasAcumuladas: timeToAcumulate })
-    .eq('idUsuario', uuid)
-    .eq('nombre', name)
-    .eq('fechaLimite', dateFormatted)
-
-  return data
-}
-
-async function getObjectiveIdByName(objectiveName: string, uuid: string) {
-  const { data, error } = await supabase
-    .from('ObjetivosFavoritos')
-    .select()
-    .eq('descripcion', objectiveName)
-    .eq('idUsuario', uuid)
-
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  if (data) return data
-  else console.log(error)
-}
-
-async function acumulateHoursInFavouriteObj(
-  objName: string,
-  time: number,
-  uuid: string,
-  eventId?: number
-) {
-  const { data, error } = await supabase
-    .from('ObjetivosFavoritos')
-    .update({ horasAcumuladas: time })
-    .eq('descripcion', objName)
-    .eq('idUsuario', uuid)
-
-  if (error) console.log(error)
-  console.log(eventId)
-  if (eventId) {
-    const ObjetivoMarcado = await getObjectiveIdByName(objName, uuid)
-    //@ts-expect-error no te preocupes ts, confia en nosotros
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    const idObjetivoMarcado = ObjetivoMarcado[0].id
-    const { data, error } = await supabase
-      .from('ObjetivosFavoritosXEventos')
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      .insert([{ idEvento: eventId, idObjetivoFavorito: idObjetivoMarcado }])
-    if (error) console.log(error)
-  }
-}
 export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
   return (
     <div className='select-none'>
@@ -103,39 +42,6 @@ export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
       </div>
     </div>
   )
-}
-
-function getSelectedMusic(title: string) {
-  let musicaSeleccionada = 0
-  switch (title) {
-    case 'CapyEpic': {
-      const musicID = 1
-      musicaSeleccionada = musicID
-      break
-    }
-    case 'CapySynthwave': {
-      const musicID = 2
-      musicaSeleccionada = musicID
-      break
-    }
-    case 'CapyChill': {
-      const musicID = 3
-      musicaSeleccionada = musicID
-      break
-    }
-    case 'CapyAmbiente': {
-      const musicID = 4
-      musicaSeleccionada = musicID
-      break
-    }
-    default: {
-      const musicID = 0
-      musicaSeleccionada = musicID
-      break
-    }
-  }
-
-  return musicaSeleccionada
 }
 
 export default function Timer() {
@@ -184,7 +90,7 @@ export default function Timer() {
     if (session) {
       const hoy = new Date()
       async function saveSession() {
-        const sessionToSave: SessionAGuardar = {
+        const sessionToSave: SesionAGuardar = {
           //@ts-expect-error no jodas ts, anda en la bd
           uuid: session?.user.id,
           horaInicioSesion: dateToTimetz(InicioSesion),

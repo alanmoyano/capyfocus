@@ -481,21 +481,21 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                 </CardTitle>
               </CardHeader>
               <CardContent className='p-2'>
-                  <Calendar
-                    mode='single'
-                    selected={date}
-                    onSelect={setDate}
-                    className='rounded-md border text-sm shadow-sm'
-                    modifiers={{
-                      //@ts-expect-error shhh ts, esto funciona as expected
-                      eventDay: fechasOrdenadas?.map(fecha =>
-                        convertirAFecha(fecha)
-                      ),
-                    }}
-                    modifiersClassNames={{
-                      eventDay: 'bg-primary',
-                    }}
-                  />{' '}
+                <Calendar
+                  mode='single'
+                  selected={date}
+                  onSelect={setDate}
+                  className='rounded-md border text-sm shadow-sm'
+                  modifiers={{
+                    //@ts-expect-error shhh ts, esto funciona as expected
+                    eventDay: fechasOrdenadas?.map(fecha =>
+                      convertirAFecha(fecha)
+                    ),
+                  }}
+                  modifiersClassNames={{
+                    eventDay: 'bg-primary',
+                  }}
+                />{' '}
               </CardContent>
             </Card>
           </div>

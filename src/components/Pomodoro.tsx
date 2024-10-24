@@ -18,12 +18,42 @@ import CountdownStudy from './ComponentesEspecifico/CountDown/CountdownStudy'
 import CountdownBreak from './ComponentesEspecifico/CountDown/CountdownBreak'
 import { SkipForward } from 'lucide-react'
 import usePomodoro from '@/hooks/usePomodoro'
+import {
+  acumulateHoursInSelectedEvent,
+  dateToTimetz,
+  getSelectedMusic,
+  SesionAGuardar,
+} from '@/constants/supportFunctions'
+import { supabase } from './supabase/client'
+import { useSession } from './contexts/SessionContext'
+import { useEvents } from './contexts/EventsContext'
 
 //BUG: No anda bien el contador de tiempo, no cuenta el tiempo de estudio y descanso.
 type Mode = 'Estudiando' | 'Descansando'
 
 function addZeroIfNeeded(value: number) {
   return value.toString().padStart(2, '0')
+}
+
+async function saveSession(sessionToSave: SesionAGuardar) {
+  const { data, error } = await supabase.from('SesionesDeEstudio').insert([
+    {
+      idUsuario: sessionToSave.uuid,
+      horaInicioSesion: sessionToSave.horaInicioSesion,
+      fecha: sessionToSave.fecha,
+      horaFinSesion: sessionToSave.horaFinSesion,
+      tecnicaEstudio: sessionToSave.tecnicaEstudio,
+      tipoMotivacion: sessionToSave.tipoMotivacion,
+      cantidadObjetivosCumplidos: sessionToSave.cantidadObjetivosCumplidos,
+      cantidadObjetivos: sessionToSave.cantidadObjetivos,
+      tiempoEstudio: sessionToSave.tiempoEstudio,
+      musicaSeleccionada: sessionToSave.musicaSeleccionada,
+      eventoSeleccionado: sessionToSave.eventoSeleccionado,
+    },
+  ])
+
+  if (error) console.log(error)
+  else console.log('Datos guardados correctamente')
 }
 
 export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
@@ -73,6 +103,9 @@ export default function Pomodoro() {
   const [volumen, setVolumen] = useState(true)
   const [boom, setBoom] = useState(false)
   const [breakStarted, setBreakStarted] = useState(false)
+  const { session } = useSession()
+  const [InicioSesion, setInicioSesion] = useState<Date | null>(null)
+  const { selectedEvent } = useEvents()
 
   const {
     objetivos,
@@ -97,13 +130,60 @@ export default function Pomodoro() {
   const finalizarSesion = () => {
     clearInterval(timer.current)
 
+    let studyTime = 0
+    pomodorosRealizados.forEach(
+      pomodoro => (studyTime += pomodoro.tiempoEstudio)
+    )
+
     if (time > 0 && mode === 'Estudiando') {
+      studyTime -= time
       console.log('Entre en el primero')
       setTiempoTotal(prev => prev - time)
       setAcumuladorTiempoPausa(prev => prev - breakSeconds)
     } else if (time > 0 && mode === 'Descansando') {
       console.log('Entre en el segundo')
       setAcumuladorTiempoPausa(prev => prev - time)
+    }
+
+    if (session) {
+      const hoy = new Date()
+      const sessionToSave: SesionAGuardar = {
+        uuid: session.user.id,
+        horaInicioSesion: dateToTimetz(InicioSesion),
+        //@ts-expect-error no te preocupes ts
+        fecha: InicioSesion,
+        horaFinSesion: dateToTimetz(hoy),
+        tecnicaEstudio: 1,
+        tipoMotivacion: motivationType === 'Positiva' ? 1 : 2,
+        cantidadObjetivos: objetivos.length,
+        cantidadObjetivosCumplidos: objCumplidos,
+        tiempoEstudio: studyTime,
+        musicaSeleccionada: getSelectedMusic(
+          selectedMusic ? selectedMusic.title : ''
+        ),
+        eventoSeleccionado: selectedEvent ? selectedEvent.id : null,
+      }
+
+      saveSession(sessionToSave)
+        .then(() => console.log('Los datos fueron guardados correctamente'))
+        .catch((error: unknown) => {
+          console.log('Ocurrio un error', error)
+        })
+
+      if (selectedEvent) {
+        const nuevoTiempo =
+          (selectedEvent.hoursAcumulated ? selectedEvent.hoursAcumulated : 0) +
+          studyTime
+        selectedEvent.hoursAcumulated = nuevoTiempo
+        acumulateHoursInSelectedEvent(
+          nuevoTiempo,
+          session.user.id,
+          selectedEvent.title,
+          selectedEvent.date
+        )
+          .then(() => console.log('Datos cargados en evento de manera exitosa'))
+          .catch((error: unknown) => console.log('Ocurrio un error', error))
+      }
     }
 
     objetivos.forEach(objetivo => {
@@ -239,6 +319,8 @@ export default function Pomodoro() {
       setSessionStart(true)
       setTiempo({})
       setTiempoSesion({})
+      const hoy = new Date()
+      setInicioSesion(hoy)
     }
     setIsSetted(prev => !prev)
     setIsActive(prev => !prev)
