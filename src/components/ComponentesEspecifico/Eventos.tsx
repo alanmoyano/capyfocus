@@ -36,6 +36,7 @@ import {
 } from '../../constants/supportFunctions'
 
 export type Event = {
+  id: number
   date: Date
   title: string
   hoursAcumulated?: number
@@ -47,6 +48,14 @@ type EventToSave = {
   fechaLimite: Date
 }
 
+type EventToRecover = {
+  idEvento: number
+  nombre: string
+  idUsuario: string
+  fechaLimite: string
+  horasAcumuladas: number | null
+}
+
 type EventAddContext = 'New' | 'Existing'
 
 async function saveEvent(name: string, uuid: string, limitDate: Date) {
@@ -55,15 +64,18 @@ async function saveEvent(name: string, uuid: string, limitDate: Date) {
     uuid: uuid,
     fechaLimite: limitDate,
   }
-  const { data, error } = await supabase.from('Eventos').insert([
-    {
-      nombre: eventToSave.nombre,
-      idUsuario: eventToSave.uuid,
-      fechaLimite: eventToSave.fechaLimite,
-    },
-  ])
+  const { data, error } = await supabase
+    .from('Eventos')
+    .insert([
+      {
+        nombre: eventToSave.nombre,
+        idUsuario: eventToSave.uuid,
+        fechaLimite: eventToSave.fechaLimite,
+      },
+    ])
+    .select()
 
-  if (error) console.log(error)
+  if (data) return data[0] as EventToRecover
 }
 
 async function deleteEvent(date: Date, name: string, uuid: string) {
@@ -125,7 +137,7 @@ export default function Eventos() {
                 '/'
               ) as string
 
-              const id = evento.idEvento 
+              const id = evento.idEvento
 
               const date = new Date(fechaParsed)
 
@@ -162,7 +174,14 @@ export default function Eventos() {
         }
         if (session) {
           saveEvent(eventTitle, session.user.id, date)
-            .then(() => console.log('Datos cargados con exito'))
+            .then(data => {
+              if (data) {
+                setEvents([
+                  ...events,
+                  { date, title: eventTitle, id: data.idEvento },
+                ])
+              }
+            })
             .catch((error: unknown) => console.log(error))
         } else {
           toast.error('ADVERTENCIA', {
@@ -170,8 +189,9 @@ export default function Eventos() {
               'Si no tienes sesion iniciada tu evento se borrará de la pagina',
           })
         }
-        setEvents([...events, { date, title: eventTitle }])
+        // setEvents([...events, { date, title: eventTitle }])
         setEventTitle('') // Limpiar el título después de añadir el evento
+        console.log(events)
       }
     } else {
       toast.error('No se ha podido crear el evento:', {
