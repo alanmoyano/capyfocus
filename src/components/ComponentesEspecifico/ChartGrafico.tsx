@@ -13,6 +13,7 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import { useEffect, useState } from 'react'
+import { useCallback } from 'react'
 
 const chartDataMeses = [
   {
@@ -132,7 +133,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-type Period =
+type periodo =
   | 'sesion'
   | 'semanal'
   | 'mensual'
@@ -145,15 +146,12 @@ type ChartData =
   | { month: string; cumplidos: number; pendientes: number; date: Date }
   | { day: string; cumplidos: number; pendientes: number; date: Date }
 
-export default function ChartGrafico({ periodo }: { periodo: Period }) {
-  const [periodoSeleccionado, setPeriodoSeleccionado] =
-    useState<Period>(periodo)
-  const [tipoGrafico, setTipoGrafico] = useState<string>('chartDataMeses') //Esto es solo para el dataKey
-  const [datosGrafico, setDatosGrafico] = useState<ChartData[]>(chartDataSemana) //Esto es para los gráficos
+export default function ChartGrafico({ periodo }: { periodo: periodo }) {
+  const [datosGrafico, setDatosGrafico] = useState<ChartData[]>(chartDataMeses) //Esto es para los gráficos
 
-  function getDateOfPeriod(period: Period) {
+  function getDateOfperiodo(periodo: periodo) {
     const dateToReturn = new Date()
-    switch (period) {
+    switch (periodo) {
       case 'semanal':
         dateToReturn.setDate(dateToReturn.getDate() - 7)
         break
@@ -172,40 +170,32 @@ export default function ChartGrafico({ periodo }: { periodo: Period }) {
     return dateToReturn
   }
   // Obtener datos según el período seleccionado
-  const obtenerDatosPorPeriodo = (period: Period): ChartData[] => {
-    const startDate = getDateOfPeriod(period)
-    switch (period) {
-      case 'mensual':
-        setDatosGrafico(chartDataMeses)
-        setTipoGrafico('chartDataMeses')
-        return chartDataMeses.filter(data => data.date >= startDate)
-      case 'semanal':
-        setDatosGrafico(chartDataSemana)
-        setTipoGrafico('chartDataSemana')
-        return chartDataSemana.filter(data => data.date >= startDate)
-      case 'bimestral':
-      case 'sesion':
-      case 'evento':
-        setDatosGrafico(chartDataMes)
-        setTipoGrafico('chartDataMes')
-        return chartDataMes.filter(data => data.date >= startDate)
-      default:
-        return []
-    }
-  }
+  const obtenerDatosPorperiodo = useCallback(
+    (periodo: periodo): ChartData[] => {
+      const startDate = getDateOfperiodo(periodo)
+      switch (periodo) {
+        case 'mensual':
+          return chartDataMeses.filter(data => data.date >= startDate)
+        case 'semanal':
+          return chartDataSemana.filter(data => data.date >= startDate)
+        case 'bimestral':
+        case 'sesion':
+        case 'evento':
+          return chartDataMes.filter(data => data.date >= startDate)
+        default:
+          return []
+      }
+    },
+    [] // No tiene dependencias, ya que es independiente del renderizado
+  )
   useEffect(() => {
     try {
-      const datos = obtenerDatosPorPeriodo(periodoSeleccionado)
+      const datos = obtenerDatosPorperiodo(periodo)
       setDatosGrafico(datos)
     } catch (error) {
       console.error('Error al obtener los datos del gráfico:', error)
     }
-  }, [periodoSeleccionado])
-
-  // Actualizar los datos del gráfico al cambiar el período
-  useEffect(() => {
-    setDatosGrafico(obtenerDatosPorPeriodo(periodoSeleccionado))
-  }, [periodoSeleccionado])
+  }, [periodo, obtenerDatosPorperiodo])
 
   return (
     <div>
@@ -217,37 +207,45 @@ export default function ChartGrafico({ periodo }: { periodo: Period }) {
         </CardHeader>
         <CardContent className='p-3'>
           <ChartContainer config={chartConfig}>
-            <ResponsiveContainer width='100%' height={250}>
-              <BarChart accessibilityLayer data={datosGrafico}>
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey={tipoGrafico === 'chartDataSemana' ? 'day' : 'month'} // Cambia 'month' a 'day' si se está mostrando la semana
-                  tickLine={false}
-                  tickMargin={10}
-                  axisLine={false}
-                  tickFormatter={(value: string) => value.slice(0, 3)}
-                />
-                <ChartTooltip
-                  cursor={false}
-                  content={
-                    <ChartTooltipContent
-                      formatType='integer'
-                      indicator='line'
-                    />
-                  }
-                />
-                <Bar
-                  dataKey='cumplidos'
-                  fill='var(--color-cumplidos)'
-                  radius={4}
-                />
-                <Bar
-                  dataKey='pendientes'
-                  fill='var(--color-pendientes)'
-                  radius={4}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+            {datosGrafico.length === 0 ? (
+              <div className='h-full w-full'>
+                <p className='flex items-center justify-center text-xl'>
+                  No hay datos disponibles para el período seleccionado
+                </p>
+              </div>
+            ) : (
+              <ResponsiveContainer width='100%' height={250}>
+                <BarChart accessibilityLayer data={datosGrafico}>
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    dataKey={periodo === 'semanal' ? 'day' : 'month'} // Cambia 'month' a 'day' si se está mostrando la semana
+                    tickLine={false}
+                    tickMargin={10}
+                    axisLine={false}
+                    tickFormatter={(value: string) => value.slice(0, 3)}
+                  />
+                  <ChartTooltip
+                    cursor={false}
+                    content={
+                      <ChartTooltipContent
+                        formatType='integer'
+                        indicator='line'
+                      />
+                    }
+                  />
+                  <Bar
+                    dataKey='cumplidos'
+                    fill='var(--color-cumplidos)'
+                    radius={4}
+                  />
+                  <Bar
+                    dataKey='pendientes'
+                    fill='var(--color-pendientes)'
+                    radius={4}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </ChartContainer>
         </CardContent>
       </Card>

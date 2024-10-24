@@ -385,7 +385,7 @@ export default function Inicio() {
           </div>
         </div>
         {/* columna 2 */}
-        <div className=' p-2 sm:p-0'>
+        <div className='p-2 sm:p-0'>
           <h1 className='text-4xl font-bold'>Hola!</h1>
           <p className='mt-2'>Elige tu método de estudio:</p>
           <ToggleGroup
