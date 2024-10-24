@@ -422,6 +422,15 @@ export default function Eventos() {
         <SheetFooter className='flex w-full justify-between'>
           <SheetClose asChild>
             <div className='flex w-full items-center justify-between gap-2'>
+            <Button
+                variant={'secondary'}
+                className='w-full sm:ml-2 sm:w-auto'
+                onClick={() => {
+                  handleVolver()
+                }}
+              >
+                Aceptar
+              </Button>
               <Button
                 variant={'accent'}
                 className='w-full sm:mr-2 sm:w-auto'
@@ -432,15 +441,7 @@ export default function Eventos() {
               >
                 Cancelar
               </Button>
-              <Button
-                variant={'secondary'}
-                className='w-full sm:ml-2 sm:w-auto'
-                onClick={() => {
-                  handleVolver()
-                }}
-              >
-                Aceptar
-              </Button>
+
             </div>
           </SheetClose>
         </SheetFooter>

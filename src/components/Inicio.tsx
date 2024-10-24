@@ -421,9 +421,14 @@ export default function Inicio() {
           {/* Objetivos */}
           <div className='mt-4 rounded-xl bg-secondary/70 p-4 dark:bg-secondary/90'>
             {/* Aca si eligio sesion o evento va a ir */}
-            <label htmlFor=''>
-              Objetivos de sesion o evento: {selectedEvent?.title}
-            </label>
+            {selectedEvent ? (
+              <label htmlFor=''>
+                Objetivos del evento: {selectedEvent.title}
+              </label>
+            ) : (
+              <label htmlFor=''>Objetivos de sesion</label>
+            )}
+
             <div className='mt-2 flex items-center gap-2'>
               <Input
                 type='text'
