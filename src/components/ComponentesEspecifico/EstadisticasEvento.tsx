@@ -410,10 +410,8 @@ export default function EstadisticasEvento({ name }: { name: string }) {
       {/* info de periodo */}
       <Card className='container mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg md:flex-row dark:from-gray-800 dark:to-gray-900 dark:shadow-gray-800'>
         <CardHeader>
-          <CardTitle>
-            <h1 className='text-left text-3xl font-bold'>
-              Resumen de Sesiones de Estudio para el evento {name}
-            </h1>
+          <CardTitle className='text-left text-3xl font-bold'>
+            Resumen de Sesiones de Estudio para el evento {name}
           </CardTitle>
         </CardHeader>
         <CardContent className='flex flex-col justify-between gap-8 md:flex-row'>
