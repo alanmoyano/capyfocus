@@ -12,7 +12,6 @@ import {
 import { Progress } from '@/components/ui/progress'
 import { DialogClose } from '@radix-ui/react-dialog'
 
-import '@/brenda.css'
 import {
   Card,
   CardContent,
