@@ -149,8 +149,8 @@ export default function CapyEstadisticas() {
       if (events.length === 0) {
         gatherEventsOfUser(session.user.id)
           .then(data =>
-            data?.forEach(evento => {
-              if (evento) {
+            data.forEach(evento => {
+                // @ts-expect-error no te preocupes type, anda 
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 const fechaParsed = evento.fechaLimite.replaceAll(
                   '-',
@@ -159,16 +159,16 @@ export default function CapyEstadisticas() {
 
                 const date = new Date(fechaParsed)
 
-                const title = evento.nombre as string
+                const title = evento.nombre
 
-                const hours = evento.horasAcumuladas as number
+                const hours = evento.horasAcumuladas
 
                 console.log(date, title)
+                //@ts-expect-error no te preocupes type
                 setEvents(prev => [
                   ...prev,
                   { date, title: title, hoursAcumulated: hours },
                 ])
-              }
             })
           )
           .catch((error: unknown) => console.log(error))
@@ -180,9 +180,9 @@ export default function CapyEstadisticas() {
   console.log(queryParams)
 
   const handleSelect = (value: string) => {
-    if(periodos.includes(value)){
+    if (periodos.includes(value)) {
       setSelectedPeriod(value)
-    }else{
+    } else {
       setSelectedPeriod('')
       setSelectedEvent(value)
     }
@@ -317,21 +317,23 @@ export default function CapyEstadisticas() {
                     </TooltipProvider>
                   </SelectItem>
 
-                  {events.map(evento => (
-                    (evento.hoursAcumulated &&
-                    <SelectItem key={evento.title} value={evento.title}>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <p>{evento.title}</p>
-                          </TooltipTrigger>
-                          <TooltipContent className='ml-40'>
-                            <p>Estadísticas del evento: {evento.title}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </SelectItem>)
-                  ))}
+                  {events.map(
+                    evento =>
+                      evento.hoursAcumulated && (
+                        <SelectItem key={evento.title} value={evento.title}>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <p>{evento.title}</p>
+                              </TooltipTrigger>
+                              <TooltipContent className='ml-40'>
+                                <p>Estadísticas del evento: {evento.title}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </SelectItem>
+                      )
+                  )}
                   {/* <SelectItem key={5} value='evento'>
                     <TooltipProvider>
                       <Tooltip>
@@ -352,7 +354,7 @@ export default function CapyEstadisticas() {
       </div>
 
       {/* Pagina en blanco */}
-      {(selectedPeriod === '' && tiempoTotal === 0 && !selectedEvent) && (
+      {selectedPeriod === '' && tiempoTotal === 0 && !selectedEvent && (
         <Reproductor src='/auto.webm' />
       )}
       {/* Pagina de sesion */}
@@ -654,7 +656,7 @@ export default function CapyEstadisticas() {
         </>
       )}
 
-      {(selectedPeriod === '' && selectedEvent) && (
+      {selectedPeriod === '' && selectedEvent && (
         <>
           <EstadisticasEvento name={selectedEvent}></EstadisticasEvento>
         </>

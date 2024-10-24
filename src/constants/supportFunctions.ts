@@ -1,4 +1,12 @@
-import { supabase } from "@/components/supabase/client"
+import { supabase } from '@/components/supabase/client'
+
+type EventToRecover = {
+  idEvento: number
+  nombre: string
+  idUsuario: string
+  fechaLimite: string
+  horasAcumuladas: number | null
+}
 
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 function dateToTimetz(date: Date | null): string {
@@ -74,13 +82,13 @@ async function gatherEventsOfUser(uuid: string, date?: Date) {
       .select()
       .eq('idUsuario', uuid)
       .gt('fechaLimite', formatDateDash(date))
-    return data
+    return data as EventToRecover[]
   } else {
     const { data, error } = await supabase
       .from('Eventos')
       .select()
       .eq('idUsuario', uuid)
-    return data
+    return data as EventToRecover[]
   }
 }
 
@@ -91,5 +99,5 @@ export {
   obtenerClaveMayorValor,
   getElementNameById,
   convertirAFecha,
-  gatherEventsOfUser
+  gatherEventsOfUser,
 }

@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
 import { useEffect, useRef, useState } from 'react'
 
 import {
@@ -160,18 +164,20 @@ function getDateOfPeriod(period: Period) {
   return dateToReturn
 }
 
-// async function getEventFromName(eventName: string, uuid: string) {
-//   const { data, error } = await supabase
-//     .from('Eventos')
-//     .select()
-//     .eq('nombre', eventName)
-//     .eq('idUsuario', uuid)
+async function getEventIdFromName(eventName: string, uuid: string) {
+  const { data, error } = await supabase
+    .from('Eventos')
+    .select()
+    .eq('nombre', eventName)
+    .eq('idUsuario', uuid)
 
-//   if (data) return data[0] as EventToRecover
-//   else console.log(error)
-// }
+  if (data) return data[0].idEvento as number
+  else console.log(error)
+}
 
-async function gatherSessionsOfEventOfUser(uuid: string, eventId: number) {
+async function gatherSessionsOfEventOfUser(uuid: string, eventName: string) {
+  const eventId = await getEventIdFromName(eventName, uuid)
+
   const { data, error } = await supabase
     .from('SesionesDeEstudio')
     .select()
@@ -190,6 +196,14 @@ export default function EstadisticasEvento({ name }: { name: string }) {
     bimestral: useRef(null),
     semestre: useRef(null),
     evento: useRef(null),
+  }
+
+  async function conseguirIdEvento() {
+    if (session) {
+      //@ts-expect-error no va a pasar nada type
+      setEventId(await getEventIdFromName(name, session.user.id))
+      return
+    }
   }
 
   function getRachaPorPeriodo(fechasSesiones: string[]) {
@@ -224,128 +238,106 @@ export default function EstadisticasEvento({ name }: { name: string }) {
     setRacha(rachaActual)
   }
 
-  useEffect(() => {
-    const evento = events.find(e => e.title === name)
-    setEventoSeleccionado(evento)
-    if (evento && session) {
-      gatherSessionsOfEventOfUser(session.user.id, evento.id)
-        .then(data => setSessionsRecovered(data))
-        .catch((error: unknown) => {
-          console.log(error)
-        })
-    }
-    setStatisticsValues()
-  }, [])
+  const setStatisticsValues = (data: sessionToRecover[], evento: Event) => {
+    if (session) {
+      const studyTime = evento.hoursAcumulated ? evento.hoursAcumulated : 0
+      let objectiveCount = 0
+      let objectiveAcomplishedCount = 0
+      const setFechas = new Set()
 
-  const setStatisticsValues = () => {
-    if (eventoSeleccionado && session) {
-      const studyTime = eventoSeleccionado.hoursAcumulated
-        ? eventoSeleccionado.hoursAcumulated
-        : 0
+      const mapaMotivaciones = new Map<string, number>([
+        ['1', 0],
+        ['2', 0],
+      ])
+      const mapaMusicas = new Map<string, number>([
+        ['0', 0],
+        ['1', 0],
+        ['2', 0],
+        ['3', 0],
+        ['4', 0],
+      ])
+      const mapaTecnicaEstudio = new Map<string, number>([
+        ['1', 0],
+        ['2', 0],
+      ])
 
-      if (sessionsRecovered) {
-        let objectiveCount = 0
-        let objectiveAcomplishedCount = 0
-        const setFechas = new Set()
+      for (const particularSession of data) {
+        objectiveCount += parseInt(
+          particularSession.cantidadObjetivos as unknown as string
+        )
+        objectiveAcomplishedCount += parseInt(
+          particularSession.cantidadObjetivosCumplidos as unknown as string
+        )
 
-        const mapaMotivaciones = new Map<string, number>([
-          ['1', 0],
-          ['2', 0],
-        ])
-        const mapaMusicas = new Map<string, number>([
-          ['0', 0],
-          ['1', 0],
-          ['2', 0],
-          ['3', 0],
-          ['4', 0],
-        ])
-        const mapaTecnicaEstudio = new Map<string, number>([
-          ['1', 0],
-          ['2', 0],
-        ])
-
-        for (const particularSession of sessionsRecovered) {
-          objectiveCount += parseInt(
-            particularSession.cantidadObjetivos as unknown as string
-          )
-          objectiveAcomplishedCount += parseInt(
-            particularSession.cantidadObjetivosCumplidos as unknown as string
-          )
-
+        //@ts-expect-error no joda typescript, anda bien
+        console.log(particularSession.musicaSeleccionada.toString())
+        const valorActualMotivaciones = mapaMotivaciones.get(
+          particularSession.tipoMotivacion.toString()
+        )
+        mapaMotivaciones.set(
+          particularSession.tipoMotivacion.toString(),
+          //@ts-expect-error no te preocupes querido ts, esto anda bien
+          valorActualMotivaciones + 1
+        )
+        const valorActualMusica = mapaMusicas.get(
           //@ts-expect-error no joda typescript, anda bien
-          console.log(particularSession.musicaSeleccionada.toString())
-          const valorActualMotivaciones = mapaMotivaciones.get(
-            particularSession.tipoMotivacion.toString()
-          )
-          mapaMotivaciones.set(
-            particularSession.tipoMotivacion.toString(),
-            valorActualMotivaciones + 1
-          )
-          const valorActualMusica = mapaMusicas.get(
-            //@ts-expect-error no joda typescript, anda bien
-            particularSession.musicaSeleccionada.toString()
-          )
-          mapaMusicas.set(
-            //@ts-expect-error no joda typescript, anda bien
-            particularSession.musicaSeleccionada.toString(),
-            valorActualMusica + 1
-          )
-          const valorActualTecnicaEstudio = mapaTecnicaEstudio.get(
-            particularSession.tecnicaEstudio.toString()
-          )
-          mapaTecnicaEstudio.set(
-            particularSession.tecnicaEstudio.toString(),
-            valorActualTecnicaEstudio + 1
-          )
-          setFechas.add(particularSession.fecha)
-        }
-
-        const fechasOrdenadas = Array.from(setFechas).sort((a, b) => {
-          //@ts-expect-error no jodas ts, funca bien
-          const dateA = new Date(a)
-          //@ts-expect-error no jodas ts, funca bien
-          const dateB = new Date(b)
-          return dateA.getTime() - dateB.getTime()
-        })
-
-        fechasOrdenadas.forEach(f => console.log(f))
-        getRachaPorPeriodo(fechasOrdenadas as string[])
-
-        setTiempoEstudio(studyTime)
-        setObjetivosTotales(objectiveCount)
-        setObjetivosCumplidos(objectiveAcomplishedCount)
-        setObjetivosPendientes(objectiveCount - objectiveAcomplishedCount)
-        setMotivacion(
-          getElementNameById(
-            parseInt(obtenerClaveMayorValor(mapaMotivaciones)),
-            motivations
-          )
+          particularSession.musicaSeleccionada.toString()
         )
-        setMusicaFavorita(
-          getElementNameById(
-            parseInt(obtenerClaveMayorValor(mapaMusicas)),
-            musicList
-          )
+        mapaMusicas.set(
+          //@ts-expect-error no joda typescript, anda bien
+          particularSession.musicaSeleccionada.toString(),
+          //@ts-expect-error no te preocupes querido ts, esto anda bien
+          valorActualMusica + 1
         )
-        setTecnicaEstudio(
-          getElementNameById(
-            parseInt(obtenerClaveMayorValor(mapaTecnicaEstudio)),
-            StudyTechniqueList
-          )
+        const valorActualTecnicaEstudio = mapaTecnicaEstudio.get(
+          particularSession.tecnicaEstudio.toString()
         )
+        mapaTecnicaEstudio.set(
+          particularSession.tecnicaEstudio.toString(),
+          //@ts-expect-error no te preocupes querido ts, esto anda bien
+          valorActualTecnicaEstudio + 1
+        )
+        setFechas.add(particularSession.fecha)
       }
+
+      const fechasOrdenadas = Array.from(setFechas).sort((a, b) => {
+        //@ts-expect-error no jodas ts, funca bien
+        const dateA = new Date(a)
+        //@ts-expect-error no jodas ts, funca bien
+        const dateB = new Date(b)
+        return dateA.getTime() - dateB.getTime()
+      })
+
+      fechasOrdenadas.forEach(f => console.log(f))
+      getRachaPorPeriodo(fechasOrdenadas as string[])
+
+      setTiempoEstudio(studyTime)
+      setObjetivosTotales(objectiveCount)
+      setObjetivosCumplidos(objectiveAcomplishedCount)
+      setObjetivosPendientes(objectiveCount - objectiveAcomplishedCount)
+      setMotivacion(
+        getElementNameById(
+          parseInt(obtenerClaveMayorValor(mapaMotivaciones)),
+          motivations
+        )
+      )
+      setMusicaFavorita(
+        getElementNameById(
+          parseInt(obtenerClaveMayorValor(mapaMusicas)),
+          musicList
+        )
+      )
+      setTecnicaEstudio(
+        getElementNameById(
+          parseInt(obtenerClaveMayorValor(mapaTecnicaEstudio)),
+          StudyTechniqueList
+        )
+      )
     }
   }
 
-  // let studyTimeAcum = 0
-  // let objectiveCount = 0
-  // let objectiveAcomplishedCount = 0
-  // const setFechas = new Set()
-
-  // for (const particularSession of sessionsRecovered) {
-  //   studyTimeAcum += particularSession.tiempoEstudio
-
   const [eventoSeleccionado, setEventoSeleccionado] = useState<Event>()
+  const [eventId, setEventId] = useState(0)
   const { objetivos, tiempo } = useObjetivos()
   const [sessionsRecovered, setSessionsRecovered] =
     useState<sessionToRecover[]>()
@@ -360,6 +352,19 @@ export default function EstadisticasEvento({ name }: { name: string }) {
   const [tecnicaEstudio, setTecnicaEstudio] = useState<string>()
   const [racha, setRacha] = useState(0)
   const { events } = useEvents()
+
+  useEffect(() => {
+    const evento = events.find(e => e.title === name)
+    setEventoSeleccionado(evento)
+    if (evento && session) {
+      gatherSessionsOfEventOfUser(session.user.id, name)
+        //@ts-expect-error no te preocupes type
+        .then(data => setStatisticsValues(data, evento))
+        .catch((error: unknown) => {
+          console.log(error)
+        })
+    }
+  }, [name])
 
   return (
     <>

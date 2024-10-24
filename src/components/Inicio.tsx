@@ -377,13 +377,13 @@ export default function Inicio() {
           type='image/webp'
         />
       </Helmet>
-      <section className='sm:mt-10 flex flex-col sm:gap-20 sm:p-10 md:flex-row'>
-      <div className='mt-4 px-16 sm:px-4'>
-            <DialogoChicho />
-            <div className='relative flex sm:h-full sm:max-h-[450px] w-full sm:min-w-[450px] sm:max-w-[450px] items-center max-h-[300px]  min-w-[200px] max-w-[250px] justify-center overflow-hidden'>
-          <Reproductor src='/idle.webm' />
-            </div>
+      <section className='flex flex-col sm:mt-10 sm:gap-20 sm:p-10 md:flex-row'>
+        <div className='mt-4 px-16 sm:px-4'>
+          <DialogoChicho />
+          <div className='relative flex max-h-[300px] w-full min-w-[200px] max-w-[250px] items-center justify-center overflow-hidden sm:h-full sm:max-h-[450px] sm:min-w-[450px] sm:max-w-[450px]'>
+            <Reproductor src='/idle.webm' />
           </div>
+        </div>
         {/* columna 2 */}
         <div className='m-auto p-2 sm:p-0'>
           <h1 className='text-4xl font-bold'>Hola!</h1>
@@ -664,8 +664,8 @@ export default function Inicio() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className='hidden sm:inline-flex -left-8' />
-              <CarouselNext className='hidden sm:inline-flex -right-8' />
+              <CarouselPrevious className='-left-8 hidden sm:inline-flex' />
+              <CarouselNext className='-right-8 hidden sm:inline-flex' />
             </Carousel>
           </div>
 

@@ -309,7 +309,7 @@ export default function Pomodoro() {
         <div className='col-span-1 p-4'>
           <div className='mt-4 px-4'>
             <DialogoChicho motivation={motivationType} />
-            <div className='relative flex sm:h-full sm:max-h-[450px] w-full sm:min-w-[450px] sm:max-w-[450px] items-center max-h-[320px]  min-w-[250px] max-w-[250px] justify-center overflow-hidden'>
+            <div className='relative flex max-h-[320px] w-full min-w-[250px] max-w-[250px] items-center justify-center overflow-hidden sm:h-full sm:max-h-[450px] sm:min-w-[450px] sm:max-w-[450px]'>
               <AnimacionChicho motivation={motivationType} />
             </div>
           </div>
@@ -327,7 +327,7 @@ export default function Pomodoro() {
         </div>
         {/* Columna 2  */}
         <div className='col-span-1'>
-          <div className='mb-4 sm:mt-4 w-7/12 rounded-lg bg-accent p-2'>
+          <div className='mb-4 w-7/12 rounded-lg bg-accent p-2 sm:mt-4'>
             Motivación: <span className='font-semibold'>{motivationType}</span>
           </div>
           {/* Seteadores de tiempo */}
@@ -390,7 +390,7 @@ export default function Pomodoro() {
           {isSetted && (
             <>
               <div className='px-4'>
-                <div className='sm:mt-16 flex justify-center'>
+                <div className='flex justify-center sm:mt-16'>
                   {mode === 'Estudiando' ? (
                     <div>
                       <CountdownStudy

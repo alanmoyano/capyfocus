@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+
 import { Trash } from 'lucide-react'
 import {
   Tooltip,
@@ -23,19 +25,17 @@ import { Calendar } from '@/components/ui/calendar'
 import { es } from 'date-fns/locale'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useState, KeyboardEvent, useEffect } from 'react'
+import { useState, KeyboardEvent } from 'react'
 import { useLocation } from 'wouter'
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
 import { useEvents } from '../contexts/EventsContext'
 import {
   formatDateDash,
-  formatDateSlash,
-  gatherEventsOfUser
+  gatherEventsOfUser,
 } from '../../constants/supportFunctions'
 
 export type Event = {
-  id: number
   date: Date
   title: string
   hoursAcumulated?: number
@@ -62,6 +62,8 @@ async function saveEvent(name: string, uuid: string, limitDate: Date) {
       fechaLimite: eventToSave.fechaLimite,
     },
   ])
+
+  if (error) console.log(error)
 }
 
 async function deleteEvent(date: Date, name: string, uuid: string) {
@@ -115,29 +117,25 @@ export default function Eventos() {
       if (events.length === 0) {
         gatherEventsOfUser(session.user.id)
           .then(data =>
-            data?.forEach(evento => {
-              if (evento) {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-                const fechaParsed = evento.fechaLimite.replaceAll(
-                  '-',
-                  '/'
-                ) as string
+            data.forEach(evento => {
+              // @ts-expect-error no te preocupes type, anda
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+              const fechaParsed = evento.fechaLimite.replaceAll(
+                '-',
+                '/'
+              ) as string
 
-                const date = new Date(fechaParsed)
-                
-                const id = evento.idEvento
-                console.log(id)
+              const date = new Date(fechaParsed)
 
-                const title = evento.nombre as string
+              const title = evento.nombre
 
-                const hours = evento.horasAcumuladas as number
+              const hours = evento.horasAcumuladas
 
-                console.log(date, title)
-                setEvents(prev => [
-                  ...prev,
-                  { date, title: title, hoursAcumulated: hours, id: id },
-                ])
-              }
+              // @ts-expect-error no te preocupes type, anda
+              setEvents(prev => [
+                ...prev,
+                { date, title: title, hoursAcumulated: hours },
+              ])
             })
           )
           .catch((error: unknown) => console.log(error))
@@ -153,8 +151,6 @@ export default function Eventos() {
         day: 'numeric',
       })
 
-      setEvents([...events, { date, title: eventTitle }])
-      setEventTitle('') // Limpiar el título después de añadir el evento
       if (context === 'New') {
         toast.success('Se ha creado el evento:', {
           description: '"' + eventTitle + '"' + ' en el dia: ' + dateString,
@@ -164,7 +160,7 @@ export default function Eventos() {
         }
         if (session) {
           saveEvent(eventTitle, session.user.id, date)
-            .then(() => console.log('Evento guardado correctamente'))
+            .then(() => console.log('Datos cargados con exito'))
             .catch((error: unknown) => console.log(error))
         } else {
           toast.error('ADVERTENCIA', {
@@ -172,6 +168,8 @@ export default function Eventos() {
               'Si no tienes sesion iniciada tu evento se borrará de la pagina',
           })
         }
+        setEvents([...events, { date, title: eventTitle}])
+        setEventTitle('') // Limpiar el título después de añadir el evento
       }
     } else {
       toast.error('No se ha podido crear el evento:', {

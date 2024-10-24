@@ -36,7 +36,7 @@ type SessionAGuardar = {
   cantidadObjetivos: number
   tiempoEstudio: number
   musicaSeleccionada: number
-  eventoSeleccionado: number
+  eventoSeleccionado: number | null
 }
 
 async function acumulateHoursInSelectedEvent(
@@ -199,7 +199,7 @@ export default function Timer() {
           musicaSeleccionada: getSelectedMusic(
             selectedMusic ? selectedMusic.title : ''
           ),
-          eventoSeleccionado: selectedEvent?.id,
+          eventoSeleccionado: selectedEvent ? selectedEvent.id : null,
         }
 
         const { data, error } = await supabase
@@ -453,7 +453,7 @@ export default function Timer() {
           {/* <AnimacionChicho2 motivation={motivationType} /> */}
           <div className='mt-4 px-4'>
             <DialogoChicho motivation={motivationType} />
-            <div className='relative flex sm:h-full sm:max-h-[450px] w-full sm:min-w-[450px] sm:max-w-[450px] items-center max-h-[320px]  min-w-[300px] max-w-[250px] justify-center overflow-hidden'>
+            <div className='relative flex max-h-[320px] w-full min-w-[300px] max-w-[250px] items-center justify-center overflow-hidden sm:h-full sm:max-h-[450px] sm:min-w-[450px] sm:max-w-[450px]'>
               <AnimacionChicho motivation={motivationType} />
             </div>
           </div>
@@ -539,12 +539,12 @@ export default function Timer() {
               ))}
             </ul>
           </div>
-          <div className='mt-6 flex mb-2 sm:mb-0 items-center justify-between  sm:flex-row'>
-            <Button className='w-auto ' onClick={handleAccept}>
+          <div className='mb-2 mt-6 flex items-center justify-between sm:mb-0 sm:flex-row'>
+            <Button className='w-auto' onClick={handleAccept}>
               Volver
             </Button>
             <Button
-              className=' w-auto'
+              className='w-auto'
               variant={'destructive'}
               onClick={() => {
                 finalizarSesion()
