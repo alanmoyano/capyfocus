@@ -481,11 +481,9 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                 </CardTitle>
               </CardHeader>
               <CardContent className='p-2'>
-              <div className='flex flex-col md:flex-row'>
+                <div className='flex flex-col md:flex-row'>
                   <Calendar
                     mode='single'
-                    selected={date}
-                    onSelect={setDate}
                     className='rounded-md border text-sm shadow-sm'
                     modifiers={{
                       //@ts-expect-error shhh ts, esto funciona as expected

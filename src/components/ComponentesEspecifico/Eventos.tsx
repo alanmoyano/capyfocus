@@ -422,7 +422,7 @@ export default function Eventos() {
         <SheetFooter className='flex w-full justify-between'>
           <SheetClose asChild>
             <div className='flex w-full items-center justify-between gap-2'>
-            <Button
+              <Button
                 variant={'secondary'}
                 className='w-full sm:ml-2 sm:w-auto'
                 onClick={() => {
@@ -441,7 +441,6 @@ export default function Eventos() {
               >
                 Cancelar
               </Button>
-
             </div>
           </SheetClose>
         </SheetFooter>

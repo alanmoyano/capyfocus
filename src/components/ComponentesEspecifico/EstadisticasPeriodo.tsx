@@ -437,8 +437,6 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
                 <div className='flex flex-col md:flex-row'>
                   <Calendar
                     mode='single'
-                    selected={date}
-                    onSelect={setDate}
                     className='rounded-md border text-sm shadow-sm'
                     modifiers={{
                       //@ts-expect-error shhh ts, esto funciona as expected
@@ -447,7 +445,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
                       ),
                     }}
                     modifiersClassNames={{
-                      eventDay: 'bg-primary/80 ',
+                      eventDay: 'bg-primary/50 ',
                     }}
                   />
 

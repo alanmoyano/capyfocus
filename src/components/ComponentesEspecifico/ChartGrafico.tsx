@@ -132,8 +132,6 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-type Graficos = 'chartDataMeses' | 'chartDataSemana' | 'chartDataMes'
-
 type Period =
   | 'sesion'
   | 'semanal'
@@ -147,46 +145,48 @@ type ChartData =
   | { month: string; cumplidos: number; pendientes: number; date: Date }
   | { day: string; cumplidos: number; pendientes: number; date: Date }
 
-function getDateOfPeriod(period: Period) {
-  const dateToReturn = new Date()
-  switch (period) {
-    case 'semanal':
-      dateToReturn.setDate(dateToReturn.getDate() - 7)
-      break
-    case 'mensual':
-      dateToReturn.setMonth(dateToReturn.getMonth() - 1)
-      break
-    case 'bimestral':
-      dateToReturn.setMonth(dateToReturn.getMonth() - 2)
-      break
-    case 'semestre':
-      dateToReturn.setMonth(dateToReturn.getMonth() - 6)
-      break
-    default:
-      break
-  }
-  return dateToReturn
-}
-
 export default function ChartGrafico({ periodo }: { periodo: Period }) {
   const [periodoSeleccionado, setPeriodoSeleccionado] =
-    useState<Period>('mensual')
-  const [tipoGrafico, setTipoGrafico] = useState<Graficos>('chartDataMeses')
-  const [datosGrafico, setDatosGrafico] = useState<ChartData[]>(chartDataMeses)
+    useState<Period>(periodo)
+  const [tipoGrafico, setTipoGrafico] = useState<string>('chartDataMeses') //Esto es solo para el dataKey
+  const [datosGrafico, setDatosGrafico] = useState<ChartData[]>(chartDataSemana) //Esto es para los gráficos
 
+  function getDateOfPeriod(period: Period) {
+    const dateToReturn = new Date()
+    switch (period) {
+      case 'semanal':
+        dateToReturn.setDate(dateToReturn.getDate() - 7)
+        break
+      case 'mensual':
+        dateToReturn.setMonth(dateToReturn.getMonth() - 1)
+        break
+      case 'bimestral':
+        dateToReturn.setMonth(dateToReturn.getMonth() - 2)
+        break
+      case 'semestre':
+        dateToReturn.setMonth(dateToReturn.getMonth() - 6)
+        break
+      default:
+        break
+    }
+    return dateToReturn
+  }
   // Obtener datos según el período seleccionado
   const obtenerDatosPorPeriodo = (period: Period): ChartData[] => {
     const startDate = getDateOfPeriod(period)
     switch (period) {
       case 'mensual':
+        setDatosGrafico(chartDataMeses)
         setTipoGrafico('chartDataMeses')
         return chartDataMeses.filter(data => data.date >= startDate)
       case 'semanal':
+        setDatosGrafico(chartDataSemana)
         setTipoGrafico('chartDataSemana')
         return chartDataSemana.filter(data => data.date >= startDate)
       case 'bimestral':
       case 'sesion':
       case 'evento':
+        setDatosGrafico(chartDataMes)
         setTipoGrafico('chartDataMes')
         return chartDataMes.filter(data => data.date >= startDate)
       default:
