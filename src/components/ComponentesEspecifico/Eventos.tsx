@@ -85,6 +85,7 @@ async function deleteEvent(date: Date, name: string, uuid: string) {
     .eq('nombre', name)
     .eq('fechaLimite', formatDateDash(date))
     .eq('idUsuario', uuid)
+  if (error) console.log(error)
 }
 
 const formatDate = (date: Date) => {
@@ -127,7 +128,9 @@ export default function Eventos() {
   const recoverEvents = () => {
     if (session) {
       if (events.length === 0) {
-        gatherEventsOfUser(session.user.id)
+        const hoy = new Date()
+        hoy.setHours(0,0,0,0)
+        gatherEventsOfUser(session.user.id, hoy)
           .then(data =>
             data.forEach(evento => {
               // @ts-expect-error no te preocupes type, anda

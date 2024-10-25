@@ -111,7 +111,7 @@ async function gatherEventsOfUser(uuid: string, date?: Date) {
       .from('Eventos')
       .select()
       .eq('idUsuario', uuid)
-      .gt('fechaLimite', formatDateDash(date))
+      .gte('fechaLimite', formatDateDash(date))
     return data as EventToRecover[]
   } else {
     const { data, error } = await supabase

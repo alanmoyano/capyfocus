@@ -284,7 +284,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
   const setStatisticsValues = (data: sessionToRecover[], evento: Event) => {
     if (session) {
       const studyTime = evento.hoursAcumulated ? evento.hoursAcumulated : 0
-      let objectiveCount = 0
+      let objectiveCount = 0 //contador para saber cuantos 
       let objectiveAcomplishedCount = 0
       const setFechas = new Set()
 
