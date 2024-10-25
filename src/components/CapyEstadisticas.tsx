@@ -524,13 +524,13 @@ export default function CapyEstadisticas() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className='w-[100px]'>Objetivo</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead className='text-right'>Tiempo</TableHead>
-                      <TableHead className='text-right'>
+                      <TableHead className='w-[200px]'>Objetivo</TableHead>
+                      <TableHead className='text-center'>Estado</TableHead>
+                      <TableHead className='text-center'>Tiempo</TableHead>
+                      <TableHead className='text-center'>
                         Tiempo Acumulado Favorito
                       </TableHead>
-                      <TableHead className='text-right'>
+                      <TableHead className='text-center'>
                         Tiempo Cumplido en sesion
                       </TableHead>
                     </TableRow>
@@ -541,7 +541,7 @@ export default function CapyEstadisticas() {
                         <TableCell className='font-medium'>
                           {objetivo}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className='text-center'>
                           {tiempo[objetivo] === 0 ? (
                             <span className='rounded-full bg-orange-200 px-2 py-1 text-xs font-semibold text-yellow-800'>
                               Pendiente
@@ -552,17 +552,17 @@ export default function CapyEstadisticas() {
                             </span>
                           )}
                         </TableCell>
-                        <TableCell className='text-right'>
+                        <TableCell className='text-center'>
                           {formatTime(tiempo[objetivo] || 0)}
                         </TableCell>
-                        <TableCell className='text-right'>
+                        <TableCell className='text-center'>
                           {objetivosFav.includes(objetivo) ? (
                             <>{formatTime(tiempoFavorito[objetivo] || 0)}</>
                           ) : (
                             <>--|--</>
                           )}
                         </TableCell>
-                        <TableCell className='text-right'>
+                        <TableCell className='text-center'>
                           <>{formatTime(tiempoSesion[objetivo] || 0)}</>
                         </TableCell>
                       </TableRow>

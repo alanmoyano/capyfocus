@@ -54,30 +54,30 @@ const chartDataMeses = [
 ]
 
 const chartDataMes = [
-  { month: 'Sem1', cumplidos: 186, pendientes: 80, date: new Date(2024, 5, 1) },
+  { sem: 'Sem1', cumplidos: 186, pendientes: 80, date: new Date('2024/ 5/ 1') },
   {
-    month: 'Sem2',
+    sem: 'Sem2',
     cumplidos: 305,
     pendientes: 200,
-    date: new Date(2024, 5, 7),
+    date: new Date('2024/ 5/ 7'),
   },
   {
-    month: 'Sem3',
+    sem: 'Sem3',
     cumplidos: 237,
     pendientes: 120,
-    date: new Date(2024, 5, 14),
+    date: new Date('2024/ 5/ 14'),
   },
   {
-    month: 'Sem4',
+    sem: 'Sem4',
     cumplidos: 73,
     pendientes: 190,
-    date: new Date(2024, 5, 21),
+    date: new Date('2024/ 5/ 21'),
   },
   {
-    month: 'Sem5',
+    sem: 'Sem5',
     cumplidos: 209,
     pendientes: 130,
-    date: new Date(2024, 5, 28),
+    date: new Date('2024/ 5/ 28'),
   },
 ]
 
@@ -148,6 +148,7 @@ type periodo =
 // Define el tipo para los datos del gráfico
 type ChartData =
   | { month: string; cumplidos: number; pendientes: number; date: Date }
+  | { sem: string; cumplidos: number; pendientes: number; date: Date }
   | { day: string; cumplidos: number; pendientes: number; date: Date }
 
 export default function ChartGrafico({
@@ -223,7 +224,7 @@ export default function ChartGrafico({
                 </p>
               </div>
             ) : (
-              <BarChart accessibilityLayer data={datosGrafico}>
+              <BarChart accessibilityLayer data={chartData}>
                 <CartesianGrid vertical={false} />
                 <XAxis
                   dataKey={periodo === 'semanal' ? 'day' : 'month'} // Cambia 'month' a 'day' si se está mostrando la semana
