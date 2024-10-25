@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
@@ -109,6 +110,13 @@ const StudyTechniqueList: StudyTechnique[] = [
 
 type Graficos = 'chartDataMeses' | 'chartDataSemana' | 'chartDataMes'
 
+type dataChart = {
+  day: string
+  cumplidos: number
+  pendiente: number
+  date: Date
+}
+
 type sessionToRecover = {
   uuid: string
   horaInicioSesion: string
@@ -133,6 +141,49 @@ async function getPeriodSessions(period: Date, uuid: string) {
   else return
 }
 
+function generateDataOfChart(period: Period, matrizDatos: unknown) {
+  const dataToChart: dataChart[] = []
+  const diasSemana = [
+    'Lunes',
+    'Martes',
+    'Miercoles',
+    'Jueves',
+    'Viernes',
+    'Sábado',
+    'Domingo',
+  ]
+  const Meses = [
+    'Enero',
+    'Feberero',
+    'Marzo',
+    'Abril',
+    'Mayo',
+    'Junio',
+    'Julio',
+    'Agosto',
+    'Septiembre',
+    'Octubre',
+    'Noviembre',
+    'Diciembre',
+  ]
+
+  switch (period) {
+    case 'semanal':
+      //@ts-expect-error no jodas ts
+      for (const fila of matrizDatos) {
+        const dataToPutInChart: dataChart = {
+          day: diasSemana[new Date(fila[0]).getDay()],
+          cumplidos: fila[1] as number,
+          pendiente: fila[2] as number,
+          date: new Date(fila[0]),
+        }
+        console.log(dataToPutInChart)
+        dataToChart.push(dataToPutInChart)
+      }
+      return dataToChart
+  }
+}
+
 function getDateOfPeriod(period: Period) {
   const dateToReturn = new Date()
   switch (period) {
@@ -152,6 +203,27 @@ function getDateOfPeriod(period: Period) {
       break
   }
   return dateToReturn
+}
+
+function getDistanceOfPeriod(period: Period) {
+  let numToReturn = 0
+  switch (period) {
+    case 'semanal':
+      numToReturn += 7
+      break
+    case 'mensual':
+      numToReturn += 30
+      break
+    case 'bimestral':
+      numToReturn += 60
+      break
+    case 'semestre':
+      numToReturn += 180
+      break
+    default:
+      break
+  }
+  return numToReturn
 }
 
 export default function EstadisticasPeriodo({ period }: { period: Period }) {
@@ -202,20 +274,24 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
       getPeriodSessions(dateToRecover, session.user.id)
         .then(data => {
           if (data) {
-            setStatisticsValues(data)
+            setStatisticsValues(data, period)
           }
         })
         .catch((error: unknown) => {
           console.log('Ocurrio un error recuperando las sesiones', error)
         })
     }
-  }, [])
+  }, [period])
 
-  const setStatisticsValues = (sessionsRecovered: sessionToRecover[]) => {
+  const setStatisticsValues = (
+    sessionsRecovered: sessionToRecover[],
+    period: Period
+  ) => {
     let studyTimeAcum = 0
     let objectiveCount = 0
     let objectiveAcomplishedCount = 0
     const setFechas = new Set()
+    const today = new Date()
 
     const mapaMotivaciones = new Map<string, number>([
       ['1', 0],
@@ -232,6 +308,17 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
       ['1', 0],
       ['2', 0],
     ])
+
+    const matrizFechas = []
+    for (let i = 0; i < getDistanceOfPeriod(period); i++) {
+      const fechaAuxiliar = new Date(today)
+      matrizFechas.push([
+        new Date(fechaAuxiliar.setDate(today.getDate() - i)),
+        0,
+        0,
+      ])
+    }
+
     for (const particularSession of sessionsRecovered) {
       studyTimeAcum += particularSession.tiempoEstudio
       objectiveCount += parseInt(
@@ -240,9 +327,6 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
       objectiveAcomplishedCount += parseInt(
         particularSession.cantidadObjetivosCumplidos as unknown as string
       )
-
-      //@ts-expect-error no joda typescript, anda bien
-      console.log(particularSession.musicaSeleccionada.toString())
       const valorActualMotivaciones = mapaMotivaciones.get(
         particularSession.tipoMotivacion.toString()
       )!
@@ -267,6 +351,30 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
         valorActualTecnicaEstudio + 1
       )
       setFechas.add(particularSession.fecha)
+      const arrayEncontrado = matrizFechas.find(
+        e =>
+          formatDateDash(e[0] as Date) === (particularSession.fecha as unknown)
+      )
+      console.log('Array viejo', arrayEncontrado)
+      console.log('Fecha de la sesión', particularSession.fecha)
+      if (arrayEncontrado) {
+        //@ts-expect-error no tengo ganas de pelear ts, dejalo asi
+        arrayEncontrado[1] += particularSession.cantidadObjetivosCumplidos
+        //@ts-expect-error no tengo ganas de pelear ts, dejalo asi
+        arrayEncontrado[2] +=
+          particularSession.cantidadObjetivos -
+          particularSession.cantidadObjetivosCumplidos
+
+        console.log(
+          'Array por partes. Fecha',
+          arrayEncontrado[0],
+          'Objetivos cumplidos',
+          arrayEncontrado[1],
+          'Objetivos pendientes',
+          arrayEncontrado[2]
+        )
+      }
+      console.log('Array nuevo', arrayEncontrado)
     }
 
     const fechasOrdenadas = Array.from(setFechas).sort((a, b) => {
@@ -277,7 +385,6 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
       return dateA.getTime() - dateB.getTime()
     })
 
-    fechasOrdenadas.forEach(f => console.log(f))
     getRachaPorPeriodo(fechasOrdenadas as string[])
     setFechasOrdenadas(fechasOrdenadas as string[])
 
@@ -303,6 +410,8 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
         StudyTechniqueList
       )
     )
+    //@ts-expect-error no jodas despues se arregla
+    setChartData(generateDataOfChart(period, matrizFechas))
   }
 
   const { objetivos, tiempo } = useObjetivos()
@@ -317,6 +426,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
   const [tecnicaEstudio, setTecnicaEstudio] = useState<string>()
   const [racha, setRacha] = useState(0)
   const [fechasOrdenadas, setFechasOrdenadas] = useState<string[]>()
+  const [chartData, setChartData] = useState([])
 
   return (
     <>
@@ -382,7 +492,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
 
           {/* chart */}
           <div className='space-y-6 md:w-1/2'>
-            <ChartGrafico periodo={period} />
+            <ChartGrafico periodo={period} chartData={chartData} />
 
             {/*             <Card className='overflow-hidden rounded-lg shadow-md'>
               <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-2'>

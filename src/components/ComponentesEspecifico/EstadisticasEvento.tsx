@@ -131,6 +131,13 @@ type RowToRecover = {
   idObjetivoFavorito: number
 }
 
+type dataChart = {
+  day: string
+  cumplidos: number
+  pendiente: number
+  date: Date
+}
+
 type ObjectiveToRecover = {
   id: number
   created_at: string
@@ -219,8 +226,8 @@ async function gatherObjectivesOfEvent(eventId: number) {
             console.log('Ocurrio un error recuperando los objetivos', error)
           )
       }
+      return ObjectivesToRecover
     }
-    return ObjectivesToRecover
   } else console.log(error)
 }
 
@@ -387,8 +394,10 @@ export default function EstadisticasEvento({ name }: { name: string }) {
     if (evento && session) {
       gatherObjectivesOfEvent(evento.id)
         .then(data => {
-          //@ts-expect-error intente hacerla bien, pero no me entraba al if T-T
-          setEventObjectives(data)
+          //@ts-expect-error no molestes ts
+          if (data.length !== 0) {
+            setEventObjectives(data ? data : [])
+          }
         })
         .catch((error: unknown) => {
           console.log(
@@ -466,7 +475,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
 
           {/* chart */}
           <div className='space-y-6 md:w-1/2'>
-            <ChartGrafico periodo={'semanal'} />
+            {/* <ChartGrafico periodo={'semanal'} /> */}
 
             {/*             <Card className='overflow-hidden rounded-lg shadow-md'>
               <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-2'>

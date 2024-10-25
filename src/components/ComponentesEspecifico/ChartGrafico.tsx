@@ -83,42 +83,47 @@ const chartDataMes = [
 ]
 
 const chartDataSemana = [
-  { day: 'Lunes', cumplidos: 186, pendientes: 80, date: new Date(2024, 9, 14) },
+  {
+    day: 'Lunes',
+    cumplidos: 186,
+    pendientes: 80,
+    date: new Date('2024/10/17'),
+  },
   {
     day: 'Martes',
     cumplidos: 305,
     pendientes: 200,
-    date: new Date(2024, 9, 15),
+    date: new Date('2024/10/18'),
   },
   {
     day: 'Miércoles',
     cumplidos: 237,
     pendientes: 120,
-    date: new Date(2024, 9, 16),
+    date: new Date('2024/10/19'),
   },
   {
     day: 'Jueves',
     cumplidos: 73,
     pendientes: 190,
-    date: new Date(2024, 9, 17),
+    date: new Date('2024/10/20'),
   },
   {
     day: 'Viernes',
     cumplidos: 209,
     pendientes: 130,
-    date: new Date(2024, 9, 18),
+    date: new Date('2024/10/21'),
   },
   {
     day: 'Sábado',
     cumplidos: 214,
     pendientes: 140,
-    date: new Date(2024, 9, 19),
+    date: new Date('2024/10/22'),
   },
   {
     day: 'Domingo',
     cumplidos: 204,
     pendientes: 40,
-    date: new Date(2024, 9, 20),
+    date: new Date('2024/10/23'),
   },
 ]
 
@@ -146,7 +151,13 @@ type ChartData =
   | { month: string; cumplidos: number; pendientes: number; date: Date }
   | { day: string; cumplidos: number; pendientes: number; date: Date }
 
-export default function ChartGrafico({ periodo }: { periodo: periodo }) {
+export default function ChartGrafico({
+  periodo,
+  chartData,
+}: {
+  periodo: periodo
+  chartData: ChartData[]
+}) {
   const [datosGrafico, setDatosGrafico] = useState<ChartData[]>(chartDataMeses) //Esto es para los gráficos
 
   function getDateOfperiodo(periodo: periodo) {
@@ -207,7 +218,7 @@ export default function ChartGrafico({ periodo }: { periodo: periodo }) {
         </CardHeader>
         <CardContent className='p-3'>
           <ChartContainer config={chartConfig}>
-            {datosGrafico.length === 0 ? (
+            {chartData.length === 0 ? (
               <div className='h-full w-full'>
                 <p className='flex items-center justify-center text-xl'>
                   No hay datos disponibles para el período seleccionado
@@ -215,7 +226,7 @@ export default function ChartGrafico({ periodo }: { periodo: periodo }) {
               </div>
             ) : (
               <ResponsiveContainer width='100%' height={250}>
-                <BarChart accessibilityLayer data={datosGrafico}>
+                <BarChart accessibilityLayer data={chartData}>
                   <CartesianGrid vertical={false} />
                   <XAxis
                     dataKey={periodo === 'semanal' ? 'day' : 'month'} // Cambia 'month' a 'day' si se está mostrando la semana
