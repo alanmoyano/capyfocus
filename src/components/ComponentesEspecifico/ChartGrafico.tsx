@@ -199,6 +199,7 @@ export default function ChartGrafico({
     },
     [] // No tiene dependencias, ya que es independiente del renderizado
   )
+  
   useEffect(() => {
     try {
       const datos = obtenerDatosPorperiodo(periodo)
@@ -228,9 +229,9 @@ export default function ChartGrafico({
                 <CartesianGrid vertical={false} />
                 <XAxis
                   dataKey={periodo === 'semanal' ? 'day' : 'month'} // Cambia 'month' a 'day' si se está mostrando la semana
-                  tickLine={false}
+                  tickLine={true}
                   tickMargin={10}
-                  axisLine={false}
+                  axisLine={true}
                   tickFormatter={(value: string) => value.slice(0, 3)}
                 />
                 <ChartTooltip

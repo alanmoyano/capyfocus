@@ -22,7 +22,7 @@ import {
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
 import ChartGrafico from './ChartGrafico'
-import {addMonths, startOfWeek, addDays, subMonths } from 'date-fns';
+import { startOfWeek, addDays, subMonths } from 'date-fns';
 
 //TODO: Grafico segun el periodo de tiempo seleccionado
 
@@ -81,9 +81,14 @@ const StudyTechniqueList: StudyTechnique[] = [
 type dataChart = {
   day: string
   cumplidos: number
-  pendiente: number
+  pendientes: number
   date: Date
 }
+//Propongo algo asi:
+/* type ChartData =
+  | { month: string; cumplidos: number; pendientes: number; date: Date }
+  | { sem: string; cumplidos: number; pendientes: number; date: Date }
+  | { day: string; cumplidos: number; pendientes: number; date: Date } */
 
 type sessionToRecover = {
   uuid: string
@@ -139,11 +144,13 @@ function generateDataOfChart(period: Period, matrizDatos: unknown) {
     case 'semanal':
       //@ts-expect-error no jodas ts
       for (const fila of matrizDatos) {
+        const fecha = new Date(fila[0]);
+        const dayIndex = (fecha.getDay() + 6) % 7; // Ajusta que Lunes sea 0
         const dataToPutInChart: dataChart = {
-          day: diasSemana[new Date(fila[0]).getDay()],
+          day: diasSemana[dayIndex],
           cumplidos: fila[1] as number,
-          pendiente: fila[2] as number,
-          date: new Date(fila[0]),
+          pendientes: fila[2] as number,
+          date: fecha,
         }
         console.log(dataToPutInChart)
         dataToChart.push(dataToPutInChart)
@@ -156,6 +163,7 @@ function getDateOfPeriod(period: Period) {
   const dateToReturn = new Date()
   switch (period) {
     case 'semanal':
+      
       dateToReturn.setDate(dateToReturn.getDate() - 7)
       break
     case 'mensual':
@@ -236,20 +244,6 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
     setRacha(rachaActual)
   }
 
-  useEffect(() => {
-    const dateToRecover = getDateOfPeriod(period)
-    if (session) {
-      getPeriodSessions(dateToRecover, session.user.id)
-        .then(data => {
-          if (data) {
-            setStatisticsValues(data, period)
-          }
-        })
-        .catch((error: unknown) => {
-          console.log('Ocurrio un error recuperando las sesiones', error)
-        })
-    }
-  }, [period])
 
   const setStatisticsValues = (
     sessionsRecovered: sessionToRecover[],
@@ -422,6 +416,50 @@ const dateRange = (() => {
       return {}
   }
 })()
+
+useEffect(() => {
+  const dateToRecover = getDateOfPeriod(period)
+  if (session) {
+    getPeriodSessions(dateToRecover, session.user.id)
+      .then(data => {
+        if (data) {
+          setStatisticsValues(data, period)
+        }
+      })
+      .catch((error: unknown) => {
+        console.log('Ocurrio un error recuperando las sesiones', error)
+      })
+  }
+}, [period,getDateOfPeriod,session])
+
+/* useEffect(() => {
+  try {
+    const dateToRecover = getDateOfPeriod(period);
+
+    // Verificamos si es un array y ordenamos las fechas
+    if (Array.isArray(dateToRecover)) {
+      const datosOrdenados = dateToRecover.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+      if (session) {
+        getPeriodSessions(datosOrdenados, session.user.id)
+          .then(data => {
+            if (data) {
+              setStatisticsValues(data, period);
+            }
+          })
+          .catch((error: unknown) => {
+            console.log('Ocurrió un error recuperando las sesiones:', error);
+          });
+      }
+    } else {
+      console.error('Las fechas recuperadas no son un array:', dateToRecover);
+    }
+  } catch (error) {
+    console.error('Error durante el proceso de ordenación de fechas o recuperación de sesiones:', error);
+  }
+}, [period, getDateOfPeriod, session]);
+
+ */
   return (
     <>
       {/* info de periodo */}
