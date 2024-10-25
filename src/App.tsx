@@ -24,86 +24,75 @@ import ExperimentandoBrenda from './components/ExperimentandoBrenda'
 import { SessionProvider } from './components/contexts/SessionContext'
 import { EventsProvider } from './components/contexts/EventsContext'
 import { ProfilePicProvider } from './components/contexts/ProfilePicContext'
-import { PostHogProvider } from 'posthog-js/react'
 import LandingPage from './components/LandingPage'
-import { useLocation } from 'wouter'
 
 function App() {
-  const [location] = useLocation()
-
   return (
     <ThemeProvider defaultTheme='light' storageKey='theme'>
       <SpeedInsights />
       <Analytics />
-      <PostHogProvider
-        options={{
-          api_host: import.meta.env.VITE_POSTHOG_API_URL,
-          ui_host: import.meta.env.VITE_POSTHOG_HOST,
-        }}
-        apiKey={import.meta.env.VITE_POSTHOG_KEY}
-      >
-        <SessionProvider>
-          <ProfilePicProvider>
-            <ObjetivosProvider>
-              <MotivationProvider>
-                <SesionProvider>
-                  <MusicProvider>
-                    <EventsProvider>
-                      <Navbar />
 
-                      <Helmet>
-                        <title>Capyfocus</title>
-                      </Helmet>
+      <SessionProvider>
+        <ProfilePicProvider>
+          <ObjetivosProvider>
+            <MotivationProvider>
+              <SesionProvider>
+                <MusicProvider>
+                  <EventsProvider>
+                    <Navbar />
 
-                      <main>
-                        <Switch>
-                          <Route path='/'>
-                            <LandingPage />
-                          </Route>
-                          <Route path='/inicio'>
-                            <Inicio />
-                          </Route>
-                          <Route path='/login' component={Login} />
+                    <Helmet>
+                      <title>Capyfocus</title>
+                    </Helmet>
 
-                          <Route path='/capydoro'>
-                            <Pomodoro />
-                          </Route>
-                          <Route path='/capymetro'>
-                            <Timer />
-                          </Route>
+                    <main>
+                      <Switch>
+                        <Route path='/'>
+                          <LandingPage />
+                        </Route>
+                        <Route path='/inicio'>
+                          <Inicio />
+                        </Route>
+                        <Route path='/login' component={Login} />
 
-                          <Route path='/brenda'>
-                            <ExperimentandoBrenda />
-                          </Route>
+                        <Route path='/capydoro'>
+                          <Pomodoro />
+                        </Route>
+                        <Route path='/capymetro'>
+                          <Timer />
+                        </Route>
 
-                          <Route
-                            path='/capyInsignias'
-                            component={CapyInsignias}
-                          />
-                          <Route
-                            path='/capyEstadisticas'
-                            component={CapyEstadisticas}
-                          />
+                        <Route path='/brenda'>
+                          <ExperimentandoBrenda />
+                        </Route>
 
-                          <Route path='/usuario' component={Usuario} />
+                        <Route
+                          path='/capyInsignias'
+                          component={CapyInsignias}
+                        />
+                        <Route
+                          path='/capyEstadisticas'
+                          component={CapyEstadisticas}
+                        />
 
-                          <Route path='/prueba' component={Prueba} />
+                        <Route path='/usuario' component={Usuario} />
 
-                          <Route>
-                            <NotFound />
-                          </Route>
-                        </Switch>
-                      </main>
+                        <Route path='/prueba' component={Prueba} />
 
-                      <Toaster richColors closeButton />
-                    </EventsProvider>
-                  </MusicProvider>
-                </SesionProvider>
-              </MotivationProvider>
-            </ObjetivosProvider>
-          </ProfilePicProvider>
-        </SessionProvider>
-      </PostHogProvider>
+                        <Route>
+                          <NotFound />
+                        </Route>
+                      </Switch>
+                    </main>
+
+                    <Toaster richColors closeButton />
+                  </EventsProvider>
+                </MusicProvider>
+              </SesionProvider>
+            </MotivationProvider>
+          </ObjetivosProvider>
+        </ProfilePicProvider>
+      </SessionProvider>
     </ThemeProvider>
   )
 }

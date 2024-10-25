@@ -436,10 +436,8 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
         className='container mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg md:flex-row dark:from-gray-800 dark:to-gray-900 dark:shadow-gray-800'
       >
         <CardHeader>
-          <CardTitle>
-            <h1 className='text-left text-3xl font-bold'>
-              Resumen {period} de Sesiones de Estudio
-            </h1>
+          <CardTitle className='text-left text-3xl font-bold'>
+            Resumen {period} de Sesiones de Estudio
           </CardTitle>
         </CardHeader>
         <CardContent className='flex flex-col justify-between gap-8 md:flex-row'>

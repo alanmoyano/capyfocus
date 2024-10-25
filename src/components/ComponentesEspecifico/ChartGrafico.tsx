@@ -10,7 +10,6 @@ import {
   BarChart,
   CartesianGrid,
   XAxis,
-  ResponsiveContainer,
 } from 'recharts'
 import { useEffect, useState } from 'react'
 import { useCallback } from 'react'
@@ -225,37 +224,35 @@ export default function ChartGrafico({
                 </p>
               </div>
             ) : (
-              <ResponsiveContainer width='100%' height={250}>
-                <BarChart accessibilityLayer data={chartData}>
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey={periodo === 'semanal' ? 'day' : 'month'} // Cambia 'month' a 'day' si se está mostrando la semana
-                    tickLine={false}
-                    tickMargin={10}
-                    axisLine={false}
-                    tickFormatter={(value: string) => value.slice(0, 3)}
-                  />
-                  <ChartTooltip
-                    cursor={false}
-                    content={
-                      <ChartTooltipContent
-                        formatType='integer'
-                        indicator='line'
-                      />
-                    }
-                  />
-                  <Bar
-                    dataKey='cumplidos'
-                    fill='var(--color-cumplidos)'
-                    radius={4}
-                  />
-                  <Bar
-                    dataKey='pendientes'
-                    fill='var(--color-pendientes)'
-                    radius={4}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+              <BarChart accessibilityLayer data={datosGrafico}>
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey={periodo === 'semanal' ? 'day' : 'month'} // Cambia 'month' a 'day' si se está mostrando la semana
+                  tickLine={false}
+                  tickMargin={10}
+                  axisLine={false}
+                  tickFormatter={(value: string) => value.slice(0, 3)}
+                />
+                <ChartTooltip
+                  cursor={false}
+                  content={
+                    <ChartTooltipContent
+                      formatType='integer'
+                      indicator='line'
+                    />
+                  }
+                />
+                <Bar
+                  dataKey='cumplidos'
+                  fill='var(--color-cumplidos)'
+                  radius={4}
+                />
+                <Bar
+                  dataKey='pendientes'
+                  fill='var(--color-pendientes)'
+                  radius={4}
+                />
+              </BarChart>
             )}
           </ChartContainer>
         </CardContent>

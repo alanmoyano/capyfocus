@@ -212,23 +212,23 @@ async function gatherObjectivesOfEvent(eventId: number) {
     .select()
     .eq('idEvento', eventId)
 
+  if (error) console.error(error)
+
+  const ObjectivesToRecover: ObjectiveToRecover[] = []
   if (data) {
-    const ObjectivesToRecover: ObjectiveToRecover[] = []
-    if (data.length > 0) {
-      for (const row of data as RowToRecover[]) {
-        recoverObjectiveFromId(row.idObjetivoFavorito)
-          .then(data => {
-            if (data) {
-              ObjectivesToRecover.push(data[0])
-            }
-          })
-          .catch((error: unknown) =>
-            console.log('Ocurrio un error recuperando los objetivos', error)
-          )
-      }
-      return ObjectivesToRecover
+    for (const row of data as RowToRecover[]) {
+      recoverObjectiveFromId(row.idObjetivoFavorito)
+        .then(data => {
+          if (data) {
+            ObjectivesToRecover.push(data[0])
+          }
+        })
+        .catch((error: unknown) =>
+          console.log('Ocurrio un error recuperando los objetivos', error)
+        )
     }
-  } else console.log(error)
+  }
+  return ObjectivesToRecover
 }
 
 export default function EstadisticasEvento({ name }: { name: string }) {
@@ -394,10 +394,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
     if (evento && session) {
       gatherObjectivesOfEvent(evento.id)
         .then(data => {
-          //@ts-expect-error no molestes ts
-          if (data.length !== 0) {
-            setEventObjectives(data ? data : [])
-          }
+          setEventObjectives(data)
         })
         .catch((error: unknown) => {
           console.log(
@@ -419,10 +416,8 @@ export default function EstadisticasEvento({ name }: { name: string }) {
       {/* info de periodo */}
       <Card className='container mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg md:flex-row dark:from-gray-800 dark:to-gray-900 dark:shadow-gray-800'>
         <CardHeader>
-          <CardTitle>
-            <h1 className='text-left text-3xl font-bold'>
-              Resumen de Sesiones de Estudio para el evento {name}
-            </h1>
+          <CardTitle className='text-left text-3xl font-bold'>
+            Resumen de Sesiones de Estudio para el evento {name}
           </CardTitle>
         </CardHeader>
         <CardContent className='flex flex-col justify-between gap-8 md:flex-row'>
