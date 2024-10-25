@@ -214,21 +214,29 @@ async function gatherObjectivesOfEvent(eventId: number) {
 
   if (error) console.error(error)
 
-  const ObjectivesToRecover: ObjectiveToRecover[] = []
   if (data) {
-    for (const row of data as RowToRecover[]) {
-      recoverObjectiveFromId(row.idObjetivoFavorito)
-        .then(data => {
-          if (data) {
-            ObjectivesToRecover.push(data[0])
-          }
-        })
-        .catch((error: unknown) =>
-          console.log('Ocurrio un error recuperando los objetivos', error)
-        )
-    }
+    const objectivePromises = (data as RowToRecover[]).map(async row => {
+      const data = await recoverObjectiveFromId(row.idObjetivoFavorito)
+      return data ? (data[0] as ObjectiveToRecover) : null
+    })
+
+    console.log(objectivePromises)
+    const objetivos = await Promise.all(objectivePromises)
+    console.log(objetivos)
+
+    return objetivos.filter(obj => obj !== undefined)
+    // for (const row of data as RowToRecover[]) {
+    //   recoverObjectiveFromId(row.idObjetivoFavorito)
+    //     .then(data => {
+    //       if (data) {
+    //         ObjectivesToRecover.push(data[0])
+    //       }
+    //     })
+    //     .catch((error: unknown) =>
+    //       console.log('Ocurrio un error recuperando los objetivos', error)
+    //     )
+    // }
   }
-  return ObjectivesToRecover
 }
 
 export default function EstadisticasEvento({ name }: { name: string }) {
@@ -394,7 +402,8 @@ export default function EstadisticasEvento({ name }: { name: string }) {
     if (evento && session) {
       gatherObjectivesOfEvent(evento.id)
         .then(data => {
-          setEventObjectives(data)
+          console.log(data)
+          setEventObjectives(data as ObjectiveToRecover[])
         })
         .catch((error: unknown) => {
           console.log(
