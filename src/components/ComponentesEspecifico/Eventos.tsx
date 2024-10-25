@@ -168,6 +168,8 @@ export default function Eventos() {
       if (context === 'New') {
         toast.success('Se ha creado el evento:', {
           description: '"' + eventTitle + '"' + ' en el dia: ' + dateString,
+          duration: 4000,
+          position: 'bottom-center'
         })
         if (googleCalendar) {
           window.open(createGoogleCalendarLink(eventTitle, date))

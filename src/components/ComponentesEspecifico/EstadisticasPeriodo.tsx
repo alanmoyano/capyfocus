@@ -5,29 +5,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useEffect, useRef, useState } from 'react'
 
-import {
-  Tooltip as ChartTooltip,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  XAxis,
-  ResponsiveContainer,
-} from 'recharts'
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltipContent,
-} from '@/components/ui/chart'
 
 import Reproductor from './Reproductor'
 import { Calendar } from '@components/ui/calendar'
@@ -44,6 +22,7 @@ import {
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
 import ChartGrafico from './ChartGrafico'
+import { addDays, startOfWeek } from 'date-fns';
 
 //TODO: Grafico segun el periodo de tiempo seleccionado
 
@@ -72,16 +51,6 @@ type StudyTechnique =
       name: 'CapyMetro'
     }
 
-/*     const chartConfig = {
-      cumplidos: {
-        label: 'Cumplidos',
-        color: 'hsl(var(--chart-1))',
-      },
-      pendientes: {
-        label: 'Pendientes',
-        color: 'hsl(var(--chart-2))',
-      },
-    } satisfies ChartConfig */
 
 type Music =
   | { id: 0; name: 'Sin música' }
@@ -108,7 +77,6 @@ const StudyTechniqueList: StudyTechnique[] = [
   { id: 2, name: 'CapyMetro' },
 ]
 
-type Graficos = 'chartDataMeses' | 'chartDataSemana' | 'chartDataMes'
 
 type dataChart = {
   day: string
@@ -427,7 +395,10 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
   const [racha, setRacha] = useState(0)
   const [fechasOrdenadas, setFechasOrdenadas] = useState<string[]>()
   const [chartData, setChartData] = useState([])
-
+  const weekRange = period === 'semanal' ? {
+    fromDate: startOfWeek(new Date()),
+    toDate: addDays(startOfWeek(new Date()), 6),
+  } : {};
   return (
     <>
       {/* info de periodo */}
@@ -544,6 +515,8 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
               <CardContent className='p-2'>
                 <div className='flex flex-col md:flex-row'>
                   <Calendar
+                  showOutsideDays={period !== 'semanal'} // Ocultar días fuera del rango
+                  {...weekRange} //Aplica solo si es semanal
                     mode='single'
                     className='rounded-md border text-sm shadow-sm'
                     modifiers={{

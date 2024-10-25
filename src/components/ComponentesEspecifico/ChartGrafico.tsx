@@ -206,7 +206,6 @@ export default function ChartGrafico({
       console.error('Error al obtener los datos del gráfico:', error)
     }
   }, [periodo, obtenerDatosPorperiodo])
-
   return (
     <div>
       <Card className='overflow-hidden rounded-lg shadow-md'>
@@ -217,7 +216,7 @@ export default function ChartGrafico({
         </CardHeader>
         <CardContent className='p-3'>
           <ChartContainer config={chartConfig}>
-            {chartData.length === 0 ? (
+            {!chartData || chartData.length === 0 ?  ( //Si se saca crashea el programa  
               <div className='h-full w-full'>
                 <p className='flex items-center justify-center text-xl'>
                   No hay datos disponibles para el período seleccionado
