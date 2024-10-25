@@ -21,7 +21,8 @@ export type SesionAGuardar = {
   eventoSeleccionado: number | null
 }
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-function dateToTimetz(date: Date | null): string {// funcion que es necesaria para guardar horas dentro de la bd, ya que el tiempo que pide es Timetz
+function dateToTimetz(date: Date | null): string {
+  // funcion que es necesaria para guardar horas dentro de la bd, ya que el tiempo que pide es Timetz
   // Obtiene la parte de la hora y la zona horaria
   const options: Intl.DateTimeFormatOptions = {
     timeZone: 'UTC', // Cambia esto a la zona horaria que necesites
@@ -34,7 +35,8 @@ function dateToTimetz(date: Date | null): string {// funcion que es necesaria pa
   return date.toLocaleString('en-US', options)
 }
 
-const formatDateSlash = (date: Date) => {// Función que nos permite pasar de un objeto tipo date a uno de tipo string en formato YYYY/MM/DD
+const formatDateSlash = (date: Date) => {
+  // Función que nos permite pasar de un objeto tipo date a uno de tipo string en formato YYYY/MM/DD
   // Esta es LA FUNCIÓN A USAR si queremos guardar fechas en algún lado, porque asi es más fácil recuperarlas y transformarlas en objetos tipo DATE
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
@@ -43,7 +45,8 @@ const formatDateSlash = (date: Date) => {// Función que nos permite pasar de un
   return `${year}/${month}/${day}`
 }
 
-const formatDateDash = (date: Date) => {// Función que nos permite pasar de un objeto tipo date a uno de tipo string en formato YYYY-MM-DD
+const formatDateDash = (date: Date) => {
+  // Función que nos permite pasar de un objeto tipo date a uno de tipo string en formato YYYY-MM-DD
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
@@ -51,7 +54,8 @@ const formatDateDash = (date: Date) => {// Función que nos permite pasar de un 
   return `${year}-${month}-${day}`
 }
 
-const formatDateDashARG = (date: Date) => {// Funcion que nos permite pasar de un objeto tipo date a uno de tipo string en formato DD-MM-YYYY
+const formatDateDashARG = (date: Date) => {
+  // Funcion que nos permite pasar de un objeto tipo date a uno de tipo string en formato DD-MM-YYYY
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
@@ -74,19 +78,18 @@ function obtenerClaveMayorValor(map: Map<string, number>): string {
   return claveMax
 }
 
-// // eslint-disable-next-line @typescript-eslint/no-explicit-any
-// function getElementNameById(id: number, list: any[]): string {
-//   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-//   const element = list.find(element => element.id === id)
-//   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-//   return element.name
-// }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getElementNameById(id: number, list: any[]): string {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+  const element = list.find(element => element.id === id)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  return element.name
+}
 
 function convertirAFecha(fechaStr: string): Date {
   //Dada una fecha cualquiera en string en formato americano, sea separada por - o por /, la convierte a un objeto del tipo date de la fecha exacta
 
   const formatoNormalizado: string = fechaStr.replace('-', '/')
-
 
   const fecha = new Date(formatoNormalizado)
 
@@ -181,7 +184,7 @@ function getSelectedMusic(title: string) {
 
 async function getObjectiveByName(objectiveName: string, uuid: string) {
   //Dado un nombre de un objetivo favorito y un usuario identificado con la UUID, devuelve el objetivo de ese usuario con ese nombre como una lista de un único elemento
-  // que contendra al objetivo, si este existiera, en caso de que no, devuelve una lista vacia 
+  // que contendra al objetivo, si este existiera, en caso de que no, devuelve una lista vacia
   const { data, error } = await supabase
     .from('ObjetivosFavoritos')
     .select()
