@@ -30,6 +30,13 @@ import { useSession } from './contexts/SessionContext'
 import { useEvents } from './contexts/EventsContext'
 import useTimer from '@/hooks/useTimer'
 
+import {
+  TooltipContent,
+  Tooltip,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@radix-ui/react-tooltip'
+
 //BUG: No anda bien el contador de tiempo, no cuenta el tiempo de estudio y descanso.
 type Mode = 'Estudiando' | 'Descansando'
 
@@ -597,22 +604,47 @@ export default function Pomodoro() {
                 Empezar
               </Button>
             ) : (
-              <div className='flex flex-row items-center justify-center'>
-                <Button
-                  className='flex items-center justify-center rounded-full p-6'
-                  onClick={() => handlePause()}
-                >
-                  {isActive ? <Pause /> : <Play />}
-                </Button>
-                <Button
-                  className='flex items-center justify-center'
-                  variant='ghost'
-                  type='button'
-                  onClick={handleSaltar}
-                >
-                  <SkipForward />
-                </Button>
+
+
+              
+              <div className='flex w-3/12 flex-row justify-between items-center px-4'>
+              <div className='flex justify-center'>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        className='flex items-center rounded-full p-6'
+                        onClick={() => handlePause()}
+                      >
+                        {isActive ? <Pause /> : <Play />}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side='bottom' className='bg-gray-200 mt-1 flex px-4 py-1 rounded-md'>
+                      <p>{isActive ? 'Pausar' : 'Reanudar'}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
+              <div className='flex justify-end'>
+                <TooltipProvider>
+                  <Tooltip delayDuration={300}>
+                    <TooltipTrigger asChild>
+                      <Button
+                        className='flex'
+                        variant='ghost'
+                        type='button'
+                        onClick={handleSaltar}
+                      >
+                        <SkipForward />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side='bottom' className='bg-gray-200 mt-1 flex px-4 py-1 rounded-md'>
+                      <p>Saltar</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            </div>
             )}
           </div>
           {/* Volumen */}

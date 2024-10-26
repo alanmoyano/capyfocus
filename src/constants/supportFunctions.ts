@@ -29,12 +29,12 @@ function dateToTimetz(date: Date | null): string {
     hour: '2-digit', // Formato de hora de dos dígitos
     minute: '2-digit', // Formato de minutos de dos dígitos
     second: '2-digit', // Formato de segundos de dos dígitos
-    hour12: false, //
+    hour12: false, // Formato de 24 horas
   }
  //@ts-expect-error anda, no te preocupes
   return date.toLocaleString('es-AR', options) 
 }
-// Ejemplo de uso
+
 
 
 const formatDateSlash = (date: Date) => {
