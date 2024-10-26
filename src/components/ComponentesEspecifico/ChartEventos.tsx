@@ -25,17 +25,23 @@ const chartConfig = {
 } satisfies ChartConfig
 
 type chartData = {
-  nombreObjetivo: string,
+  nombreObjetivo: string
   horas: number
 }
-export default function ChartEventos({chartData, minimaFecha} : {chartData: chartData, minimaFecha : Date}) {
-
+export default function ChartEventos({
+  chartData,
+  minimaFecha,
+}: {
+  chartData: chartData[]
+  minimaFecha: Date
+}) {
   function getFechaMinima() {
     const hoy = new Date()
     if (minimaFecha >= hoy) {
       return 'hoy'
+    } else {
+      return formatDateDashARG(minimaFecha)
     }
-    else { return formatDateDashARG(minimaFecha) }
   }
   const fecha = getFechaMinima()
 
@@ -48,7 +54,8 @@ export default function ChartEventos({chartData, minimaFecha} : {chartData: char
       <CardContent className=''>
         <ChartContainer config={chartConfig}>
           <BarChart
-            accessibilityLayer data={chartData}
+            accessibilityLayer
+            data={chartData}
             layout='vertical'
             margin={{
               right: 16,
@@ -61,6 +68,7 @@ export default function ChartEventos({chartData, minimaFecha} : {chartData: char
               tickLine={false}
               tickMargin={10}
               axisLine={false}
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
               tickFormatter={value => value.slice(0, 3)}
               hide
             />
@@ -82,7 +90,6 @@ export default function ChartEventos({chartData, minimaFecha} : {chartData: char
                 className='fill-[--color-label]'
                 fontSize={12}
               />
-
             </Bar>
           </BarChart>
         </ChartContainer>

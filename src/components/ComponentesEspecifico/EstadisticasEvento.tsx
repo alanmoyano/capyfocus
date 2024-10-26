@@ -96,7 +96,7 @@ type RowToRecover = {
 }
 
 type chartData = {
-  nombreObjetivo: string,
+  nombreObjetivo: string
   horas: number
 }
 
@@ -354,21 +354,20 @@ export default function EstadisticasEvento({ name }: { name: string }) {
           )
         })
       gatherSessionsOfEventOfUser(session.user.id, name)
-        .then(data => {setStatisticsValues(data, evento)
-          
+        .then(data => {
+          setStatisticsValues(data, evento)
         })
         .catch((error: unknown) => {
           console.log(error)
         })
-      }
-      
+    }
   }, [name])
 
   //Funciones para la chart
   const [chartData, setChartData] = useState<chartData[]>([])
 
   //Tenia sentido cuando lo hice, ahora que lo veo de otra forma ya no
-  function generateDataOfChart(data: ObjectiveToRecover[]){
+  function generateDataOfChart(data: ObjectiveToRecover[]) {
     const dataToChart: chartData[] = []
     for (const objetivo of data) {
       dataToChart.push({
@@ -376,17 +375,15 @@ export default function EstadisticasEvento({ name }: { name: string }) {
         horas: objetivo.horasAcumuladas,
       })
     }
-    console.log('Datos: ',dataToChart)
+    console.log('Datos: ', dataToChart)
     return dataToChart
   }
-
 
   function loadChartData(data: ObjectiveToRecover[]) {
     const generatedData = generateDataOfChart(data)
     console.log('Datos a cargar', generatedData)
     setChartData(generatedData)
   }
-
 
   //setChartData(generateDataOfChart())
 
@@ -403,7 +400,6 @@ export default function EstadisticasEvento({ name }: { name: string }) {
     return new Date(earliestObjective.created_at)
   }
   const earliestDate = getEarliestDate(eventObjectives)
-
 
   return (
     <>
@@ -464,7 +460,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
 
           {/* chart  */}
           <div className='space-y-6 md:w-1/2'>
-            <ChartEventos chartData={chartData} minimaFecha={earliestDate}/>
+            <ChartEventos chartData={chartData} minimaFecha={earliestDate} />
             {/* Calendario */}
             <Card className='overflow-hidden rounded-lg shadow-sm'>
               <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-3'>

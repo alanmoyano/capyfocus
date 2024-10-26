@@ -494,7 +494,6 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
           <div className='space-y-6 md:w-1/2'>
             <ChartGrafico periodo={period} chartData={chartData} />
 
-            
             {/* Calendario */}
             <Card className='overflow-hidden rounded-lg shadow-sm'>
               <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-3'>
