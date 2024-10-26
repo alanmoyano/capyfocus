@@ -604,47 +604,50 @@ export default function Pomodoro() {
                 Empezar
               </Button>
             ) : (
-
-
-              
-              <div className='flex w-3/12 flex-row justify-between items-center px-4'>
-              <div className='flex justify-center'>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        className='flex items-center rounded-full p-6'
-                        onClick={() => handlePause()}
+              <div className='flex w-3/12 flex-row items-center justify-between px-4'>
+                <div className='flex justify-center'>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          className='flex items-center rounded-full p-6'
+                          onClick={() => handlePause()}
+                        >
+                          {isActive ? <Pause /> : <Play />}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side='bottom'
+                        className='mt-1 flex rounded-md bg-gray-200 px-4 py-1'
                       >
-                        {isActive ? <Pause /> : <Play />}
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side='bottom' className='bg-gray-200 mt-1 flex px-4 py-1 rounded-md'>
-                      <p>{isActive ? 'Pausar' : 'Reanudar'}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-              <div className='flex justify-end'>
-                <TooltipProvider>
-                  <Tooltip delayDuration={300}>
-                    <TooltipTrigger asChild>
-                      <Button
-                        className='flex'
-                        variant='ghost'
-                        type='button'
-                        onClick={handleSaltar}
+                        <p>{isActive ? 'Pausar' : 'Reanudar'}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <div className='flex justify-end'>
+                  <TooltipProvider>
+                    <Tooltip delayDuration={300}>
+                      <TooltipTrigger asChild>
+                        <Button
+                          className='flex'
+                          variant='ghost'
+                          type='button'
+                          onClick={handleSaltar}
+                        >
+                          <SkipForward />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side='bottom'
+                        className='mt-1 flex rounded-md bg-gray-200 px-4 py-1'
                       >
-                        <SkipForward />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side='bottom' className='bg-gray-200 mt-1 flex px-4 py-1 rounded-md'>
-                      <p>Saltar</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                        <p>Saltar</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
               </div>
-            </div>
             )}
           </div>
           {/* Volumen */}

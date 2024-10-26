@@ -424,34 +424,6 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
     }
   }, [period, getDateOfPeriod, session])
 
-  /* useEffect(() => {
-  try {
-    const dateToRecover = getDateOfPeriod(period);
-
-    // Verificamos si es un array y ordenamos las fechas
-    if (Array.isArray(dateToRecover)) {
-      const datosOrdenados = dateToRecover.sort((a, b) => b.date.getTime() - a.date.getTime());
-
-      if (session) {
-        getPeriodSessions(datosOrdenados, session.user.id)
-          .then(data => {
-            if (data) {
-              setStatisticsValues(data, period);
-            }
-          })
-          .catch((error: unknown) => {
-            console.log('Ocurrió un error recuperando las sesiones:', error);
-          });
-      }
-    } else {
-      console.error('Las fechas recuperadas no son un array:', dateToRecover);
-    }
-  } catch (error) {
-    console.error('Error durante el proceso de ordenación de fechas o recuperación de sesiones:', error);
-  }
-}, [period, getDateOfPeriod, session]);
-
- */
   return (
     <>
       {/* info de periodo */}

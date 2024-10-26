@@ -1,6 +1,8 @@
 import {
   ChartConfig,
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltipContent,
 } from '@/components/ui/chart'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -243,6 +245,7 @@ export default function ChartGrafico({
                     />
                   }
                 />
+                <ChartLegend content={<ChartLegendContent />} />
                 <Bar
                   dataKey='cumplidos'
                   fill='var(--color-cumplidos)'

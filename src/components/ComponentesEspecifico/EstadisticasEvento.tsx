@@ -2,16 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
-import { useEffect, useRef, useState } from 'react'
-
-import {
-  Tooltip as ChartTooltip,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  XAxis,
-  ResponsiveContainer,
-} from 'recharts'
+import { useEffect, useState } from 'react'
 
 import {
   Table,
@@ -22,17 +13,11 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltipContent,
-} from '@/components/ui/chart'
 
 import Reproductor from './Reproductor'
 import { Calendar } from '@components/ui/calendar'
 import { formatTime } from '@/lib/utils'
 
-//Lo siguiente se va a ir fuertemente cuando este implementada la BD:
 import { useObjetivos } from '@contexts/ObjetivosContext'
 import {
   formatDateDash,
@@ -44,18 +29,11 @@ import {
 } from '../../constants/supportFunctions'
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
-import ChartGrafico from './ChartGrafico'
 import { useEvents } from '../contexts/EventsContext'
 import { Event } from './Eventos'
+import ChartEventos from './ChartEventos'
 //TODO: Grafico segun el periodo de tiempo seleccionado
 
-type Period =
-  | 'sesion'
-  | 'semanal'
-  | 'mensual'
-  | 'bimestral'
-  | 'semestre'
-  | 'evento'
 
 type Motivation =
   | {
@@ -74,16 +52,6 @@ type StudyTechnique =
       name: 'CapyMetro'
     }
 
-/*     const chartConfig = {
-      cumplidos: {
-        label: 'Cumplidos',
-        color: 'hsl(var(--chart-1))',
-      },
-      pendientes: {
-        label: 'Pendientes',
-        color: 'hsl(var(--chart-2))',
-      },
-    } satisfies ChartConfig */
 
 type Music =
   | { id: 0; name: 'Sin música' }
@@ -110,8 +78,6 @@ const StudyTechniqueList: StudyTechnique[] = [
   { id: 2, name: 'CapyMetro' },
 ]
 
-type Graficos = 'chartDataMeses' | 'chartDataSemana' | 'chartDataMes'
-
 type sessionToRecover = {
   uuid: string
   horaInicioSesion: string
@@ -130,11 +96,9 @@ type RowToRecover = {
   idObjetivoFavorito: number
 }
 
-type dataChart = {
-  day: string
-  cumplidos: number
-  pendiente: number
-  date: Date
+type chartData = {
+  nombreObjetivo: string
+  horas: number
 }
 
 type ObjectiveToRecover = {
@@ -160,26 +124,6 @@ async function getEventOfUser(period: Date, uuid: string) {
   else return
 }
 
-function getDateOfPeriod(period: Period) {
-  const dateToReturn = new Date()
-  switch (period) {
-    case 'semanal':
-      dateToReturn.setDate(dateToReturn.getDate() - 7)
-      break
-    case 'mensual':
-      dateToReturn.setMonth(dateToReturn.getMonth() - 1)
-      break
-    case 'bimestral':
-      dateToReturn.setMonth(dateToReturn.getMonth() - 2)
-      break
-    case 'semestre':
-      dateToReturn.setMonth(dateToReturn.getMonth() - 6)
-      break
-    default:
-      break
-  }
-  return dateToReturn
-}
 
 async function getEventIdFromName(eventName: string, uuid: string) {
   const { data, error } = await supabase
@@ -248,14 +192,7 @@ async function gatherObjectivesOfEvent(eventId: number) {
 }
 
 export default function EstadisticasEvento({ name }: { name: string }) {
-  const cardRefs = {
-    sesion: useRef(null),
-    semanal: useRef(null),
-    mensual: useRef(null),
-    bimestral: useRef(null),
-    semestre: useRef(null),
-    evento: useRef(null),
-  }
+
 
   function getRachaPorPeriodo(fechasSesiones: string[]) {
     let rachaActual = 0
@@ -427,6 +364,26 @@ export default function EstadisticasEvento({ name }: { name: string }) {
     }
   }, [name])
 
+  //Funciones para la chart
+
+  const [chartData, setChartData] = useState<chartData[]>([])
+
+  //Tenia sentido cuando lo hice, ahora que lo veo de otra forma ya no
+  function generateDataOfChart(){
+    const dataToChart: chartData[] = []
+    for (const objetivo of eventObjectives) {
+      dataToChart.push({
+        nombreObjetivo: objetivo.descripcion,
+        horas: objetivo.horasAcumuladas,
+      })
+      return dataToChart
+    }
+  }
+  
+  useEffect(() => {
+    setChartData(generateDataOfChart())
+  },)
+
   return (
     <>
       {/* info de periodo */}
@@ -484,52 +441,9 @@ export default function EstadisticasEvento({ name }: { name: string }) {
             </div>
           </div>
 
-          {/* chart */}
+          {/* chart  */}
           <div className='space-y-6 md:w-1/2'>
-            {/* <ChartGrafico periodo={'semanal'} /> */}
-
-            {/*             <Card className='overflow-hidden rounded-lg shadow-md'>
-              <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-2'>
-                <CardTitle className='text-lg font-bold text-gray-900'>
-                  Registro de objetivos
-                </CardTitle>
-              </CardHeader>
-              <CardContent className='p-3'>
-                <ChartContainer config={chartConfig}>
-                  <ResponsiveContainer width='100%' height={250}>
-                    <BarChart accessibilityLayer data={chartDataMeses}>
-                      <CartesianGrid vertical={false} />
-                      <XAxis
-                        dataKey='month'
-                        tickLine={false}
-                        tickMargin={10}
-                        axisLine={false}
-                        tickFormatter={(value: string) => value.slice(0, 3)}
-                      />
-                      <ChartTooltip
-                        cursor={false}
-                        content={
-                          <ChartTooltipContent
-                            formatType='integer'
-                            indicator='line'
-                          />
-                        }
-                      />
-                      <Bar
-                        dataKey='cumplidos'
-                        fill='var(--color-cumplidos)'
-                        radius={4}
-                      />
-                      <Bar
-                        dataKey='pendientes '
-                        fill='var(--color-pendientes )'
-                        radius={4}
-                      />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-              </CardContent>
-            </Card> */}
+              <ChartEventos chartData={chartData} />
             {/* Calendario */}
             <Card className='overflow-hidden rounded-lg shadow-sm'>
               <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-3'>
