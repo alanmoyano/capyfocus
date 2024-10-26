@@ -129,7 +129,7 @@ export default function Eventos() {
     if (session) {
       if (events.length === 0) {
         const hoy = new Date()
-        hoy.setHours(0,0,0,0)
+        hoy.setHours(0, 0, 0, 0)
         gatherEventsOfUser(session.user.id, hoy)
           .then(data =>
             data.forEach(evento => {
@@ -172,7 +172,7 @@ export default function Eventos() {
         toast.success('Se ha creado el evento:', {
           description: '"' + eventTitle + '"' + ' en el dia: ' + dateString,
           duration: 4000,
-          position: 'bottom-center'
+          position: 'bottom-center',
         })
         if (googleCalendar) {
           window.open(createGoogleCalendarLink(eventTitle, date))
@@ -247,8 +247,8 @@ export default function Eventos() {
           <p className='text-sm text-muted-foreground'>
             Selecciona una fecha para el evento.
           </p>
-          <div className='grid gap-4 mt-1'>
-            <div className='grid grid-cols-1 items-center sm:gap-4 gap-2 sm:grid-cols-4'>
+          <div className='mt-1 grid gap-4'>
+            <div className='grid grid-cols-1 items-center gap-2 sm:grid-cols-4 sm:gap-4'>
               <Label
                 htmlFor='name'
                 className='text-sm font-bold sm:text-right sm:text-base'

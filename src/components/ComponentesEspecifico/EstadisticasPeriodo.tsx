@@ -356,9 +356,11 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
         StudyTechniqueList
       )
     )
-      //Aca de ordena por fecha de forma ascendente
-      const sortedData = matrizFechas.sort((a, b) => a[0].getTime() - b[0].getTime());
-    
+    //Aca de ordena por fecha de forma ascendente
+    const sortedData = matrizFechas.sort(
+      //@ts-expect-error no hay problema ts
+      (a, b) => a[0].getTime() - b[0].getTime()
+    )
 
     //@ts-expect-error no jodas despues se arregla
     setChartData(generateDataOfChart(period, matrizFechas))

@@ -199,7 +199,7 @@ export default function ChartGrafico({
     },
     [] // No tiene dependencias, ya que es independiente del renderizado
   )
-  
+
   useEffect(() => {
     try {
       const datos = obtenerDatosPorperiodo(periodo)
@@ -218,7 +218,7 @@ export default function ChartGrafico({
         </CardHeader>
         <CardContent className='p-3'>
           <ChartContainer config={chartConfig}>
-            {!chartData || chartData.length === 0 ?  ( //Si se saca crashea el programa  
+            {!chartData || chartData.length === 0 ? ( //Si se saca crashea el programa
               <div className='h-full w-full'>
                 <p className='flex items-center justify-center text-xl'>
                   No hay datos disponibles para el período seleccionado

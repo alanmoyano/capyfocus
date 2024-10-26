@@ -203,11 +203,13 @@ async function gatherSessionsOfEventOfUser(uuid: string, eventName: string) {
 
   if (data) {
     //Aca de ordena por fecha de forma ascendente
-    const sortedData = data.sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime());
+    const sortedData = data.sort(
+      (a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime()
+    )
     console.log(sortedData)
     return sortedData as sessionToRecover[]
-  }
-  else {console.log(error)
+  } else {
+    console.log(error)
     return []
   }
 }
@@ -290,7 +292,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
   const setStatisticsValues = (data: sessionToRecover[], evento: Event) => {
     if (session) {
       const studyTime = evento.hoursAcumulated ? evento.hoursAcumulated : 0
-      let objectiveCount = 0 //contador para saber cuantos 
+      let objectiveCount = 0 //contador para saber cuantos
       let objectiveAcomplishedCount = 0
       const setFechas = new Set()
 
@@ -418,15 +420,12 @@ export default function EstadisticasEvento({ name }: { name: string }) {
           )
         })
       gatherSessionsOfEventOfUser(session.user.id, name)
-        //@ts-expect-error no te preocupes type
         .then(data => setStatisticsValues(data, evento))
         .catch((error: unknown) => {
           console.log(error)
         })
     }
   }, [name])
-
-
 
   return (
     <>
@@ -541,9 +540,9 @@ export default function EstadisticasEvento({ name }: { name: string }) {
               <CardContent className='p-2'>
                 <div className='flex flex-col md:flex-row'>
                   <Calendar
-                  showOutsideDays={false}
-                  fromDate={undefined}
-                  toDate={new Date()}
+                    showOutsideDays={false}
+                    fromDate={undefined}
+                    toDate={new Date()}
                     mode='single'
                     className='rounded-md border text-sm shadow-sm'
                     modifiers={{
