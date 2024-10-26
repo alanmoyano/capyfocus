@@ -14,7 +14,6 @@ import { useSearch } from 'wouter'
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -117,17 +116,6 @@ const chartConfig1: ChartConfig = {
     color: 'hsl(var(--chart-10))',
   },
 }
-
-/* const chartConfig4 = {
-  desktop: {
-    label: 'Desktop',
-    color: 'hsl(var(--chart-1))',
-  },
-  mobile: {
-    label: 'Mobile',
-    color: 'hsl(var(--chart-2))',
-  },
-} satisfies ChartConfig */
 
 export default function CapyEstadisticas() {
   const queryParams = useSearch()
@@ -579,74 +567,26 @@ export default function CapyEstadisticas() {
 
       {selectedPeriod === 'semanal' && (
         <>
-          <div className='mr-12 flex w-full justify-end'>
-            <Button
-              variant='ghost'
-              onClick={() => captureScreenshot('semanal')}
-              className=''
-            >
-              <ImageDown className='mr-2 h-4 w-4' />
-              Capturar
-            </Button>
-          </div>
           <EstadisticasPeriodo period='semanal'></EstadisticasPeriodo>
         </>
       )}
 
       {selectedPeriod === 'mensual' && (
         <>
-          <div className='mr-12 flex w-full justify-end'>
-            <Button
-              variant='ghost'
-              onClick={() => captureScreenshot('mensual')}
-              className=''
-            >
-              <ImageDown className='mr-2 h-4 w-4' />
-              Capturar
-            </Button>
-          </div>
-          <>
-            <EstadisticasPeriodo period='mensual'></EstadisticasPeriodo>
-          </>
+          <EstadisticasPeriodo period='mensual'></EstadisticasPeriodo>
         </>
       )}
 
       {selectedPeriod === 'bimestral' && (
         <>
-          <div className='mr-12 flex w-full justify-end'>
-            <Button
-              variant='ghost'
-              onClick={() => captureScreenshot('bimestral')}
-              className=''
-            >
-              <ImageDown className='mr-2 h-4 w-4' />
-              Capturar
-            </Button>
-          </div>
-          <>
-            <EstadisticasPeriodo period='bimestral'></EstadisticasPeriodo>
-          </>
+          <EstadisticasPeriodo period='bimestral'></EstadisticasPeriodo>
         </>
       )}
-
       {selectedPeriod === 'semestral' && (
         <>
-          <div className='mr-12 flex w-full justify-end'>
-            <Button
-              variant='ghost'
-              onClick={() => captureScreenshot('semestral')}
-              className=''
-            >
-              <ImageDown className='mr-2 h-4 w-4' />
-              Capturar
-            </Button>
-          </div>
-          <>
-            <EstadisticasPeriodo period='semestre'></EstadisticasPeriodo>
-          </>
+          <EstadisticasPeriodo period='semestre'></EstadisticasPeriodo>
         </>
       )}
-
       {selectedPeriod === '' && selectedEvent && (
         <>
           <EstadisticasEvento name={selectedEvent}></EstadisticasEvento>

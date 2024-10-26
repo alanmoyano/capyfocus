@@ -46,12 +46,26 @@ export default function ChartGrafico({
   periodo: periodo
   chartData: ChartData[]
 }) {
+  const Meses = [
+    'Enero',
+    'Feberero',
+    'Marzo',
+    'Abril',
+    'Mayo',
+    'Junio',
+    'Julio',
+    'Agosto',
+    'Septiembre',
+    'Octubre',
+    'Noviembre',
+    'Diciembre',
+  ]
   return (
     <div>
       <Card className='overflow-hidden rounded-lg shadow-md'>
         <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-2'>
           <CardTitle className='text-lg font-bold text-gray-900'>
-            Registro de objetivos
+            Registro de objetivos del mes de {Meses[new Date().getMonth()]}{' '}
           </CardTitle>
         </CardHeader>
         <CardContent className='p-3'>
@@ -66,12 +80,33 @@ export default function ChartGrafico({
               <BarChart accessibilityLayer data={chartData}>
                 <CartesianGrid vertical={false} />
                 <XAxis
-                  dataKey={periodo === 'semanal' ? 'day' : 'month'} // Cambia 'month' a 'day' si se está mostrando la semana
+                  dataKey={
+                    periodo === 'semanal'
+                      ? 'day'
+                      : periodo === 'mensual'
+                        ? 'month'
+                        : 'sem'
+                  }
                   tickLine={true}
                   tickMargin={10}
                   axisLine={true}
-                  tickFormatter={(value: string) => value.slice(0, 3)}
+                  tickFormatter={(value: string | number, index: number) => {
+                    if (periodo === 'semanal') {
+                      // Si el periodo es semanal, muestra solo el número del día
+                      //@ts-expect-error No se puede llamar a slice en un valor de tipo string | number
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+                      return value.slice(0, 3)
+                    } else if (periodo === 'mensual') {
+                      // Si es mensual, muestra el día y el mes
+                      const monthDate = chartData[index].date
+                      return `${monthDate.getDate()}`
+                    } else {
+                      // Si es otro periodo, muestra un valor genérico
+                      return value
+                    }
+                  }}
                 />
+
                 <ChartTooltip
                   cursor={false}
                   content={

@@ -23,6 +23,9 @@ import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
 import ChartGrafico from './ChartGrafico'
 import { startOfWeek, addDays, subMonths } from 'date-fns'
+import html2canvas from 'html2canvas'
+import { Button } from '@components/ui/button'
+import { ImageDown } from 'lucide-react'
 
 //TODO: Grafico segun el periodo de tiempo seleccionado
 
@@ -76,17 +79,10 @@ const StudyTechniqueList: StudyTechnique[] = [
   { id: 2, name: 'CapyMetro' },
 ]
 
-type dataChart = {
-  day: string
-  cumplidos: number
-  pendientes: number
-  date: Date
-}
-//Propongo algo asi:
-/* type ChartData =
+type ChartData =
   | { month: string; cumplidos: number; pendientes: number; date: Date }
   | { sem: string; cumplidos: number; pendientes: number; date: Date }
-  | { day: string; cumplidos: number; pendientes: number; date: Date } */
+  | { day: string; cumplidos: number; pendientes: number; date: Date }
 
 type sessionToRecover = {
   uuid: string
@@ -117,7 +113,7 @@ async function getPeriodSessions(period: Date, uuid: string) {
 }
 
 function generateDataOfChart(period: Period, matrizDatos: unknown) {
-  const dataToChart: dataChart[] = []
+  const dataToChart: ChartData[] = []
   const diasSemana = [
     'Lunes',
     'Martes',
@@ -149,7 +145,7 @@ function generateDataOfChart(period: Period, matrizDatos: unknown) {
       for (const fila of matrizDatos) {
         const fecha = new Date(fila[0])
         const dayIndex = (fecha.getDay() + 6) % 7 // Ajusta que Lunes sea 0
-        const dataToPutInChart: dataChart = {
+        const dataToPutInChart: ChartData = {
           day: diasSemana[dayIndex],
           cumplidos: fila[1] as number,
           pendientes: fila[2] as number,
@@ -157,8 +153,25 @@ function generateDataOfChart(period: Period, matrizDatos: unknown) {
         }
         dataToChart.push(dataToPutInChart)
       }
-      return dataToChart
+      break
+    case 'mensual':
+      //Lo copie y pegue lo de arriba.
+      //@ts-expect-error no jodas ts
+      for (const fila of matrizDatos) {
+        const fecha = new Date(fila[0])
+        const dataToPutInChart: ChartData = {
+          month: Meses[fecha.getMonth()],
+          cumplidos: fila[1] as number,
+          pendientes: fila[2] as number,
+          date: fecha,
+        }
+
+        dataToChart.push(dataToPutInChart)
+      }
+      break
   }
+  console.log('Datos:', dataToChart)
+  return dataToChart
 }
 
 function getDateOfPeriod(period: Period) {
@@ -211,6 +224,17 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
     bimestral: useRef(null),
     semestre: useRef(null),
     evento: useRef(null),
+  }
+
+  const captureScreenshot = async (period: Period) => {
+    if (cardRefs[period].current) {
+      const canvas = await html2canvas(cardRefs[period].current as HTMLElement)
+      const image = canvas.toDataURL('image/png')
+      const link = document.createElement('a')
+      link.href = image
+      link.download = `capyestadisticas_${period}.png`
+      link.click()
+    }
   }
 
   function getRachaPorPeriodo(fechasSesiones: string[]) {
@@ -433,6 +457,13 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
   return (
     <>
       {/* info de periodo */}
+      {/* Boton Screen */}
+      <div className='mr-12 flex w-full justify-end'>
+        <Button variant='ghost' onClick={() => captureScreenshot(period)}>
+          <ImageDown className='mr-2 h-4 w-4' />
+          Capturar
+        </Button>
+      </div>
       <Card
         ref={cardRefs[period]}
         className='container mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg md:flex-row dark:from-gray-800 dark:to-gray-900 dark:shadow-gray-800'
