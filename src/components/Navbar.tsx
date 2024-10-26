@@ -154,10 +154,8 @@ export default function Navbar() {
           <NavItems />
         </nav>
 
-        <div className='flex items-center md:absolute md:right-16'>
+        <div className='flex items-center gap-2 md:absolute md:right-16'>
           <ModeToggle />
-        </div>
-        <div className='flex items-center md:absolute md:right-4'>
           <AvatarLink />
         </div>
       </div>
