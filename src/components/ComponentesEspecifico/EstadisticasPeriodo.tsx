@@ -22,7 +22,7 @@ import {
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
 import ChartGrafico from './ChartGrafico'
-import { startOfWeek, addDays, subMonths } from 'date-fns';
+import { startOfWeek, addDays, subMonths } from 'date-fns'
 
 //TODO: Grafico segun el periodo de tiempo seleccionado
 
@@ -51,7 +51,6 @@ type StudyTechnique =
       name: 'CapyMetro'
     }
 
-
 type Music =
   | { id: 0; name: 'Sin música' }
   | { id: 1; name: 'CapyEpic' }
@@ -76,7 +75,6 @@ const StudyTechniqueList: StudyTechnique[] = [
   { id: 1, name: 'CapyDoro' },
   { id: 2, name: 'CapyMetro' },
 ]
-
 
 type dataChart = {
   day: string
@@ -108,7 +106,7 @@ async function getPeriodSessions(period: Date, uuid: string) {
     .from('SesionesDeEstudio')
     .select()
     .eq('idUsuario', uuid)
-    .gt('fecha', periodFormatted)
+    .gte('fecha', periodFormatted)
 
   if (data) return data as sessionToRecover[]
   else return
@@ -144,15 +142,14 @@ function generateDataOfChart(period: Period, matrizDatos: unknown) {
     case 'semanal':
       //@ts-expect-error no jodas ts
       for (const fila of matrizDatos) {
-        const fecha = new Date(fila[0]);
-        const dayIndex = (fecha.getDay() + 6) % 7; // Ajusta que Lunes sea 0
+        const fecha = new Date(fila[0])
+        const dayIndex = (fecha.getDay() + 6) % 7 // Ajusta que Lunes sea 0
         const dataToPutInChart: dataChart = {
           day: diasSemana[dayIndex],
           cumplidos: fila[1] as number,
           pendientes: fila[2] as number,
           date: fecha,
         }
-        console.log(dataToPutInChart)
         dataToChart.push(dataToPutInChart)
       }
       return dataToChart
@@ -163,7 +160,6 @@ function getDateOfPeriod(period: Period) {
   const dateToReturn = new Date()
   switch (period) {
     case 'semanal':
-      
       dateToReturn.setDate(dateToReturn.getDate() - 7)
       break
     case 'mensual':
@@ -244,7 +240,6 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
     setRacha(rachaActual)
   }
 
-
   const setStatisticsValues = (
     sessionsRecovered: sessionToRecover[],
     period: Period
@@ -317,8 +312,6 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
         e =>
           formatDateDash(e[0] as Date) === (particularSession.fecha as unknown)
       )
-      console.log('Array viejo', arrayEncontrado)
-      console.log('Fecha de la sesión', particularSession.fecha)
       if (arrayEncontrado) {
         //@ts-expect-error no tengo ganas de pelear ts, dejalo asi
         arrayEncontrado[1] += particularSession.cantidadObjetivosCumplidos
@@ -326,17 +319,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
         arrayEncontrado[2] +=
           particularSession.cantidadObjetivos -
           particularSession.cantidadObjetivosCumplidos
-
-        console.log(
-          'Array por partes. Fecha',
-          arrayEncontrado[0],
-          'Objetivos cumplidos',
-          arrayEncontrado[1],
-          'Objetivos pendientes',
-          arrayEncontrado[2]
-        )
       }
-      console.log('Array nuevo', arrayEncontrado)
     }
 
     const fechasOrdenadas = Array.from(setFechas).sort((a, b) => {
@@ -372,6 +355,10 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
         StudyTechniqueList
       )
     )
+      //Aca de ordena por fecha de forma ascendente
+      const sortedData = matrizFechas.sort((a, b) => a[0].getTime() - b[0].getTime());
+    
+
     //@ts-expect-error no jodas despues se arregla
     setChartData(generateDataOfChart(period, matrizFechas))
   }
@@ -391,49 +378,49 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
   const [chartData, setChartData] = useState([])
 
   //Esto es para el calendario, cuando inicia y cuando termina de mostrar
-const   dateRange = (() => {
-  switch (period) {
-    case 'semanal':
-      return {
-        fromDate: startOfWeek(new Date()),
-        toDate: addDays(startOfWeek(new Date()), 6),
-      }
-    case 'mensual':
-      return {
-        fromDate: subMonths(new Date(), 1),
-        toDate: new Date(),
-      }
-    case 'bimestral':
-      return {
-        fromDate: subMonths(new Date(), 2),
-        toDate: new Date(),
-      }
-    case 'semestre':
-      return {
-        fromDate: subMonths(new Date(), 6),
-        toDate: new Date(),
-      }
-    default:
-      return {}
-  }
-})()
-
-useEffect(() => {
-  const dateToRecover = getDateOfPeriod(period)
-  if (session) {
-    getPeriodSessions(dateToRecover, session.user.id)
-      .then(data => {
-        if (data) {
-          setStatisticsValues(data, period)
+  const dateRange = (() => {
+    switch (period) {
+      case 'semanal':
+        return {
+          fromDate: startOfWeek(new Date()),
+          toDate: addDays(startOfWeek(new Date()), 6),
         }
-      })
-      .catch((error: unknown) => {
-        console.log('Ocurrio un error recuperando las sesiones', error)
-      })
-  }
-}, [period,getDateOfPeriod,session])
+      case 'mensual':
+        return {
+          fromDate: subMonths(new Date(), 1),
+          toDate: new Date(),
+        }
+      case 'bimestral':
+        return {
+          fromDate: subMonths(new Date(), 2),
+          toDate: new Date(),
+        }
+      case 'semestre':
+        return {
+          fromDate: subMonths(new Date(), 6),
+          toDate: new Date(),
+        }
+      default:
+        return {}
+    }
+  })()
 
-/* useEffect(() => {
+  useEffect(() => {
+    const dateToRecover = getDateOfPeriod(period)
+    if (session) {
+      getPeriodSessions(dateToRecover, session.user.id)
+        .then(data => {
+          if (data) {
+            setStatisticsValues(data, period)
+          }
+        })
+        .catch((error: unknown) => {
+          console.log('Ocurrio un error recuperando las sesiones', error)
+        })
+    }
+  }, [period, getDateOfPeriod, session])
+
+  /* useEffect(() => {
   try {
     const dateToRecover = getDateOfPeriod(period);
 
@@ -577,8 +564,8 @@ useEffect(() => {
               <CardContent className='p-2'>
                 <div className='flex flex-col md:flex-row'>
                   <Calendar
-                  showOutsideDays={period !== 'semanal'} // Ocultar días fuera del rango
-                  {...dateRange} //Aplica solo si es semanal
+                    showOutsideDays={period !== 'semanal'} // Ocultar días fuera del rango
+                    {...dateRange} //Aplica solo si es semanal
                     mode='single'
                     className='rounded-md border text-sm shadow-sm'
                     modifiers={{
