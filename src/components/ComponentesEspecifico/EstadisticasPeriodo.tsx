@@ -390,7 +390,8 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
   const [fechasOrdenadas, setFechasOrdenadas] = useState<string[]>()
   const [chartData, setChartData] = useState([])
 
-const dateRange = (() => {
+  //Esto es para el calendario, cuando inicia y cuando termina de mostrar
+const   dateRange = (() => {
   switch (period) {
     case 'semanal':
       return {

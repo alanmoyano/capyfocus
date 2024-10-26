@@ -47,7 +47,6 @@ import { useSession } from '../contexts/SessionContext'
 import ChartGrafico from './ChartGrafico'
 import { useEvents } from '../contexts/EventsContext'
 import { Event } from './Eventos'
-
 //TODO: Grafico segun el periodo de tiempo seleccionado
 
 type Period =
@@ -202,8 +201,15 @@ async function gatherSessionsOfEventOfUser(uuid: string, eventName: string) {
     .eq('idUsuario', uuid)
     .eq('eventoSeleccionado', eventId)
 
-  if (data) return data as sessionToRecover[]
-  else console.log(error)
+  if (data) {
+    //Aca de ordena por fecha de forma ascendente
+    const sortedData = data.sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime());
+    console.log(sortedData)
+    return sortedData as sessionToRecover[]
+  }
+  else {console.log(error)
+    return []
+  }
 }
 
 async function gatherObjectivesOfEvent(eventId: number) {
@@ -420,6 +426,8 @@ export default function EstadisticasEvento({ name }: { name: string }) {
     }
   }, [name])
 
+
+
   return (
     <>
       {/* info de periodo */}
@@ -533,6 +541,9 @@ export default function EstadisticasEvento({ name }: { name: string }) {
               <CardContent className='p-2'>
                 <div className='flex flex-col md:flex-row'>
                   <Calendar
+                  showOutsideDays={false}
+                  fromDate={undefined}
+                  toDate={new Date()}
                     mode='single'
                     className='rounded-md border text-sm shadow-sm'
                     modifiers={{
@@ -569,7 +580,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                 <TableHead>Objetivo</TableHead>
                 <TableHead>Estado</TableHead>
                 <TableHead>Fecha Creado</TableHead>
-                <TableHead className='text-right'>Tiempo Acumulado</TableHead>
+                <TableHead className='text-center'>Tiempo Acumulado</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -595,7 +606,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                   <TableCell>
                     {formatDateDashARG(new Date(objetivo.created_at))}
                   </TableCell>
-                  <TableCell className='text-right font-medium'>
+                  <TableCell className='text-center font-medium'>
                     {formatTime(objetivo.horasAcumuladas)}
                   </TableCell>
                 </TableRow>

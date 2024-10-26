@@ -242,16 +242,13 @@ export default function Eventos() {
           <SheetTitle className='flex items-center justify-between text-xl font-bold sm:text-2xl'>
             Agregar evento
           </SheetTitle>
-          <SheetDescription className='text-black sm:text-lg'>
-            Agrega eventos desde aquí.
-          </SheetDescription>
         </SheetHeader>
         <ScrollArea className='h-[80vh] pr-4'>
           <p className='text-sm text-muted-foreground'>
             Selecciona una fecha para el evento.
           </p>
-          <div className='grid gap-4 py-4'>
-            <div className='grid grid-cols-1 items-center gap-4 sm:grid-cols-4'>
+          <div className='grid gap-4 mt-1'>
+            <div className='grid grid-cols-1 items-center sm:gap-4 gap-2 sm:grid-cols-4'>
               <Label
                 htmlFor='name'
                 className='text-sm font-bold sm:text-right sm:text-base'

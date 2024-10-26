@@ -108,7 +108,7 @@ export default function LandingPage() {
               <CarouselItem className='basis-full lg:basis-1/3'>
                 <div>
                   <img
-                    src='/FotosLanding/eventos2.webp'
+                    src='/FotosLanding/eventos3.png'
                     alt='Eventos'
                     className='mx-auto mb-6 h-44 w-[80%] rounded-lg object-cover'
                   />
@@ -140,7 +140,7 @@ export default function LandingPage() {
               <CarouselItem className='basis-full lg:basis-1/3'>
                 <div>
                   <img
-                    src='/FotosLanding/CapyInsignias.webp'
+                    src='/FotosLanding/CapyInsignias2.png'
                     alt='Insignia 1'
                     className='mx-auto mb-6 h-44 w-[80%] rounded-lg object-cover'
                   />
