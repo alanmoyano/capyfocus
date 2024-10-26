@@ -142,6 +142,7 @@ function generateDataOfChart(period: Period, matrizDatos: unknown) {
 
   switch (period) {
     case 'semanal':
+      //Se cargan los datos de la semana en el chart
       //@ts-expect-error no jodas ts
       for (const fila of matrizDatos) {
         const fecha = new Date(fila[0]);
