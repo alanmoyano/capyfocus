@@ -91,7 +91,7 @@ type dataChart = {
 type sessionToRecover = {
   uuid: string
   horaInicioSesion: string
-  fecha: Date
+  fecha: string
   horaFinSesion: string
   tecnicaEstudio: number
   tipoMotivacion: number
@@ -100,6 +100,10 @@ type sessionToRecover = {
   tiempoEstudio: number
 }
 
+//Los meses de las sesiones aparecen desde aquí, cuando traemos todas las sesiones de estudio a partir de una fecha determinada, los mismos se guardan en el atributo
+//fecha, las cuales vienen en formato YYYY-MM-DD, y si queremos usarlo, podes hacerlo de 2 maneras.
+// 1) Hacer un split sobre el valor de fecha a partir de los guiones (-) y obtener el valor del segundo miembro, asi te da el valor del mes en las escala de enero = 1 y diciembre = 12
+// 2) Convertir ese string a una fecha con la funcion convertirAFecha() y luego a la fecha obtenida pedirle que te devuelva su mes con la función getMonth() en la escala de enero = 0 y diciembre = 11
 async function getPeriodSessions(period: Date, uuid: string) {
   const periodFormatted = formatDateDash(period)
   const { data } = await supabase
@@ -111,7 +115,6 @@ async function getPeriodSessions(period: Date, uuid: string) {
   if (data) return data as sessionToRecover[]
   else return
 }
-
 
 function generateDataOfChart(period: Period, matrizDatos: unknown) {
   const dataToChart: dataChart[] = []
@@ -279,6 +282,9 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
     }
 
     for (const particularSession of sessionsRecovered) {
+      //Este particularSession es una y cada una de las sesiones que recuperó la función de arriba y para acceder a la fecha lo podes hacer como particularSession.fecha
+      console.log(particularSession)
+
       studyTimeAcum += particularSession.tiempoEstudio
       objectiveCount += parseInt(
         particularSession.cantidadObjetivos as unknown as string

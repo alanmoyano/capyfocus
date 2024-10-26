@@ -232,7 +232,7 @@ async function gatherObjectivesOfEvent(eventId: number) {
     const objetivos = await Promise.all(objectivePromises)
     console.log(objetivos)
 
-    return objetivos.filter(obj => obj !== undefined)
+    return objetivos.filter(obj => obj !== null)
     // for (const row of data as RowToRecover[]) {
     //   recoverObjectiveFromId(row.idObjetivoFavorito)
     //     .then(data => {
