@@ -83,50 +83,6 @@ const chartDataMes = [
   },
 ]
 
-const chartDataSemana = [
-  {
-    day: 'Lunes',
-    cumplidos: 186,
-    pendientes: 80,
-    date: new Date('2024/10/17'),
-  },
-  {
-    day: 'Martes',
-    cumplidos: 305,
-    pendientes: 200,
-    date: new Date('2024/10/18'),
-  },
-  {
-    day: 'Miércoles',
-    cumplidos: 237,
-    pendientes: 120,
-    date: new Date('2024/10/19'),
-  },
-  {
-    day: 'Jueves',
-    cumplidos: 73,
-    pendientes: 190,
-    date: new Date('2024/10/20'),
-  },
-  {
-    day: 'Viernes',
-    cumplidos: 209,
-    pendientes: 130,
-    date: new Date('2024/10/21'),
-  },
-  {
-    day: 'Sábado',
-    cumplidos: 214,
-    pendientes: 140,
-    date: new Date('2024/10/22'),
-  },
-  {
-    day: 'Domingo',
-    cumplidos: 204,
-    pendientes: 40,
-    date: new Date('2024/10/23'),
-  },
-]
 
 const chartConfig = {
   cumplidos: {

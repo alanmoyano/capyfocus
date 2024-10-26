@@ -494,48 +494,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
           <div className='space-y-6 md:w-1/2'>
             <ChartGrafico periodo={period} chartData={chartData} />
 
-            {/*             <Card className='overflow-hidden rounded-lg shadow-md'>
-              <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-2'>
-                <CardTitle className='text-lg font-bold text-gray-900'>
-                  Registro de objetivos
-                </CardTitle>
-              </CardHeader>
-              <CardContent className='p-3'>
-                <ChartContainer config={chartConfig}>
-                  <ResponsiveContainer width='100%' height={250}>
-                    <BarChart accessibilityLayer data={chartDataMeses}>
-                      <CartesianGrid vertical={false} />
-                      <XAxis
-                        dataKey='month'
-                        tickLine={false}
-                        tickMargin={10}
-                        axisLine={false}
-                        tickFormatter={(value: string) => value.slice(0, 3)}
-                      />
-                      <ChartTooltip
-                        cursor={false}
-                        content={
-                          <ChartTooltipContent
-                            formatType='integer'
-                            indicator='line'
-                          />
-                        }
-                      />
-                      <Bar
-                        dataKey='cumplidos'
-                        fill='var(--color-cumplidos)'
-                        radius={4}
-                      />
-                      <Bar
-                        dataKey='pendientes '
-                        fill='var(--color-pendientes )'
-                        radius={4}
-                      />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-              </CardContent>
-            </Card> */}
+            
             {/* Calendario */}
             <Card className='overflow-hidden rounded-lg shadow-sm'>
               <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-3'>

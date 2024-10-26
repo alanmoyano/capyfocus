@@ -32,8 +32,8 @@ import { useSession } from '../contexts/SessionContext'
 import { useEvents } from '../contexts/EventsContext'
 import { Event } from './Eventos'
 import ChartEventos from './ChartEventos'
+import { ConstructionIcon } from 'lucide-react'
 //TODO: Grafico segun el periodo de tiempo seleccionado
-
 
 type Motivation =
   | {
@@ -51,7 +51,6 @@ type StudyTechnique =
       id: 2
       name: 'CapyMetro'
     }
-
 
 type Music =
   | { id: 0; name: 'Sin música' }
@@ -97,7 +96,7 @@ type RowToRecover = {
 }
 
 type chartData = {
-  nombreObjetivo: string
+  nombreObjetivo: string,
   horas: number
 }
 
@@ -123,7 +122,6 @@ async function getEventOfUser(period: Date, uuid: string) {
   if (data) return data as sessionToRecover[]
   else return
 }
-
 
 async function getEventIdFromName(eventName: string, uuid: string) {
   const { data, error } = await supabase
@@ -192,8 +190,6 @@ async function gatherObjectivesOfEvent(eventId: number) {
 }
 
 export default function EstadisticasEvento({ name }: { name: string }) {
-
-
   function getRachaPorPeriodo(fechasSesiones: string[]) {
     let rachaActual = 0
     let ultimaFechaRacha: Date
@@ -349,6 +345,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
         .then(data => {
           console.log(data)
           setEventObjectives(data as ObjectiveToRecover[])
+          loadChartData(data as ObjectiveToRecover[])
         })
         .catch((error: unknown) => {
           console.log(
@@ -357,32 +354,56 @@ export default function EstadisticasEvento({ name }: { name: string }) {
           )
         })
       gatherSessionsOfEventOfUser(session.user.id, name)
-        .then(data => setStatisticsValues(data, evento))
+        .then(data => {setStatisticsValues(data, evento)
+          
+        })
         .catch((error: unknown) => {
           console.log(error)
         })
-    }
+      }
+      
   }, [name])
 
   //Funciones para la chart
-
   const [chartData, setChartData] = useState<chartData[]>([])
 
   //Tenia sentido cuando lo hice, ahora que lo veo de otra forma ya no
-  function generateDataOfChart(){
+  function generateDataOfChart(data: ObjectiveToRecover[]){
     const dataToChart: chartData[] = []
-    for (const objetivo of eventObjectives) {
+    for (const objetivo of data) {
       dataToChart.push({
         nombreObjetivo: objetivo.descripcion,
         horas: objetivo.horasAcumuladas,
       })
-      return dataToChart
     }
+    console.log('Datos: ',dataToChart)
+    return dataToChart
   }
-  
-  useEffect(() => {
-    setChartData(generateDataOfChart())
-  },)
+
+
+  function loadChartData(data: ObjectiveToRecover[]) {
+    const generatedData = generateDataOfChart(data)
+    console.log('Datos a cargar', generatedData)
+    setChartData(generatedData)
+  }
+
+
+  //setChartData(generateDataOfChart())
+
+  //obtener la fecha mas temprana de los objetivos
+  function getEarliestDate(objectives: ObjectiveToRecover[]): Date {
+    if (objectives.length === 0) return new Date()
+    // Convierte las fechas de `created_at` y encuentra la menor
+    const earliestObjective = objectives.reduce((earliest, current) => {
+      const currentDate = new Date(current.created_at)
+      const earliestDate = new Date(earliest.created_at)
+      return currentDate < earliestDate ? current : earliest
+    })
+
+    return new Date(earliestObjective.created_at)
+  }
+  const earliestDate = getEarliestDate(eventObjectives)
+
 
   return (
     <>
@@ -443,7 +464,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
 
           {/* chart  */}
           <div className='space-y-6 md:w-1/2'>
-              <ChartEventos chartData={chartData} />
+            <ChartEventos chartData={chartData} minimaFecha={earliestDate}/>
             {/* Calendario */}
             <Card className='overflow-hidden rounded-lg shadow-sm'>
               <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-3'>
