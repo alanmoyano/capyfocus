@@ -112,6 +112,7 @@ async function getPeriodSessions(period: Date, uuid: string) {
   else return
 }
 
+
 function generateDataOfChart(period: Period, matrizDatos: unknown) {
   const dataToChart: dataChart[] = []
   const diasSemana = [

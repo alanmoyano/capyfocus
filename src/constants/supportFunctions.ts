@@ -25,15 +25,17 @@ function dateToTimetz(date: Date | null): string {
   // funcion que es necesaria para guardar horas dentro de la bd, ya que el tiempo que pide es Timetz
   // Obtiene la parte de la hora y la zona horaria
   const options: Intl.DateTimeFormatOptions = {
-    timeZone: 'UTC', // Cambia esto a la zona horaria que necesites
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-    timeZoneName: 'short',
+    timeZone: 'America/Argentina/Buenos_Aires', // Cambia esto a la zona horaria que necesites
+    hour: '2-digit', // Formato de hora de dos dígitos
+    minute: '2-digit', // Formato de minutos de dos dígitos
+    second: '2-digit', // Formato de segundos de dos dígitos
+    hour12: false, //
   }
-  //@ts-expect-error anda, no te preocupes
-  return date.toLocaleString('en-US', options)
+ //@ts-expect-error anda, no te preocupes
+  return date.toLocaleString('es-AR', options) 
 }
+// Ejemplo de uso
+
 
 const formatDateSlash = (date: Date) => {
   // Función que nos permite pasar de un objeto tipo date a uno de tipo string en formato YYYY/MM/DD

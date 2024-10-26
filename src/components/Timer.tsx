@@ -54,6 +54,12 @@ export default function Timer() {
     finalizeTimers,
   } = useTimer()
 
+  const hoyNormal = new Date()
+  const hoyRaro = new  Date()
+  console.log('Dia normal', hoyNormal)
+  console.log('Dia en formato', dateToTimetz(hoyRaro))
+
+
   const [tiempoObjAcumulado, setTiempoObjAcumulado] = useState(0)
   const [objCumplidos, setObjCumplidos] = useState(0)
 
@@ -107,7 +113,7 @@ export default function Timer() {
           ),
           eventoSeleccionado: selectedEvent ? selectedEvent.id : null,
         }
-
+        
         const { data, error } = await supabase
           .from('SesionesDeEstudio')
           .insert([
