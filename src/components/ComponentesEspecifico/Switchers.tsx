@@ -1,5 +1,14 @@
 import { useState } from 'react'
 import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select'
+import { supabase } from '../supabase/client'
+import { useSession } from '../contexts/SessionContext'
 
 //TODO: Cambiar los colores de los switchers en modo oscuro
 
@@ -8,6 +17,7 @@ export default function Switchers() {
   const [isPositive, setIsPositive] = useState(true)
   const [isDark, setIsDark] = useState(true)
   const [isNotificaction, setIsNotificaction] = useState(true)
+  const { session } = useSession()
 
   const handleToggle = () => {
     setIsPositive(!isPositive)
@@ -17,6 +27,17 @@ export default function Switchers() {
   }
   const handleToggleNotification = () => {
     setIsNotificaction(!isNotificaction)
+  }
+
+  function handleSelectMotivation() {
+    // TODO: acá iría lo de la motivación, en la base creé el campo motivacionFavorita
+    // sería algo así:
+    // supabase
+    //   .from('Usuarios')
+    //   .update({ motivacionFavorita: '1' }) // 1 es positiva, 2 es agresiva
+    //   .eq('id', session?.user.id)
+
+    console.log('Seleccionaste una motivación')
   }
 
   return (
@@ -62,10 +83,19 @@ export default function Switchers() {
 
       {/* Motivación */}
       <div className='mt-2 flex items-center justify-between'>
-        <Label className='text-left'>
-          Motivación por defecto: {isPositive ? 'Agresiva' : 'Positiva'}
-        </Label>
-        <div
+        <Label className='text-left'>Motivación favorita:</Label>
+
+        <Select defaultValue='positiva' onValueChange={handleSelectMotivation}>
+          <SelectTrigger className='max-w-32'>
+            <SelectValue placeholder='Selecciona tu motivación favorita' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='positiva'>Positiva</SelectItem>
+            <SelectItem value='agresiva'>Agresiva</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* <div
           onClick={handleToggle}
           className={`${
             isPositive ? 'bg-[#e78282]' : 'bg-[#433323]'
@@ -76,7 +106,7 @@ export default function Switchers() {
               isPositive ? 'translate-x-5' : 'translate-x-1'
             } inline-block h-5 w-5 transform rounded-full bg-[#f0ece9] transition dark:bg-[#110d09]`}
           />
-        </div>
+        </div> */}
       </div>
     </div>
   )
