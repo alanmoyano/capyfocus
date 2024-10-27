@@ -377,7 +377,8 @@ export default function EstadisticasEvento({ name }: { name: string }) {
   }
 
   const [sessionInformacion, setSessionInfo] = useState<sessionInfo[]>([])
-  const [sessionInfoAcumuladas, setSessionInfoAcumuladas] = useState<sessionInfo[]>()
+  const [sessionInfoAcumuladas, setSessionInfoAcumuladas] =
+    useState<sessionInfo[]>()
   const [eventoSeleccionado, setEventoSeleccionado] = useState<Event>()
   const [eventId, setEventId] = useState(0)
   const { objetivos, tiempo } = useObjetivos()
@@ -407,7 +408,6 @@ export default function EstadisticasEvento({ name }: { name: string }) {
           loadChartData(data as ObjectiveToRecover[])
           //Esto tengo que mover a otro lado
           setSessionInfoAcumuladas(accumulateSessions(sessionInformacion))
-
         })
         .catch((error: unknown) => {
           console.log(
@@ -465,7 +465,6 @@ export default function EstadisticasEvento({ name }: { name: string }) {
 
   //Para ver info del calendario:
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
-
 
   return (
     <>
@@ -567,7 +566,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                             Sesiones de estudio
                           </h2>
                           <div>
-                            {sessionInfoAcumuladas
+                            {/* {sessionInfoAcumuladas
                               .filter(session => {
                                 // Filtramos las sesiones por la fecha seleccionada
                                 return (
@@ -589,11 +588,11 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                                     {session.objetivosCumplidos}
                                   </p>
                                   <p>
-                                    Tiempo de Estudio: {formatTime(session.tiempoEstudio)}{' '}
-                                    
+                                    Tiempo de Estudio:{' '}
+                                    {formatTime(session.tiempoEstudio)}{' '}
                                   </p>
                                 </div>
-                              ))}
+                              ))} */}
                           </div>
                         </li>
                       ) : null}

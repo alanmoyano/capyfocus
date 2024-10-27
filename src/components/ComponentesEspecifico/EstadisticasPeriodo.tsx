@@ -179,8 +179,8 @@ function generateDataOfChart(period: Period, matrizDatos: unknown) {
         const fecha = new Date(fila[0])
         if (banderaControl) {
           banderaControl = false
-          objetivosCumplidos = fila[1] as number
-          pendientes = fila[2] as number
+          objetivosCumplidos += fila[1] as number
+          pendientes += fila[2] as number
         } else {
           const dateToSave = new Date(fila[0])
           const dataToPutInChart: ChartData = {
@@ -195,6 +195,32 @@ function generateDataOfChart(period: Period, matrizDatos: unknown) {
         }
       }
       break
+    }
+    case 'semestre': {
+      let contadorControl = 0
+      let objetivosCumplidos = 0
+      let objetivosPendientes = 0
+
+      //@ts-expect-error no te preocupes ts, anda perfecto
+      for (const fila of matrizDatos) {
+        const fecha = new Date(fila[0])
+        if (contadorControl < 8) {
+          contadorControl++
+          objetivosCumplidos += fila[1] as number
+          objetivosPendientes += fila[2] as number
+        } else {
+          const dateToSave = new Date(fila[0])
+          const dataToPutInChart: ChartData = {
+            month: Meses[fecha.getMonth()],
+            cumplidos: objetivosCumplidos + (fila[1] as number),
+            pendientes: objetivosPendientes + (fila[2] as number),
+            date: dateToSave,
+          }
+
+          dataToChart.push(dataToPutInChart)
+          contadorControl = 0
+        }
+      }
     }
   }
   console.log('Datos:', dataToChart)
@@ -254,13 +280,14 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
   }
 
   const captureScreenshot = async (period: Period) => {
-      const canvas = await html2canvas(cardRefs[period].current as unknown as HTMLElement)
-      const image = canvas.toDataURL('image/png')
-      const link = document.createElement('a')
-      link.href = image
-      link.download = `capyestadisticas_${period}.png`
-      link.click()
-    
+    const canvas = await html2canvas(
+      cardRefs[period].current as unknown as HTMLElement
+    )
+    const image = canvas.toDataURL('image/png')
+    const link = document.createElement('a')
+    link.href = image
+    link.download = `capyestadisticas_${period}.png`
+    link.click()
   }
 
   function getRachaPorPeriodo(fechasSesiones: string[]) {

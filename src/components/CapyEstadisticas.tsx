@@ -160,7 +160,6 @@ export default function CapyEstadisticas() {
     }
   }
 
-
   const handleSelect = (value: string) => {
     if (periodos.includes(value)) {
       setSelectedPeriod(value)
