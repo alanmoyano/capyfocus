@@ -36,7 +36,6 @@ import { useProfilePic } from './contexts/ProfilePicContext'
 import { useEvents } from './contexts/EventsContext'
 import { useObjetivos } from './contexts/ObjetivosContext'
 import { Pencil } from 'lucide-react'
-//TODO: si no tiene una sesion abierta no se deberia poder personalizar, ni cambiar perfil
 
 const formSchema = z.object({
   username: z
@@ -63,7 +62,6 @@ export default function Usuario() {
     setLocation('/login')
   }
 
-  // que los default sean los anteriores, ver cuando este la DB
   const [currentUsername, setCurrentUsername] = useState(
     () =>
       (user?.user_metadata.name as string | undefined) ?? 'Invitado de Chicho'
