@@ -179,8 +179,8 @@ function generateDataOfChart(period: Period, matrizDatos: unknown) {
         const fecha = new Date(fila[0])
         if (banderaControl) {
           banderaControl = false
-          objetivosCumplidos += fila[1] as number
-          pendientes += fila[2] as number
+          objetivosCumplidos = fila[1] as number
+          pendientes = fila[2] as number
         } else {
           const dateToSave = new Date(fila[0])
           const dataToPutInChart: ChartData = {
@@ -194,6 +194,18 @@ function generateDataOfChart(period: Period, matrizDatos: unknown) {
           banderaControl = true
         }
       }
+      if (!banderaControl) {
+        const dateToSave = new Date()
+        const dataToPutInChart: ChartData = {
+          month: Meses[dateToSave.getMonth()],
+          cumplidos: objetivosCumplidos,
+          pendientes: pendientes,
+          date: dateToSave,
+        }
+
+        dataToChart.push(dataToPutInChart)
+      }
+
       break
     }
     case 'semestre': {
@@ -204,7 +216,7 @@ function generateDataOfChart(period: Period, matrizDatos: unknown) {
       //@ts-expect-error no te preocupes ts, anda perfecto
       for (const fila of matrizDatos) {
         const fecha = new Date(fila[0])
-        if (contadorControl < 8) {
+        if (contadorControl < 7) {
           contadorControl++
           objetivosCumplidos += fila[1] as number
           objetivosPendientes += fila[2] as number
@@ -219,11 +231,23 @@ function generateDataOfChart(period: Period, matrizDatos: unknown) {
 
           dataToChart.push(dataToPutInChart)
           contadorControl = 0
+          objetivosCumplidos = 0
+          objetivosPendientes = 0
         }
+      }
+      if (contadorControl < 7) {
+        const dateToSave = new Date()
+        const dataToPutInChart: ChartData = {
+          month: Meses[dateToSave.getMonth()],
+          cumplidos: objetivosCumplidos,
+          pendientes: objetivosPendientes,
+          date: dateToSave,
+        }
+
+        dataToChart.push(dataToPutInChart)
       }
     }
   }
-  console.log('Datos:', dataToChart)
   return dataToChart
 }
 
@@ -261,7 +285,7 @@ function getDistanceOfPeriod(period: Period) {
       numToReturn += 60
       break
     case 'semestre':
-      numToReturn += 180
+      numToReturn += 186
       break
     default:
       break
@@ -498,6 +522,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
       getPeriodSessions(dateToRecover, session.user.id)
         .then(data => {
           if (data) {
+            console.log(data)
             setStatisticsValues(data, period)
           }
         })
