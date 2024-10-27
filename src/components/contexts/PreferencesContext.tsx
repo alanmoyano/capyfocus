@@ -1,6 +1,7 @@
 import { createContext, useContext, useState } from 'react'
 import type { ReactNode, Dispatch, SetStateAction } from 'react'
 import { Motivation } from '../ComponentesEspecifico/Switchers'
+import { useTheme } from './ThemeContext'
 
 type Preferences = {
   motivationPreference: Motivation
@@ -33,6 +34,8 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     }
   )
 
+  const { setTheme } = useTheme()
+
   return (
     <PreferencesContext.Provider
       value={{
@@ -49,6 +52,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         setDarkModePreference: newDarkMode => {
           localStorage.setItem('darkModePreference', String(newDarkMode))
           setDarkModePreference(newDarkMode)
+          setTheme(newDarkMode ? 'dark' : 'light')
         },
         setNotificationPreference: newNotification => {
           localStorage.setItem(
