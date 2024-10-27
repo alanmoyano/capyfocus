@@ -22,7 +22,8 @@ import {
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
 import ChartGrafico from './ChartGrafico'
-import { startOfWeek, addDays, subMonths } from 'date-fns'
+import { startOfWeek, subMonths } from 'date-fns'
+import { es } from 'date-fns/locale'
 import html2canvas from 'html2canvas'
 import { Button } from '@components/ui/button'
 import { ImageDown } from 'lucide-react'
@@ -227,14 +228,13 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
   }
 
   const captureScreenshot = async (period: Period) => {
-    if (cardRefs[period].current) {
-      const canvas = await html2canvas(cardRefs[period].current as HTMLElement)
+      const canvas = await html2canvas(cardRefs[period].current as unknown as HTMLElement)
       const image = canvas.toDataURL('image/png')
       const link = document.createElement('a')
       link.href = image
       link.download = `capyestadisticas_${period}.png`
       link.click()
-    }
+    
   }
 
   function getRachaPorPeriodo(fechasSesiones: string[]) {
@@ -416,8 +416,8 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
     switch (period) {
       case 'semanal':
         return {
-          fromDate: startOfWeek(new Date()),
-          toDate: addDays(startOfWeek(new Date()), 6),
+          fromDate: startOfWeek(new Date(), { weekStartsOn: 1 }),
+          toDate: new Date(),
         }
       case 'mensual':
         return {
@@ -538,6 +538,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
                     showOutsideDays={period !== 'semanal'} // Ocultar días fuera del rango
                     {...dateRange} //Aplica solo si es semanal
                     mode='single'
+                    locale={es}
                     className='rounded-md border text-sm shadow-sm'
                     modifiers={{
                       //@ts-expect-error shhh ts, esto funciona as expected

@@ -446,7 +446,7 @@ export default function CapyEstadisticas() {
                         <div className='flex h-full w-full items-center justify-center'>
                           <p className='rounded-lg bg-accent p-4 text-center'>
                             Oh, en esta sesion no has completado objetivos,
-                            entonces no podrás ver las CapyEstadísticas.
+                            entonces no podremos calcular las CapyEstadísticas.
                           </p>
                         </div>
                       )}

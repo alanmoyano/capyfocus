@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 import Reproductor from './Reproductor'
 import { Calendar } from '@components/ui/calendar'
+import { es } from 'date-fns/locale'
 import { formatTime } from '@/lib/utils'
 
 import { useObjetivos } from '@contexts/ObjetivosContext'
@@ -33,7 +34,7 @@ import { useEvents } from '../contexts/EventsContext'
 import { Event } from './Eventos'
 import ChartEventos from './ChartEventos'
 import { ConstructionIcon } from 'lucide-react'
-//TODO: Grafico segun el periodo de tiempo seleccionado
+//TODO: información calendario
 
 type Motivation =
   | {
@@ -111,7 +112,7 @@ type ObjectiveToRecover = {
 
 const ObjectiveStates = ['Pendiente', 'Cumplido']
 
-async function getEventOfUser(period: Date, uuid: string) {
+/* async function getEventOfUser(period: Date, uuid: string) {
   const periodFormatted = formatDateDash(period)
   const { data } = await supabase
     .from('SesionesDeEstudio')
@@ -121,8 +122,8 @@ async function getEventOfUser(period: Date, uuid: string) {
 
   if (data) return data as sessionToRecover[]
   else return
-}
-
+} */
+//Buscamos el evento de la BD
 async function getEventIdFromName(eventName: string, uuid: string) {
   const { data, error } = await supabase
     .from('Eventos')
@@ -133,7 +134,7 @@ async function getEventIdFromName(eventName: string, uuid: string) {
   if (data) return data[0].idEvento as number
   else console.log(error)
 }
-
+//Buscamos las sesiones segun el evento
 async function gatherSessionsOfEventOfUser(uuid: string, eventName: string) {
   const eventId = await getEventIdFromName(eventName, uuid)
 
@@ -156,6 +157,7 @@ async function gatherSessionsOfEventOfUser(uuid: string, eventName: string) {
   }
 }
 
+//Buscamos los objetivos favoritos del evento
 async function gatherObjectivesOfEvent(eventId: number) {
   const { data, error } = await supabase
     .from('ObjetivosFavoritosXEventos')
@@ -190,10 +192,10 @@ async function gatherObjectivesOfEvent(eventId: number) {
 }
 
 export default function EstadisticasEvento({ name }: { name: string }) {
+  //Para obtener la racha
   function getRachaPorPeriodo(fechasSesiones: string[]) {
     let rachaActual = 0
     let ultimaFechaRacha: Date
-
     for (const fechaActual of fechasSesiones) {
       const fechaAComparar = convertirAFecha(fechaActual)
       //@ts-expect-error No va a ser referenciado antes de ser asignado
@@ -315,9 +317,67 @@ export default function EstadisticasEvento({ name }: { name: string }) {
           StudyTechniqueList
         )
       )
+      //Para poder mostrar la info en el calendario
+      const sesionesResumidas = data.map(particularSession => ({
+        fecha: particularSession.fecha.toString(),
+        objetivosTotales: parseInt(
+          particularSession.cantidadObjetivos as unknown as string
+        ),
+        objetivosCumplidos: parseInt(
+          particularSession.cantidadObjetivosCumplidos as unknown as string
+        ),
+        tiempoEstudio: particularSession.tiempoEstudio,
+      }))
+      // Guardamos sesionesResumidas en el estado para mostrarlo
+      setSessionInfo(sesionesResumidas)
     }
   }
 
+  const accumulateSessions = (sessionInfo: sessionInfo[]) => {
+    const acumulados: Record<
+      string,
+      {
+        objetivosTotales: number
+        objetivosCumplidos: number
+        tiempoEstudio: number
+      }
+    > = {}
+
+    for (const session of sessionInfo) {
+      const { fecha, objetivosTotales, objetivosCumplidos, tiempoEstudio } =
+        session
+
+      // Si la fecha ya está en el objeto acumulados, sumamos los valores
+      if (acumulados[fecha]) {
+        acumulados[fecha].objetivosTotales += objetivosTotales
+        acumulados[fecha].objetivosCumplidos += objetivosCumplidos
+        acumulados[fecha].tiempoEstudio += tiempoEstudio // Asegúrate de que tiempoEstudio esté definido en session
+      } else {
+        // Si la fecha no está, la agregamos
+        acumulados[fecha] = {
+          objetivosTotales,
+          objetivosCumplidos,
+          tiempoEstudio, // Asegúrate de que tiempoEstudio esté definido en session
+        }
+      }
+    }
+
+    // Convertimos el objeto acumulados de vuelta a un arreglo
+    return Object.entries(acumulados).map(([fecha, datos]) => ({
+      fecha,
+      ...datos,
+    }))
+  }
+
+  type sessionInfo = {
+    fecha: string
+    objetivosTotales: number
+    objetivosCumplidos: number
+    tiempoEstudio: number
+  }
+
+  const [sessionInformacion, setSessionInfo] = useState<sessionInfo[]>([])
+  const [sessionInfoAcumuladas, setSessionInfoAcumuladas] = useState<sessionInfo[]>()
   const [eventoSeleccionado, setEventoSeleccionado] = useState<Event>()
   const [eventId, setEventId] = useState(0)
   const { objetivos, tiempo } = useObjetivos()
@@ -336,7 +396,6 @@ export default function EstadisticasEvento({ name }: { name: string }) {
   const [eventObjectives, setEventObjectives] = useState<ObjectiveToRecover[]>(
     []
   )
-
   useEffect(() => {
     const evento = events.find(e => e.title === name)
     setEventoSeleccionado(evento)
@@ -346,6 +405,9 @@ export default function EstadisticasEvento({ name }: { name: string }) {
           console.log(data)
           setEventObjectives(data as ObjectiveToRecover[])
           loadChartData(data as ObjectiveToRecover[])
+          //Esto tengo que mover a otro lado
+          setSessionInfoAcumuladas(accumulateSessions(sessionInformacion))
+
         })
         .catch((error: unknown) => {
           console.log(
@@ -400,6 +462,10 @@ export default function EstadisticasEvento({ name }: { name: string }) {
     return new Date(earliestObjective.created_at)
   }
   const earliestDate = getEarliestDate(eventObjectives)
+
+  //Para ver info del calendario:
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
+
 
   return (
     <>
@@ -472,9 +538,13 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                 <div className='flex flex-col md:flex-row'>
                   <Calendar
                     showOutsideDays={false}
+                    locale={es}
                     fromDate={undefined}
                     toDate={new Date()}
                     mode='single'
+                    onSelect={date => {
+                      setSelectedDate(date)
+                    }}
                     className='rounded-md border text-sm shadow-sm'
                     modifiers={{
                       //@ts-expect-error shhh ts, esto funciona as expected
@@ -488,10 +558,46 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                   />{' '}
                   <div className='pl-4 md:w-1/2'>
                     <h1 className='mb-2 text-lg font-semibold'>
-                      Horas dedicadas
+                      Información del día: {selectedDate?.toLocaleDateString()}
                     </h1>
-                    {/* Lista de eventos */}
-                    <p>11/07 2hs</p>
+                    <ul className='space-y-2'>
+                      {selectedDate ? (
+                        <li>
+                          <h2 className='text-lg font-semibold'>
+                            Sesiones de estudio
+                          </h2>
+                          <div>
+                            {sessionInfoAcumuladas
+                              .filter(session => {
+                                // Filtramos las sesiones por la fecha seleccionada
+                                return (
+                                  new Date(
+                                    session.fecha
+                                  ).toLocaleDateString() ===
+                                  selectedDate.toLocaleDateString()
+                                )
+                              })
+                              .map((session, index) => (
+                                <div key={index + 1}>
+                                  <p>Fecha: {session.fecha}</p>
+                                  <p>
+                                    Objetivos Totales:{' '}
+                                    {session.objetivosTotales}
+                                  </p>
+                                  <p>
+                                    Objetivos Cumplidos:{' '}
+                                    {session.objetivosCumplidos}
+                                  </p>
+                                  <p>
+                                    Tiempo de Estudio: {formatTime(session.tiempoEstudio)}{' '}
+                                    
+                                  </p>
+                                </div>
+                              ))}
+                          </div>
+                        </li>
+                      ) : null}
+                    </ul>
                   </div>
                 </div>
               </CardContent>
