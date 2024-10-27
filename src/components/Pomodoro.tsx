@@ -36,6 +36,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@radix-ui/react-tooltip'
+import { toast } from 'sonner'
 
 //BUG: No anda bien el contador de tiempo, no cuenta el tiempo de estudio y descanso.
 type Mode = 'Estudiando' | 'Descansando'
@@ -633,7 +634,10 @@ export default function Pomodoro() {
                           className='flex'
                           variant='ghost'
                           type='button'
-                          onClick={handleSaltar}
+                          // onClick={handleSaltar}
+                          onClick={() =>
+                            toast.warning('Desabilitado por el momento...')
+                          }
                         >
                           <SkipForward />
                         </Button>
