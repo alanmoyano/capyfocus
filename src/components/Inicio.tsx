@@ -77,6 +77,7 @@ import { Helmet } from 'react-helmet'
 import Reproductor from './ComponentesEspecifico/Reproductor'
 import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
 import { useEvents } from './contexts/EventsContext'
+import { usePreferences } from './contexts/PreferencesContext'
 
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
@@ -216,6 +217,8 @@ export default function Inicio() {
   } = useSesion()
 
   const [motivaciones, setMotivaciones] = useState<Motivacion[]>([])
+
+  const { motivationPreference } = usePreferences()
 
   const recoverObjectives = () => {
     if (session && !objectivesRecovered) {
@@ -595,7 +598,12 @@ export default function Inicio() {
           </div>
           <div className='mt-6 flex items-center justify-center'>
             {/* Motivación */}
-            <Select onValueChange={value => handleSelect(value)}>
+            <Select
+              onValueChange={value => handleSelect(value)}
+              defaultValue={
+                motivationPreference === '1' ? 'Positiva' : 'Pasivo Agresiva'
+              }
+            >
               <SelectTrigger className='ml-4 w-[280px]'>
                 <SelectValue placeholder='Selecciona una motivación' />
               </SelectTrigger>

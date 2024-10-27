@@ -118,7 +118,6 @@ const chartConfig1: ChartConfig = {
 }
 
 export default function CapyEstadisticas() {
-  const queryParams = useSearch()
   const { period } = useSearchParams()
   const [selectedPeriod, setSelectedPeriod] = useState(period ?? '')
   const [selectedEvent, setSelectedEvent] = useState('')
@@ -161,7 +160,6 @@ export default function CapyEstadisticas() {
     }
   }
 
-  console.log(queryParams)
 
   const handleSelect = (value: string) => {
     if (periodos.includes(value)) {

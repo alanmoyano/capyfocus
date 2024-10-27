@@ -5,13 +5,20 @@ import {
   ChartLegendContent,
   ChartTooltipContent,
 } from '@/components/ui/chart'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import {
   Tooltip as ChartTooltip,
   Bar,
   BarChart,
   CartesianGrid,
   XAxis,
+  LegendProps,
 } from 'recharts'
 
 const chartConfig = {
@@ -65,7 +72,12 @@ export default function ChartGrafico({
       <Card className='overflow-hidden rounded-lg shadow-md'>
         <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-2'>
           <CardTitle className='text-lg font-bold text-gray-900'>
-            Registro de objetivos del mes de {Meses[new Date().getMonth()]}{' '}
+            {periodo === 'bimestral' &&
+              `Registro de objetivos del bimestre ${Meses[new Date().getMonth() - 1]} - ${Meses[new Date().getMonth()]} `}
+            {(periodo === 'semanal' || periodo === 'mensual') &&
+              `Registro de objetivos del mes de ${Meses[new Date().getMonth()]}`}
+            {periodo === 'semestre' &&
+              `Registro de objetivos del mes de ${Meses[new Date().getMonth() - 6]} - ${Meses[new Date().getMonth()]}`}
           </CardTitle>
         </CardHeader>
         <CardContent className='p-3'>
@@ -100,6 +112,9 @@ export default function ChartGrafico({
                       // Si es mensual, muestra el día y el mes
                       const monthDate = chartData[index].date
                       return `${monthDate.getDate()}`
+                    } else if (periodo === 'bimestral') {
+                      const monthDate = chartData[index].date
+                      return `${index + 1}`
                     } else {
                       // Si es otro periodo, muestra un valor genérico
                       return value
@@ -131,6 +146,14 @@ export default function ChartGrafico({
             )}
           </ChartContainer>
         </CardContent>
+        <CardFooter className='flex-col items-start gap-2 text-sm'>
+          <div className='flex gap-2 font-medium leading-none'>
+            Los datos presentados son calculados cada 2 días
+          </div>
+          {/* <div className='leading-none text-muted-foreground'>
+            ssdfsdffdssdsdf
+          </div> */}
+        </CardFooter>
       </Card>
     </div>
   )
