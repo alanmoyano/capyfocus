@@ -169,6 +169,32 @@ function generateDataOfChart(period: Period, matrizDatos: unknown) {
         dataToChart.push(dataToPutInChart)
       }
       break
+    case 'bimestral': {
+      let banderaControl = true
+      let objetivosCumplidos = 0
+      let pendientes = 0
+      //@ts-expect-error no te preocupes ts, anda perfecto
+      for (const fila of matrizDatos) {
+        const fecha = new Date(fila[0])
+        if (banderaControl) {
+          banderaControl = false
+          objetivosCumplidos = fila[1] as number
+          pendientes = fila[2] as number
+        } else {
+          const dateToSave = new Date(fila[0])
+          const dataToPutInChart: ChartData = {
+            month: Meses[fecha.getMonth()],
+            cumplidos: objetivosCumplidos + (fila[1] as number),
+            pendientes: pendientes + (fila[2] as number),
+            date: dateToSave,
+          }
+
+          dataToChart.push(dataToPutInChart)
+          banderaControl = true
+        }
+      }
+      break
+    }
   }
   console.log('Datos:', dataToChart)
   return dataToChart
