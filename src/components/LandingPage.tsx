@@ -108,7 +108,7 @@ export default function LandingPage() {
               <CarouselItem className='basis-full lg:basis-1/3'>
                 <div>
                   <img
-                    src='/FotosLanding/eventos2.webp'
+                    src='/FotosLanding/eventos3.png'
                     alt='Eventos'
                     className='mx-auto mb-6 h-44 w-[80%] rounded-lg object-cover'
                   />
@@ -140,7 +140,7 @@ export default function LandingPage() {
               <CarouselItem className='basis-full lg:basis-1/3'>
                 <div>
                   <img
-                    src='/FotosLanding/CapyInsignias.webp'
+                    src='/FotosLanding/CapyInsignias2.png'
                     alt='Insignia 1'
                     className='mx-auto mb-6 h-44 w-[80%] rounded-lg object-cover'
                   />
@@ -154,8 +154,8 @@ export default function LandingPage() {
                 </div>
               </CarouselItem>
             </CarouselContent>
-            <CarouselPrevious className='left-4' />
-            <CarouselNext className='right-4' />
+            <CarouselPrevious className='left-4 lg:hidden' />
+            <CarouselNext className='right-4 lg:hidden' />
           </Carousel>
         </section>
 
@@ -251,28 +251,28 @@ export default function LandingPage() {
 
             <Carousel opts={{ loop: true }}>
               <CarouselContent>
-                <CarouselItem className='basis-1/2 md:basis-1/4'>
+                <CarouselItem className='basis-1/2 sm:basis-1/3 md:basis-1/4'>
                   <img
                     src='/FotosLanding/ZTMNComiendoAlfajor.webp'
                     alt='Equipo comiendo alfajor'
-                    className='v h-56 w-56 rounded-lg border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
+                    className='h-56 w-56 rounded-lg border-4 border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
                   />
                 </CarouselItem>
-                <CarouselItem className='basis-1/2 md:basis-1/4'>
+                <CarouselItem className='basis-1/2 sm:basis-1/3 md:basis-1/4'>
                   <img
                     src='/FotosLanding/presentandoCapyfocus2.webp'
                     alt='Equipo presentando'
                     className='h-56 w-56 rounded-lg border-4 border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
                   />
                 </CarouselItem>
-                <CarouselItem className='basis-1/2 md:basis-1/4'>
+                <CarouselItem className='basis-1/2 sm:basis-1/3 md:basis-1/4'>
                   <img
                     src='/FotosLanding/amigos.webp'
                     alt='Equipo en una juntada'
                     className='h-56 w-56 rounded-lg border-4 border-accent/60 object-cover shadow-lg transition duration-300 hover:scale-105'
                   />
                 </CarouselItem>
-                <CarouselItem className='basis-1/2 md:basis-1/4'>
+                <CarouselItem className='basis-1/2 sm:basis-1/3 md:basis-1/4'>
                   <img
                     src='/FotosLanding/ZTMNSonriendo.webp'
                     alt='Equipo sonriendo'
@@ -280,8 +280,8 @@ export default function LandingPage() {
                   />
                 </CarouselItem>
               </CarouselContent>
-              <CarouselPrevious className='left-4' />
-              <CarouselNext className='right-4' />
+              <CarouselPrevious className='left-4 md:hidden' />
+              <CarouselNext className='right-4 md:hidden' />
             </Carousel>
           </div>
         </section>

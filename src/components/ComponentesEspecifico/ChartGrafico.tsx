@@ -1,126 +1,26 @@
 import {
   ChartConfig,
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltipContent,
 } from '@/components/ui/chart'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import {
   Tooltip as ChartTooltip,
   Bar,
   BarChart,
   CartesianGrid,
   XAxis,
-  ResponsiveContainer,
 } from 'recharts'
-import { useEffect, useState } from 'react'
-import { useCallback } from 'react'
-
-const chartDataMeses = [
-  {
-    month: 'Enero',
-    cumplidos: 186,
-    pendientes: 80,
-    date: new Date(2024, 0, 1),
-  },
-  {
-    month: 'Febrero',
-    cumplidos: 305,
-    pendientes: 200,
-    date: new Date(2024, 1, 1),
-  },
-  {
-    month: 'Marzo',
-    cumplidos: 237,
-    pendientes: 120,
-    date: new Date(2024, 2, 1),
-  },
-  {
-    month: 'Abril',
-    cumplidos: 73,
-    pendientes: 190,
-    date: new Date(2024, 3, 1),
-  },
-  {
-    month: 'Mayo',
-    cumplidos: 209,
-    pendientes: 130,
-    date: new Date(2024, 4, 1),
-  },
-  {
-    month: 'Junio',
-    cumplidos: 214,
-    pendientes: 140,
-    date: new Date(2024, 5, 1),
-  },
-]
-
-const chartDataMes = [
-  { month: 'Sem1', cumplidos: 186, pendientes: 80, date: new Date(2024, 5, 1) },
-  {
-    month: 'Sem2',
-    cumplidos: 305,
-    pendientes: 200,
-    date: new Date(2024, 5, 7),
-  },
-  {
-    month: 'Sem3',
-    cumplidos: 237,
-    pendientes: 120,
-    date: new Date(2024, 5, 14),
-  },
-  {
-    month: 'Sem4',
-    cumplidos: 73,
-    pendientes: 190,
-    date: new Date(2024, 5, 21),
-  },
-  {
-    month: 'Sem5',
-    cumplidos: 209,
-    pendientes: 130,
-    date: new Date(2024, 5, 28),
-  },
-]
-
-const chartDataSemana = [
-  { day: 'Lunes', cumplidos: 186, pendientes: 80, date: new Date(2024, 9, 14) },
-  {
-    day: 'Martes',
-    cumplidos: 305,
-    pendientes: 200,
-    date: new Date(2024, 9, 15),
-  },
-  {
-    day: 'Miércoles',
-    cumplidos: 237,
-    pendientes: 120,
-    date: new Date(2024, 9, 16),
-  },
-  {
-    day: 'Jueves',
-    cumplidos: 73,
-    pendientes: 190,
-    date: new Date(2024, 9, 17),
-  },
-  {
-    day: 'Viernes',
-    cumplidos: 209,
-    pendientes: 130,
-    date: new Date(2024, 9, 18),
-  },
-  {
-    day: 'Sábado',
-    cumplidos: 214,
-    pendientes: 140,
-    date: new Date(2024, 9, 19),
-  },
-  {
-    day: 'Domingo',
-    cumplidos: 204,
-    pendientes: 40,
-    date: new Date(2024, 9, 20),
-  },
-]
+import { useState, useEffect } from 'react'
+import { Loader } from 'lucide-react'
 
 const chartConfig = {
   cumplidos: {
@@ -144,86 +44,100 @@ type periodo =
 // Define el tipo para los datos del gráfico
 type ChartData =
   | { month: string; cumplidos: number; pendientes: number; date: Date }
+  | { sem: string; cumplidos: number; pendientes: number; date: Date }
   | { day: string; cumplidos: number; pendientes: number; date: Date }
 
-export default function ChartGrafico({ periodo }: { periodo: periodo }) {
-  const [datosGrafico, setDatosGrafico] = useState<ChartData[]>(chartDataMeses) //Esto es para los gráficos
+export default function ChartGrafico({
+  periodo,
+  chartData,
+}: {
+  periodo: periodo
+  chartData: ChartData[]
+}) {
+  const Meses = [
+    'Enero',
+    'Feberero',
+    'Marzo',
+    'Abril',
+    'Mayo',
+    'Junio',
+    'Julio',
+    'Agosto',
+    'Septiembre',
+    'Octubre',
+    'Noviembre',
+    'Diciembre',
+  ]
+  const [loading, setLoading] = useState(true) // Estado de carga
 
-  function getDateOfperiodo(periodo: periodo) {
-    const dateToReturn = new Date()
-    switch (periodo) {
-      case 'semanal':
-        dateToReturn.setDate(dateToReturn.getDate() - 7)
-        break
-      case 'mensual':
-        dateToReturn.setMonth(dateToReturn.getMonth() - 1)
-        break
-      case 'bimestral':
-        dateToReturn.setMonth(dateToReturn.getMonth() - 2)
-        break
-      case 'semestre':
-        dateToReturn.setMonth(dateToReturn.getMonth() - 6)
-        break
-      default:
-        break
-    }
-    return dateToReturn
-  }
-  // Obtener datos según el período seleccionado
-  const obtenerDatosPorperiodo = useCallback(
-    (periodo: periodo): ChartData[] => {
-      const startDate = getDateOfperiodo(periodo)
-      switch (periodo) {
-        case 'mensual':
-          return chartDataMeses.filter(data => data.date >= startDate)
-        case 'semanal':
-          return chartDataSemana.filter(data => data.date >= startDate)
-        case 'bimestral':
-        case 'sesion':
-        case 'evento':
-          return chartDataMes.filter(data => data.date >= startDate)
-        default:
-          return []
-      }
-    },
-    [] // No tiene dependencias, ya que es independiente del renderizado
-  )
   useEffect(() => {
-    try {
-      const datos = obtenerDatosPorperiodo(periodo)
-      setDatosGrafico(datos)
-    } catch (error) {
-      console.error('Error al obtener los datos del gráfico:', error)
-    }
-  }, [periodo, obtenerDatosPorperiodo])
+    // Simulamos un tiempo de carga. Reemplaza esto con la lógica real de carga.
+    const timer = setTimeout(() => {
+      setLoading(false)
+    }, 1000) // Ajusta el tiempo según sea necesario
 
+    return () => clearTimeout(timer)
+  }, [])
   return (
     <div>
       <Card className='overflow-hidden rounded-lg shadow-md'>
         <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-2'>
           <CardTitle className='text-lg font-bold text-gray-900'>
-            Registro de objetivos
+            {periodo === 'bimestral' &&
+              `Registro de objetivos del bimestre ${Meses[new Date().getMonth() - 1]} - ${Meses[new Date().getMonth()]} `}
+            {(periodo === 'semanal' || periodo === 'mensual') &&
+              `Registro de objetivos del mes de ${Meses[new Date().getMonth()]}`}
+            {periodo === 'semestre' &&
+              `Registro de objetivos del mes de ${Meses[new Date().getMonth() - 6]} - ${Meses[new Date().getMonth()]}`}
           </CardTitle>
         </CardHeader>
         <CardContent className='p-3'>
-          <ChartContainer config={chartConfig}>
-            {datosGrafico.length === 0 ? (
-              <div className='h-full w-full'>
-                <p className='flex items-center justify-center text-xl'>
-                  No hay datos disponibles para el período seleccionado
-                </p>
-              </div>
-            ) : (
-              <ResponsiveContainer width='100%' height={250}>
-                <BarChart accessibilityLayer data={datosGrafico}>
+          {loading ? ( // Muestra el icono de carga si está cargando
+            <div className='flex items-center justify-center p-16'>
+              <Loader className='mr-3 h-10 w-10 animate-spin' />
+              Cargando...
+            </div>
+          ) : (
+            <ChartContainer config={chartConfig}>
+              {!chartData || chartData.length === 0 ? ( //Si se saca crashea el programa
+                <div className='h-full w-full'>
+                  <p className='flex items-center justify-center text-xl'>
+                    No hay datos disponibles para el período seleccionado
+                  </p>
+                </div>
+              ) : (
+                <BarChart accessibilityLayer data={chartData}>
                   <CartesianGrid vertical={false} />
                   <XAxis
-                    dataKey={periodo === 'semanal' ? 'day' : 'month'} // Cambia 'month' a 'day' si se está mostrando la semana
-                    tickLine={false}
+                    dataKey={
+                      periodo === 'semanal'
+                        ? 'day'
+                        : periodo === 'mensual'
+                          ? 'month'
+                          : 'sem'
+                    }
+                    tickLine={true}
                     tickMargin={10}
-                    axisLine={false}
-                    tickFormatter={(value: string) => value.slice(0, 3)}
+                    axisLine={true}
+                    tickFormatter={(value: string | number, index: number) => {
+                      if (periodo === 'semanal') {
+                        // Si el periodo es semanal, muestra solo el número del día
+                        //@ts-expect-error No se puede llamar a slice en un valor de tipo string | number
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+                        return value.slice(0, 3)
+                      } else if (periodo === 'mensual') {
+                        // Si es mensual, muestra el día y el mes
+                        const monthDate = chartData[index].date
+                        return `${monthDate.getDate()}`
+                      } else if (
+                        periodo === 'bimestral' ||
+                        periodo === 'semestre'
+                      ) {
+                        return `${index + 1}`
+                      }
+                    }}
                   />
+
                   <ChartTooltip
                     cursor={false}
                     content={
@@ -233,6 +147,7 @@ export default function ChartGrafico({ periodo }: { periodo: periodo }) {
                       />
                     }
                   />
+                  <ChartLegend content={<ChartLegendContent />} />
                   <Bar
                     dataKey='cumplidos'
                     fill='var(--color-cumplidos)'
@@ -244,10 +159,25 @@ export default function ChartGrafico({ periodo }: { periodo: periodo }) {
                     radius={4}
                   />
                 </BarChart>
-              </ResponsiveContainer>
-            )}
-          </ChartContainer>
+              )}
+            </ChartContainer>
+          )}
         </CardContent>
+        <CardFooter className='flex-col items-start gap-2 text-sm'>
+          {periodo === 'bimestral' && (
+            <div className='flex gap-2 font-medium leading-none'>
+              Los datos presentados son calculados cada 2 días
+            </div>
+          )}
+          {periodo === 'semestre' && (
+            <div className='flex gap-2 font-medium leading-none'>
+              Los datos presentados son calculados cada 7 días
+            </div>
+          )}
+          {/* <div className='leading-none text-muted-foreground'>
+            ssdfsdffdssdsdf
+          </div> */}
+        </CardFooter>
       </Card>
     </div>
   )

@@ -22,19 +22,22 @@ export type SesionAGuardar = {
 }
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 function dateToTimetz(date: Date | null): string {
+  // funcion que es necesaria para guardar horas dentro de la bd, ya que el tiempo que pide es Timetz
   // Obtiene la parte de la hora y la zona horaria
   const options: Intl.DateTimeFormatOptions = {
-    timeZone: 'UTC', // Cambia esto a la zona horaria que necesites
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-    timeZoneName: 'short',
+    timeZone: 'America/Argentina/Buenos_Aires', // Cambia esto a la zona horaria que necesites
+    hour: '2-digit', // Formato de hora de dos dígitos
+    minute: '2-digit', // Formato de minutos de dos dígitos
+    second: '2-digit', // Formato de segundos de dos dígitos
+    hour12: false, // Formato de 24 horas
   }
   //@ts-expect-error anda, no te preocupes
-  return date.toLocaleString('en-US', options)
+  return date.toLocaleString('es-AR', options)
 }
 
 const formatDateSlash = (date: Date) => {
+  // Función que nos permite pasar de un objeto tipo date a uno de tipo string en formato YYYY/MM/DD
+  // Esta es LA FUNCIÓN A USAR si queremos guardar fechas en algún lado, porque asi es más fácil recuperarlas y transformarlas en objetos tipo DATE
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
@@ -43,6 +46,7 @@ const formatDateSlash = (date: Date) => {
 }
 
 const formatDateDash = (date: Date) => {
+  // Función que nos permite pasar de un objeto tipo date a uno de tipo string en formato YYYY-MM-DD
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
@@ -50,7 +54,17 @@ const formatDateDash = (date: Date) => {
   return `${year}-${month}-${day}`
 }
 
+const formatDateDashARG = (date: Date) => {
+  // Funcion que nos permite pasar de un objeto tipo date a uno de tipo string en formato DD-MM-YYYY
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${day}-${month}-${year}`
+}
+
 function obtenerClaveMayorValor(map: Map<string, number>): string {
+  // Dado un mapa que tiene una clave de tipo string y un valor de tipo number, retorna la clave que tiene el mayor valor
   let claveMax = ''
   let valorMax: number | null = null
 
@@ -73,13 +87,12 @@ function getElementNameById(id: number, list: any[]): string {
 }
 
 function convertirAFecha(fechaStr: string): Date {
-  // Reemplazar los separadores / o - por un solo formato (ej. -)
+  //Dada una fecha cualquiera en string en formato americano, sea separada por - o por /, la convierte a un objeto del tipo date de la fecha exacta
+
   const formatoNormalizado: string = fechaStr.replace('-', '/')
 
-  // Crear el objeto Date
   const fecha = new Date(formatoNormalizado)
 
-  // Verificar si la fecha es válida
   if (isNaN(fecha.getTime())) {
     throw new Error('Fecha no válida')
   }
@@ -87,13 +100,26 @@ function convertirAFecha(fechaStr: string): Date {
   return fecha
 }
 
+async function recoverObjectiveFromId(objectiveId: number) {
+  //Busca en la tabla de objetivos EL objetivo con la misma ID que le hemos pasado. Si devuelve algo, lo hace en forma de lista con un único elemento, si no
+  //devuelve una lista vacía
+  const { data, error } = await supabase
+    .from('ObjetivosFavoritos')
+    .select()
+    .eq('id', objectiveId)
+
+  if (error) console.error(error)
+  else return data
+}
+
 async function gatherEventsOfUser(uuid: string, date?: Date) {
+  //Recupera todos los eventos del usuario a partir de una fecha(Si el parámetro date es pasado) o todos los eventos de este usuario, el cual se identifica con la UUID
   if (date) {
     const { data, error } = await supabase
       .from('Eventos')
       .select()
       .eq('idUsuario', uuid)
-      .gt('fechaLimite', formatDateDash(date))
+      .gte('fechaLimite', formatDateDash(date))
     return data as EventToRecover[]
   } else {
     const { data, error } = await supabase
@@ -105,7 +131,8 @@ async function gatherEventsOfUser(uuid: string, date?: Date) {
 }
 
 async function acumulateHoursInSelectedEvent(
-  timeToAcumulate: number,
+  //Guarda el valor de pasado en la función como timeToSave en el evento que coincida ser el del nombre y fecha pasados por parametro, y además que sea del usuario identificado por la UUID
+  timeToSave: number,
   uuid: string,
   name: string,
   date: Date
@@ -113,7 +140,7 @@ async function acumulateHoursInSelectedEvent(
   const dateFormatted = formatDateDash(date)
   const { data, error } = await supabase
     .from('Eventos')
-    .update({ horasAcumuladas: timeToAcumulate })
+    .update({ horasAcumuladas: timeToSave })
     .eq('idUsuario', uuid)
     .eq('nombre', name)
     .eq('fechaLimite', dateFormatted)
@@ -122,6 +149,7 @@ async function acumulateHoursInSelectedEvent(
 }
 
 function getSelectedMusic(title: string) {
+  // Pasandole el nombre de la playlist en cuestion de las creadas, devuelve la id que tiene la misma en la BD para que lo que guardemos haga referencia a esa tabla
   let musicaSeleccionada = 0
   switch (title) {
     case 'CapyEpic': {
@@ -155,18 +183,21 @@ function getSelectedMusic(title: string) {
 }
 
 async function getObjectiveByName(objectiveName: string, uuid: string) {
+  //Dado un nombre de un objetivo favorito y un usuario identificado con la UUID, devuelve el objetivo de ese usuario con ese nombre como una lista de un único elemento
+  // que contendra al objetivo, si este existiera, en caso de que no, devuelve una lista vacia
   const { data, error } = await supabase
     .from('ObjetivosFavoritos')
     .select()
     .eq('descripcion', objectiveName)
     .eq('idUsuario', uuid)
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   if (data) return data
   else console.log(error)
 }
 
 async function acumulateHoursInFavouriteObj(
+  //Dado un objetivo, un usuario y un tiempo a guardar, guarda el nuevo tiempo en el parámetro de horasAcumuladas del mismo y si se le pasa una id de evento seleccionado
+  // crea una referencia en la tabla de ObjetivosFavoritosXEventos para que quede referenciado que en ESE evento se realizó ESE objetivo
   objName: string,
   time: number,
   uuid: string,
@@ -205,4 +236,6 @@ export {
   acumulateHoursInSelectedEvent,
   getObjectiveByName,
   acumulateHoursInFavouriteObj,
+  recoverObjectiveFromId,
+  formatDateDashARG,
 }

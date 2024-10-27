@@ -30,6 +30,14 @@ import { useSession } from './contexts/SessionContext'
 import { useEvents } from './contexts/EventsContext'
 import useTimer from '@/hooks/useTimer'
 
+import {
+  TooltipContent,
+  Tooltip,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@radix-ui/react-tooltip'
+import { toast } from 'sonner'
+
 //BUG: No anda bien el contador de tiempo, no cuenta el tiempo de estudio y descanso.
 type Mode = 'Estudiando' | 'Descansando'
 
@@ -114,6 +122,7 @@ export default function Pomodoro() {
     pauseStudy: pauseObjectiveTime,
     resetTimers: resetObjectiveTime,
   } = useTimer()
+  const [timerObjectivesAcum, setTimerObjectivesAcum] = useState(0)
 
   const {
     objetivos,
@@ -245,6 +254,8 @@ export default function Pomodoro() {
       } else {
         // if (time > 0) return
         stopStudy()
+        setTimerObjectivesAcum(prev => prev + objStudyTime)
+        resetObjectiveTime()
         setBreakSeconds(
           pomodorosRealizados[pomodorosRealizados.length - 1].tiempoDescanso
         )
@@ -303,11 +314,11 @@ export default function Pomodoro() {
 
     setTiempo(prev => ({
       ...prev,
-      [objetivo]: objStudyTime,
+      [objetivo]: objStudyTime + timerObjectivesAcum,
     }))
     setTiempoSesion(prev => ({ ...prev, [objetivo]: tiempoTotal - time }))
     if (objetivosFav.includes(objetivo)) {
-      const timeToSave = objStudyTime
+      const timeToSave = objStudyTime + timerObjectivesAcum
       if (!tiempoFavorito[objetivo]) {
         setTiempoFavorito(prev => ({ ...prev, [objetivo]: timeToSave }))
         if (session) {
@@ -335,7 +346,8 @@ export default function Pomodoro() {
           }
         }
       } else {
-        const timeToSave = objStudyTime + (tiempoFavorito[objetivo] ?? 0)
+        const timeToSave =
+          objStudyTime + (tiempoFavorito[objetivo] ?? 0) + timerObjectivesAcum
         setTiempoFavorito(prev => ({
           ...prev,
           [objetivo]: timeToSave,
@@ -369,7 +381,7 @@ export default function Pomodoro() {
 
     resetObjectiveTime()
     startObjTime()
-    setObjStudyTime(0)
+    setTimerObjectivesAcum(0)
   }
 
   const handleSetted = (Sessioncountup: number, Breakcountup: number) => {
@@ -400,6 +412,7 @@ export default function Pomodoro() {
     }
     setTiempoTotal(prev => (prev += tiempoEstudio))
     setAcumuladorTiempoPausa(prev => (prev += tiempoDescanso))
+
     startObjTime()
   }
 
@@ -409,10 +422,14 @@ export default function Pomodoro() {
     if (!value) {
       setCantidadPausas(prev => (prev += 1))
       pauseStudy()
-      pauseObjectiveTime()
+      if (mode === 'Estudiando') {
+        pauseObjectiveTime()
+      }
     } else {
       resumeStudy()
-      startObjTime()
+      if (mode === 'Estudiando') {
+        startObjTime()
+      }
 
       // resumeStudy()
     }
@@ -588,21 +605,52 @@ export default function Pomodoro() {
                 Empezar
               </Button>
             ) : (
-              <div className='flex flex-row items-center justify-center'>
-                <Button
-                  className='flex items-center justify-center rounded-full p-6'
-                  onClick={() => handlePause()}
-                >
-                  {isActive ? <Pause /> : <Play />}
-                </Button>
-                <Button
-                  className='flex items-center justify-center'
-                  variant='ghost'
-                  type='button'
-                  onClick={handleSaltar}
-                >
-                  <SkipForward />
-                </Button>
+              <div className='flex w-3/12 flex-row items-center justify-between px-4'>
+                <div className='flex justify-center'>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          className='flex items-center rounded-full p-6'
+                          onClick={() => handlePause()}
+                        >
+                          {isActive ? <Pause /> : <Play />}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side='bottom'
+                        className='mt-1 flex rounded-md bg-gray-200 px-4 py-1'
+                      >
+                        <p>{isActive ? 'Pausar' : 'Reanudar'}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <div className='flex justify-end'>
+                  <TooltipProvider>
+                    <Tooltip delayDuration={300}>
+                      <TooltipTrigger asChild>
+                        <Button
+                          className='flex'
+                          variant='ghost'
+                          type='button'
+                          // onClick={handleSaltar}
+                          onClick={() =>
+                            toast.warning('Desabilitado por el momento...')
+                          }
+                        >
+                          <SkipForward />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side='bottom'
+                        className='mt-1 flex rounded-md bg-gray-200 px-4 py-1'
+                      >
+                        <p>Saltar</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
               </div>
             )}
           </div>

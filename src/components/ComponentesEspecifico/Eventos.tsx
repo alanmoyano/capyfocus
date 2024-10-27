@@ -85,6 +85,7 @@ async function deleteEvent(date: Date, name: string, uuid: string) {
     .eq('nombre', name)
     .eq('fechaLimite', formatDateDash(date))
     .eq('idUsuario', uuid)
+  if (error) console.log(error)
 }
 
 const formatDate = (date: Date) => {
@@ -127,7 +128,9 @@ export default function Eventos() {
   const recoverEvents = () => {
     if (session) {
       if (events.length === 0) {
-        gatherEventsOfUser(session.user.id)
+        const hoy = new Date()
+        hoy.setHours(0, 0, 0, 0)
+        gatherEventsOfUser(session.user.id, hoy)
           .then(data =>
             data.forEach(evento => {
               // @ts-expect-error no te preocupes type, anda
@@ -168,6 +171,8 @@ export default function Eventos() {
       if (context === 'New') {
         toast.success('Se ha creado el evento:', {
           description: '"' + eventTitle + '"' + ' en el dia: ' + dateString,
+          duration: 4000,
+          position: 'bottom-center',
         })
         if (googleCalendar) {
           window.open(createGoogleCalendarLink(eventTitle, date))
@@ -237,16 +242,13 @@ export default function Eventos() {
           <SheetTitle className='flex items-center justify-between text-xl font-bold sm:text-2xl'>
             Agregar evento
           </SheetTitle>
-          <SheetDescription className='text-black sm:text-lg'>
-            Agrega eventos desde aquí.
-          </SheetDescription>
         </SheetHeader>
         <ScrollArea className='h-[80vh] pr-4'>
           <p className='text-sm text-muted-foreground'>
             Selecciona una fecha para el evento.
           </p>
-          <div className='grid gap-4 py-4'>
-            <div className='grid grid-cols-1 items-center gap-4 sm:grid-cols-4'>
+          <div className='mt-1 grid gap-4'>
+            <div className='grid grid-cols-1 items-center gap-2 sm:grid-cols-4 sm:gap-4'>
               <Label
                 htmlFor='name'
                 className='text-sm font-bold sm:text-right sm:text-base'

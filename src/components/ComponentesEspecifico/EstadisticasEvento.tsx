@@ -2,16 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
-import { useEffect, useRef, useState } from 'react'
-
-import {
-  Tooltip as ChartTooltip,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  XAxis,
-  ResponsiveContainer,
-} from 'recharts'
+import { useEffect, useState } from 'react'
 
 import {
   Table,
@@ -22,39 +13,28 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltipContent,
-} from '@/components/ui/chart'
 
 import Reproductor from './Reproductor'
 import { Calendar } from '@components/ui/calendar'
+import { es } from 'date-fns/locale'
 import { formatTime } from '@/lib/utils'
 
-//Lo siguiente se va a ir fuertemente cuando este implementada la BD:
 import { useObjetivos } from '@contexts/ObjetivosContext'
 import {
   formatDateDash,
   obtenerClaveMayorValor,
   getElementNameById,
   convertirAFecha,
+  recoverObjectiveFromId,
+  formatDateDashARG,
 } from '../../constants/supportFunctions'
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
-import ChartGrafico from './ChartGrafico'
 import { useEvents } from '../contexts/EventsContext'
 import { Event } from './Eventos'
-
-//TODO: Grafico segun el periodo de tiempo seleccionado
-
-type Period =
-  | 'sesion'
-  | 'semanal'
-  | 'mensual'
-  | 'bimestral'
-  | 'semestre'
-  | 'evento'
+import ChartEventos from './ChartEventos'
+import { ConstructionIcon } from 'lucide-react'
+//TODO: información calendario
 
 type Motivation =
   | {
@@ -72,25 +52,6 @@ type StudyTechnique =
       id: 2
       name: 'CapyMetro'
     }
-
-/*     const chartConfig = {
-      cumplidos: {
-        label: 'Cumplidos',
-        color: 'hsl(var(--chart-1))',
-      },
-      pendientes: {
-        label: 'Pendientes',
-        color: 'hsl(var(--chart-2))',
-      },
-    } satisfies ChartConfig */
-
-type EventToRecover = {
-  idEvento: number
-  nombre: string
-  idUsuario: string
-  fechaLimite: string
-  horasAcumuladas: number
-}
 
 type Music =
   | { id: 0; name: 'Sin música' }
@@ -117,8 +78,6 @@ const StudyTechniqueList: StudyTechnique[] = [
   { id: 2, name: 'CapyMetro' },
 ]
 
-type Graficos = 'chartDataMeses' | 'chartDataSemana' | 'chartDataMes'
-
 type sessionToRecover = {
   uuid: string
   horaInicioSesion: string
@@ -131,7 +90,29 @@ type sessionToRecover = {
   tiempoEstudio: number
 }
 
-async function getEventOfUser(period: Date, uuid: string) {
+type RowToRecover = {
+  id: number
+  idEvento: number
+  idObjetivoFavorito: number
+}
+
+type chartData = {
+  nombreObjetivo: string
+  horas: number
+}
+
+type ObjectiveToRecover = {
+  id: number
+  created_at: string
+  idUsuario: string
+  descripcion: string
+  idEstado: number
+  horasAcumuladas: number
+}
+
+const ObjectiveStates = ['Pendiente', 'Cumplido']
+
+/* async function getEventOfUser(period: Date, uuid: string) {
   const periodFormatted = formatDateDash(period)
   const { data } = await supabase
     .from('SesionesDeEstudio')
@@ -141,29 +122,8 @@ async function getEventOfUser(period: Date, uuid: string) {
 
   if (data) return data as sessionToRecover[]
   else return
-}
-
-function getDateOfPeriod(period: Period) {
-  const dateToReturn = new Date()
-  switch (period) {
-    case 'semanal':
-      dateToReturn.setDate(dateToReturn.getDate() - 7)
-      break
-    case 'mensual':
-      dateToReturn.setMonth(dateToReturn.getMonth() - 1)
-      break
-    case 'bimestral':
-      dateToReturn.setMonth(dateToReturn.getMonth() - 2)
-      break
-    case 'semestre':
-      dateToReturn.setMonth(dateToReturn.getMonth() - 6)
-      break
-    default:
-      break
-  }
-  return dateToReturn
-}
-
+} */
+//Buscamos el evento de la BD
 async function getEventIdFromName(eventName: string, uuid: string) {
   const { data, error } = await supabase
     .from('Eventos')
@@ -174,7 +134,7 @@ async function getEventIdFromName(eventName: string, uuid: string) {
   if (data) return data[0].idEvento as number
   else console.log(error)
 }
-
+//Buscamos las sesiones segun el evento
 async function gatherSessionsOfEventOfUser(uuid: string, eventName: string) {
   const eventId = await getEventIdFromName(eventName, uuid)
 
@@ -184,32 +144,58 @@ async function gatherSessionsOfEventOfUser(uuid: string, eventName: string) {
     .eq('idUsuario', uuid)
     .eq('eventoSeleccionado', eventId)
 
-  if (data) return data as sessionToRecover[]
-  else console.log(error)
+  if (data) {
+    //Aca de ordena por fecha de forma ascendente
+    const sortedData = data.sort(
+      (a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime()
+    )
+    console.log(sortedData)
+    return sortedData as sessionToRecover[]
+  } else {
+    console.log(error)
+    return []
+  }
+}
+
+//Buscamos los objetivos favoritos del evento
+async function gatherObjectivesOfEvent(eventId: number) {
+  const { data, error } = await supabase
+    .from('ObjetivosFavoritosXEventos')
+    .select()
+    .eq('idEvento', eventId)
+
+  if (error) console.error(error)
+
+  if (data) {
+    const objectivePromises = (data as RowToRecover[]).map(async row => {
+      const data = await recoverObjectiveFromId(row.idObjetivoFavorito)
+      return data ? (data[0] as ObjectiveToRecover) : null
+    })
+
+    console.log(objectivePromises)
+    const objetivos = await Promise.all(objectivePromises)
+    console.log(objetivos)
+
+    return objetivos.filter(obj => obj !== null)
+    // for (const row of data as RowToRecover[]) {
+    //   recoverObjectiveFromId(row.idObjetivoFavorito)
+    //     .then(data => {
+    //       if (data) {
+    //         ObjectivesToRecover.push(data[0])
+    //       }
+    //     })
+    //     .catch((error: unknown) =>
+    //       console.log('Ocurrio un error recuperando los objetivos', error)
+    //     )
+    // }
+  }
 }
 
 export default function EstadisticasEvento({ name }: { name: string }) {
-  const cardRefs = {
-    sesion: useRef(null),
-    semanal: useRef(null),
-    mensual: useRef(null),
-    bimestral: useRef(null),
-    semestre: useRef(null),
-    evento: useRef(null),
-  }
-
-  async function conseguirIdEvento() {
-    if (session) {
-      //@ts-expect-error no va a pasar nada type
-      setEventId(await getEventIdFromName(name, session.user.id))
-      return
-    }
-  }
-
+  //Para obtener la racha
   function getRachaPorPeriodo(fechasSesiones: string[]) {
     let rachaActual = 0
     let ultimaFechaRacha: Date
-
     for (const fechaActual of fechasSesiones) {
       const fechaAComparar = convertirAFecha(fechaActual)
       //@ts-expect-error No va a ser referenciado antes de ser asignado
@@ -241,7 +227,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
   const setStatisticsValues = (data: sessionToRecover[], evento: Event) => {
     if (session) {
       const studyTime = evento.hoursAcumulated ? evento.hoursAcumulated : 0
-      let objectiveCount = 0
+      let objectiveCount = 0 //contador para saber cuantos
       let objectiveAcomplishedCount = 0
       const setFechas = new Set()
 
@@ -269,8 +255,6 @@ export default function EstadisticasEvento({ name }: { name: string }) {
           particularSession.cantidadObjetivosCumplidos as unknown as string
         )
 
-        //@ts-expect-error no joda typescript, anda bien
-        console.log(particularSession.musicaSeleccionada.toString())
         const valorActualMotivaciones = mapaMotivaciones.get(
           particularSession.tipoMotivacion.toString()
         )
@@ -308,7 +292,6 @@ export default function EstadisticasEvento({ name }: { name: string }) {
         return dateA.getTime() - dateB.getTime()
       })
 
-      fechasOrdenadas.forEach(f => console.log(f))
       getRachaPorPeriodo(fechasOrdenadas as string[])
       setFechasOdenadas(fechasOrdenadas as string[])
 
@@ -334,9 +317,68 @@ export default function EstadisticasEvento({ name }: { name: string }) {
           StudyTechniqueList
         )
       )
+      //Para poder mostrar la info en el calendario
+      const sesionesResumidas = data.map(particularSession => ({
+        fecha: particularSession.fecha.toString(),
+        objetivosTotales: parseInt(
+          particularSession.cantidadObjetivos as unknown as string
+        ),
+        objetivosCumplidos: parseInt(
+          particularSession.cantidadObjetivosCumplidos as unknown as string
+        ),
+        tiempoEstudio: particularSession.tiempoEstudio,
+      }))
+      // Guardamos sesionesResumidas en el estado para mostrarlo
+      setSessionInfo(sesionesResumidas)
     }
   }
 
+  const accumulateSessions = (sessionInfo: sessionInfo[]) => {
+    const acumulados: Record<
+      string,
+      {
+        objetivosTotales: number
+        objetivosCumplidos: number
+        tiempoEstudio: number
+      }
+    > = {}
+
+    for (const session of sessionInfo) {
+      const { fecha, objetivosTotales, objetivosCumplidos, tiempoEstudio } =
+        session
+
+      // Si la fecha ya está en el objeto acumulados, sumamos los valores
+      if (acumulados[fecha]) {
+        acumulados[fecha].objetivosTotales += objetivosTotales
+        acumulados[fecha].objetivosCumplidos += objetivosCumplidos
+        acumulados[fecha].tiempoEstudio += tiempoEstudio // Asegúrate de que tiempoEstudio esté definido en session
+      } else {
+        // Si la fecha no está, la agregamos
+        acumulados[fecha] = {
+          objetivosTotales,
+          objetivosCumplidos,
+          tiempoEstudio, // Asegúrate de que tiempoEstudio esté definido en session
+        }
+      }
+    }
+
+    // Convertimos el objeto acumulados de vuelta a un arreglo
+    return Object.entries(acumulados).map(([fecha, datos]) => ({
+      fecha,
+      ...datos,
+    }))
+  }
+
+  type sessionInfo = {
+    fecha: string
+    objetivosTotales: number
+    objetivosCumplidos: number
+    tiempoEstudio: number
+  }
+
+  const [sessionInformacion, setSessionInfo] = useState<sessionInfo[]>([])
+  const [sessionInfoAcumuladas, setSessionInfoAcumuladas] =
+    useState<sessionInfo[]>()
   const [eventoSeleccionado, setEventoSeleccionado] = useState<Event>()
   const [eventId, setEventId] = useState(0)
   const { objetivos, tiempo } = useObjetivos()
@@ -352,31 +394,85 @@ export default function EstadisticasEvento({ name }: { name: string }) {
   const [racha, setRacha] = useState(0)
   const { events } = useEvents()
   const [fechasOrdenadas, setFechasOdenadas] = useState<string[]>()
-
+  const [eventObjectives, setEventObjectives] = useState<ObjectiveToRecover[]>(
+    []
+  )
   useEffect(() => {
     const evento = events.find(e => e.title === name)
     setEventoSeleccionado(evento)
     if (evento && session) {
+      gatherObjectivesOfEvent(evento.id)
+        .then(data => {
+          console.log(data)
+          setEventObjectives(data as ObjectiveToRecover[])
+          loadChartData(data as ObjectiveToRecover[])
+          //Esto tengo que mover a otro lado
+          setSessionInfoAcumuladas(accumulateSessions(sessionInformacion))
+        })
+        .catch((error: unknown) => {
+          console.log(
+            'Ocurrio un error a la hora de meter los objetivos al array correspondiente',
+            error
+          )
+        })
       gatherSessionsOfEventOfUser(session.user.id, name)
-        //@ts-expect-error no te preocupes type
-        .then(data => setStatisticsValues(data, evento))
+        .then(data => {
+          setStatisticsValues(data, evento)
+        })
         .catch((error: unknown) => {
           console.log(error)
         })
     }
   }, [name])
 
-  console.log(fechasOrdenadas)
+  //Funciones para la chart
+  const [chartData, setChartData] = useState<chartData[]>([])
+
+  //Tenia sentido cuando lo hice, ahora que lo veo de otra forma ya no
+  function generateDataOfChart(data: ObjectiveToRecover[]) {
+    const dataToChart: chartData[] = []
+    for (const objetivo of data) {
+      dataToChart.push({
+        nombreObjetivo: objetivo.descripcion,
+        horas: objetivo.horasAcumuladas,
+      })
+    }
+    console.log('Datos: ', dataToChart)
+    return dataToChart
+  }
+
+  function loadChartData(data: ObjectiveToRecover[]) {
+    const generatedData = generateDataOfChart(data)
+    console.log('Datos a cargar', generatedData)
+    setChartData(generatedData)
+  }
+
+  //setChartData(generateDataOfChart())
+
+  //obtener la fecha mas temprana de los objetivos
+  function getEarliestDate(objectives: ObjectiveToRecover[]): Date {
+    if (objectives.length === 0) return new Date()
+    // Convierte las fechas de `created_at` y encuentra la menor
+    const earliestObjective = objectives.reduce((earliest, current) => {
+      const currentDate = new Date(current.created_at)
+      const earliestDate = new Date(earliest.created_at)
+      return currentDate < earliestDate ? current : earliest
+    })
+
+    return new Date(earliestObjective.created_at)
+  }
+  const earliestDate = getEarliestDate(eventObjectives)
+
+  //Para ver info del calendario:
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
 
   return (
     <>
       {/* info de periodo */}
       <Card className='container mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg md:flex-row dark:from-gray-800 dark:to-gray-900 dark:shadow-gray-800'>
         <CardHeader>
-          <CardTitle>
-            <h1 className='text-left text-3xl font-bold'>
-              Resumen de Sesiones de Estudio para el evento {name}
-            </h1>
+          <CardTitle className='text-left text-3xl font-bold'>
+            Resumen de Sesiones de Estudio para el evento {name}
           </CardTitle>
         </CardHeader>
         <CardContent className='flex flex-col justify-between gap-8 md:flex-row'>
@@ -427,52 +523,9 @@ export default function EstadisticasEvento({ name }: { name: string }) {
             </div>
           </div>
 
-          {/* chart */}
+          {/* chart  */}
           <div className='space-y-6 md:w-1/2'>
-            <ChartGrafico periodo={'semanal'} />
-
-            {/*             <Card className='overflow-hidden rounded-lg shadow-md'>
-              <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-2'>
-                <CardTitle className='text-lg font-bold text-gray-900'>
-                  Registro de objetivos
-                </CardTitle>
-              </CardHeader>
-              <CardContent className='p-3'>
-                <ChartContainer config={chartConfig}>
-                  <ResponsiveContainer width='100%' height={250}>
-                    <BarChart accessibilityLayer data={chartDataMeses}>
-                      <CartesianGrid vertical={false} />
-                      <XAxis
-                        dataKey='month'
-                        tickLine={false}
-                        tickMargin={10}
-                        axisLine={false}
-                        tickFormatter={(value: string) => value.slice(0, 3)}
-                      />
-                      <ChartTooltip
-                        cursor={false}
-                        content={
-                          <ChartTooltipContent
-                            formatType='integer'
-                            indicator='line'
-                          />
-                        }
-                      />
-                      <Bar
-                        dataKey='cumplidos'
-                        fill='var(--color-cumplidos)'
-                        radius={4}
-                      />
-                      <Bar
-                        dataKey='pendientes '
-                        fill='var(--color-pendientes )'
-                        radius={4}
-                      />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-              </CardContent>
-            </Card> */}
+            <ChartEventos chartData={chartData} minimaFecha={earliestDate} />
             {/* Calendario */}
             <Card className='overflow-hidden rounded-lg shadow-sm'>
               <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-3'>
@@ -483,7 +536,14 @@ export default function EstadisticasEvento({ name }: { name: string }) {
               <CardContent className='p-2'>
                 <div className='flex flex-col md:flex-row'>
                   <Calendar
+                    showOutsideDays={false}
+                    locale={es}
+                    fromDate={undefined}
+                    toDate={new Date()}
                     mode='single'
+                    onSelect={date => {
+                      setSelectedDate(date)
+                    }}
                     className='rounded-md border text-sm shadow-sm'
                     modifiers={{
                       //@ts-expect-error shhh ts, esto funciona as expected
@@ -497,10 +557,46 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                   />{' '}
                   <div className='pl-4 md:w-1/2'>
                     <h1 className='mb-2 text-lg font-semibold'>
-                      Horas dedicadas
+                      Información del día: {selectedDate?.toLocaleDateString()}
                     </h1>
-                    {/* Lista de eventos */}
-                    <p>11/07 2hs</p>
+                    <ul className='space-y-2'>
+                      {selectedDate ? (
+                        <li>
+                          <h2 className='text-lg font-semibold'>
+                            Sesiones de estudio
+                          </h2>
+                          <div>
+                            {/* {sessionInfoAcumuladas
+                              .filter(session => {
+                                // Filtramos las sesiones por la fecha seleccionada
+                                return (
+                                  new Date(
+                                    session.fecha
+                                  ).toLocaleDateString() ===
+                                  selectedDate.toLocaleDateString()
+                                )
+                              })
+                              .map((session, index) => (
+                                <div key={index + 1}>
+                                  <p>Fecha: {session.fecha}</p>
+                                  <p>
+                                    Objetivos Totales:{' '}
+                                    {session.objetivosTotales}
+                                  </p>
+                                  <p>
+                                    Objetivos Cumplidos:{' '}
+                                    {session.objetivosCumplidos}
+                                  </p>
+                                  <p>
+                                    Tiempo de Estudio:{' '}
+                                    {formatTime(session.tiempoEstudio)}{' '}
+                                  </p>
+                                </div>
+                              ))} */}
+                          </div>
+                        </li>
+                      ) : null}
+                    </ul>
                   </div>
                 </div>
               </CardContent>
@@ -515,20 +611,24 @@ export default function EstadisticasEvento({ name }: { name: string }) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className=''>Evento</TableHead>
+                {/* <TableHead className=''>Evento</TableHead> */}
                 <TableHead>Objetivo</TableHead>
                 <TableHead>Estado</TableHead>
                 <TableHead>Fecha Creado</TableHead>
-                <TableHead className='text-right'>Tiempo Acumulado</TableHead>
+                <TableHead className='text-center'>Tiempo Acumulado</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {objetivos.map((objetivo, index) => (
+              {eventObjectives.map((objetivo, index) => (
                 <TableRow key={index}>
-                  <TableCell className='font-medium'>{objetivo}</TableCell>
-                  <TableCell>{objetivo}</TableCell>
+                  {/* <TableCell className='font-medium'>{objetivo}</TableCell> */}
                   <TableCell>
-                    {tiempo[objetivo] === 0 ? (
+                    <span className='text-blue-700'>
+                      {objetivo.descripcion}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    {objetivo.idEstado === 1 ? (
                       <span className='rounded-full bg-yellow-100 px-2 py-1 text-xs font-semibold text-yellow-800'>
                         Pendiente
                       </span>
@@ -539,10 +639,10 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                     )}
                   </TableCell>
                   <TableCell>
-                    <span className='text-blue-700'>Activo</span>
+                    {formatDateDashARG(new Date(objetivo.created_at))}
                   </TableCell>
-                  <TableCell className='text-right font-medium'>
-                    {formatTime(tiempo[objetivo] || 0)}
+                  <TableCell className='text-center font-medium'>
+                    {formatTime(objetivo.horasAcumuladas)}
                   </TableCell>
                 </TableRow>
               ))}

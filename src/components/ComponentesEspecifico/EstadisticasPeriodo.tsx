@@ -1,32 +1,11 @@
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useEffect, useRef, useState } from 'react'
 
-import {
-  Tooltip as ChartTooltip,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  XAxis,
-  ResponsiveContainer,
-} from 'recharts'
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltipContent,
-} from '@/components/ui/chart'
 
 import Reproductor from './Reproductor'
 import { Calendar } from '@components/ui/calendar'
@@ -43,6 +22,11 @@ import {
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
 import ChartGrafico from './ChartGrafico'
+import { startOfWeek, subMonths } from 'date-fns'
+import { es } from 'date-fns/locale'
+import html2canvas from 'html2canvas'
+import { Button } from '@components/ui/button'
+import { ImageDown } from 'lucide-react'
 
 //TODO: Grafico segun el periodo de tiempo seleccionado
 
@@ -71,17 +55,6 @@ type StudyTechnique =
       name: 'CapyMetro'
     }
 
-/*     const chartConfig = {
-      cumplidos: {
-        label: 'Cumplidos',
-        color: 'hsl(var(--chart-1))',
-      },
-      pendientes: {
-        label: 'Pendientes',
-        color: 'hsl(var(--chart-2))',
-      },
-    } satisfies ChartConfig */
-
 type Music =
   | { id: 0; name: 'Sin música' }
   | { id: 1; name: 'CapyEpic' }
@@ -107,12 +80,15 @@ const StudyTechniqueList: StudyTechnique[] = [
   { id: 2, name: 'CapyMetro' },
 ]
 
-type Graficos = 'chartDataMeses' | 'chartDataSemana' | 'chartDataMes'
+type ChartData =
+  | { month: string; cumplidos: number; pendientes: number; date: Date }
+  | { sem: string; cumplidos: number; pendientes: number; date: Date }
+  | { day: string; cumplidos: number; pendientes: number; date: Date }
 
 type sessionToRecover = {
   uuid: string
   horaInicioSesion: string
-  fecha: Date
+  fecha: string
   horaFinSesion: string
   tecnicaEstudio: number
   tipoMotivacion: number
@@ -121,16 +97,158 @@ type sessionToRecover = {
   tiempoEstudio: number
 }
 
+//Los meses de las sesiones aparecen desde aquí, cuando traemos todas las sesiones de estudio a partir de una fecha determinada, los mismos se guardan en el atributo
+//fecha, las cuales vienen en formato YYYY-MM-DD, y si queremos usarlo, podes hacerlo de 2 maneras.
+// 1) Hacer un split sobre el valor de fecha a partir de los guiones (-) y obtener el valor del segundo miembro, asi te da el valor del mes en las escala de enero = 1 y diciembre = 12
+// 2) Convertir ese string a una fecha con la funcion convertirAFecha() y luego a la fecha obtenida pedirle que te devuelva su mes con la función getMonth() en la escala de enero = 0 y diciembre = 11
 async function getPeriodSessions(period: Date, uuid: string) {
   const periodFormatted = formatDateDash(period)
   const { data } = await supabase
     .from('SesionesDeEstudio')
     .select()
     .eq('idUsuario', uuid)
-    .gt('fecha', periodFormatted)
+    .gte('fecha', periodFormatted)
 
   if (data) return data as sessionToRecover[]
   else return
+}
+
+function generateDataOfChart(period: Period, matrizDatos: unknown) {
+  const dataToChart: ChartData[] = []
+  const diasSemana = [
+    'Lunes',
+    'Martes',
+    'Miercoles',
+    'Jueves',
+    'Viernes',
+    'Sábado',
+    'Domingo',
+  ]
+  const Meses = [
+    'Enero',
+    'Feberero',
+    'Marzo',
+    'Abril',
+    'Mayo',
+    'Junio',
+    'Julio',
+    'Agosto',
+    'Septiembre',
+    'Octubre',
+    'Noviembre',
+    'Diciembre',
+  ]
+
+  switch (period) {
+    case 'semanal':
+      //Se cargan los datos de la semana en el chart
+      //@ts-expect-error no jodas ts
+      for (const fila of matrizDatos) {
+        const fecha = new Date(fila[0])
+        const dayIndex = (fecha.getDay() + 6) % 7 // Ajusta que Lunes sea 0
+        const dataToPutInChart: ChartData = {
+          day: diasSemana[dayIndex],
+          cumplidos: fila[1] as number,
+          pendientes: fila[2] as number,
+          date: fecha,
+        }
+        dataToChart.push(dataToPutInChart)
+      }
+      break
+    case 'mensual':
+      //Lo copie y pegue lo de arriba.
+      //@ts-expect-error no jodas ts
+      for (const fila of matrizDatos) {
+        const fecha = new Date(fila[0])
+        const dataToPutInChart: ChartData = {
+          month: Meses[fecha.getMonth()],
+          cumplidos: fila[1] as number,
+          pendientes: fila[2] as number,
+          date: fecha,
+        }
+
+        dataToChart.push(dataToPutInChart)
+      }
+      break
+    case 'bimestral': {
+      let banderaControl = true
+      let objetivosCumplidos = 0
+      let pendientes = 0
+      //@ts-expect-error no te preocupes ts, anda perfecto
+      for (const fila of matrizDatos) {
+        const fecha = new Date(fila[0])
+        if (banderaControl) {
+          banderaControl = false
+          objetivosCumplidos = fila[1] as number
+          pendientes = fila[2] as number
+        } else {
+          const dateToSave = new Date(fila[0])
+          const dataToPutInChart: ChartData = {
+            month: Meses[fecha.getMonth()],
+            cumplidos: objetivosCumplidos + (fila[1] as number),
+            pendientes: pendientes + (fila[2] as number),
+            date: dateToSave,
+          }
+
+          dataToChart.push(dataToPutInChart)
+          banderaControl = true
+        }
+      }
+      if (!banderaControl) {
+        const dateToSave = new Date()
+        const dataToPutInChart: ChartData = {
+          month: Meses[dateToSave.getMonth()],
+          cumplidos: objetivosCumplidos,
+          pendientes: pendientes,
+          date: dateToSave,
+        }
+
+        dataToChart.push(dataToPutInChart)
+      }
+
+      break
+    }
+    case 'semestre': {
+      let contadorControl = 0
+      let objetivosCumplidos = 0
+      let objetivosPendientes = 0
+
+      //@ts-expect-error no te preocupes ts, anda perfecto
+      for (const fila of matrizDatos) {
+        const fecha = new Date(fila[0])
+        if (contadorControl < 7) {
+          contadorControl++
+          objetivosCumplidos += fila[1] as number
+          objetivosPendientes += fila[2] as number
+        } else {
+          const dateToSave = new Date(fila[0])
+          const dataToPutInChart: ChartData = {
+            month: Meses[fecha.getMonth()],
+            cumplidos: objetivosCumplidos + (fila[1] as number),
+            pendientes: objetivosPendientes + (fila[2] as number),
+            date: dateToSave,
+          }
+
+          dataToChart.push(dataToPutInChart)
+          contadorControl = 0
+          objetivosCumplidos = 0
+          objetivosPendientes = 0
+        }
+      }
+      if (contadorControl < 7) {
+        const dateToSave = new Date()
+        const dataToPutInChart: ChartData = {
+          month: Meses[dateToSave.getMonth()],
+          cumplidos: objetivosCumplidos,
+          pendientes: objetivosPendientes,
+          date: dateToSave,
+        }
+
+        dataToChart.push(dataToPutInChart)
+      }
+    }
+  }
+  return dataToChart
 }
 
 function getDateOfPeriod(period: Period) {
@@ -154,6 +272,27 @@ function getDateOfPeriod(period: Period) {
   return dateToReturn
 }
 
+function getDistanceOfPeriod(period: Period) {
+  let numToReturn = 0
+  switch (period) {
+    case 'semanal':
+      numToReturn += 7
+      break
+    case 'mensual':
+      numToReturn += 30
+      break
+    case 'bimestral':
+      numToReturn += 60
+      break
+    case 'semestre':
+      numToReturn += 186
+      break
+    default:
+      break
+  }
+  return numToReturn
+}
+
 export default function EstadisticasPeriodo({ period }: { period: Period }) {
   const cardRefs = {
     sesion: useRef(null),
@@ -162,6 +301,17 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
     bimestral: useRef(null),
     semestre: useRef(null),
     evento: useRef(null),
+  }
+
+  const captureScreenshot = async (period: Period) => {
+    const canvas = await html2canvas(
+      cardRefs[period].current as unknown as HTMLElement
+    )
+    const image = canvas.toDataURL('image/png')
+    const link = document.createElement('a')
+    link.href = image
+    link.download = `capyestadisticas_${period}.png`
+    link.click()
   }
 
   function getRachaPorPeriodo(fechasSesiones: string[]) {
@@ -196,26 +346,15 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
     setRacha(rachaActual)
   }
 
-  useEffect(() => {
-    const dateToRecover = getDateOfPeriod(period)
-    if (session) {
-      getPeriodSessions(dateToRecover, session.user.id)
-        .then(data => {
-          if (data) {
-            setStatisticsValues(data)
-          }
-        })
-        .catch((error: unknown) => {
-          console.log('Ocurrio un error recuperando las sesiones', error)
-        })
-    }
-  }, [])
-
-  const setStatisticsValues = (sessionsRecovered: sessionToRecover[]) => {
+  const setStatisticsValues = (
+    sessionsRecovered: sessionToRecover[],
+    period: Period
+  ) => {
     let studyTimeAcum = 0
     let objectiveCount = 0
     let objectiveAcomplishedCount = 0
     const setFechas = new Set()
+    const today = new Date()
 
     const mapaMotivaciones = new Map<string, number>([
       ['1', 0],
@@ -232,7 +371,21 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
       ['1', 0],
       ['2', 0],
     ])
+
+    const matrizFechas = []
+    for (let i = 0; i < getDistanceOfPeriod(period); i++) {
+      const fechaAuxiliar = new Date(today)
+      matrizFechas.push([
+        new Date(fechaAuxiliar.setDate(today.getDate() - i)),
+        0,
+        0,
+      ])
+    }
+
     for (const particularSession of sessionsRecovered) {
+      //Este particularSession es una y cada una de las sesiones que recuperó la función de arriba y para acceder a la fecha lo podes hacer como particularSession.fecha
+      console.log(particularSession)
+
       studyTimeAcum += particularSession.tiempoEstudio
       objectiveCount += parseInt(
         particularSession.cantidadObjetivos as unknown as string
@@ -240,9 +393,6 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
       objectiveAcomplishedCount += parseInt(
         particularSession.cantidadObjetivosCumplidos as unknown as string
       )
-
-      //@ts-expect-error no joda typescript, anda bien
-      console.log(particularSession.musicaSeleccionada.toString())
       const valorActualMotivaciones = mapaMotivaciones.get(
         particularSession.tipoMotivacion.toString()
       )!
@@ -267,6 +417,18 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
         valorActualTecnicaEstudio + 1
       )
       setFechas.add(particularSession.fecha)
+      const arrayEncontrado = matrizFechas.find(
+        e =>
+          formatDateDash(e[0] as Date) === (particularSession.fecha as unknown)
+      )
+      if (arrayEncontrado) {
+        //@ts-expect-error no tengo ganas de pelear ts, dejalo asi
+        arrayEncontrado[1] += particularSession.cantidadObjetivosCumplidos
+        //@ts-expect-error no tengo ganas de pelear ts, dejalo asi
+        arrayEncontrado[2] +=
+          particularSession.cantidadObjetivos -
+          particularSession.cantidadObjetivosCumplidos
+      }
     }
 
     const fechasOrdenadas = Array.from(setFechas).sort((a, b) => {
@@ -277,7 +439,6 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
       return dateA.getTime() - dateB.getTime()
     })
 
-    fechasOrdenadas.forEach(f => console.log(f))
     getRachaPorPeriodo(fechasOrdenadas as string[])
     setFechasOrdenadas(fechasOrdenadas as string[])
 
@@ -303,6 +464,14 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
         StudyTechniqueList
       )
     )
+    //Aca de ordena por fecha de forma ascendente
+    const sortedData = matrizFechas.sort(
+      //@ts-expect-error no hay problema ts
+      (a, b) => a[0].getTime() - b[0].getTime()
+    )
+
+    //@ts-expect-error no jodas despues se arregla
+    setChartData(generateDataOfChart(period, matrizFechas))
   }
 
   const { objetivos, tiempo } = useObjetivos()
@@ -317,19 +486,69 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
   const [tecnicaEstudio, setTecnicaEstudio] = useState<string>()
   const [racha, setRacha] = useState(0)
   const [fechasOrdenadas, setFechasOrdenadas] = useState<string[]>()
+  const [chartData, setChartData] = useState([])
+
+  //Esto es para el calendario, cuando inicia y cuando termina de mostrar
+  const dateRange = (() => {
+    switch (period) {
+      case 'semanal':
+        return {
+          fromDate: startOfWeek(new Date(), { weekStartsOn: 1 }),
+          toDate: new Date(),
+        }
+      case 'mensual':
+        return {
+          fromDate: subMonths(new Date(), 1),
+          toDate: new Date(),
+        }
+      case 'bimestral':
+        return {
+          fromDate: subMonths(new Date(), 2),
+          toDate: new Date(),
+        }
+      case 'semestre':
+        return {
+          fromDate: subMonths(new Date(), 6),
+          toDate: new Date(),
+        }
+      default:
+        return {}
+    }
+  })()
+
+  useEffect(() => {
+    const dateToRecover = getDateOfPeriod(period)
+    if (session) {
+      getPeriodSessions(dateToRecover, session.user.id)
+        .then(data => {
+          if (data) {
+            console.log(data)
+            setStatisticsValues(data, period)
+          }
+        })
+        .catch((error: unknown) => {
+          console.log('Ocurrio un error recuperando las sesiones', error)
+        })
+    }
+  }, [period, getDateOfPeriod, session])
 
   return (
     <>
       {/* info de periodo */}
+      {/* Boton Screen */}
+      <div className='mr-12 flex w-full justify-end'>
+        <Button variant='ghost' onClick={() => captureScreenshot(period)}>
+          <ImageDown className='mr-2 h-4 w-4' />
+          Capturar
+        </Button>
+      </div>
       <Card
         ref={cardRefs[period]}
         className='container mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg md:flex-row dark:from-gray-800 dark:to-gray-900 dark:shadow-gray-800'
       >
         <CardHeader>
-          <CardTitle>
-            <h1 className='text-left text-3xl font-bold'>
-              Resumen {period} de Sesiones de Estudio
-            </h1>
+          <CardTitle className='text-left text-3xl font-bold'>
+            Resumen {period} de Sesiones de Estudio
           </CardTitle>
         </CardHeader>
         <CardContent className='flex flex-col justify-between gap-8 md:flex-row'>
@@ -382,50 +601,8 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
 
           {/* chart */}
           <div className='space-y-6 md:w-1/2'>
-            <ChartGrafico periodo={period} />
+            <ChartGrafico periodo={period} chartData={chartData} />
 
-            {/*             <Card className='overflow-hidden rounded-lg shadow-md'>
-              <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-2'>
-                <CardTitle className='text-lg font-bold text-gray-900'>
-                  Registro de objetivos
-                </CardTitle>
-              </CardHeader>
-              <CardContent className='p-3'>
-                <ChartContainer config={chartConfig}>
-                  <ResponsiveContainer width='100%' height={250}>
-                    <BarChart accessibilityLayer data={chartDataMeses}>
-                      <CartesianGrid vertical={false} />
-                      <XAxis
-                        dataKey='month'
-                        tickLine={false}
-                        tickMargin={10}
-                        axisLine={false}
-                        tickFormatter={(value: string) => value.slice(0, 3)}
-                      />
-                      <ChartTooltip
-                        cursor={false}
-                        content={
-                          <ChartTooltipContent
-                            formatType='integer'
-                            indicator='line'
-                          />
-                        }
-                      />
-                      <Bar
-                        dataKey='cumplidos'
-                        fill='var(--color-cumplidos)'
-                        radius={4}
-                      />
-                      <Bar
-                        dataKey='pendientes '
-                        fill='var(--color-pendientes )'
-                        radius={4}
-                      />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-              </CardContent>
-            </Card> */}
             {/* Calendario */}
             <Card className='overflow-hidden rounded-lg shadow-sm'>
               <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-3'>
@@ -436,7 +613,10 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
               <CardContent className='p-2'>
                 <div className='flex flex-col md:flex-row'>
                   <Calendar
+                    showOutsideDays={period !== 'semanal'} // Ocultar días fuera del rango
+                    {...dateRange} //Aplica solo si es semanal
                     mode='single'
+                    locale={es}
                     className='rounded-md border text-sm shadow-sm'
                     modifiers={{
                       //@ts-expect-error shhh ts, esto funciona as expected

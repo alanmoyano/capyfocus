@@ -17,11 +17,6 @@ export function ModeToggle({ className }: { className?: string }) {
     toggleTheme(isChecked)
   }
 
-  const toggleDotStyle = {
-    transform: isChecked ? 'translateX(100%)' : 'translateX(0%)',
-    transition: 'transform 0.3s ease-in-out',
-  }
-
   return (
     <div className='flex h-full w-full items-center justify-center'>
       <div className=''>
@@ -37,10 +32,7 @@ export function ModeToggle({ className }: { className?: string }) {
             htmlFor='toggle'
             className='flex h-7 w-14 cursor-pointer items-center rounded-full bg-gray-200 p-1'
           >
-            <div
-              className='toggle-dot flex h-6 w-6 items-center justify-center rounded-full bg-primary/60 shadow-md dark:bg-black'
-              style={toggleDotStyle}
-            >
+            <div className='toggle-dot flex h-6 w-6 translate-x-0 items-center justify-center rounded-full bg-primary/60 shadow-md duration-300 ease-in-out dark:translate-x-full dark:bg-black'>
               <span className='dark:hidden'>
                 <Sun />
               </span>

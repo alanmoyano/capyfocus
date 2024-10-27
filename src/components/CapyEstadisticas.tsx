@@ -7,20 +7,13 @@ import { ImageDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import EstadisticasPeriodo from './ComponentesEspecifico/EstadisticasPeriodo'
 
-import {
-  Tooltip as ChartTooltip,
-  Pie,
-  PieChart,
-  Cell,
-  ResponsiveContainer,
-} from 'recharts'
+import { Tooltip as ChartTooltip, Pie, PieChart, Cell } from 'recharts'
 
 import { useSearch } from 'wouter'
 
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -124,19 +117,7 @@ const chartConfig1: ChartConfig = {
   },
 }
 
-/* const chartConfig4 = {
-  desktop: {
-    label: 'Desktop',
-    color: 'hsl(var(--chart-1))',
-  },
-  mobile: {
-    label: 'Mobile',
-    color: 'hsl(var(--chart-2))',
-  },
-} satisfies ChartConfig */
-
 export default function CapyEstadisticas() {
-  const queryParams = useSearch()
   const { period } = useSearchParams()
   const [selectedPeriod, setSelectedPeriod] = useState(period ?? '')
   const [selectedEvent, setSelectedEvent] = useState('')
@@ -178,8 +159,6 @@ export default function CapyEstadisticas() {
       recovered.current = true
     }
   }
-
-  console.log(queryParams)
 
   const handleSelect = (value: string) => {
     if (periodos.includes(value)) {
@@ -387,10 +366,8 @@ export default function CapyEstadisticas() {
             className='container mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg md:flex-row dark:from-gray-800 dark:to-gray-600 dark:shadow-gray-700'
           >
             <CardHeader>
-              <CardTitle className=''>
-                <h1 className='text-left text-3xl font-bold'>
-                  Resumen de la Sesión
-                </h1>
+              <CardTitle className='text-left text-3xl font-bold'>
+                Resumen de la Sesión
               </CardTitle>
             </CardHeader>
             <CardContent className='flex flex-col justify-between gap-8 md:flex-row'>
@@ -466,7 +443,7 @@ export default function CapyEstadisticas() {
                         <div className='flex h-full w-full items-center justify-center'>
                           <p className='rounded-lg bg-accent p-4 text-center'>
                             Oh, en esta sesion no has completado objetivos,
-                            entonces no podrás ver las CapyEstadísticas.
+                            entonces no podremos calcular las CapyEstadísticas.
                           </p>
                         </div>
                       )}
@@ -474,49 +451,46 @@ export default function CapyEstadisticas() {
                     {objetivos.length > 0 && (
                       <div>
                         <ChartContainer config={chartConfig1}>
-                          <ResponsiveContainer width='100%' height={400}>
-                            <PieChart>
-                              {/* Agregue un filtro para que no se muestren los objetivos que no se han cumplido */}
-                              <Pie
-                                data={objetivos
-                                  .filter(objetivo => tiempo[objetivo] > 0)
-                                  .map(objetivo => ({
-                                    name: objetivo,
-                                    value: tiempo[objetivo] ?? 0,
-                                  }))}
-                                labelLine={false}
-                                outerRadius='80%'
-                                dataKey='value'
-                                label={({ name, percent }) =>
-                                  `${name} ${(percent * 100).toFixed(0)}%`
-                                }
-                              >
-                                {objetivos
-                                  .filter(objetivo => tiempo[objetivo] > 0)
-                                  .map((objetivo, index) => (
-                                    <Cell
-                                      key={`cell-${index}`}
-                                      fill={
-                                        chartConfig1[
-                                          Object.keys(chartConfig1)[index + 1]
-                                        ].color ??
-                                        `hsl(${index * 90}, 70%, 60%)`
-                                      }
-                                      name={objetivo}
-                                    />
-                                  ))}
-                              </Pie>
-                              <ChartTooltip
-                                content={
-                                  <ChartTooltipContent
-                                    indicator='dot'
-                                    formatType='time'
+                          <PieChart>
+                            {/* Agregue un filtro para que no se muestren los objetivos que no se han cumplido */}
+                            <Pie
+                              data={objetivos
+                                .filter(objetivo => tiempo[objetivo] > 0)
+                                .map(objetivo => ({
+                                  name: objetivo,
+                                  value: tiempo[objetivo] ?? 0,
+                                }))}
+                              labelLine={false}
+                              outerRadius='80%'
+                              dataKey='value'
+                              label={({ name, percent }) =>
+                                `${name} ${(percent * 100).toFixed(0)}%`
+                              }
+                            >
+                              {objetivos
+                                .filter(objetivo => tiempo[objetivo] > 0)
+                                .map((objetivo, index) => (
+                                  <Cell
+                                    key={`cell-${index}`}
+                                    fill={
+                                      chartConfig1[
+                                        Object.keys(chartConfig1)[index + 1]
+                                      ].color ?? `hsl(${index * 90}, 70%, 60%)`
+                                    }
+                                    name={objetivo}
                                   />
-                                }
-                              />
-                              <ChartLegend content={<ChartLegendContent />} />
-                            </PieChart>
-                          </ResponsiveContainer>
+                                ))}
+                            </Pie>
+                            <ChartTooltip
+                              content={
+                                <ChartTooltipContent
+                                  indicator='dot'
+                                  formatType='time'
+                                />
+                              }
+                            />
+                            <ChartLegend content={<ChartLegendContent />} />
+                          </PieChart>
                         </ChartContainer>
                       </div>
                     )}
@@ -535,13 +509,13 @@ export default function CapyEstadisticas() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className='w-[100px]'>Objetivo</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead className='text-right'>Tiempo</TableHead>
-                      <TableHead className='text-right'>
+                      <TableHead className='w-[200px]'>Objetivo</TableHead>
+                      <TableHead className='text-center'>Estado</TableHead>
+                      <TableHead className='text-center'>Tiempo</TableHead>
+                      <TableHead className='text-center'>
                         Tiempo Acumulado Favorito
                       </TableHead>
-                      <TableHead className='text-right'>
+                      <TableHead className='text-center'>
                         Tiempo Cumplido en sesion
                       </TableHead>
                     </TableRow>
@@ -552,7 +526,7 @@ export default function CapyEstadisticas() {
                         <TableCell className='font-medium'>
                           {objetivo}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className='text-center'>
                           {tiempo[objetivo] === 0 ? (
                             <span className='rounded-full bg-orange-200 px-2 py-1 text-xs font-semibold text-yellow-800'>
                               Pendiente
@@ -563,17 +537,17 @@ export default function CapyEstadisticas() {
                             </span>
                           )}
                         </TableCell>
-                        <TableCell className='text-right'>
+                        <TableCell className='text-center'>
                           {formatTime(tiempo[objetivo] || 0)}
                         </TableCell>
-                        <TableCell className='text-right'>
+                        <TableCell className='text-center'>
                           {objetivosFav.includes(objetivo) ? (
                             <>{formatTime(tiempoFavorito[objetivo] || 0)}</>
                           ) : (
                             <>--|--</>
                           )}
                         </TableCell>
-                        <TableCell className='text-right'>
+                        <TableCell className='text-center'>
                           <>{formatTime(tiempoSesion[objetivo] || 0)}</>
                         </TableCell>
                       </TableRow>
@@ -590,74 +564,26 @@ export default function CapyEstadisticas() {
 
       {selectedPeriod === 'semanal' && (
         <>
-          <div className='mr-12 flex w-full justify-end'>
-            <Button
-              variant='ghost'
-              onClick={() => captureScreenshot('semanal')}
-              className=''
-            >
-              <ImageDown className='mr-2 h-4 w-4' />
-              Capturar
-            </Button>
-          </div>
           <EstadisticasPeriodo period='semanal'></EstadisticasPeriodo>
         </>
       )}
 
       {selectedPeriod === 'mensual' && (
         <>
-          <div className='mr-12 flex w-full justify-end'>
-            <Button
-              variant='ghost'
-              onClick={() => captureScreenshot('mensual')}
-              className=''
-            >
-              <ImageDown className='mr-2 h-4 w-4' />
-              Capturar
-            </Button>
-          </div>
-          <>
-            <EstadisticasPeriodo period='mensual'></EstadisticasPeriodo>
-          </>
+          <EstadisticasPeriodo period='mensual'></EstadisticasPeriodo>
         </>
       )}
 
       {selectedPeriod === 'bimestral' && (
         <>
-          <div className='mr-12 flex w-full justify-end'>
-            <Button
-              variant='ghost'
-              onClick={() => captureScreenshot('bimestral')}
-              className=''
-            >
-              <ImageDown className='mr-2 h-4 w-4' />
-              Capturar
-            </Button>
-          </div>
-          <>
-            <EstadisticasPeriodo period='bimestral'></EstadisticasPeriodo>
-          </>
+          <EstadisticasPeriodo period='bimestral'></EstadisticasPeriodo>
         </>
       )}
-
       {selectedPeriod === 'semestral' && (
         <>
-          <div className='mr-12 flex w-full justify-end'>
-            <Button
-              variant='ghost'
-              onClick={() => captureScreenshot('semestral')}
-              className=''
-            >
-              <ImageDown className='mr-2 h-4 w-4' />
-              Capturar
-            </Button>
-          </div>
-          <>
-            <EstadisticasPeriodo period='semestre'></EstadisticasPeriodo>
-          </>
+          <EstadisticasPeriodo period='semestre'></EstadisticasPeriodo>
         </>
       )}
-
       {selectedPeriod === '' && selectedEvent && (
         <>
           <EstadisticasEvento name={selectedEvent}></EstadisticasEvento>

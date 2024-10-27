@@ -24,26 +24,18 @@ import ExperimentandoBrenda from './components/ExperimentandoBrenda'
 import { SessionProvider } from './components/contexts/SessionContext'
 import { EventsProvider } from './components/contexts/EventsContext'
 import { ProfilePicProvider } from './components/contexts/ProfilePicContext'
-import { PostHogProvider } from 'posthog-js/react'
 import LandingPage from './components/LandingPage'
-import { useLocation } from 'wouter'
+import { PreferencesProvider } from './components/contexts/PreferencesContext'
 
 function App() {
-  const [location] = useLocation()
-
   return (
     <ThemeProvider defaultTheme='light' storageKey='theme'>
       <SpeedInsights />
       <Analytics />
-      <PostHogProvider
-        options={{
-          api_host: import.meta.env.VITE_POSTHOG_API_URL,
-          ui_host: import.meta.env.VITE_POSTHOG_HOST,
-        }}
-        apiKey={import.meta.env.VITE_POSTHOG_KEY}
-      >
-        <SessionProvider>
-          <ProfilePicProvider>
+
+      <SessionProvider>
+        <ProfilePicProvider>
+          <PreferencesProvider>
             <ObjetivosProvider>
               <MotivationProvider>
                 <SesionProvider>
@@ -101,9 +93,9 @@ function App() {
                 </SesionProvider>
               </MotivationProvider>
             </ObjetivosProvider>
-          </ProfilePicProvider>
-        </SessionProvider>
-      </PostHogProvider>
+          </PreferencesProvider>
+        </ProfilePicProvider>
+      </SessionProvider>
     </ThemeProvider>
   )
 }
