@@ -10,6 +10,7 @@ import {
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
 import { usePreferences } from '../contexts/PreferencesContext'
+import { useTheme } from '../contexts/ThemeContext'
 
 //TODO: Cambiar los colores de los switchers en modo oscuro
 
@@ -31,6 +32,7 @@ export default function Switchers() {
   const [isDark, setIsDark] = useState(darkModePreference)
   const [isNotificaction, setIsNotificaction] = useState(notificationPreference)
   const { session } = useSession()
+  const { setTheme } = useTheme()
 
   const handleToggleDark = () => {
     supabase
@@ -45,6 +47,7 @@ export default function Switchers() {
 
     setIsDark(prev => !prev)
     setDarkModePreference(prev => !prev)
+    setTheme(!isDark ? 'dark' : 'light')
   }
 
   const handleToggleNotification = () => {
