@@ -18,8 +18,9 @@ import {
   BarChart,
   CartesianGrid,
   XAxis,
-  LegendProps,
 } from 'recharts'
+import { useState, useEffect } from 'react';
+import { Loader } from 'lucide-react'
 
 const chartConfig = {
   cumplidos: {
@@ -67,9 +68,19 @@ export default function ChartGrafico({
     'Noviembre',
     'Diciembre',
   ]
+  const [loading, setLoading] = useState(true); // Estado de carga
+
+  useEffect(() => {
+    // Simulamos un tiempo de carga. Reemplaza esto con la lógica real de carga.
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000); // Ajusta el tiempo según sea necesario
+
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <div>
-      <Card className='overflow-hidden rounded-lg shadow-md'>
+      <Card className='overflow-hidden rounded-lg shadow-md '>
         <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-2'>
           <CardTitle className='text-lg font-bold text-gray-900'>
             {periodo === 'bimestral' &&
@@ -81,6 +92,12 @@ export default function ChartGrafico({
           </CardTitle>
         </CardHeader>
         <CardContent className='p-3'>
+        {loading ? ( // Muestra el icono de carga si está cargando
+            <div className='flex items-center justify-center p-16 '>
+              <Loader className="animate-spin h-10 w-10 mr-3 " />
+              Cargando...
+            </div>
+          ) : (
           <ChartContainer config={chartConfig}>
             {!chartData || chartData.length === 0 ? ( //Si se saca crashea el programa
               <div className='h-full w-full'>
@@ -114,7 +131,7 @@ export default function ChartGrafico({
                       return `${monthDate.getDate()}`
                     } else if (periodo === 'bimestral') {
                       const monthDate = chartData[index].date
-                      return `${index + 1}`
+                      return `${monthDate.getDate()}`
                     } else {
                       // Si es otro periodo, muestra un valor genérico
                       return value
@@ -145,6 +162,7 @@ export default function ChartGrafico({
               </BarChart>
             )}
           </ChartContainer>
+          )}
         </CardContent>
         <CardFooter className='flex-col items-start gap-2 text-sm'>
           <div className='flex gap-2 font-medium leading-none'>
