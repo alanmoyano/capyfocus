@@ -49,7 +49,7 @@ export default function CapyInsiginiasCards({
       <Dialog>
         <DialogTrigger asChild>
           <Card
-            className={`group cursor-pointer overflow-hidden transition-all duration-200 ease-in-out hover:scale-105 hover:shadow-lg ${
+            className={`group cursor-pointer overflow-hidden border-0 drop-shadow-md transition-all duration-200 ease-in-out hover:scale-105 hover:shadow-lg ${
               progress === 100 ? 'bg-primary' : 'bg-gray-400'
             } `}
           >
