@@ -113,7 +113,7 @@ export default function Timer() {
           eventoSeleccionado: selectedEvent ? selectedEvent.id : null,
         }
 
-        const { data, error } = await supabase
+        await supabase
           .from('SesionesDeEstudio')
           .insert([
             {
@@ -131,9 +131,50 @@ export default function Timer() {
               eventoSeleccionado: sessionToSave.eventoSeleccionado,
             },
           ])
+          .select()
+          .then(({ data, error }) => {
+            if (error) console.log(error)
+            else console.log(data)
+          })
 
-        if (error) console.log(error)
-        else console.log(data)
+        const { data, error } = await supabase
+          .from('Usuarios')
+          .select(
+            'objetivosCumplidos,sesionesDeEstudio,sesionesPositivas,sesionesNegativas'
+          )
+          .eq('id', session?.user.id)
+
+        if (error) console.error(error)
+        if (!data) return
+
+        const {
+          objetivosCumplidos,
+          sesionesDeEstudio,
+          sesionesNegativas,
+          sesionesPositivas,
+        } = data[0] as {
+          objetivosCumplidos: number
+          sesionesDeEstudio: number
+          sesionesNegativas: number
+          sesionesPositivas: number
+        }
+
+        await supabase
+          .from('Usuarios')
+          .update({
+            objetivosCumplidos: objetivosCumplidos + objCumplidos,
+            sesionesDeEstudio: sesionesDeEstudio + 1,
+            sesionesPositivas:
+              sesionesPositivas + (motivationType === 'Positiva' ? 1 : 0),
+            sesionesNegativas:
+              sesionesNegativas + (motivationType === 'Negativa' ? 1 : 0),
+          })
+          .eq('id', session?.user.id)
+          .select()
+          .then(({ data, error }) => {
+            if (error) console.log(error)
+            else console.log(data)
+          })
       }
       saveSession()
         .then(() => console.log('Datos guardados correctamente'))
