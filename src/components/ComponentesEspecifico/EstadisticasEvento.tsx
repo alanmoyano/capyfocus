@@ -27,6 +27,7 @@ import {
   convertirAFecha,
   recoverObjectiveFromId,
   formatDateDashARG,
+  formatDateSlash,
 } from '../../constants/supportFunctions'
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
@@ -149,7 +150,6 @@ async function gatherSessionsOfEventOfUser(uuid: string, eventName: string) {
     const sortedData = data.sort(
       (a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime()
     )
-    console.log(sortedData)
     return sortedData as sessionToRecover[]
   } else {
     console.log(error)
@@ -172,9 +172,7 @@ async function gatherObjectivesOfEvent(eventId: number) {
       return data ? (data[0] as ObjectiveToRecover) : null
     })
 
-    console.log(objectivePromises)
     const objetivos = await Promise.all(objectivePromises)
-    console.log(objetivos)
 
     return objetivos.filter(obj => obj !== null)
     // for (const row of data as RowToRecover[]) {
@@ -329,7 +327,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
         tiempoEstudio: particularSession.tiempoEstudio,
       }))
       // Guardamos sesionesResumidas en el estado para mostrarlo
-      setSessionInfo(sesionesResumidas)
+      setSessionInfoAcumuladas(accumulateSessions(sesionesResumidas))
     }
   }
 
@@ -403,11 +401,9 @@ export default function EstadisticasEvento({ name }: { name: string }) {
     if (evento && session) {
       gatherObjectivesOfEvent(evento.id)
         .then(data => {
-          console.log(data)
-          setEventObjectives(data as ObjectiveToRecover[])
-          loadChartData(data as ObjectiveToRecover[])
+          setEventObjectives(data!)
+          loadChartData(data!)
           //Esto tengo que mover a otro lado
-          setSessionInfoAcumuladas(accumulateSessions(sessionInformacion))
         })
         .catch((error: unknown) => {
           console.log(
@@ -437,13 +433,11 @@ export default function EstadisticasEvento({ name }: { name: string }) {
         horas: objetivo.horasAcumuladas,
       })
     }
-    console.log('Datos: ', dataToChart)
     return dataToChart
   }
 
   function loadChartData(data: ObjectiveToRecover[]) {
     const generatedData = generateDataOfChart(data)
-    console.log('Datos a cargar', generatedData)
     setChartData(generatedData)
   }
 
@@ -556,43 +550,58 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                     }}
                   />{' '}
                   <div className='pl-4 md:w-1/2'>
-                    <h1 className='mb-2 text-lg font-semibold'>
+                    <h1 className='mb-2 text-lg font-bold'>
                       Información del día: {selectedDate?.toLocaleDateString()}
                     </h1>
                     <ul className='space-y-2'>
                       {selectedDate ? (
                         <li>
-                          <h2 className='text-lg font-semibold'>
-                            Sesiones de estudio
+                          <h2 className='mb-2 text-lg font-semibold'>
+                            Resumen de sesiones de estudio:
+                            <hr className='border-gray-400'></hr>
                           </h2>
                           <div>
-                            {/* {sessionInfoAcumuladas
-                              .filter(session => {
+                            {sessionInfoAcumuladas
+                              ?.filter(session => {
                                 // Filtramos las sesiones por la fecha seleccionada
+                                const fechaFormateada = formatDateSlash(
+                                  session.fecha
+                                )
                                 return (
                                   new Date(
-                                    session.fecha
+                                    fechaFormateada
                                   ).toLocaleDateString() ===
                                   selectedDate.toLocaleDateString()
                                 )
                               })
                               .map((session, index) => (
                                 <div key={index + 1}>
-                                  <p>Fecha: {session.fecha}</p>
-                                  <p>
-                                    Objetivos Totales:{' '}
-                                    {session.objetivosTotales}
-                                  </p>
-                                  <p>
-                                    Objetivos Cumplidos:{' '}
-                                    {session.objetivosCumplidos}
-                                  </p>
-                                  <p>
-                                    Tiempo de Estudio:{' '}
-                                    {formatTime(session.tiempoEstudio)}{' '}
-                                  </p>
+                                  <span className='flex gap-2'>
+                                    <p className='font-semibold'>
+                                      Objetivos Totales:{' '}
+                                    </p>
+                                    <p>{session.objetivosTotales}</p>
+                                  </span>
+                                  <span className='flex gap-2'>
+                                    <p className='font-semibold'>
+                                      Objetivos Cumplidos:{' '}
+                                    </p>
+                                    <p>{session.objetivosCumplidos}</p>
+                                  </span>
+                                  <span className='flex gap-2'>
+                                    <p className='font-semibold'>
+                                      Tiempo de Estudio:{' '}
+                                    </p>
+                                    <p>{formatTime(session.tiempoEstudio)} </p>
+                                  </span>
+                                  <span className='flex gap-2'>
+                                    <p className='font-semibold'>
+                                      Cantidad de sesiones:{' '}
+                                    </p>
+                                    <p>{sessionInfoAcumuladas?.length}</p>
+                                  </span>
                                 </div>
-                              ))} */}
+                              ))}
                           </div>
                         </li>
                       ) : null}
