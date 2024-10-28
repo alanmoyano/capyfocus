@@ -87,7 +87,12 @@ function App() {
                         </Switch>
                       </main>
 
-                      <Toaster richColors closeButton />
+                      <Toaster
+                        richColors
+                        closeButton
+                        toastOptions={{}}
+                        theme='light'
+                      />
                     </EventsProvider>
                   </MusicProvider>
                 </SesionProvider>
