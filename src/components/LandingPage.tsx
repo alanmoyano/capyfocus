@@ -77,9 +77,9 @@ export default function LandingPage() {
           </p>
           <span className='mt-12 flex w-max flex-col items-center justify-center gap-4 sm:w-full sm:flex-row sm:gap-10'>
             <Button
-            type='button'
-            variant={"ghost"}
-              className='rounded-lg border  p-8 text-xl shadow-md transition-all duration-300  hover:shadow-lg'
+              type='button'
+              variant={'ghost'}
+              className='rounded-lg border p-8 text-xl shadow-md transition-all duration-300 hover:shadow-lg'
               onClick={handleNavigateRegistrar}
             >
               Ingresa
