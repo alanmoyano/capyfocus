@@ -22,7 +22,7 @@ import {
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
 import ChartGrafico from './ChartGrafico'
-import { startOfWeek, subMonths } from 'date-fns'
+import {  subMonths, subWeeks } from 'date-fns'
 import { es } from 'date-fns/locale'
 import html2canvas from 'html2canvas'
 import { Button } from '@components/ui/button'
@@ -464,6 +464,21 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
         StudyTechniqueList
       )
     )
+
+    //Para poder mostrar la info en el calendario
+/*     const sesionesResumidas = data.map(particularSession => ({
+      fecha: particularSession.fecha.toString(),
+      objetivosTotales: parseInt(
+        particularSession.cantidadObjetivos as unknown as string
+      ),
+      objetivosCumplidos: parseInt(
+        particularSession.cantidadObjetivosCumplidos as unknown as string
+      ),
+      tiempoEstudio: particularSession.tiempoEstudio,
+    })) */
+    // Guardamos sesionesResumidas en el estado para mostrarlo
+    setSessionInfoAcumuladas(accumulateSessions(sesionesResumidas))
+
     //Aca de ordena por fecha de forma ascendente
     const sortedData = matrizFechas.sort(
       //@ts-expect-error no hay problema ts
@@ -472,8 +487,56 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
 
     //@ts-expect-error no jodas despues se arregla
     setChartData(generateDataOfChart(period, matrizFechas))
+
+
+  }
+  
+
+  const accumulateSessions = (sessionInfo: sessionInfo[]) => {
+    const acumulados: Record<
+      string,
+      {
+        objetivosTotales: number
+        objetivosCumplidos: number
+        tiempoEstudio: number
+      }
+    > = {}
+
+    for (const session of sessionInfo) {
+      const { fecha, objetivosTotales, objetivosCumplidos, tiempoEstudio } =
+        session
+
+      // Si la fecha ya está en el objeto acumulados, sumamos los valores
+      if (acumulados[fecha]) {
+        acumulados[fecha].objetivosTotales += objetivosTotales
+        acumulados[fecha].objetivosCumplidos += objetivosCumplidos
+        acumulados[fecha].tiempoEstudio += tiempoEstudio // Asegúrate de que tiempoEstudio esté definido en session
+      } else {
+        // Si la fecha no está, la agregamos
+        acumulados[fecha] = {
+          objetivosTotales,
+          objetivosCumplidos,
+          tiempoEstudio, // Asegúrate de que tiempoEstudio esté definido en session
+        }
+      }
+    }
+
+    // Convertimos el objeto acumulados de vuelta a un arreglo
+    return Object.entries(acumulados).map(([fecha, datos]) => ({
+      fecha,
+      ...datos,
+    }))
   }
 
+  type sessionInfo = {
+    fecha: string
+    objetivosTotales: number
+    objetivosCumplidos: number
+    tiempoEstudio: number
+  }
+  
+  const [sessionInfoAcumuladas, setSessionInfoAcumuladas] =
+    useState<sessionInfo[]>()
   const { objetivos, tiempo } = useObjetivos()
   const [date, setDate] = useState<Date | undefined>(new Date())
   const { session } = useSession()
@@ -493,7 +556,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
     switch (period) {
       case 'semanal':
         return {
-          fromDate: startOfWeek(new Date(), { weekStartsOn: 1 }),
+          fromDate: subWeeks(new Date(), 1),
           toDate: new Date(),
         }
       case 'mensual':
@@ -531,10 +594,11 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
         })
     }
   }, [period, getDateOfPeriod, session])
+//Calendario: 
+const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
 
   return (
     <>
-      {/* info de periodo */}
       {/* Boton Screen */}
       <div className='mr-12 flex w-full justify-end'>
         <Button variant='ghost' onClick={() => captureScreenshot(period)}>
@@ -612,11 +676,15 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
               </CardHeader>
               <CardContent className='p-2'>
                 <div className='flex flex-col md:flex-row'>
+                  {/* Calendario */}
                   <Calendar
                     showOutsideDays={period !== 'semanal'} // Ocultar días fuera del rango
                     {...dateRange} //Aplica solo si es semanal
                     mode='single'
                     locale={es}
+                    onSelect={date => {
+                      setSelectedDate(date)
+                    }}
                     className='rounded-md border text-sm shadow-sm'
                     modifiers={{
                       //@ts-expect-error shhh ts, esto funciona as expected
@@ -632,7 +700,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
                   <div className='pl-4 md:w-1/2'>
                     <h1 className='mb-2 text-lg font-semibold'>Eventos</h1>
                     {/* Lista de eventos */}
-                    <p>11/07 Brenda conquista el mundo</p>
+                    <p>info Periodo</p>
                   </div>
                 </div>
               </CardContent>

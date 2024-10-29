@@ -133,7 +133,8 @@ export default function ChartGrafico({
                         periodo === 'bimestral' ||
                         periodo === 'semestre'
                       ) {
-                        return `${index + 1}`
+                        const monthDate = chartData[index].date
+                        return `${monthDate.getDate()}`
                       }
                     }}
                   />

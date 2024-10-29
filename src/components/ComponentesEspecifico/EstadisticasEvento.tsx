@@ -424,7 +424,6 @@ export default function EstadisticasEvento({ name }: { name: string }) {
   //Funciones para la chart
   const [chartData, setChartData] = useState<chartData[]>([])
 
-  //Tenia sentido cuando lo hice, ahora que lo veo de otra forma ya no
   function generateDataOfChart(data: ObjectiveToRecover[]) {
     const dataToChart: chartData[] = []
     for (const objetivo of data) {
