@@ -24,12 +24,12 @@ export default function LandingPage() {
     <div className='w-screen text-pretty'>
       <div className='bg-white'>
         {/* Comienzo */}
-        <section className='bg-gradient-to-r from-yellow-50 to-purple-50 py-12 text-center'>
-          <h1 className='mb-4 text-5xl font-extrabold text-gray-800'>
+        <section className='bg-gradient-to-r from-yellow-50 to-purple-50 py-12 text-center dark:bg-gradient-to-r dark:from-yellow-950 dark:to-black'>
+          <h1 className='mb-4 text-5xl font-extrabold text-gray-800 dark:text-white'>
             Optimiza tu tiempo de estudio con{' '}
             <span className='text-[#f2b76a]'>CapyFocus</span>
           </h1>
-          <p className='mb-6 text-2xl text-gray-700'>
+          <p className='mb-6 text-2xl text-gray-700 dark:text-white'>
             Capydoro y Capymetro, dos técnicas que te ayudarán a lograr tus
             objetivos.
           </p>
@@ -41,7 +41,7 @@ export default function LandingPage() {
                   Capydoro
                 </span>
               </h2>
-              <p className='text-lg text-gray-600'>
+              <p className='text-lg text-gray-600 dark:text-white'>
                 Basado en la técnica pomodoro, para sesiones de estudio
                 eficientes.
               </p>
@@ -53,7 +53,7 @@ export default function LandingPage() {
                   Capymetro
                 </span>
               </h2>
-              <p className='text-lg text-gray-600'>
+              <p className='text-lg text-gray-600 dark:text-white'>
                 Un cronómetro para medir el tiempo de estudio sin
                 interrupciones.
               </p>
@@ -62,28 +62,30 @@ export default function LandingPage() {
         </section>
 
         {/* Botones */}
-        <section className='flex flex-col items-center justify-center py-8'>
-          <p className='text-center text-2xl font-semibold text-gray-800'>
+        <section className='flex flex-col items-center justify-center py-8 dark:bg-black'>
+          <p className='text-center text-2xl font-semibold text-gray-800 dark:text-white'>
             ¡El momento es ahora! ¿Listo para tomar el control de tu tiempo de
             estudio?
           </p>
-          <p className='mt-4 text-center text-lg text-gray-700'>
+          <p className='mt-4 text-center text-lg text-gray-700 dark:text-white'>
             Con cada sesión, te acercas más al éxito. No dejes que el tiempo se
             te escape, ¡haz que cada minuto cuente!
           </p>
-          <p className='mt-6 text-center text-lg text-gray-700'>
+          <p className='mt-6 text-center text-lg text-gray-700 dark:text-white'>
             ¿Qué estás esperando? Únete a nosotros y empieza a disfrutar de un
             estudio más productivo y efectivo.
           </p>
           <span className='mt-12 flex w-max flex-col items-center justify-center gap-4 sm:w-full sm:flex-row sm:gap-10'>
             <Button
-              className='rounded-lg border border-gray-300 bg-white p-8 text-xl text-gray-900 shadow-md transition-all duration-300 hover:bg-gray-100 hover:shadow-lg'
+            type='button'
+            variant={"ghost"}
+              className='rounded-lg border  p-8 text-xl shadow-md transition-all duration-300  hover:shadow-lg'
               onClick={handleNavigateRegistrar}
             >
               Ingresa
             </Button>
             <Button
-              className='rounded-lg bg-[#f2b76a] p-8 text-xl text-white shadow-md transition-all duration-300 hover:shadow-lg'
+              className='rounded-lg p-8 text-xl text-white shadow-md transition-all duration-300 hover:shadow-lg'
               onClick={handleNavigateInicio}
             >
               Empieza ahora
