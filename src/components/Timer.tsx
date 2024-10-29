@@ -204,12 +204,36 @@ export default function Timer() {
 
             if (!session) return
 
-            console.log(
-              groupBy(insigniasXUsuario, 'idUsuario')[session.user.id] // con esto voy a agrupar todos los datos de insignias por usuario y despues estoy filtrando por el id del usuario actual, después sigo!
-            )
+            const insigniaXUsuario = groupBy(insigniasXUsuario, 'idUsuario')[
+              session.user.id
+            ]
+
+            console.log(insigniaXUsuario)
+            /* eslint-disable-next-line */
+            if (!insigniaXUsuario) return
 
             insignias.forEach(insignia => {
-              console.log(insignia)
+              // const insigniaParticular = insigniaXUsuario.find(
+              //   insigniaUsuario => insigniaUsuario.idInsignia === insignia.id
+              // )
+
+              // if (!insigniaParticular) return
+              // console.log(insigniaParticular)
+
+              supabase
+                .from('CapyInsigniasXUsuarios')
+                .upsert({
+                  idInsignia: insignia.id,
+                  idUsuario: session.user.id,
+                  progreso: 74, // ahora tenemos que ver como calcular el progreso!
+                })
+                .eq('idInsignia', insignia.id)
+                .eq('idUsuario', session.user.id)
+                .select()
+                .then(({ data, error }) => {
+                  if (error) console.error(error)
+                  console.log(data)
+                })
             })
           })
       }

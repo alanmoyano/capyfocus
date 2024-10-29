@@ -80,7 +80,7 @@ export default function LandingPage() {
               className='rounded-lg border border-gray-300 bg-white p-8 text-xl text-gray-900 shadow-md transition-all duration-300 hover:bg-gray-100 hover:shadow-lg'
               onClick={handleNavigateRegistrar}
             >
-              Registrate
+              Ingresa
             </Button>
             <Button
               className='rounded-lg bg-[#f2b76a] p-8 text-xl text-white shadow-md transition-all duration-300 hover:shadow-lg'

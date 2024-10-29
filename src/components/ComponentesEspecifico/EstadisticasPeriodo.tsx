@@ -18,6 +18,7 @@ import {
   obtenerClaveMayorValor,
   getElementNameById,
   convertirAFecha,
+  formatDateSlash,
 } from '../../constants/supportFunctions'
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
@@ -381,6 +382,14 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
         0,
       ])
     }
+    const acumulados: Record<
+    string,
+    {
+      objetivosTotales: number
+      objetivosCumplidos: number
+      tiempoEstudio: number
+    }
+  > = {}
 
     for (const particularSession of sessionsRecovered) {
       //Este particularSession es una y cada una de las sesiones que recuperó la función de arriba y para acceder a la fecha lo podes hacer como particularSession.fecha
@@ -429,6 +438,21 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
           particularSession.cantidadObjetivos -
           particularSession.cantidadObjetivosCumplidos
       }
+
+      console.log(particularSession.fecha)
+
+      if (acumulados[particularSession.fecha]) {
+        acumulados[particularSession.fecha].objetivosTotales += objetivosTotales
+        acumulados[particularSession.fecha].objetivosCumplidos += objetivosCumplidos
+        acumulados[particularSession.fecha].tiempoEstudio += tiempoEstudio // Asegúrate de que tiempoEstudio esté definido en session
+      } else {
+        // Si la fecha no está, la agregamos
+        acumulados[particularSession.fecha] = {
+          objetivosTotales,
+          objetivosCumplidos,
+          tiempoEstudio, // Asegúrate de que tiempoEstudio esté definido en session
+        }
+      }
     }
 
     const fechasOrdenadas = Array.from(setFechas).sort((a, b) => {
@@ -465,19 +489,10 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
       )
     )
 
-    //Para poder mostrar la info en el calendario
-/*     const sesionesResumidas = data.map(particularSession => ({
-      fecha: particularSession.fecha.toString(),
-      objetivosTotales: parseInt(
-        particularSession.cantidadObjetivos as unknown as string
-      ),
-      objetivosCumplidos: parseInt(
-        particularSession.cantidadObjetivosCumplidos as unknown as string
-      ),
-      tiempoEstudio: particularSession.tiempoEstudio,
-    })) */
-    // Guardamos sesionesResumidas en el estado para mostrarlo
-    setSessionInfoAcumuladas(accumulateSessions(sesionesResumidas))
+    setSessionInfoAcumuladas(Object.entries(acumulados).map(([fecha, datos]) => ({
+      fecha,
+      ...datos,
+    })))
 
     //Aca de ordena por fecha de forma ascendente
     const sortedData = matrizFechas.sort(
@@ -491,42 +506,6 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
 
   }
   
-
-  const accumulateSessions = (sessionInfo: sessionInfo[]) => {
-    const acumulados: Record<
-      string,
-      {
-        objetivosTotales: number
-        objetivosCumplidos: number
-        tiempoEstudio: number
-      }
-    > = {}
-
-    for (const session of sessionInfo) {
-      const { fecha, objetivosTotales, objetivosCumplidos, tiempoEstudio } =
-        session
-
-      // Si la fecha ya está en el objeto acumulados, sumamos los valores
-      if (acumulados[fecha]) {
-        acumulados[fecha].objetivosTotales += objetivosTotales
-        acumulados[fecha].objetivosCumplidos += objetivosCumplidos
-        acumulados[fecha].tiempoEstudio += tiempoEstudio // Asegúrate de que tiempoEstudio esté definido en session
-      } else {
-        // Si la fecha no está, la agregamos
-        acumulados[fecha] = {
-          objetivosTotales,
-          objetivosCumplidos,
-          tiempoEstudio, // Asegúrate de que tiempoEstudio esté definido en session
-        }
-      }
-    }
-
-    // Convertimos el objeto acumulados de vuelta a un arreglo
-    return Object.entries(acumulados).map(([fecha, datos]) => ({
-      fecha,
-      ...datos,
-    }))
-  }
 
   type sessionInfo = {
     fecha: string
@@ -696,12 +675,64 @@ const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
                       eventDay: 'bg-primary/50 ',
                     }}
                   />
-
-                  <div className='pl-4 md:w-1/2'>
-                    <h1 className='mb-2 text-lg font-semibold'>Eventos</h1>
-                    {/* Lista de eventos */}
-                    <p>info Periodo</p>
-                  </div>
+                  {<div className='pl-4 md:w-1/2'>
+                    <h1 className='mb-2 text-lg font-bold'>
+                      Información del día: {selectedDate?.toLocaleDateString()}
+                    </h1>
+                    <ul className='space-y-2'>
+                      {selectedDate ? (
+                        <li>
+                          <h2 className='mb-2 text-lg font-semibold'>
+                            Resumen de sesiones de estudio:
+                            <hr className='border-gray-400'></hr>
+                          </h2>
+                          <div>
+                            {/*sessionInfoAcumuladas
+                              ?.filter(session => {
+                                // Filtramos las sesiones por la fecha seleccionada
+                                const fechaFormateada = formatDateSlash(
+                                  session.fecha
+                                )
+                                return (
+                                  new Date(
+                                    fechaFormateada
+                                  ).toLocaleDateString() ===
+                                  selectedDate.toLocaleDateString()
+                                )
+                              })
+                              .map((session, index) => (
+                                <div key={index + 1}>
+                                  <span className='flex gap-2'>
+                                    <p className='font-semibold'>
+                                      Objetivos Totales:{' '}
+                                    </p>
+                                    <p>{session.objetivosTotales}</p>
+                                  </span>
+                                  <span className='flex gap-2'>
+                                    <p className='font-semibold'>
+                                      Objetivos Cumplidos:{' '}
+                                    </p>
+                                    <p>{session.objetivosCumplidos}</p>
+                                  </span>
+                                  <span className='flex gap-2'>
+                                    <p className='font-semibold'>
+                                      Tiempo de Estudio:{' '}
+                                    </p>
+                                    <p>{formatTime(session.tiempoEstudio)} </p>
+                                  </span>
+                                  <span className='flex gap-2'>
+                                    <p className='font-semibold'>
+                                      Cantidad de sesiones:{' '}
+                                    </p>
+                                    <p>{sessionInfoAcumuladas?.length}</p>
+                                  </span>
+                                </div>
+                              ))*/}}
+                          </div>
+                        </li>
+                      ) : null}
+                    </ul>
+                  </div>}
                 </div>
               </CardContent>
             </Card>
