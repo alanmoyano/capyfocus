@@ -24,7 +24,7 @@ export default function LandingPage() {
     <div className='w-screen text-pretty'>
       <div className='bg-white'>
         {/* Comienzo */}
-        <section className='bg-gradient-to-r from-yellow-50 to-purple-50 py-12 text-center dark:bg-gradient-to-r dark:from-yellow-950 dark:to-black'>
+        <section className='bg-gradient-to-r from-yellow-50 to-purple-50 py-12 text-center dark:bg-gradient-to-r dark:from-yellow-950 dark:to-slate-900'>
           <h1 className='mb-4 text-5xl font-extrabold text-gray-800 dark:text-white'>
             Optimiza tu tiempo de estudio con{' '}
             <span className='text-[#f2b76a]'>CapyFocus</span>
