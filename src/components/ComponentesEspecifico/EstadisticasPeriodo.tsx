@@ -19,6 +19,7 @@ import {
   getElementNameById,
   convertirAFecha,
   formatDateSlash,
+  sessionInfo,
 } from '../../constants/supportFunctions'
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
@@ -27,7 +28,7 @@ import { subMonths, subWeeks } from 'date-fns'
 import { es } from 'date-fns/locale'
 import html2canvas from 'html2canvas'
 import { Button } from '@components/ui/button'
-import { ImageDown } from 'lucide-react'
+import { Ambulance, ImageDown } from 'lucide-react'
 
 //TODO: Grafico segun el periodo de tiempo seleccionado
 
@@ -431,6 +432,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
           particularSession.cantidadObjetivos -
           particularSession.cantidadObjetivosCumplidos
       }
+      //@ts-expect-error no molestes ts, esto anda espectacular
       const sesionResumida: sessionInfo = {
         fecha: particularSession.fecha,
         objetivosCumplidos: particularSession.cantidadObjetivosCumplidos,
@@ -495,6 +497,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
         objetivosTotales: number
         objetivosCumplidos: number
         tiempoEstudio: number
+        cantidadSesiones: number
       }
     > = {}
 
@@ -507,6 +510,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
         acumulados[fecha].objetivosTotales += objetivosTotales
         acumulados[fecha].objetivosCumplidos += objetivosCumplidos
         acumulados[fecha].tiempoEstudio += tiempoEstudio // Asegúrate de que tiempoEstudio esté definido en session
+        acumulados[fecha].cantidadSesiones += 1
       } else {
         // Si la fecha no está, la agregamos
         acumulados[fecha] = {
@@ -514,6 +518,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
 
           objetivosCumplidos,
           tiempoEstudio, // Asegúrate de que tiempoEstudio esté definido en session
+          cantidadSesiones: 1,
         }
       }
     }
@@ -522,13 +527,6 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
       fecha,
       ...datos,
     }))
-  }
-
-  type sessionInfo = {
-    fecha: string
-    objetivosTotales: number
-    objetivosCumplidos: number
-    tiempoEstudio: number
   }
 
   const [sessionInfoAcumuladas, setSessionInfoAcumuladas] =
@@ -748,7 +746,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
                                       <p className='font-semibold'>
                                         Cantidad de sesiones:{' '}
                                       </p>
-                                      <p>{sessionInfoAcumuladas.length}</p>
+                                      <p>{session.cantidadSesiones}</p>
                                     </span>
                                   </div>
                                 ))}

@@ -26,6 +26,7 @@ export type sessionInfo = {
   objetivosTotales: number
   objetivosCumplidos: number
   tiempoEstudio: number
+  cantidadSesiones: number
 }
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 function dateToTimetz(date: Date | null): string {

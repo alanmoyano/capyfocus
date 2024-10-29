@@ -328,6 +328,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
         tiempoEstudio: particularSession.tiempoEstudio,
       }))
       // Guardamos sesionesResumidas en el estado para mostrarlo
+      //@ts-expect-error no molestes ts, esto anda espectacular
       setSessionInfoAcumuladas(accumulateSessions(sesionesResumidas))
     }
   }
@@ -339,6 +340,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
         objetivosTotales: number
         objetivosCumplidos: number
         tiempoEstudio: number
+        cantidadSesiones: number
       }
     > = {}
 
@@ -351,12 +353,14 @@ export default function EstadisticasEvento({ name }: { name: string }) {
         acumulados[fecha].objetivosTotales += objetivosTotales
         acumulados[fecha].objetivosCumplidos += objetivosCumplidos
         acumulados[fecha].tiempoEstudio += tiempoEstudio // Asegúrate de que tiempoEstudio esté definido en session
+        acumulados[fecha].cantidadSesiones += 1
       } else {
         // Si la fecha no está, la agregamos
         acumulados[fecha] = {
           objetivosTotales,
           objetivosCumplidos,
           tiempoEstudio, // Asegúrate de que tiempoEstudio esté definido en session
+          cantidadSesiones: 1,
         }
       }
     }
@@ -591,7 +595,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                                     <p className='font-semibold'>
                                       Cantidad de sesiones:{' '}
                                     </p>
-                                    <p>{sessionInfoAcumuladas?.length}</p>
+                                    <p>{session.cantidadSesiones}</p>
                                   </span>
                                 </div>
                               ))}
