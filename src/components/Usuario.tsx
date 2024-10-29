@@ -40,7 +40,7 @@ import { Pencil } from 'lucide-react'
 const formSchema = z.object({
   username: z
     .string()
-    .min(3, 'El nombre de usuario debe tener al menos 3 caracteres')
+    .min(2, 'El nombre de usuario debe tener al menos 2 caracteres')
     .max(30, 'El nombre de usuario no puede tener más de 30 caracteres'),
   email: z.string().email('Por favor, ingresa un email válido'),
 })
@@ -293,7 +293,7 @@ export default function Usuario() {
             <CardFooter className='mt-auto flex select-none justify-end'>
               <div className='space-x-4'>
                 <Button
-                  variant={'destructive'}
+                  variant={session ? 'destructive' : 'default'}
                   onClick={() => handleLogin()}
                   className='mt-4'
                 >

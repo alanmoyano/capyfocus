@@ -1,3 +1,5 @@
+import groupBy from 'lodash.groupby'
+
 import { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import { useLocation } from 'wouter'
@@ -26,6 +28,12 @@ import {
   acumulateHoursInFavouriteObj,
 } from '@/constants/supportFunctions'
 import { useEvents } from './contexts/EventsContext'
+import {
+  InsigniaXUsuario,
+  useInsignias,
+} from '@/components/contexts/InsigniasContext'
+import { id } from 'date-fns/locale'
+import { PostgrestError } from '@supabase/supabase-js'
 
 //import Confetti from 'react-confetti-boom'
 
@@ -91,6 +99,8 @@ export default function Timer() {
 
   const { selectedEvent } = useEvents()
 
+  const { insignias } = useInsignias()
+
   const finalizarSesion = () => {
     if (session) {
       const hoy = new Date()
@@ -134,40 +144,46 @@ export default function Timer() {
           .select()
           .then(({ data, error }) => {
             if (error) console.log(error)
-            else console.log(data)
+            else console.log('Datos guardados correctamente', data)
           })
 
-        const { data, error } = await supabase
+        let capyDatosParaEstadisticas = {
+          objetivosCumplidos: 0,
+          sesionesDeEstudio: 0,
+          sesionesNegativas: 0,
+          sesionesPositivas: 0,
+        }
+
+        await supabase
           .from('Usuarios')
           .select(
             'objetivosCumplidos,sesionesDeEstudio,sesionesPositivas,sesionesNegativas'
           )
           .eq('id', session?.user.id)
+          .then(({ data, error }) => {
+            if (error) console.error(error)
+            if (!data) return
 
-        if (error) console.error(error)
-        if (!data) return
-
-        const {
-          objetivosCumplidos,
-          sesionesDeEstudio,
-          sesionesNegativas,
-          sesionesPositivas,
-        } = data[0] as {
-          objetivosCumplidos: number
-          sesionesDeEstudio: number
-          sesionesNegativas: number
-          sesionesPositivas: number
-        }
+            capyDatosParaEstadisticas = data[0] as {
+              objetivosCumplidos: number
+              sesionesDeEstudio: number
+              sesionesNegativas: number
+              sesionesPositivas: number
+            }
+          })
 
         await supabase
           .from('Usuarios')
           .update({
-            objetivosCumplidos: objetivosCumplidos + objCumplidos,
-            sesionesDeEstudio: sesionesDeEstudio + 1,
+            objetivosCumplidos:
+              capyDatosParaEstadisticas.objetivosCumplidos + objCumplidos,
+            sesionesDeEstudio: capyDatosParaEstadisticas.sesionesDeEstudio + 1,
             sesionesPositivas:
-              sesionesPositivas + (motivationType === 'Positiva' ? 1 : 0),
+              capyDatosParaEstadisticas.sesionesPositivas +
+              (motivationType === 'Positiva' ? 1 : 0),
             sesionesNegativas:
-              sesionesNegativas + (motivationType === 'Negativa' ? 1 : 0),
+              capyDatosParaEstadisticas.sesionesNegativas +
+              (motivationType === 'Negativa' ? 1 : 0),
           })
           .eq('id', session?.user.id)
           .select()
@@ -175,7 +191,29 @@ export default function Timer() {
             if (error) console.log(error)
             else console.log(data)
           })
+
+        await supabase
+          .from('CapyInsigniasXUsuarios')
+          .select()
+          .eq('idUsuario', session?.user.id)
+          .then(({ data, error }) => {
+            if (error) console.error(error)
+            if (!data) return
+
+            const insigniasXUsuario = data as InsigniaXUsuario[]
+
+            if (!session) return
+
+            console.log(
+              groupBy(insigniasXUsuario, 'idUsuario')[session.user.id] // con esto voy a agrupar todos los datos de insignias por usuario y despues estoy filtrando por el id del usuario actual, después sigo!
+            )
+
+            insignias.forEach(insignia => {
+              console.log(insignia)
+            })
+          })
       }
+
       saveSession()
         .then(() => console.log('Datos guardados correctamente'))
         .catch((error: unknown) => console.log(error))

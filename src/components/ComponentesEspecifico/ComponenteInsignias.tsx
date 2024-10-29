@@ -39,9 +39,7 @@ export default function CapyInsiginiasCards({
   const [isUnlocked, setIsUnlocked] = useState<boolean>(false)
 
   useEffect(() => {
-    if (progress === 100) {
-      setIsUnlocked(true)
-    }
+    setIsUnlocked(progress === 100)
   }, [progress])
 
   return (

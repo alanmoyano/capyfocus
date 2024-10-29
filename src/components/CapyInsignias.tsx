@@ -2,37 +2,13 @@ import { Button } from '@/components/ui/button'
 import { useLocation } from 'wouter'
 
 import CapyInsigniasCards from '@/components/ComponentesEspecifico/ComponenteInsignias'
-import { useEffect, useState } from 'react'
-import { supabase } from './supabase/client'
 
 import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
-
-type Insignia = {
-  id: string
-  nombre: string
-  descripcionBloqueada: string
-  descripcionDesbloqueada: string
-}
+import { useInsignias } from '@/components/contexts/InsigniasContext'
 
 export default function CapyInsignias() {
-  const [insignias, setInsignias] = useState<Insignia[]>([])
+  const { insignias, insigniasXUsuario } = useInsignias()
   const [, setLocation] = useLocation()
-
-  useEffect(() => {
-    async function getInsingias() {
-      const insignias = await supabase.from('CapyInsignias').select('*')
-      return insignias.data
-    }
-
-    getInsingias()
-      .then(data => {
-        if (!data) return
-
-        console.log(data)
-        setInsignias(data)
-      })
-      .catch((error: unknown) => console.error(error))
-  }, [])
 
   const handleVolver = () => {
     setLocation('/inicio')
@@ -44,7 +20,7 @@ export default function CapyInsignias() {
       <div className='mr-8 flex w-full justify-end'>
         <CapyInfo desc='A medida que estudies se desbloquearán CapyInsignias, estas son un reconocimiento a tu esfuerzo y dedicación. ¡Sigue así!' />
       </div>
-      <div className='container grid grid-cols-2 gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 md:gap-10 md:p-10 lg:grid-cols-4 xl:grid-cols-5'>
+      <div className='container grid grid-cols-2 gap-4 p-4 md:grid-cols-3 md:gap-10 md:p-10 lg:grid-cols-4 xl:grid-cols-5'>
         {insignias.map(insignia => (
           <CapyInsigniasCards
             key={insignia.id}
@@ -52,14 +28,18 @@ export default function CapyInsignias() {
             descLock={insignia.descripcionBloqueada}
             descUnlock={insignia.descripcionDesbloqueada}
             capyName={insignia.nombre}
+            // progress={
+            //   Number(insignia.id) % 2 === 0 ? 100 : 50
+            // } /* versión aleatoria! */
             progress={
-              Number(insignia.id) % 2 === 0 ? 100 : 50
-            } /* versión aleatoria! */
-            // progress={100}
+              insigniasXUsuario.find(
+                insigniaXUsuario => insigniaXUsuario.idInsignia === insignia.id
+              )?.progreso ?? 0
+            }
           />
         ))}
       </div>
-      <div className='container w-screen'>
+      <div className='container mb-8 w-screen'>
         <Button className='mt-4' onClick={handleVolver}>
           Volver
         </Button>
