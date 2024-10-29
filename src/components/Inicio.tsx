@@ -214,6 +214,8 @@ export default function Inicio() {
     setTiempoTotal,
     setAcumuladorTiempoPausa,
     setCantidadPausas,
+    banderaUnicaVez,
+    setBanderaUnicaVez,
   } = useSesion()
 
   const [motivaciones, setMotivaciones] = useState<Motivacion[]>([])
@@ -367,6 +369,12 @@ export default function Inicio() {
       })
 
       .catch((error: unknown) => console.error(error))
+
+    if (banderaUnicaVez) {
+      setObjetivosFav([])
+      console.log('Borre los objetivos favoritos para evitar errores?')
+      setBanderaUnicaVez(false)
+    }
   }, [])
 
   return (

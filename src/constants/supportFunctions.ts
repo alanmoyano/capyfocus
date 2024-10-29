@@ -20,6 +20,13 @@ export type SesionAGuardar = {
   musicaSeleccionada: number
   eventoSeleccionado: number | null
 }
+
+export type sessionInfo = {
+  fecha: string
+  objetivosTotales: number
+  objetivosCumplidos: number
+  tiempoEstudio: number
+}
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 function dateToTimetz(date: Date | null): string {
   // funcion que es necesaria para guardar horas dentro de la bd, ya que el tiempo que pide es Timetz

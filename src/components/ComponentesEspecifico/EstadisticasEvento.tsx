@@ -28,6 +28,7 @@ import {
   recoverObjectiveFromId,
   formatDateDashARG,
   formatDateSlash,
+  sessionInfo,
 } from '../../constants/supportFunctions'
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
@@ -365,13 +366,6 @@ export default function EstadisticasEvento({ name }: { name: string }) {
       fecha,
       ...datos,
     }))
-  }
-
-  type sessionInfo = {
-    fecha: string
-    objetivosTotales: number
-    objetivosCumplidos: number
-    tiempoEstudio: number
   }
 
   const [sessionInformacion, setSessionInfo] = useState<sessionInfo[]>([])

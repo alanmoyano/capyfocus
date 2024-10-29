@@ -9,6 +9,8 @@ type SesionData = {
   setAcumuladorTiempoPausa: React.Dispatch<React.SetStateAction<number>>
   tecnicaEstudio: string
   setTecnicaEstudio: React.Dispatch<React.SetStateAction<string>>
+  banderaUnicaVez: boolean
+  setBanderaUnicaVez: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const SesionContext = createContext<SesionData | undefined>(undefined)
@@ -20,6 +22,7 @@ export const SesionProvider: React.FC<{ children: ReactNode }> = ({
   const [cantidadPausas, setCantidadPausas] = useState<number>(0)
   const [acumuladorTiempoPausa, setAcumuladorTiempoPausa] = useState<number>(0)
   const [tecnicaEstudio, setTecnicaEstudio] = useState<string>('Pomodoro')
+  const [banderaUnicaVez, setBanderaUnicaVez] = useState(true)
   return (
     <SesionContext.Provider
       value={{
@@ -31,6 +34,8 @@ export const SesionProvider: React.FC<{ children: ReactNode }> = ({
         setAcumuladorTiempoPausa,
         tecnicaEstudio,
         setTecnicaEstudio,
+        banderaUnicaVez,
+        setBanderaUnicaVez,
       }}
     >
       {children}
