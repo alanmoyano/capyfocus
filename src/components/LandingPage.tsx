@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Timer, Hourglass } from 'lucide-react'
+import { Timer, Hourglass, PawPrint } from 'lucide-react'
 import { useLocation } from 'wouter'
 import {
   Carousel,
@@ -21,10 +21,10 @@ export default function LandingPage() {
     setLocation('/login')
   }
   return (
-    <div className='w-screen text-pretty'>
+    <div className=' text-pretty'>
       <div className='bg-white'>
         {/* Comienzo */}
-        <section className='bg-gradient-to-r from-yellow-50 to-purple-50 py-12 text-center dark:bg-gradient-to-r dark:from-yellow-950 dark:to-slate-900'>
+        <section className='bg-gradient-to-r from-yellow-50 to-purple-50 py-12 text-center dark:from-yellow-950 dark:to-slate-900'>
           <h1 className='mb-4 text-5xl font-extrabold text-gray-800 dark:text-white'>
             Optimiza tu tiempo de estudio con{' '}
             <span className='text-[#f2b76a]'>CapyFocus</span>
@@ -94,14 +94,14 @@ export default function LandingPage() {
         </section>
 
         {/* Eventos y Estadisticas e Insgignias!  */}
-        <section className='flex flex-col bg-gradient-to-r from-yellow-50 to-purple-50 py-10 text-center'>
-          <h2 className='mb-4 text-4xl font-bold text-gray-700'>
+        <section className='flex flex-col bg-gradient-to-r from-yellow-50 to-purple-50 py-10 text-center dark:from-yellow-950 dark:to-slate-900'>
+          <h2 className='mb-4 text-4xl font-bold text-gray-700 dark:text-white'>
             Crea eventos y alcanza tus metas
           </h2>
-          <span className='mb-2 text-lg font-semibold text-gray-600'>
+          <span className='mb-2 text-lg font-semibold text-gray-600 dark:text-gray-200'>
             ¿Tienes un examen o un proyecto importante?
           </span>
-          <p className='mb-6 text-lg text-gray-600'>
+          <p className='mb-6 text-lg text-gray-600 dark:text-gray-200'>
             Con CapyFocus puedes crear eventos y asignarles objetivos
             específicos para estar siempre en control de tu progreso.
           </p>
@@ -114,10 +114,10 @@ export default function LandingPage() {
                     alt='Eventos'
                     className='mx-auto mb-6 h-44 w-[80%] rounded-lg object-cover'
                   />
-                  <h3 className='mb-4 text-2xl font-semibold text-gray-700'>
+                  <h3 className='mb-4 text-2xl font-semibold text-gray-700 dark:text-white'>
                     Organiza tus exámenes
                   </h3>
-                  <p className='text-lg text-gray-600'>
+                  <p className='text-lg text-gray-600 dark:text-gray-200'>
                     Define eventos importantes como exámenes o entregas y crea
                     objetivos personalizados.
                   </p>
@@ -130,10 +130,10 @@ export default function LandingPage() {
                     alt='Objetivos'
                     className='mx-auto mb-6 h-44 w-[80%] rounded-lg object-cover'
                   />
-                  <h3 className='mb-4 text-2xl font-semibold text-gray-700'>
+                  <h3 className='mb-4 text-2xl font-semibold text-gray-700 dark:text-white'>
                     Sigue tu progreso
                   </h3>
-                  <p className='text-lg text-gray-600'>
+                  <p className='text-lg text-gray-600 dark:text-gray-200'>
                     Asocia objetivos a cada evento y sigue tu evolución en
                     tiempo real.
                   </p>
@@ -146,10 +146,10 @@ export default function LandingPage() {
                     alt='Insignia 1'
                     className='mx-auto mb-6 h-44 w-[80%] rounded-lg object-cover'
                   />
-                  <h3 className='mb-4 text-2xl font-semibold text-gray-700'>
+                  <h3 className='mb-4 text-2xl font-semibold text-gray-700 dark:text-white'>
                     Desbloquea CapyInsignias
                   </h3>
-                  <p className='mb-8 text-lg text-gray-600'>
+                  <p className='mb-8 text-lg text-gray-600 dark:text-gray-200'>
                     A medida que avances en tus estudios, irás desbloqueando
                     insignias que representan tu progreso.
                   </p>
@@ -162,18 +162,18 @@ export default function LandingPage() {
         </section>
 
         {/* Chicho! */}
-        <section className='my-8 flex flex-col items-center justify-center sm:flex-row'>
+        <section className='flex flex-col items-center justify-center p-8 sm:flex-row dark:bg-black'>
           {/* Columna 1 */}
           <div className='sm:ml-16 sm:w-2/3'>
-            <p className='text-center text-2xl font-semibold text-gray-800'>
+            <p className='text-center text-2xl font-semibold text-gray-800 dark:text-white'>
               ¡Chicho te ayudara a mantenerte enfocado!
             </p>
-            <p className='mt-4 text-center text-lg text-gray-700'>
+            <p className='mt-4 text-center text-lg text-gray-700 dark:text-gray-200'>
               Dependiendo de tu estilo de motivación, Chicho puede ser dulce y
               alentador, o firme y directo para que no pierdas el enfoque.
               ¡Elige cómo te hablará y aprovecha cada sesión al máximo!
             </p>
-            <p className='mt-4 text-center text-lg text-gray-700'>
+            <p className='mt-4 text-center text-lg text-gray-700 dark:text-gray-200'>
               Ajusta su actitud en tu perfil y disfruta de una experiencia de
               estudio totalmente personalizada con CapyFocus.
             </p>
@@ -189,11 +189,11 @@ export default function LandingPage() {
         </section>
 
         {/* Sobre Nosotros */}
-        <section className='flex items-center justify-center bg-gradient-to-r from-blue-50 to-purple-50 py-12'>
+        <section className='flex items-center justify-center bg-gradient-to-r from-blue-50 to-purple-50 py-12 dark:from-gray-900 dark:to-slate-900'>
           <div className='mx-auto max-w-7xl p-6 text-center'>
             <h2 className='mb-6 text-3xl font-bold'>Sobre Nosotros</h2>
 
-            <div className='mb-8 flex flex-col-reverse items-center justify-center sm:flex-row'>
+            <div className='flex flex-col-reverse items-center justify-center sm:flex-row'>
               <p className='text-center text-lg sm:mr-10'>
                 CapyFocus nació de un grupo de amigos estudiantes. Nos conocimos
                 mientras estudiábamos, y pronto descubrimos que teníamos un
@@ -287,8 +287,36 @@ export default function LandingPage() {
             </Carousel>
           </div>
         </section>
+        {/* Agradecimientos: */}
+        <section className='flex flex-col items-center justify-center p-8 sm:flex-row dark:bg-black'>
+          {/* Columna 1 */}
+          <div className='sm:ml-16 sm:w-2/3'>
+            <p className='text-left text-2xl font-semibold text-[#2599bc] dark:text-[#a7eaff]'>
+              Agradecimientos:
+            </p>
+            <p className='mt-4 text-left text-lg text-gray-700 dark:text-gray-200 mb-2'>
+              Aprovechamos este apartado para agradecer a todas las personas que
+              contribuyeron a la realización de este proyecto, como así también
+              a los creadores de las imágenes y animaciones utilizados en la
+              página que se mensionaran a continuación:
+            </p>
+            <ul>
+              <li className='flex gap-2'>
+                <PawPrint className='h-6 w-6' />
+                <a
+                  href='https://giphy.com/thecapycode'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                >
+                  The capy code
+                </a>
+              </li>
+              <li></li>
+            </ul>
+          </div>
+        </section>
 
-        <footer className='bg-gray-100 p-6 text-center'>
+        <footer className='bg-gray-100 p-6 text-center dark:bg-black'>
           <p>&copy; 2024 CapyFocus. Todos los derechos reservados a ZTMN.</p>
         </footer>
       </div>
