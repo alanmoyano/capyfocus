@@ -388,7 +388,7 @@ export default function Inicio() {
           type='image/webp'
         />
       </Helmet>
-      <section className='flex flex-col sm:mt-10 sm:gap-20 sm:p-10 md:flex-row'>
+      <section className='flex flex-col  sm:gap-20 sm:p-6 md:flex-row'>
         <div className='mt-4 px-4 sm:px-4'>
           <DialogoChicho />
           <div className='relative flex max-h-[300px] w-full min-w-[290px] max-w-[340px] items-center justify-center overflow-hidden sm:h-full sm:max-h-[450px] sm:min-w-[450px] sm:max-w-[450px]'>
