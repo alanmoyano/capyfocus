@@ -47,11 +47,11 @@ export default function ChartEventos({
 
   return (
     <Card className='overflow-hidden rounded-lg shadow-sm'>
-      <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-3'>
+      <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-4 dark:from-slate-800 dark:to-yellow-900 dark:text-slate-200'>
         <CardTitle>Cantidad de horas dedicada a cada objetivo</CardTitle>
         <CardDescription>Desde: {fecha}</CardDescription>
       </CardHeader>
-      <CardContent className=''>
+      <CardContent className='dark:bg-neutral-850 '>
         <ChartContainer config={chartConfig}>
           <BarChart
             accessibilityLayer

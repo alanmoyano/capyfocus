@@ -363,10 +363,10 @@ export default function CapyEstadisticas() {
           {/* Info sesion */}
           <Card
             ref={cardRefs.sesion}
-            className='container mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg md:flex-row dark:from-gray-800 dark:to-gray-600 dark:shadow-gray-700'
+            className='container mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg md:flex-row dark:from-slate-900 dark:to-yellow-950 dark:shadow-gray-700'
           >
             <CardHeader>
-              <CardTitle className='text-left text-3xl font-bold'>
+              <CardTitle className='text-left text-3xl font-bold dark:text-neutral-200'>
                 Resumen de la Sesión
               </CardTitle>
             </CardHeader>
@@ -424,12 +424,12 @@ export default function CapyEstadisticas() {
               {/* Chart */}
               <div className='space-y-6 md:w-1/2'>
                 <Card className='overflow-hidden rounded-lg shadow-lg'>
-                  <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-2 text-gray-900'>
-                    <CardTitle className='text-lg font-bold text-gray-900'>
+                  <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-4 dark:from-slate-800 dark:to-yellow-900 '>
+                    <CardTitle className='text-lg font-bold text-gray-900 dark:text-neutral-200'>
                       Tiempo dedicado a objetivos en la sesión actual
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className='p-3'>
+                  <CardContent className='p-3 dark:bg-neutral-900'>
                     {objetivos.length === 0 && (
                       <div className='flex h-full w-full items-center justify-center'>
                         <p className='rounded-lg bg-accent p-4 text-center'>
@@ -523,7 +523,7 @@ export default function CapyEstadisticas() {
                   <TableBody>
                     {objetivos.map((objetivo, index) => (
                       <TableRow key={index}>
-                        <TableCell className='font-medium'>
+                        <TableCell className='text-blue-700 dark:text-indigo-300 font-semibold '>
                           {objetivo}
                         </TableCell>
                         <TableCell className='text-center'>

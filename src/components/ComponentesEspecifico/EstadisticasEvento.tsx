@@ -460,13 +460,13 @@ export default function EstadisticasEvento({ name }: { name: string }) {
   return (
     <>
       {/* info de periodo */}
-      <Card className='container mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg md:flex-row dark:from-gray-800 dark:to-gray-900 dark:shadow-gray-800'>
+      <Card className='container mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg md:flex-row dark:from-slate-800 dark:to-yellow-950 dark:shadow-gray-900'>
         <CardHeader>
           <CardTitle className='text-left text-3xl font-bold'>
             Resumen de Sesiones de Estudio para el evento {name}
           </CardTitle>
         </CardHeader>
-        <CardContent className='flex flex-col justify-between gap-8 md:flex-row'>
+        <CardContent className='flex flex-col justify-between gap-8 md:flex-row '>
           <div className='md:w-1/2'>
             <div className='grid grid-cols-2 gap-6'>
               {/* Aca va a ir lo que se consulte en la BD  */}
@@ -519,8 +519,8 @@ export default function EstadisticasEvento({ name }: { name: string }) {
             <ChartEventos chartData={chartData} minimaFecha={earliestDate} />
             {/* Calendario */}
             <Card className='overflow-hidden rounded-lg shadow-sm'>
-              <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-3'>
-                <CardTitle className='text-lg font-bold text-gray-900'>
+              <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-4 dark:from-slate-800 dark:to-yellow-900 '>
+                <CardTitle className='text-lg font-bold text-gray-900 dark:text-zinc-200'>
                   Días Conectado
                 </CardTitle>
               </CardHeader>
@@ -543,7 +543,8 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                       ),
                     }}
                     modifiersClassNames={{
-                      eventDay: 'bg-primary',
+                      eventDay: 'bg-primary/50 dark:bg-primary',
+                      today: 'bg-accent/70 dark:bg-accent/90',
                     }}
                   />{' '}
                   <div className='pl-4 md:w-1/2'>
@@ -629,7 +630,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                 <TableRow key={index}>
                   {/* <TableCell className='font-medium'>{objetivo}</TableCell> */}
                   <TableCell>
-                    <span className='text-blue-700'>
+                    <span className='text-blue-700 dark:text-indigo-300 font-semibold' >
                       {objetivo.descripcion}
                     </span>
                   </TableCell>

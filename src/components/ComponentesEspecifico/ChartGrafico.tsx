@@ -81,8 +81,8 @@ export default function ChartGrafico({
   return (
     <div>
       <Card className='overflow-hidden rounded-lg shadow-md'>
-        <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-2'>
-          <CardTitle className='text-lg font-bold text-gray-900'>
+        <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-4 dark:from-slate-800 dark:to-yellow-900'>
+          <CardTitle className='text-lg font-bold text-gray-900 dark:text-zinc-200'>
             {periodo === 'bimestral' &&
               `Registro de objetivos del bimestre ${Meses[new Date().getMonth() - 1]} - ${Meses[new Date().getMonth()]} `}
             {(periodo === 'semanal' || periodo === 'mensual') &&
@@ -91,7 +91,7 @@ export default function ChartGrafico({
               `Registro de objetivos del mes de ${Meses[new Date().getMonth() - 6]} - ${Meses[new Date().getMonth()]}`}
           </CardTitle>
         </CardHeader>
-        <CardContent className='p-3'>
+        <CardContent className='p-3 dark:bg-neutral-850'>
           {loading ? ( // Muestra el icono de carga si está cargando
             <div className='flex items-center justify-center p-16'>
               <Loader className='mr-3 h-10 w-10 animate-spin' />
