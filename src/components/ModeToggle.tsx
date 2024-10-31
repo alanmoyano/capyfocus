@@ -14,7 +14,7 @@ export function ModeToggle({ className }: { className?: string }) {
 
   const handleToggle = () => {
     setIsChecked(!isChecked)
-    toggleTheme(isChecked)
+    toggleTheme(!isChecked)
   }
 
   return (

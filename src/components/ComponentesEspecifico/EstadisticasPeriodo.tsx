@@ -18,15 +18,17 @@ import {
   obtenerClaveMayorValor,
   getElementNameById,
   convertirAFecha,
+  formatDateSlash,
+  sessionInfo,
 } from '../../constants/supportFunctions'
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
 import ChartGrafico from './ChartGrafico'
-import { startOfWeek, subMonths } from 'date-fns'
+import { subMonths, subWeeks } from 'date-fns'
 import { es } from 'date-fns/locale'
 import html2canvas from 'html2canvas'
 import { Button } from '@components/ui/button'
-import { ImageDown } from 'lucide-react'
+import { Ambulance, ImageDown } from 'lucide-react'
 
 //TODO: Grafico segun el periodo de tiempo seleccionado
 
@@ -381,6 +383,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
         0,
       ])
     }
+    const sessionesResumidas: sessionInfo[] = []
 
     for (const particularSession of sessionsRecovered) {
       //Este particularSession es una y cada una de las sesiones que recuperó la función de arriba y para acceder a la fecha lo podes hacer como particularSession.fecha
@@ -429,7 +432,18 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
           particularSession.cantidadObjetivos -
           particularSession.cantidadObjetivosCumplidos
       }
+      //@ts-expect-error no molestes ts, esto anda espectacular
+      const sesionResumida: sessionInfo = {
+        fecha: particularSession.fecha,
+        objetivosCumplidos: particularSession.cantidadObjetivosCumplidos,
+        objetivosTotales: particularSession.cantidadObjetivos,
+        tiempoEstudio: particularSession.tiempoEstudio,
+      }
+
+      sessionesResumidas.push(sesionResumida)
     }
+
+    console.log('sesiones resumidas', sessionesResumidas)
 
     const fechasOrdenadas = Array.from(setFechas).sort((a, b) => {
       //@ts-expect-error no jodas ts, funca bien
@@ -464,6 +478,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
         StudyTechniqueList
       )
     )
+
     //Aca de ordena por fecha de forma ascendente
     const sortedData = matrizFechas.sort(
       //@ts-expect-error no hay problema ts
@@ -472,8 +487,50 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
 
     //@ts-expect-error no jodas despues se arregla
     setChartData(generateDataOfChart(period, matrizFechas))
+    setSessionInfoAcumuladas(accumulateSessions(sessionesResumidas))
   }
 
+  const accumulateSessions = (sessionInfo: sessionInfo[]) => {
+    const acumulados: Record<
+      string,
+      {
+        objetivosTotales: number
+        objetivosCumplidos: number
+        tiempoEstudio: number
+        cantidadSesiones: number
+      }
+    > = {}
+
+    for (const session of sessionInfo) {
+      const { fecha, objetivosTotales, objetivosCumplidos, tiempoEstudio } =
+        session
+
+      // Si la fecha ya está en el objeto acumulados, sumamos los valores
+      if (acumulados[fecha]) {
+        acumulados[fecha].objetivosTotales += objetivosTotales
+        acumulados[fecha].objetivosCumplidos += objetivosCumplidos
+        acumulados[fecha].tiempoEstudio += tiempoEstudio // Asegúrate de que tiempoEstudio esté definido en session
+        acumulados[fecha].cantidadSesiones += 1
+      } else {
+        // Si la fecha no está, la agregamos
+        acumulados[fecha] = {
+          objetivosTotales,
+
+          objetivosCumplidos,
+          tiempoEstudio, // Asegúrate de que tiempoEstudio esté definido en session
+          cantidadSesiones: 1,
+        }
+      }
+    }
+
+    return Object.entries(acumulados).map(([fecha, datos]) => ({
+      fecha,
+      ...datos,
+    }))
+  }
+
+  const [sessionInfoAcumuladas, setSessionInfoAcumuladas] =
+    useState<sessionInfo[]>()
   const { objetivos, tiempo } = useObjetivos()
   const [date, setDate] = useState<Date | undefined>(new Date())
   const { session } = useSession()
@@ -493,7 +550,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
     switch (period) {
       case 'semanal':
         return {
-          fromDate: startOfWeek(new Date(), { weekStartsOn: 1 }),
+          fromDate: subWeeks(new Date(), 1),
           toDate: new Date(),
         }
       case 'mensual':
@@ -531,10 +588,13 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
         })
     }
   }, [period, getDateOfPeriod, session])
+  //Calendario:
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
+
+  console.log('sesiones acumuladas', sessionInfoAcumuladas)
 
   return (
     <>
-      {/* info de periodo */}
       {/* Boton Screen */}
       <div className='mr-12 flex w-full justify-end'>
         <Button variant='ghost' onClick={() => captureScreenshot(period)}>
@@ -544,10 +604,10 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
       </div>
       <Card
         ref={cardRefs[period]}
-        className='container mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg md:flex-row dark:from-gray-800 dark:to-gray-900 dark:shadow-gray-800'
+        className='container mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg md:flex-row  dark:from-slate-900 dark:to-yellow-950 dark:shadow-gray-800'
       >
         <CardHeader>
-          <CardTitle className='text-left text-3xl font-bold'>
+          <CardTitle className='text-left text-3xl font-bold dark:text-white'>
             Resumen {period} de Sesiones de Estudio
           </CardTitle>
         </CardHeader>
@@ -604,19 +664,24 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
             <ChartGrafico periodo={period} chartData={chartData} />
 
             {/* Calendario */}
-            <Card className='overflow-hidden rounded-lg shadow-sm'>
-              <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-3'>
-                <CardTitle className='text-lg font-bold text-gray-900'>
+            <Card className='overflow-hidden rounded-lg shadow-sm dark:bg-neutral-850'>
+              <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-3 dark:from-slate-800 dark:to-yellow-900 '>
+                <CardTitle className='text-lg font-bold text-gray-900 dark:text-zinc-200'>
                   Días Conectado
                 </CardTitle>
               </CardHeader>
               <CardContent className='p-2'>
                 <div className='flex flex-col md:flex-row'>
+                  {/* Calendario */}
                   <Calendar
                     showOutsideDays={period !== 'semanal'} // Ocultar días fuera del rango
                     {...dateRange} //Aplica solo si es semanal
                     mode='single'
                     locale={es}
+                    //@ts-expect-error no se que es este error pero no creo que vaya a pasar ts
+                    onSelect={date => {
+                      setSelectedDate(date)
+                    }}
                     className='rounded-md border text-sm shadow-sm'
                     modifiers={{
                       //@ts-expect-error shhh ts, esto funciona as expected
@@ -625,15 +690,74 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
                       ),
                     }}
                     modifiersClassNames={{
-                      eventDay: 'bg-primary/50 ',
+                      eventDay: 'bg-primary/50 dark:bg-primary',
+                      today: 'bg-accent/70 dark:bg-accent/90',
+
                     }}
                   />
-
-                  <div className='pl-4 md:w-1/2'>
-                    <h1 className='mb-2 text-lg font-semibold'>Eventos</h1>
-                    {/* Lista de eventos */}
-                    <p>11/07 Brenda conquista el mundo</p>
-                  </div>
+                  {
+                    <div className='pl-4 md:w-1/2'>
+                      <h1 className='mb-2 text-lg font-bold'>
+                        Información del día:{' '}
+                        {selectedDate?.toLocaleDateString()}
+                      </h1>
+                      <ul className='space-y-2'>
+                        {selectedDate ? (
+                          <li>
+                            <h2 className='mb-2 text-lg font-semibold'>
+                              Resumen de sesiones de estudio:
+                              <hr className='border-gray-400'></hr>
+                            </h2>
+                            <div>
+                              {sessionInfoAcumuladas
+                                ?.filter(session => {
+                                  // Filtramos las sesiones por la fecha seleccionada
+                                  const fechaFormateada = formatDateSlash(
+                                    session.fecha
+                                  )
+                                  return (
+                                    new Date(
+                                      fechaFormateada
+                                    ).toLocaleDateString() ===
+                                    selectedDate.toLocaleDateString()
+                                  )
+                                })
+                                .map((session, index) => (
+                                  <div key={index + 1}>
+                                    <span className='flex gap-2'>
+                                      <p className='font-semibold'>
+                                        Objetivos Totales:{' '}
+                                      </p>
+                                      <p>{session.objetivosTotales}</p>
+                                    </span>
+                                    <span className='flex gap-2'>
+                                      <p className='font-semibold'>
+                                        Objetivos Cumplidos:{' '}
+                                      </p>
+                                      <p>{session.objetivosCumplidos}</p>
+                                    </span>
+                                    <span className='flex gap-2'>
+                                      <p className='font-semibold'>
+                                        Tiempo de Estudio:{' '}
+                                      </p>
+                                      <p>
+                                        {formatTime(session.tiempoEstudio)}{' '}
+                                      </p>
+                                    </span>
+                                    <span className='flex gap-2'>
+                                      <p className='font-semibold'>
+                                        Cantidad de sesiones:{' '}
+                                      </p>
+                                      <p>{session.cantidadSesiones}</p>
+                                    </span>
+                                  </div>
+                                ))}
+                            </div>
+                          </li>
+                        ) : null}
+                      </ul>
+                    </div>
+                  }
                 </div>
               </CardContent>
             </Card>

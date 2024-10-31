@@ -20,6 +20,14 @@ export type SesionAGuardar = {
   musicaSeleccionada: number
   eventoSeleccionado: number | null
 }
+
+export type sessionInfo = {
+  fecha: string
+  objetivosTotales: number
+  objetivosCumplidos: number
+  tiempoEstudio: number
+  cantidadSesiones: number
+}
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 function dateToTimetz(date: Date | null): string {
   // funcion que es necesaria para guardar horas dentro de la bd, ya que el tiempo que pide es Timetz
@@ -35,14 +43,24 @@ function dateToTimetz(date: Date | null): string {
   return date.toLocaleString('es-AR', options)
 }
 
-const formatDateSlash = (date: Date) => {
+const formatDateSlash = (date: Date | string) => {
   // Función que nos permite pasar de un objeto tipo date a uno de tipo string en formato YYYY/MM/DD
   // Esta es LA FUNCIÓN A USAR si queremos guardar fechas en algún lado, porque asi es más fácil recuperarlas y transformarlas en objetos tipo DATE
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
 
-  return `${year}/${month}/${day}`
+  if (typeof date === 'object') {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+
+    return `${year}/${month}/${day}`
+  } else {
+    const fechaSplited = date.split('-')
+    const year = fechaSplited[0]
+    const month = fechaSplited[1]
+    const day = fechaSplited[2]
+
+    return `${year}/${month}/${day}`
+  }
 }
 
 const formatDateDash = (date: Date) => {

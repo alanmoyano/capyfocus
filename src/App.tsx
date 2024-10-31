@@ -26,6 +26,7 @@ import { EventsProvider } from './components/contexts/EventsContext'
 import { ProfilePicProvider } from './components/contexts/ProfilePicContext'
 import LandingPage from './components/LandingPage'
 import { PreferencesProvider } from './components/contexts/PreferencesContext'
+import { InsigniasProvider } from '@/components/contexts/InsigniasContext'
 
 function App() {
   return (
@@ -41,53 +42,60 @@ function App() {
                 <SesionProvider>
                   <MusicProvider>
                     <EventsProvider>
-                      <Navbar />
+                      <InsigniasProvider>
+                        <Navbar />
 
-                      <Helmet>
-                        <title>Capyfocus</title>
-                      </Helmet>
+                        <Helmet>
+                          <title>Capyfocus</title>
+                        </Helmet>
 
-                      <main>
-                        <Switch>
-                          <Route path='/'>
-                            <LandingPage />
-                          </Route>
-                          <Route path='/inicio'>
-                            <Inicio />
-                          </Route>
-                          <Route path='/login' component={Login} />
+                        <main>
+                          <Switch>
+                            <Route path='/'>
+                              <LandingPage />
+                            </Route>
+                            <Route path='/inicio'>
+                              <Inicio />
+                            </Route>
+                            <Route path='/login' component={Login} />
 
-                          <Route path='/capydoro'>
-                            <Pomodoro />
-                          </Route>
-                          <Route path='/capymetro'>
-                            <Timer />
-                          </Route>
+                            <Route path='/capydoro'>
+                              <Pomodoro />
+                            </Route>
+                            <Route path='/capymetro'>
+                              <Timer />
+                            </Route>
 
-                          <Route path='/brenda'>
-                            <ExperimentandoBrenda />
-                          </Route>
+                            <Route path='/brenda'>
+                              <ExperimentandoBrenda />
+                            </Route>
 
-                          <Route
-                            path='/capyInsignias'
-                            component={CapyInsignias}
-                          />
-                          <Route
-                            path='/capyEstadisticas'
-                            component={CapyEstadisticas}
-                          />
+                            <Route
+                              path='/capyInsignias'
+                              component={CapyInsignias}
+                            />
+                            <Route
+                              path='/capyEstadisticas'
+                              component={CapyEstadisticas}
+                            />
 
-                          <Route path='/usuario' component={Usuario} />
+                            <Route path='/usuario' component={Usuario} />
 
-                          <Route path='/prueba' component={Prueba} />
+                            <Route path='/prueba' component={Prueba} />
 
-                          <Route>
-                            <NotFound />
-                          </Route>
-                        </Switch>
-                      </main>
+                            <Route>
+                              <NotFound />
+                            </Route>
+                          </Switch>
+                        </main>
 
-                      <Toaster richColors closeButton />
+                        <Toaster
+                          richColors
+                          closeButton
+                          toastOptions={{}}
+                          theme='light'
+                        />
+                      </InsigniasProvider>
                     </EventsProvider>
                   </MusicProvider>
                 </SesionProvider>

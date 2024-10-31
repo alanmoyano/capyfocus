@@ -1,4 +1,5 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react'
+import { createContext, ReactNode, useContext, useState } from 'react'
+import { usePreferences } from './PreferencesContext'
 
 type MotivationData = {
   motivationType: string
@@ -11,7 +12,10 @@ export const MotivationContext = createContext<MotivationData | undefined>(
 )
 
 export const MotivationProvider = ({ children }: { children: ReactNode }) => {
-  const [motivationType, setMotivationType] = useState('Positiva')
+  const { motivationPreference } = usePreferences()
+  const [motivationType, setMotivationType] = useState(
+    motivationPreference === '2' ? 'Pasivo Agresiva' : 'Positiva'
+  )
 
   return (
     <MotivationContext.Provider value={{ motivationType, setMotivationType }}>

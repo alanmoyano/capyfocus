@@ -1,3 +1,5 @@
+import groupBy from 'lodash.groupby'
+
 import { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import { useLocation } from 'wouter'
@@ -26,6 +28,12 @@ import {
   acumulateHoursInFavouriteObj,
 } from '@/constants/supportFunctions'
 import { useEvents } from './contexts/EventsContext'
+import {
+  InsigniaXUsuario,
+  useInsignias,
+} from '@/components/contexts/InsigniasContext'
+import { id } from 'date-fns/locale'
+import { PostgrestError } from '@supabase/supabase-js'
 
 //import Confetti from 'react-confetti-boom'
 
@@ -91,6 +99,30 @@ export default function Timer() {
 
   const { selectedEvent } = useEvents()
 
+  const { insignias } = useInsignias()
+
+  const requisitosInsignias: Record<number, number> = {
+    1: 25, // Estudiar 25 veces con pasivoAgresivo
+    2: 25, // Estudiar 25 veces con positiva
+    3: 1, // Alcanzar un evento
+    4: 2, // Estudiar por 2 horas seguidas
+    5: 10, // Acumular 10 horas para un evento
+    6: 5, // Finalizar 5 sesiones de estudio
+    7: 15, // Finalizar 15 sesiones de estudio
+    8: 35, // Finalizar 35 sesiones de estudio
+    9: 50, // Finalizar 50 sesiones de estudio
+    10: 100, // Finalizar 100 sesiones de estudio
+    11: 10, // Cumplir todos los objetivos de una sesión
+    12: 35, // Completa 35 objetivos
+    13: 75, // Completa 75 objetivos
+    14: 100, // Completa 100 objetivos
+    15: 30, // Pasa 30 días sin estudiar
+  }
+
+  function getProgresoInsignia(idInsignia: number, relativeProgress: number) {
+    return (relativeProgress / requisitosInsignias[idInsignia]) * 100
+  }
+
   const finalizarSesion = () => {
     if (session) {
       const hoy = new Date()
@@ -113,7 +145,7 @@ export default function Timer() {
           eventoSeleccionado: selectedEvent ? selectedEvent.id : null,
         }
 
-        const { data, error } = await supabase
+        await supabase
           .from('SesionesDeEstudio')
           .insert([
             {
@@ -131,10 +163,103 @@ export default function Timer() {
               eventoSeleccionado: sessionToSave.eventoSeleccionado,
             },
           ])
+          .select()
+          .then(({ data, error }) => {
+            if (error) console.log(error)
+            else console.log('Datos guardados correctamente', data)
+          })
 
-        if (error) console.log(error)
-        else console.log(data)
+        let capyDatosParaEstadisticas = {
+          objetivosCumplidos: 0,
+          sesionesDeEstudio: 0,
+          sesionesNegativas: 0,
+          sesionesPositivas: 0,
+        }
+
+        await supabase
+          .from('Usuarios')
+          .select(
+            'objetivosCumplidos,sesionesDeEstudio,sesionesPositivas,sesionesNegativas'
+          )
+          .eq('id', session?.user.id)
+          .then(({ data, error }) => {
+            if (error) console.error(error)
+            if (!data) return
+
+            capyDatosParaEstadisticas = data[0] as {
+              objetivosCumplidos: number
+              sesionesDeEstudio: number
+              sesionesNegativas: number
+              sesionesPositivas: number
+            }
+          })
+
+        await supabase
+          .from('Usuarios')
+          .update({
+            objetivosCumplidos:
+              capyDatosParaEstadisticas.objetivosCumplidos + objCumplidos,
+            sesionesDeEstudio: capyDatosParaEstadisticas.sesionesDeEstudio + 1,
+            sesionesPositivas:
+              capyDatosParaEstadisticas.sesionesPositivas +
+              (motivationType === 'Positiva' ? 1 : 0),
+            sesionesNegativas:
+              capyDatosParaEstadisticas.sesionesNegativas +
+              (motivationType === 'Negativa' ? 1 : 0),
+          })
+          .eq('id', session?.user.id)
+          .select()
+          .then(({ data, error }) => {
+            if (error) console.log(error)
+            else console.log(data)
+          })
+
+        await supabase
+          .from('CapyInsigniasXUsuarios')
+          .select()
+          .eq('idUsuario', session?.user.id)
+          .then(({ data, error }) => {
+            if (error) console.error(error)
+            if (!data) return
+
+            const insigniasXUsuario = data as InsigniaXUsuario[]
+
+            if (!session) return
+
+            const insigniaXUsuario = groupBy(insigniasXUsuario, 'idUsuario')[
+              session.user.id
+            ]
+
+            console.log(insigniaXUsuario)
+            /* eslint-disable-next-line */
+            if (!insigniaXUsuario) return
+
+            insignias.forEach(insignia => {
+              // const insigniaParticular = insigniaXUsuario.find(
+              //   insigniaUsuario => insigniaUsuario.idInsignia === insignia.id
+              // )
+
+              // if (!insigniaParticular) return
+              // console.log(insigniaParticular)
+
+              supabase
+                .from('CapyInsigniasXUsuarios')
+                .upsert({
+                  idInsignia: insignia.id,
+                  idUsuario: session.user.id,
+                  progreso: 74, // ahora tenemos que ver como calcular el progreso!
+                })
+                .eq('idInsignia', insignia.id)
+                .eq('idUsuario', session.user.id)
+                .select()
+                .then(({ data, error }) => {
+                  if (error) console.error(error)
+                  console.log(data)
+                })
+            })
+          })
       }
+
       saveSession()
         .then(() => console.log('Datos guardados correctamente'))
         .catch((error: unknown) => console.log(error))

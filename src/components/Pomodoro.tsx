@@ -46,24 +46,68 @@ function addZeroIfNeeded(value: number) {
 }
 
 async function saveSession(sessionToSave: SesionAGuardar) {
-  const { data, error } = await supabase.from('SesionesDeEstudio').insert([
-    {
-      idUsuario: sessionToSave.uuid,
-      horaInicioSesion: sessionToSave.horaInicioSesion,
-      fecha: sessionToSave.fecha,
-      horaFinSesion: sessionToSave.horaFinSesion,
-      tecnicaEstudio: sessionToSave.tecnicaEstudio,
-      tipoMotivacion: sessionToSave.tipoMotivacion,
-      cantidadObjetivosCumplidos: sessionToSave.cantidadObjetivosCumplidos,
-      cantidadObjetivos: sessionToSave.cantidadObjetivos,
-      tiempoEstudio: sessionToSave.tiempoEstudio,
-      musicaSeleccionada: sessionToSave.musicaSeleccionada,
-      eventoSeleccionado: sessionToSave.eventoSeleccionado,
-    },
-  ])
+  await supabase
+    .from('SesionesDeEstudio')
+    .insert([
+      {
+        idUsuario: sessionToSave.uuid,
+        horaInicioSesion: sessionToSave.horaInicioSesion,
+        fecha: sessionToSave.fecha,
+        horaFinSesion: sessionToSave.horaFinSesion,
+        tecnicaEstudio: sessionToSave.tecnicaEstudio,
+        tipoMotivacion: sessionToSave.tipoMotivacion,
+        cantidadObjetivosCumplidos: sessionToSave.cantidadObjetivosCumplidos,
+        cantidadObjetivos: sessionToSave.cantidadObjetivos,
+        tiempoEstudio: sessionToSave.tiempoEstudio,
+        musicaSeleccionada: sessionToSave.musicaSeleccionada,
+        eventoSeleccionado: sessionToSave.eventoSeleccionado,
+      },
+    ])
+    .select()
+    .then(({ data, error }) => {
+      if (error) console.log(error)
+      else console.log('Datos guardados correctamente', data)
+    })
 
-  if (error) console.log(error)
-  else console.log('Datos guardados correctamente')
+  const { data, error } = await supabase
+    .from('Usuarios')
+    .select(
+      'objetivosCumplidos,sesionesDeEstudio,sesionesPositivas,sesionesNegativas'
+    )
+    .eq('id', sessionToSave.uuid)
+
+  if (error) console.error(error)
+  if (!data) return
+
+  const {
+    objetivosCumplidos,
+    sesionesDeEstudio,
+    sesionesNegativas,
+    sesionesPositivas,
+  } = data[0] as {
+    objetivosCumplidos: number
+    sesionesDeEstudio: number
+    sesionesNegativas: number
+    sesionesPositivas: number
+  }
+
+  await supabase
+    .from('Usuarios')
+    .update({
+      objetivosCumplidos:
+        objetivosCumplidos + sessionToSave.cantidadObjetivosCumplidos,
+      sesionesDeEstudio: sesionesDeEstudio + 1,
+      sesionesPositivas:
+        sesionesPositivas + (sessionToSave.tipoMotivacion === 1 ? 1 : 0),
+      sesionesNegativas:
+        sesionesNegativas + (sessionToSave.tipoMotivacion === 2 ? 1 : 0),
+    })
+    .eq('id', sessionToSave.uuid)
+    .select()
+    .then(({ data, error }) => {
+      if (error) console.log(error)
+      else console.log(data)
+    })
 }
 
 export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
