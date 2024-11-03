@@ -51,7 +51,7 @@ export default function ChartEventos({
         <CardTitle>Cantidad de horas dedicada a cada objetivo</CardTitle>
         <CardDescription>Desde: {fecha}</CardDescription>
       </CardHeader>
-      <CardContent className='dark:bg-neutral-850 '>
+      <CardContent className='dark:bg-neutral-850'>
         <ChartContainer config={chartConfig}>
           <BarChart
             accessibilityLayer

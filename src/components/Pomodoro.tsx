@@ -140,7 +140,7 @@ export default function Pomodoro() {
     isPaused,
     pauseStudy,
     resumeStudy,
-    startBreak,
+    skipCurrent,
     stopStudy,
   } = usePomodoro()
   const [isActive, setIsActive] = useState(false) //Aca se cambia el estado de play y pause
@@ -167,6 +167,7 @@ export default function Pomodoro() {
     resetTimers: resetObjectiveTime,
   } = useTimer()
   const [timerObjectivesAcum, setTimerObjectivesAcum] = useState(0)
+  const [skipped, setSkipped] = useState(false)
 
   const {
     objetivos,
@@ -286,10 +287,14 @@ export default function Pomodoro() {
         capySound()
       }
       if (mode === 'Estudiando') {
+        // if(skipped){
+
+        // }
         stopStudy()
         setSessionSeconds(
           pomodorosRealizados[pomodorosRealizados.length - 1].tiempoEstudio
         )
+        console.log('holis, si entro')
         pauseObjectiveTime()
         setMode('Descansando')
         setIsActive(false)
@@ -297,6 +302,7 @@ export default function Pomodoro() {
         pomodoroCount.current += 0.5
       } else {
         // if (time > 0) return
+        console.log('Me terminé')
         stopStudy()
         setTimerObjectivesAcum(prev => prev + objStudyTime)
         resetObjectiveTime()
@@ -335,14 +341,15 @@ export default function Pomodoro() {
   const handleSaltar = () => {
     clearInterval(timer.current)
     if (mode === 'Estudiando') {
+      setSkipped(true)
       setTiempoTotal(prev => prev - time)
       setIsActive(false)
-      setMode('Descansando')
+      skipCurrent()
     } else {
       setAcumuladorTiempoPausa(prev => prev - time)
       setIsActive(false)
       setIsSetted(false)
-      setMode('Estudiando')
+      stopStudy()
     }
   }
 

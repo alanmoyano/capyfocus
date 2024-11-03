@@ -21,7 +21,7 @@ export default function LandingPage() {
     setLocation('/login')
   }
   return (
-    <div className=' text-pretty'>
+    <div className='text-pretty'>
       <div className='bg-white'>
         {/* Comienzo */}
         <section className='bg-gradient-to-r from-yellow-50 to-purple-50 py-12 text-center dark:from-yellow-950 dark:to-slate-900'>
@@ -294,7 +294,7 @@ export default function LandingPage() {
             <p className='text-left text-2xl font-semibold text-[#2599bc] dark:text-[#a7eaff]'>
               Agradecimientos:
             </p>
-            <p className='mt-4 text-left text-lg text-gray-700 dark:text-gray-200 mb-2'>
+            <p className='mb-2 mt-4 text-left text-lg text-gray-700 dark:text-gray-200'>
               Aprovechamos este apartado para agradecer a todas las personas que
               contribuyeron a la realización de este proyecto, como así también
               a los creadores de las imágenes y animaciones utilizados en la

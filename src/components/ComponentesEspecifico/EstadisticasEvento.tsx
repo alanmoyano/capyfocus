@@ -466,7 +466,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
             Resumen de Sesiones de Estudio para el evento {name}
           </CardTitle>
         </CardHeader>
-        <CardContent className='flex flex-col justify-between gap-8 md:flex-row '>
+        <CardContent className='flex flex-col justify-between gap-8 md:flex-row'>
           <div className='md:w-1/2'>
             <div className='grid grid-cols-2 gap-6'>
               {/* Aca va a ir lo que se consulte en la BD  */}
@@ -519,7 +519,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
             <ChartEventos chartData={chartData} minimaFecha={earliestDate} />
             {/* Calendario */}
             <Card className='overflow-hidden rounded-lg shadow-sm'>
-              <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-4 dark:from-slate-800 dark:to-yellow-900 '>
+              <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-4 dark:from-slate-800 dark:to-yellow-900'>
                 <CardTitle className='text-lg font-bold text-gray-900 dark:text-zinc-200'>
                   Días Conectado
                 </CardTitle>
@@ -630,7 +630,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                 <TableRow key={index}>
                   {/* <TableCell className='font-medium'>{objetivo}</TableCell> */}
                   <TableCell>
-                    <span className='text-blue-700 dark:text-indigo-300 font-semibold' >
+                    <span className='font-semibold text-blue-700 dark:text-indigo-300'>
                       {objetivo.descripcion}
                     </span>
                   </TableCell>

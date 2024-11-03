@@ -47,6 +47,18 @@ onmessage = function (e) {
   if (action === 'startBr') {
     startTimer()
   }
+  if (action === 'skip') {
+    console.log('me skipearon')
+
+    // Clear existing interval
+    clearInterval(intervalId)
+
+    // If we're in study time, switch to break
+    if (isWorking) {
+      timeLeft = -1 // This will trigger your else condition
+      postMessage({ timeLeft, isWorking, isPaused: true })
+    }
+  }
 }
 
 function startTimer() {

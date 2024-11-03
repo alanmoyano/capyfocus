@@ -10,6 +10,7 @@ export default function usePomodoro() {
   const [time, setTime] = useState(-1)
   const [isStudying, setIsStudying] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
+  const [breakTime, setBreakTime] = useState(0)
 
   const workerRef = useRef<Worker | null>()
 
@@ -39,6 +40,7 @@ export default function usePomodoro() {
     breakTime: number
   }) {
     setTime(studyTime)
+    setBreakTime(breakTime)
     workerRef.current?.postMessage({ action: 'start', studyTime, breakTime })
 
     setIsStudying(true)
@@ -58,13 +60,17 @@ export default function usePomodoro() {
 
   function stopStudy() {
     workerRef.current?.postMessage({ action: 'stop' })
-
+    setTime(1)
     setIsStudying(false)
   }
 
   function startBreak() {
     workerRef.current?.postMessage({ action: 'startBr' })
     setIsStudying(true)
+  }
+  function skipCurrent() {
+    workerRef.current?.postMessage({ action: 'skip' })
+    setIsStudying(false)
   }
 
   return {
@@ -76,5 +82,6 @@ export default function usePomodoro() {
     resumeStudy,
     stopStudy,
     startBreak,
+    skipCurrent,
   }
 }
