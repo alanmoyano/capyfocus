@@ -128,7 +128,7 @@ export default function Eventos() {
       if (events.length === 0) {
         const hoy = new Date()
         hoy.setHours(0, 0, 0, 0)
-        gatherEventsOfUser(session.user.id, hoy)
+        gatherEventsOfUser(session.user.id)
           .then(data =>
             data.forEach(evento => {
               // @ts-expect-error no te preocupes type, anda
