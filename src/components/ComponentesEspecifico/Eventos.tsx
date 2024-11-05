@@ -361,13 +361,14 @@ export default function Eventos() {
                   Eventos programados:
                 </h2>
                 <ul className='list-inside list-disc space-y-2 text-sm text-black sm:text-base dark:text-white'>
-                  {events.map((event, index) => ( 
-                    <li
-                      key={index}
-                      className='flex items-center justify-between'
-                    >
-                      {event.date >= new Date(new Date().setHours(0,0,0,0)) && (
-                        <>
+                  {events.map((event, index) => (
+                    <>
+                      {event.date >=
+                        new Date(new Date().setHours(0, 0, 0, 0)) && (
+                        <li
+                          key={index}
+                          className='flex items-center justify-between'
+                        >
                           <span
                             onClick={() => setSelectedEvent(event)}
                             className={`cursor-pointer ${
@@ -392,9 +393,9 @@ export default function Eventos() {
                           >
                             <Trash size={16} />
                           </Button>
-                        </>
+                        </li>
                       )}
-                    </li>
+                    </>
                   ))}
                 </ul>
                 <h2 className='mt-4 text-lg font-bold sm:text-xl'>

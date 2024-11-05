@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+//TODO: colocar las unidades, y ver como solucionamos la parte de las estadisticas
 import { useEffect, useRef, useState } from 'react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -24,7 +25,7 @@ import {
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
 import ChartGrafico from './ChartGrafico'
-import { subMonths, subWeeks } from 'date-fns'
+import { subDays, subMonths, subWeeks } from 'date-fns'
 import { es } from 'date-fns/locale'
 import html2canvas from 'html2canvas'
 import { Button } from '@components/ui/button'
@@ -550,7 +551,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
     switch (period) {
       case 'semanal':
         return {
-          fromDate: subWeeks(new Date(), 1),
+          fromDate: subDays(new Date(), 6),
           toDate: new Date(),
         }
       case 'mensual':

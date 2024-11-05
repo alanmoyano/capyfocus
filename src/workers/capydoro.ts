@@ -54,10 +54,13 @@ onmessage = function (e) {
     clearInterval(intervalId)
 
     // If we're in study time, switch to break
-    if (isWorking) {
-      timeLeft = -1 // This will trigger your else condition
-      postMessage({ timeLeft, isWorking, isPaused: true })
-    }
+    workTime = studyTime
+    restTime = breakTime
+    timeLeft = workTime
+    isPaused = false
+    // isStopped = false
+
+    startTimer()
   }
 }
 
@@ -72,6 +75,21 @@ function startTimer() {
         timeLeft = isWorking ? workTime : restTime
         postMessage({ timeLeft, isWorking, isPaused })
       }
+    }
+  }, 1000)
+}
+
+function startTimer2(restTimer: number) {
+  intervalId = setInterval(() => {
+    if (timeLeft < 0) {
+      isWorking = !isWorking
+      timeLeft = restTimer
+      postMessage({ timeLeft, isWorking, isPaused })
+    }
+    if (!isPaused) {
+      timeLeft--
+      postMessage({ timeLeft, isWorking, isPaused })
+      console.log(timeLeft)
     }
   }, 1000)
 }

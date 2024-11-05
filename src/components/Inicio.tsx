@@ -437,7 +437,7 @@ export default function Inicio() {
                 Objetivos del evento: {selectedEvent.title}
               </label>
             ) : (
-              <label htmlFor=''>Objetivos de sesion</label>
+              <label htmlFor=''>Objetivos de sesión</label>
             )}
 
             <div className='mt-2 flex items-center gap-2'>

@@ -280,16 +280,21 @@ export default function Pomodoro() {
   useEffect(() => {
     if (!isActive) return () => clearInterval(timer.current)
 
-    if (time >= 0 && isStudying) {
+    if (time >= 0 && isStudying && !skipped) {
       console.log('hola')
     } else {
       if (volumen) {
         capySound()
       }
       if (mode === 'Estudiando') {
-        // if(skipped){
-
-        // }
+        if (skipped) {
+          setSkipped(false)
+          console.log('buenas')
+          // setSessionSeconds(
+          //   pomodorosRealizados[pomodorosRealizados.length - 1].tiempoEstudio
+          // )
+          // pauseObjectiveTime()
+        }
         stopStudy()
         setSessionSeconds(
           pomodorosRealizados[pomodorosRealizados.length - 1].tiempoEstudio
@@ -321,7 +326,15 @@ export default function Pomodoro() {
       finalizarSesion()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isActive, sessionSeconds, breakSeconds, mode, objCumplidos, isStudying])
+  }, [
+    isActive,
+    sessionSeconds,
+    breakSeconds,
+    mode,
+    objCumplidos,
+    isStudying,
+    skipped,
+  ])
 
   useEffect(() => {
     setIsActive(isPaused)
@@ -339,12 +352,12 @@ export default function Pomodoro() {
   } */
 
   const handleSaltar = () => {
-    clearInterval(timer.current)
+    //clearInterval(timer.current)
     if (mode === 'Estudiando') {
       setSkipped(true)
       setTiempoTotal(prev => prev - time)
       setIsActive(false)
-      skipCurrent()
+      skipCurrent(breakSeconds)
     } else {
       setAcumuladorTiempoPausa(prev => prev - time)
       setIsActive(false)

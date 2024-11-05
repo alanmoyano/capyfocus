@@ -68,8 +68,12 @@ export default function usePomodoro() {
     workerRef.current?.postMessage({ action: 'startBr' })
     setIsStudying(true)
   }
-  function skipCurrent() {
-    workerRef.current?.postMessage({ action: 'skip' })
+  function skipCurrent(breakTime: number) {
+    workerRef.current?.postMessage({
+      action: 'skip',
+      studyTime: -1,
+      breakTime: breakTime,
+    })
     setIsStudying(false)
   }
 
