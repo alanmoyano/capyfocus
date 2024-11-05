@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-
 import { Trash } from 'lucide-react'
 import {
   Tooltip,
@@ -363,35 +361,39 @@ export default function Eventos() {
                   Eventos programados:
                 </h2>
                 <ul className='list-inside list-disc space-y-2 text-sm text-black sm:text-base dark:text-white'>
-                  {events.map((event, index) => (
+                  {events.map((event, index) => ( 
                     <li
                       key={index}
                       className='flex items-center justify-between'
                     >
-                      <span
-                        onClick={() => setSelectedEvent(event)}
-                        className={`cursor-pointer ${
-                          selectedEvent === event
-                            ? 'text-accent'
-                            : 'opacity-100 hover:text-accent'
-                        }`}
-                      >
-                        {event.date.toLocaleDateString('es-ES', {
-                          weekday: 'short',
-                          month: 'numeric',
-                          day: 'numeric',
-                        })}
-                        - {event.title}
-                      </span>
-                      <Button
-                        variant='ghost'
-                        size='sm'
-                        onClick={() => {
-                          handleDelete(event, index)
-                        }}
-                      >
-                        <Trash size={16} />
-                      </Button>
+                      {event.date >= new Date(new Date().setHours(0,0,0,0)) && (
+                        <>
+                          <span
+                            onClick={() => setSelectedEvent(event)}
+                            className={`cursor-pointer ${
+                              selectedEvent === event
+                                ? 'text-accent'
+                                : 'opacity-100 hover:text-accent'
+                            }`}
+                          >
+                            {event.date.toLocaleDateString('es-ES', {
+                              weekday: 'short',
+                              month: 'numeric',
+                              day: 'numeric',
+                            })}
+                            - {event.title}
+                          </span>
+                          <Button
+                            variant='ghost'
+                            size='sm'
+                            onClick={() => {
+                              handleDelete(event, index)
+                            }}
+                          >
+                            <Trash size={16} />
+                          </Button>
+                        </>
+                      )}
                     </li>
                   ))}
                 </ul>
