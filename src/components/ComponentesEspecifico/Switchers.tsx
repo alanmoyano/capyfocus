@@ -65,7 +65,7 @@ export default function Switchers() {
     setNotificationPreference(prev => !prev)
   }
 
-  function handleSelectMotivation(value: string) {
+  function handleSelectMotivation(value: '1' | '2') {
     supabase
       .from('Usuarios')
       .update({ motivacionFavorita: value })
@@ -75,6 +75,9 @@ export default function Switchers() {
         if (error) console.error(error)
         console.log(data)
       })
+
+    setMotivation(value)
+    setMotivationPreference(value)
   }
 
   useEffect(() => {
@@ -154,7 +157,7 @@ export default function Switchers() {
           defaultValue={motivation}
           onValueChange={handleSelectMotivation}
         >
-          <SelectTrigger className='max-w-32'>
+          <SelectTrigger className='max-w-40'>
             <SelectValue placeholder='Selecciona tu motivación favorita' />
           </SelectTrigger>
           <SelectContent>

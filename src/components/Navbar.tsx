@@ -98,8 +98,9 @@ function NavItems() {
           <span className='relative inline-flex'>
             <NavbarLink to='/capyInsignias'>CapyInsiginas</NavbarLink>
             <span className='absolute right-0 top-0 -mr-1 -mt-1 flex h-3 w-3'>
-              <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-secondary opacity-75'></span>
-              <span className='relative inline-flex h-3 w-3 rounded-full bg-secondary'></span>
+              {/* Sacados momentanamente hasta que se terminen de implementar correctamente las capyinsignias  */}
+              {/* <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-secondary opacity-75'></span> */}
+              {/* <span className='relative inline-flex h-3 w-3 rounded-full bg-secondary'></span> */}
             </span>
           </span>
 

@@ -90,6 +90,7 @@ export default function CapyInsiginiasCards({
               <p>{isUnlocked ? descUnlock : descLock}</p>
             </div>
             <Progress value={progress} className='w-3/4' />
+            {progress}%
           </div>
           <DialogFooter>
             <DialogClose>

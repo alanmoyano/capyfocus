@@ -1,4 +1,11 @@
+import {
+  InsigniaXUsuario,
+  useInsignias,
+} from '@/components/contexts/InsigniasContext'
+import { useMotivation } from '@/components/contexts/MotivationContext'
+import { useSession } from '@/components/contexts/SessionContext'
 import { supabase } from '@/components/supabase/client'
+import groupBy from 'lodash.groupby'
 
 type EventToRecover = {
   idEvento: number
@@ -242,6 +249,138 @@ async function acumulateHoursInFavouriteObj(
   }
 }
 
+async function saveSession(
+  sessionToSave: SesionAGuardar,
+  { objCumplidos }: { objCumplidos: number }
+) {
+  const { session } = useSession()
+  const { motivationType } = useMotivation()
+  const { insignias, getProgresoInsignia } = useInsignias()
+
+  await supabase
+    .from('SesionesDeEstudio')
+    .insert([
+      {
+        idUsuario: sessionToSave.uuid,
+        horaInicioSesion: sessionToSave.horaInicioSesion,
+        fecha: sessionToSave.fecha,
+        horaFinSesion: sessionToSave.horaFinSesion,
+        tecnicaEstudio: sessionToSave.tecnicaEstudio,
+        tipoMotivacion: sessionToSave.tipoMotivacion,
+        cantidadObjetivosCumplidos: sessionToSave.cantidadObjetivosCumplidos,
+        cantidadObjetivos: sessionToSave.cantidadObjetivos,
+        tiempoEstudio: sessionToSave.tiempoEstudio,
+        musicaSeleccionada: sessionToSave.musicaSeleccionada,
+        eventoSeleccionado: sessionToSave.eventoSeleccionado,
+      },
+    ])
+    .select()
+    .then(({ data, error }) => {
+      if (error) console.log(error)
+      else console.log('Datos guardados correctamente', data)
+    })
+
+  let capyDatosParaEstadisticas = {
+    objetivosCumplidos: 0,
+    sesionesDeEstudio: 0,
+    sesionesNegativas: 0,
+    sesionesPositivas: 0,
+  }
+
+  await supabase
+    .from('Usuarios')
+    .select(
+      'objetivosCumplidos,sesionesDeEstudio,sesionesPositivas,sesionesNegativas'
+    )
+    .eq('id', session?.user.id)
+    .then(({ data, error }) => {
+      if (error) console.error(error)
+      if (!data) return
+
+      capyDatosParaEstadisticas = data[0] as {
+        objetivosCumplidos: number
+        sesionesDeEstudio: number
+        sesionesNegativas: number
+        sesionesPositivas: number
+      }
+    })
+
+  const nuevosCapyDatosParaEstadisticas = {
+    objetivosCumplidos:
+      capyDatosParaEstadisticas.objetivosCumplidos + objCumplidos,
+    sesionesDeEstudio: capyDatosParaEstadisticas.sesionesDeEstudio + 1,
+    sesionesPositivas:
+      capyDatosParaEstadisticas.sesionesPositivas +
+      (motivationType === 'Positiva' ? 1 : 0),
+    sesionesNegativas:
+      capyDatosParaEstadisticas.sesionesNegativas +
+      (motivationType === 'Negativa' ? 1 : 0),
+  }
+
+  await supabase
+    .from('Usuarios')
+    .update(nuevosCapyDatosParaEstadisticas)
+    .eq('id', session?.user.id)
+    .select()
+    .then(({ data, error }) => {
+      if (error) console.log(error)
+      else console.log(data)
+    })
+
+  await supabase
+    .from('CapyInsigniasXUsuarios')
+    .select()
+    .eq('idUsuario', session?.user.id)
+    .then(({ data, error }) => {
+      if (error) console.error(error)
+      if (!data) return
+
+      const insigniasXUsuario = data as InsigniaXUsuario[]
+
+      if (!session) return
+
+      const insigniaXUsuario = groupBy(insigniasXUsuario, 'idUsuario')[
+        session.user.id
+      ]
+
+      console.log(insigniaXUsuario)
+
+      const hoy = new Date()
+
+      if (!insigniaXUsuario) return
+
+      insignias.forEach(insignia => {
+        // const insigniaParticular = insigniaXUsuario.find(
+        //   insigniaUsuario => insigniaUsuario.idInsignia === insignia.id
+        // )
+
+        // if (!insigniaParticular) return
+        // console.log(insigniaParticular)
+
+        supabase
+          .from('CapyInsigniasXUsuarios')
+          .upsert({
+            idInsignia: insignia.id,
+            idUsuario: session.user.id,
+            progreso: getProgresoInsignia(insignia.id, {
+              objetivosSesion: sessionToSave.cantidadObjetivos,
+              //@ts-expect-error lo voy a parchear ahora hasta que alan lo arregle
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+              tiempoEstudiado: (hoy.getTime() - InicioSesion.getTime()) / 1000,
+              ...nuevosCapyDatosParaEstadisticas,
+            }),
+          })
+          .eq('idInsignia', insignia.id)
+          .eq('idUsuario', session.user.id)
+          .select()
+          .then(({ data, error }) => {
+            if (error) console.error(error)
+            console.log(data)
+          })
+      })
+    })
+}
+
 export {
   dateToTimetz,
   formatDateDash,
@@ -256,4 +395,5 @@ export {
   acumulateHoursInFavouriteObj,
   recoverObjectiveFromId,
   formatDateDashARG,
+  saveSession,
 }

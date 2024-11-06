@@ -325,16 +325,20 @@ export default function Inicio() {
           })
       }
     } else {
-      setObjetivosFav([...objetivosFav, objetivo])
       if (session) {
-        const hoy = new Date()
-        persistFavoriteObjective(objetivo, hoy, session.user.id)
-          .then(() => {
-            console.log('Objetivo persistido correctamente')
-          })
-          .catch((error: unknown) => {
-            console.log('Ocurrio un error: ', error)
-          })
+        if (objetivosFav.length === 0) {
+          const hoy = new Date()
+          persistFavoriteObjective(objetivo, hoy, session.user.id)
+            .then(() => {
+              console.log('Objetivo persistido correctamente')
+            })
+            .catch((error: unknown) => {
+              console.log('Ocurrio un error: ', error)
+            })
+        }
+        recoverObjectives()
+      } else {
+        setObjetivosFav([...objetivosFav, objetivo])
       }
     }
   }
@@ -632,7 +636,7 @@ export default function Inicio() {
           </div>
           {/* Musica */}
           <div className='mt-4'>
-            {selectedPlaylist !== -1 && (
+            {selectedPlaylist !== -1 ? (
               <div className='rounded-lg bg-accent p-2'>
                 <h2>
                   Playlist seleccionada:{' '}
@@ -641,7 +645,17 @@ export default function Inicio() {
                   </span>
                 </h2>
               </div>
+            ) : (
+              <div className='rounded-lg bg-accent p-2'>
+                <h2>
+                  Playlist seleccionada:{' '}
+                  <span className='font-semibold text-accent-foreground'>
+                    Sin música
+                  </span>
+                </h2>
+              </div>
             )}
+
             <Carousel className='w-full max-w-md' opts={{ loop: true }}>
               <CarouselContent>
                 {playlists.map(item => (
