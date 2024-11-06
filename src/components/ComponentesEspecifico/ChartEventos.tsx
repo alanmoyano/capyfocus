@@ -13,6 +13,7 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart'
 import { formatDateDashARG } from '@/constants/supportFunctions'
+import { Calendar } from 'lucide-react'
 
 const chartConfig = {
   horas: {
@@ -52,9 +53,9 @@ export default function ChartEventos({
         <CardDescription>Desde: {fecha}</CardDescription>
       </CardHeader>
       <CardContent className='dark:bg-neutral-850'>
-        <ChartContainer config={chartConfig}>
-          {chartData.length !== 0 ? (
-            <>
+        {chartData.length !== 0 ? (
+          <>
+            <ChartContainer config={chartConfig}>
               <BarChart
                 accessibilityLayer
                 data={chartData}
@@ -94,18 +95,18 @@ export default function ChartEventos({
                   />
                 </Bar>
               </BarChart>
-            </>
-          ) : (
-            <>
-              <div className='flex h-full'>
-                <p className='flex items-center text-2xl'>
-                  {' '}
-                  Este evento no tiene objetivos favoritos asociados
-                </p>
-              </div>
-            </>
-          )}
-        </ChartContainer>
+            </ChartContainer>
+          </>
+        ) : (
+          <ChartContainer config={chartConfig}>
+            <div className='flex h-full items-center justify-center'>
+              <p className='flex items-center gap-2 rounded-xl bg-accent p-4 text-2xl'>
+                <Calendar></Calendar>
+                Este evento no tiene objetivos favoritos asociados
+              </p>
+            </div>
+          </ChartContainer>
+        )}
       </CardContent>
     </Card>
   )

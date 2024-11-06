@@ -44,6 +44,7 @@ import {
 import { Button } from '@components/ui/button'
 import { Trash } from 'lucide-react'
 import { unknown } from 'zod'
+import { useLocation } from 'wouter'
 
 type Motivation =
   | {
@@ -406,7 +407,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
   const [musicaFavorita, setMusicaFavorita] = useState<string>()
   const [tecnicaEstudio, setTecnicaEstudio] = useState<string>()
   const [racha, setRacha] = useState(0)
-  const { events } = useEvents()
+  const { events, setEvents } = useEvents()
   const [fechasOrdenadas, setFechasOdenadas] = useState<string[]>()
   const [eventObjectives, setEventObjectives] = useState<ObjectiveToRecover[]>(
     []
@@ -485,6 +486,8 @@ export default function EstadisticasEvento({ name }: { name: string }) {
   //Para ver info del calendario:
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
 
+  const [, setLocation] = useLocation()
+
   function handleBorrar() {
     if (session && fechaEvento) {
       deleteEvent(fechaEvento, name, session.user.id)
@@ -495,6 +498,8 @@ export default function EstadisticasEvento({ name }: { name: string }) {
           console.log(error)
         })
     }
+    setEvents([])
+    setLocation('/inicio')
   }
 
   return (

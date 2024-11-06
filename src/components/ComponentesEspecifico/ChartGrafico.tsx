@@ -20,7 +20,7 @@ import {
   XAxis,
 } from 'recharts'
 import { useState, useEffect } from 'react'
-import { Loader } from 'lucide-react'
+import { ChartColumn, Loader } from 'lucide-react'
 
 const chartConfig = {
   cumplidos: {
@@ -102,11 +102,14 @@ export default function ChartGrafico({
           ) : (
             <ChartContainer config={chartConfig}>
               {!chartData || chartData.length === 0 ? ( //Si se saca crashea el programa
-                <div className='h-full w-full'>
-                  <p className='flex items-center justify-center text-xl'>
-                    No hay datos disponibles para el período seleccionado
-                  </p>
-                </div>
+                <ChartContainer config={chartConfig}>
+                  <div className='flex h-full items-center justify-center'>
+                    <p className='flex items-center gap-2 rounded-xl bg-accent p-4 text-2xl'>
+                      <ChartColumn></ChartColumn>
+                      Este evento no tiene objetivos favoritos asociados
+                    </p>
+                  </div>
+                </ChartContainer>
               ) : (
                 <BarChart accessibilityLayer data={chartData}>
                   <CartesianGrid vertical={false} />
