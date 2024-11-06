@@ -298,7 +298,7 @@ export default function LandingPage() {
               Aprovechamos este apartado para agradecer a todas las personas que
               contribuyeron a la realización de este proyecto, como así también
               a los creadores de las imágenes y animaciones utilizados en la
-              página que se mensionaran a continuación:
+              página que se mencionaran a continuación:
             </p>
             <ul>
               <li className='flex gap-2'>
