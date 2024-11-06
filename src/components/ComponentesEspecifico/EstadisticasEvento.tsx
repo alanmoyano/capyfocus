@@ -716,11 +716,15 @@ export default function EstadisticasEvento({ name }: { name: string }) {
           </Table>
         </div>
         {/* Boton para eliminar eventos */}
-        <div className='flex w-full mb-2 justify-end'>
+        <div className='mb-2 flex w-full justify-end'>
           <TooltipProvider delayDuration={50}>
             <Tooltip delayDuration={50}>
               <TooltipTrigger asChild>
-                <Button type='button' variant={'destructive'} className='ml-auto'>
+                <Button
+                  type='button'
+                  variant={'destructive'}
+                  className='ml-auto'
+                >
                   <Trash></Trash>
                 </Button>
               </TooltipTrigger>
