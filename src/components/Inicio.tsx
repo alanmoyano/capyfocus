@@ -327,19 +327,18 @@ export default function Inicio() {
     } else {
       if (session) {
         if (objetivosFav.length === 0) {
-          const hoy = new Date()
-          persistFavoriteObjective(objetivo, hoy, session.user.id)
-            .then(() => {
-              console.log('Objetivo persistido correctamente')
-            })
-            .catch((error: unknown) => {
-              console.log('Ocurrio un error: ', error)
-            })
+          recoverObjectives()
         }
-        recoverObjectives()
-      } else {
-        setObjetivosFav([...objetivosFav, objetivo])
+        const hoy = new Date()
+        persistFavoriteObjective(objetivo, hoy, session.user.id)
+          .then(() => {
+            console.log('Objetivo persistido correctamente')
+          })
+          .catch((error: unknown) => {
+            console.log('Ocurrio un error: ', error)
+          })
       }
+      setObjetivosFav([...objetivosFav, objetivo])
     }
   }
 

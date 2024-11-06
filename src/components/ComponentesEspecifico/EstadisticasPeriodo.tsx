@@ -25,11 +25,11 @@ import {
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
 import ChartGrafico from './ChartGrafico'
-import { subDays, subMonths, subWeeks } from 'date-fns'
+import { subDays, subMonths } from 'date-fns'
 import { es } from 'date-fns/locale'
 import html2canvas from 'html2canvas'
 import { Button } from '@components/ui/button'
-import { Ambulance, ImageDown } from 'lucide-react'
+import { ImageDown } from 'lucide-react'
 
 //TODO: Grafico segun el periodo de tiempo seleccionado
 

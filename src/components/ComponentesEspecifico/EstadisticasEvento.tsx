@@ -21,7 +21,6 @@ import { formatTime } from '@/lib/utils'
 
 import { useObjetivos } from '@contexts/ObjetivosContext'
 import {
-  formatDateDash,
   obtenerClaveMayorValor,
   getElementNameById,
   convertirAFecha,
@@ -35,8 +34,14 @@ import { useSession } from '../contexts/SessionContext'
 import { useEvents } from '../contexts/EventsContext'
 import { Event } from './Eventos'
 import ChartEventos from './ChartEventos'
-import { ConstructionIcon } from 'lucide-react'
-//TODO: información calendario
+import {
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+  Tooltip,
+} from '@radix-ui/react-tooltip'
+import { Button } from '@components/ui/button'
+import { Trash } from 'lucide-react'
 
 type Motivation =
   | {
@@ -188,6 +193,17 @@ async function gatherObjectivesOfEvent(eventId: number) {
     //     )
     // }
   }
+}
+//Buscamos la fecha
+async function getEventDateFromName(eventName: string, uuid: string) {
+  const { data, error } = await supabase
+    .from('Eventos')
+    .select()
+    .eq('nombre', eventName)
+    .eq('idUsuario', uuid)
+
+  if (data) return data[0].fechaLimite as string
+  else console.log(error)
 }
 
 export default function EstadisticasEvento({ name }: { name: string }) {
@@ -393,6 +409,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
   const [eventObjectives, setEventObjectives] = useState<ObjectiveToRecover[]>(
     []
   )
+  const [fechaEvento, setFechaEvento] = useState<Date | undefined>(undefined)
   useEffect(() => {
     const evento = events.find(e => e.title === name)
     setEventoSeleccionado(evento)
@@ -412,6 +429,15 @@ export default function EstadisticasEvento({ name }: { name: string }) {
       gatherSessionsOfEventOfUser(session.user.id, name)
         .then(data => {
           setStatisticsValues(data, evento)
+        })
+        .catch((error: unknown) => {
+          console.log(error)
+        })
+      getEventDateFromName(name, session.user.id)
+        .then(data => {
+          if (data) {
+            setFechaEvento(new Date(formatDateSlash(data)))
+          }
         })
         .catch((error: unknown) => {
           console.log(error)
@@ -541,10 +567,43 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                       eventDay: fechasOrdenadas?.map(fecha =>
                         convertirAFecha(fecha)
                       ),
+                      //@ts-expect-error shhh ts, esto funciona as expected
+                      importantDay: fechaEvento,
                     }}
                     modifiersClassNames={{
                       eventDay: 'bg-primary/50 dark:bg-primary',
                       today: 'bg-accent/70 dark:bg-accent/90',
+                      importantDay: 'bg-secondary/70 dark:bg-secondary/90',
+                    }}
+                    components={{
+                      DayContent: day => {
+                        const isToday =
+                          day.date.toDateString() === new Date().toDateString()
+                        const isImportantDay =
+                          fechaEvento &&
+                          day.date.toDateString() ===
+                            new Date(fechaEvento).toDateString()
+                        return (
+                          <div className='flex items-center justify-center'>
+                            <TooltipProvider delayDuration={50}>
+                              <Tooltip delayDuration={50}>
+                                <TooltipTrigger asChild>
+                                  <div>{day.date.getDate()}</div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className='p-2'>
+                                    {isImportantDay
+                                      ? name
+                                      : isToday
+                                        ? 'Hoy'
+                                        : null}
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
+                        )
+                      },
                     }}
                   />{' '}
                   <div className='pl-4 md:w-1/2'>
@@ -655,6 +714,25 @@ export default function EstadisticasEvento({ name }: { name: string }) {
               ))}
             </TableBody>
           </Table>
+        </div>
+        {/* Boton para eliminar eventos */}
+        <div className='mb-2 flex w-full justify-end'>
+          <TooltipProvider delayDuration={50}>
+            <Tooltip delayDuration={50}>
+              <TooltipTrigger asChild>
+                <Button
+                  type='button'
+                  variant={'destructive'}
+                  className='ml-auto'
+                >
+                  <Trash></Trash>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className='p-2'>Eliminar evento</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </Card>
     </>

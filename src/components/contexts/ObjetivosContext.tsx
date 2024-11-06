@@ -28,15 +28,7 @@ export const ObjetivosProvider = ({ children }: { children: ReactNode }) => {
   // lo mismo que estaba allá ! ;)
   const [objetivos, setObjetivos] = useState<string[]>([])
   const [objetivosPend, setObjetivosPend] = useState<string[]>([])
-  const [objetivosFav, setObjetivosFav] = useState<string[]>(() => {
-    const savedFav = localStorage.getItem('objetivosFav')
-    if (!savedFav) return []
-    try {
-      return JSON.parse(savedFav) as string[]
-    } catch {
-      return []
-    }
-  })
+  const [objetivosFav, setObjetivosFav] = useState<string[]>([])
 
   const [tiempo, setTiempo] = useState<Record<string, number>>({})
   const [tiempoSesion, setTiempoSesion] = useState<Record<string, number>>({})
@@ -54,10 +46,7 @@ export const ObjetivosProvider = ({ children }: { children: ReactNode }) => {
         objetivosPend,
         setObjetivosPend,
         objetivosFav,
-        setObjetivosFav: newObjetivosFav => {
-          localStorage.setItem('objetivosFav', JSON.stringify(newObjetivosFav))
-          setObjetivosFav(newObjetivosFav)
-        },
+        setObjetivosFav,
         tiempoSesion,
         setTiempoSesion,
         tiempoFavorito,
