@@ -78,7 +78,7 @@ import Reproductor from './ComponentesEspecifico/Reproductor'
 import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
 import { useEvents } from './contexts/EventsContext'
 import { usePreferences } from './contexts/PreferencesContext'
-
+//BUG: Algunos objetivos Favoritos no se ponen como favoritos.
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
 const playlists = [
