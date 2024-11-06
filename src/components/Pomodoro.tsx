@@ -140,7 +140,7 @@ export default function Pomodoro() {
     isPaused,
     pauseStudy,
     resumeStudy,
-    startBreak,
+    skipCurrent,
     stopStudy,
   } = usePomodoro()
   const [isActive, setIsActive] = useState(false) //Aca se cambia el estado de play y pause
@@ -290,6 +290,7 @@ export default function Pomodoro() {
         setSessionSeconds(
           pomodorosRealizados[pomodorosRealizados.length - 1].tiempoEstudio
         )
+        console.log('holis, si entro')
         pauseObjectiveTime()
         setMode('Descansando')
         setIsActive(false)
@@ -297,6 +298,7 @@ export default function Pomodoro() {
         pomodoroCount.current += 0.5
       } else {
         // if (time > 0) return
+        console.log('Me terminé')
         stopStudy()
         setTimerObjectivesAcum(prev => prev + objStudyTime)
         resetObjectiveTime()
@@ -333,16 +335,15 @@ export default function Pomodoro() {
   } */
 
   const handleSaltar = () => {
-    clearInterval(timer.current)
+    //clearInterval(timer.current)
     if (mode === 'Estudiando') {
       setTiempoTotal(prev => prev - time)
-      setIsActive(false)
-      setMode('Descansando')
+      skipCurrent(breakSeconds)
+      setIsActive(true)
     } else {
       setAcumuladorTiempoPausa(prev => prev - time)
-      setIsActive(false)
-      setIsSetted(false)
-      setMode('Estudiando')
+      skipCurrent(-1)
+      setIsActive(true)
     }
   }
 
@@ -678,10 +679,10 @@ export default function Pomodoro() {
                           className='flex'
                           variant='ghost'
                           type='button'
-                          // onClick={handleSaltar}
-                          onClick={() =>
-                            toast.warning('Desabilitado por el momento...')
-                          }
+                          onClick={handleSaltar}
+                          // onClick={() =>
+                          //   toast.warning('Desabilitado por el momento...')
+                          // }
                         >
                           <SkipForward />
                         </Button>
@@ -690,7 +691,7 @@ export default function Pomodoro() {
                         side='bottom'
                         className='mt-1 flex rounded-md bg-gray-200 px-4 py-1'
                       >
-                        <p>Saltar</p>
+                        <p>BOTON DE SALTAR</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>

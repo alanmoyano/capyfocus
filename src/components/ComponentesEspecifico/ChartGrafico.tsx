@@ -85,13 +85,15 @@ export default function ChartGrafico({
           <CardTitle className='text-lg font-bold text-gray-900 dark:text-zinc-200'>
             {periodo === 'bimestral' &&
               `Registro de objetivos del bimestre ${Meses[new Date().getMonth() - 1]} - ${Meses[new Date().getMonth()]} `}
-            {(periodo === 'semanal' || periodo === 'mensual') &&
+            {periodo === 'mensual' &&
               `Registro de objetivos del mes de ${Meses[new Date().getMonth()]}`}
+            {periodo === 'semanal' &&
+              'Registro de objetivos de la última semana'}
             {periodo === 'semestre' &&
               `Registro de objetivos del mes de ${Meses[new Date().getMonth() - 6]} - ${Meses[new Date().getMonth()]}`}
           </CardTitle>
         </CardHeader>
-        <CardContent className='p-3 dark:bg-neutral-850'>
+        <CardContent className='dark:bg-neutral-850 p-3'>
           {loading ? ( // Muestra el icono de carga si está cargando
             <div className='flex items-center justify-center p-16'>
               <Loader className='mr-3 h-10 w-10 animate-spin' />

@@ -159,7 +159,7 @@ export default function Switchers() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value='1'>Positiva</SelectItem>
-            <SelectItem value='2'>Agresiva</SelectItem>
+            <SelectItem value='2'>Pasivo agresiva</SelectItem>
           </SelectContent>
         </Select>
       </div>

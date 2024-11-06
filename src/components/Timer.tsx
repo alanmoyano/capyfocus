@@ -64,6 +64,10 @@ export default function Timer() {
 
   const hoyNormal = new Date()
   const hoyRaro = new Date()
+
+  const hoy = new Date()
+  const InicioSesion = hoy
+
   console.log('Dia normal', hoyNormal)
   console.log('Dia en formato', dateToTimetz(hoyRaro))
 
@@ -79,7 +83,7 @@ export default function Timer() {
   const [, setLocation] = useLocation()
   const [lastCheckedObj, setLastCheckedObj] = useState<number | null>(null)
   const [sessionStart, setSessionStart] = useState(false)
-  const [InicioSesion, setInicioSesion] = useState<Date | null>(null)
+
   const { session } = useSession()
   const {
     objetivos,
@@ -101,7 +105,7 @@ export default function Timer() {
 
   const { insignias } = useInsignias()
 
-  const requisitosInsignias: Record<number, number> = {
+  const requisitosInsignias = {
     1: 25, // Estudiar 25 veces con pasivoAgresivo
     2: 25, // Estudiar 25 veces con positiva
     3: 1, // Alcanzar un evento
@@ -117,10 +121,72 @@ export default function Timer() {
     13: 75, // Completa 75 objetivos
     14: 100, // Completa 100 objetivos
     15: 30, // Pasa 30 días sin estudiar
-  }
+  } as const
 
-  function getProgresoInsignia(idInsignia: number, relativeProgress: number) {
-    return (relativeProgress / requisitosInsignias[idInsignia]) * 100
+  function getProgresoInsignia(
+    idInsignia: number,
+    datosNuevosInsignias: {
+      sesionesNegativas: number
+      sesionesPositivas: number
+      tiempoEstudiado: number
+      sesionesDeEstudio: number
+      objetivosCumplidos: number
+      objetivosSesion: number
+    }
+  ) {
+    switch (idInsignia) {
+      case 1: {
+        const porcentaje = Math.round(
+          (datosNuevosInsignias.sesionesNegativas / requisitosInsignias[1]) *
+            100
+        )
+
+        return porcentaje > 100 ? porcentaje : 100
+      }
+
+      case 2: {
+        const porcentaje = Math.round(
+          (datosNuevosInsignias.sesionesPositivas / requisitosInsignias[2]) *
+            100
+        )
+
+        return porcentaje > 100 ? porcentaje : 100
+      }
+
+      case 4:
+        return datosNuevosInsignias.tiempoEstudiado > 2 * 60 * 60 ? 100 : 7
+
+      case 6:
+      case 7:
+      case 8:
+      case 9:
+      case 10: {
+        const porcentaje = Math.round(
+          (datosNuevosInsignias.sesionesDeEstudio /
+            requisitosInsignias[idInsignia]) *
+            100
+        )
+        return porcentaje > 100 ? 100 : porcentaje
+      }
+
+      case 11:
+        return datosNuevosInsignias.objetivosCumplidos >
+          datosNuevosInsignias.objetivosSesion
+          ? 100
+          : 7
+
+      case 12:
+      case 13:
+      case 14:
+        return Math.round(
+          (datosNuevosInsignias.objetivosCumplidos /
+            requisitosInsignias[idInsignia]) *
+            100
+        )
+
+      default:
+        return 1
+    }
   }
 
   const finalizarSesion = () => {
@@ -131,7 +197,6 @@ export default function Timer() {
           //@ts-expect-error no jodas ts, anda en la bd
           uuid: session?.user.id,
           horaInicioSesion: dateToTimetz(InicioSesion),
-          //@ts-expect-error no jodas ts, anda en la bd
           fecha: InicioSesion,
           horaFinSesion: dateToTimetz(hoy),
           tecnicaEstudio: 2,
@@ -194,19 +259,21 @@ export default function Timer() {
             }
           })
 
+        const nuevosCapyDatosParaEstadisticas = {
+          objetivosCumplidos:
+            capyDatosParaEstadisticas.objetivosCumplidos + objCumplidos,
+          sesionesDeEstudio: capyDatosParaEstadisticas.sesionesDeEstudio + 1,
+          sesionesPositivas:
+            capyDatosParaEstadisticas.sesionesPositivas +
+            (motivationType === 'Positiva' ? 1 : 0),
+          sesionesNegativas:
+            capyDatosParaEstadisticas.sesionesNegativas +
+            (motivationType === 'Negativa' ? 1 : 0),
+        }
+
         await supabase
           .from('Usuarios')
-          .update({
-            objetivosCumplidos:
-              capyDatosParaEstadisticas.objetivosCumplidos + objCumplidos,
-            sesionesDeEstudio: capyDatosParaEstadisticas.sesionesDeEstudio + 1,
-            sesionesPositivas:
-              capyDatosParaEstadisticas.sesionesPositivas +
-              (motivationType === 'Positiva' ? 1 : 0),
-            sesionesNegativas:
-              capyDatosParaEstadisticas.sesionesNegativas +
-              (motivationType === 'Negativa' ? 1 : 0),
-          })
+          .update(nuevosCapyDatosParaEstadisticas)
           .eq('id', session?.user.id)
           .select()
           .then(({ data, error }) => {
@@ -247,7 +314,12 @@ export default function Timer() {
                 .upsert({
                   idInsignia: insignia.id,
                   idUsuario: session.user.id,
-                  progreso: 74, // ahora tenemos que ver como calcular el progreso!
+                  progreso: getProgresoInsignia(insignia.id, {
+                    objetivosSesion: sessionToSave.cantidadObjetivos,
+                    tiempoEstudiado:
+                      (hoy.getTime() - InicioSesion.getTime()) / 1000,
+                    ...nuevosCapyDatosParaEstadisticas,
+                  }),
                 })
                 .eq('idInsignia', insignia.id)
                 .eq('idUsuario', session.user.id)
@@ -311,8 +383,6 @@ export default function Timer() {
     }
     setObjetivosPend(objetivos)
     startStudy()
-    const hoy = new Date()
-    setInicioSesion(hoy)
   }, [])
 
   useEffect(() => {

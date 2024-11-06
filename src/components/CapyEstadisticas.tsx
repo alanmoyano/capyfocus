@@ -424,7 +424,7 @@ export default function CapyEstadisticas() {
               {/* Chart */}
               <div className='space-y-6 md:w-1/2'>
                 <Card className='overflow-hidden rounded-lg shadow-lg'>
-                  <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-4 dark:from-slate-800 dark:to-yellow-900 '>
+                  <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-4 dark:from-slate-800 dark:to-yellow-900'>
                     <CardTitle className='text-lg font-bold text-gray-900 dark:text-neutral-200'>
                       Tiempo dedicado a objetivos en la sesión actual
                     </CardTitle>
@@ -523,7 +523,7 @@ export default function CapyEstadisticas() {
                   <TableBody>
                     {objetivos.map((objetivo, index) => (
                       <TableRow key={index}>
-                        <TableCell className='text-blue-700 dark:text-indigo-300 font-semibold '>
+                        <TableCell className='font-semibold text-blue-700 dark:text-indigo-300'>
                           {objetivo}
                         </TableCell>
                         <TableCell className='text-center'>

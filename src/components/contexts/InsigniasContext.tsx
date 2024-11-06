@@ -2,6 +2,7 @@ import { createContext, useState, useContext, useEffect } from 'react'
 import type { ReactNode, Dispatch, SetStateAction } from 'react'
 
 import { supabase } from '@/components/supabase/client'
+import { useSession } from './SessionContext'
 
 type Insignia = {
   id: number
@@ -30,6 +31,7 @@ export function InsigniasProvider({ children }: { children: ReactNode }) {
   const [insigniasXUsuario, setInsigniasXUsuario] = useState<
     InsigniaXUsuario[]
   >([])
+  const { session } = useSession()
 
   useEffect(() => {
     supabase
@@ -43,8 +45,10 @@ export function InsigniasProvider({ children }: { children: ReactNode }) {
     supabase
       .from('CapyInsigniasXUsuarios')
       .select()
+      .eq('idUsuario', session?.user.id)
       .then(({ data }) => {
         console.log(data)
+        if (!data) return
         setInsigniasXUsuario(data as InsigniaXUsuario[])
       })
   }, [])

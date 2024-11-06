@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+//TODO: colocar las unidades, y ver como solucionamos la parte de las estadisticas
 import { useEffect, useRef, useState } from 'react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -24,7 +25,7 @@ import {
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
 import ChartGrafico from './ChartGrafico'
-import { subMonths, subWeeks } from 'date-fns'
+import { subDays, subMonths, subWeeks } from 'date-fns'
 import { es } from 'date-fns/locale'
 import html2canvas from 'html2canvas'
 import { Button } from '@components/ui/button'
@@ -550,7 +551,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
     switch (period) {
       case 'semanal':
         return {
-          fromDate: subWeeks(new Date(), 1),
+          fromDate: subDays(new Date(), 6),
           toDate: new Date(),
         }
       case 'mensual':
@@ -604,7 +605,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
       </div>
       <Card
         ref={cardRefs[period]}
-        className='container mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg md:flex-row  dark:from-slate-900 dark:to-yellow-950 dark:shadow-gray-800'
+        className='container mt-4 rounded-lg bg-gradient-to-br from-orange-100 to-blue-100 shadow-lg md:flex-row dark:from-slate-900 dark:to-yellow-950 dark:shadow-gray-800'
       >
         <CardHeader>
           <CardTitle className='text-left text-3xl font-bold dark:text-white'>
@@ -664,8 +665,8 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
             <ChartGrafico periodo={period} chartData={chartData} />
 
             {/* Calendario */}
-            <Card className='overflow-hidden rounded-lg shadow-sm dark:bg-neutral-850'>
-              <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-3 dark:from-slate-800 dark:to-yellow-900 '>
+            <Card className='dark:bg-neutral-850 overflow-hidden rounded-lg shadow-sm'>
+              <CardHeader className='bg-gradient-to-r from-orange-200 to-blue-200 p-3 dark:from-slate-800 dark:to-yellow-900'>
                 <CardTitle className='text-lg font-bold text-gray-900 dark:text-zinc-200'>
                   Días Conectado
                 </CardTitle>
@@ -692,7 +693,6 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
                     modifiersClassNames={{
                       eventDay: 'bg-primary/50 dark:bg-primary',
                       today: 'bg-accent/70 dark:bg-accent/90',
-
                     }}
                   />
                   {
