@@ -21,7 +21,6 @@ import { formatTime } from '@/lib/utils'
 
 import { useObjetivos } from '@contexts/ObjetivosContext'
 import {
-  formatDateDash,
   obtenerClaveMayorValor,
   getElementNameById,
   convertirAFecha,
@@ -41,7 +40,8 @@ import {
   TooltipTrigger,
   Tooltip,
 } from '@radix-ui/react-tooltip'
-//TODO: información calendario
+import { Button } from '@components/ui/button'
+import { Trash } from 'lucide-react'
 
 type Motivation =
   | {
@@ -714,6 +714,21 @@ export default function EstadisticasEvento({ name }: { name: string }) {
               ))}
             </TableBody>
           </Table>
+        </div>
+        {/* Boton para eliminar eventos */}
+        <div className='flex w-full mb-2 justify-end'>
+          <TooltipProvider delayDuration={50}>
+            <Tooltip delayDuration={50}>
+              <TooltipTrigger asChild>
+                <Button type='button' variant={'destructive'} className='ml-auto'>
+                  <Trash></Trash>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className='p-2'>Eliminar evento</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </Card>
     </>
