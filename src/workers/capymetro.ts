@@ -10,9 +10,9 @@ onmessage = function (e) {
       intervalId1 = setInterval(() => {
         timer1++
         postMessage({ timer1, timer2 })
-        console.log(
-          `timer1: ${timer1}, timer2: ${timer2} at ${new Date().toLocaleString()}`
-        )
+        // console.log(
+        //   `timer1: ${timer1}, timer2: ${timer2} at ${new Date().toLocaleString()}`
+        // )
       }, 1000)
       return
     }
@@ -21,9 +21,9 @@ onmessage = function (e) {
       intervalId2 = setInterval(() => {
         timer2++
         postMessage({ timer1, timer2 })
-        console.log(
-          `timer1: ${timer1}, timer2: ${timer2} at ${new Date().toLocaleString()}`
-        )
+        // console.log(
+        //   `timer1: ${timer1}, timer2: ${timer2} at ${new Date().toLocaleString()}`
+        // )
       }, 1000)
       return
     }

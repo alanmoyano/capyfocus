@@ -22,6 +22,7 @@ export default function usePomodoro() {
     workerRef.current.onmessage = event => {
       const { timeLeft, isWorking, isPaused } = event.data as props
       setTime(timeLeft)
+      // console.log('culpa del 2')
       setIsStudying(isWorking)
       setIsPaused(isPaused)
     }
@@ -42,39 +43,50 @@ export default function usePomodoro() {
     setTime(studyTime)
     setBreakTime(breakTime)
     workerRef.current?.postMessage({ action: 'start', studyTime, breakTime })
+    // console.log('culpa del 3')
 
     setIsStudying(true)
   }
 
   function pauseStudy() {
     workerRef.current?.postMessage({ action: 'pause' })
+    // console.log('culpa del 4')
 
     setIsStudying(false)
   }
 
   function resumeStudy() {
     workerRef.current?.postMessage({ action: 'resume' })
+    // console.log('culpa del 5')
 
     setIsStudying(true)
   }
 
   function stopStudy() {
     workerRef.current?.postMessage({ action: 'stop' })
-    setTime(1)
+    // console.log('culpa del 6')
+
     setIsStudying(false)
   }
 
   function startBreak() {
     workerRef.current?.postMessage({ action: 'startBr' })
+    // console.log('culpa del 7')
+
     setIsStudying(true)
   }
-  function skipCurrent(breakTime: number) {
-    workerRef.current?.postMessage({
-      action: 'skip',
-      studyTime: -1,
-      breakTime: breakTime,
-    })
-    setIsStudying(false)
+  function skipCurrent(breakTime?: number) {
+    if (breakTime) {
+      console.log('vino breaktime')
+      workerRef.current?.postMessage({
+        action: 'skip',
+        studyTime: -1,
+        breakTime: breakTime,
+      })
+    }
+    // console.log('culpa del 8')
+
+    setIsStudying(prev => !prev)
   }
 
   return {

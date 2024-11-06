@@ -7,7 +7,7 @@ import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
 
 export default function Login() {
   return (
-    <section className='mt-4 flex my-10 rounded-3xl h-full w-[80vw] items-center justify-center sm:rounded-[10rem] bg-secondary/60 p-4 text-current sm:h-full md:h-[90vh] dark:bg-secondary/85'>
+    <section className='my-10 mt-4 flex h-full w-[80vw] items-center justify-center rounded-3xl bg-secondary/60 p-4 text-current sm:h-full sm:rounded-[10rem] md:h-[90vh] dark:bg-secondary/85'>
       <div className='flex flex-col sm:gap-10 sm:p-10 md:flex-row lg:gap-20 2xl:gap-40'>
         <div className='m-auto w-full max-w-[300px] md:max-w-[366px]'>
           <Reproductor

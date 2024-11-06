@@ -167,7 +167,6 @@ export default function Pomodoro() {
     resetTimers: resetObjectiveTime,
   } = useTimer()
   const [timerObjectivesAcum, setTimerObjectivesAcum] = useState(0)
-  const [skipped, setSkipped] = useState(false)
 
   const {
     objetivos,
@@ -280,21 +279,13 @@ export default function Pomodoro() {
   useEffect(() => {
     if (!isActive) return () => clearInterval(timer.current)
 
-    if (time >= 0 && isStudying && !skipped) {
+    if (time >= 0 && isStudying) {
       console.log('hola')
     } else {
       if (volumen) {
         capySound()
       }
       if (mode === 'Estudiando') {
-        if (skipped) {
-          setSkipped(false)
-          console.log('buenas')
-          // setSessionSeconds(
-          //   pomodorosRealizados[pomodorosRealizados.length - 1].tiempoEstudio
-          // )
-          // pauseObjectiveTime()
-        }
         stopStudy()
         setSessionSeconds(
           pomodorosRealizados[pomodorosRealizados.length - 1].tiempoEstudio
@@ -326,15 +317,7 @@ export default function Pomodoro() {
       finalizarSesion()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    isActive,
-    sessionSeconds,
-    breakSeconds,
-    mode,
-    objCumplidos,
-    isStudying,
-    skipped,
-  ])
+  }, [isActive, sessionSeconds, breakSeconds, mode, objCumplidos, isStudying])
 
   useEffect(() => {
     setIsActive(isPaused)
@@ -354,15 +337,13 @@ export default function Pomodoro() {
   const handleSaltar = () => {
     //clearInterval(timer.current)
     if (mode === 'Estudiando') {
-      setSkipped(true)
       setTiempoTotal(prev => prev - time)
-      setIsActive(false)
       skipCurrent(breakSeconds)
+      setIsActive(true)
     } else {
       setAcumuladorTiempoPausa(prev => prev - time)
-      setIsActive(false)
-      setIsSetted(false)
-      stopStudy()
+      skipCurrent(-1)
+      setIsActive(true)
     }
   }
 
@@ -698,10 +679,10 @@ export default function Pomodoro() {
                           className='flex'
                           variant='ghost'
                           type='button'
-                          // onClick={handleSaltar}
-                          onClick={() =>
-                            toast.warning('Desabilitado por el momento...')
-                          }
+                          onClick={handleSaltar}
+                          // onClick={() =>
+                          //   toast.warning('Desabilitado por el momento...')
+                          // }
                         >
                           <SkipForward />
                         </Button>
@@ -710,7 +691,7 @@ export default function Pomodoro() {
                         side='bottom'
                         className='mt-1 flex rounded-md bg-gray-200 px-4 py-1'
                       >
-                        <p>Saltar</p>
+                        <p>BOTON DE SALTAR</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>

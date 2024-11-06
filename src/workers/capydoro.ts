@@ -54,10 +54,11 @@ onmessage = function (e) {
     clearInterval(intervalId)
 
     // If we're in study time, switch to break
-    workTime = studyTime
-    restTime = breakTime
-    timeLeft = workTime
+    // workTime = studyTime
+    // restTime = breakTime
+    timeLeft = breakTime
     isPaused = false
+    // isWorking = !isWorking
     // isStopped = false
 
     startTimer()
@@ -66,15 +67,17 @@ onmessage = function (e) {
 
 function startTimer() {
   intervalId = setInterval(() => {
+    if (timeLeft < 0) {
+      // console.log('entre')
+      isWorking = !isWorking
+      // console.log('isWorking', isWorking)
+      timeLeft = isWorking ? workTime : restTime
+      postMessage({ timeLeft, isWorking, isPaused })
+    }
     if (!isPaused) {
       timeLeft--
       postMessage({ timeLeft, isWorking, isPaused })
       console.log(timeLeft)
-      if (timeLeft < 0) {
-        isWorking = !isWorking
-        timeLeft = isWorking ? workTime : restTime
-        postMessage({ timeLeft, isWorking, isPaused })
-      }
     }
   }, 1000)
 }
