@@ -1,8 +1,3 @@
-import FotoSelector from './FotoSelector'
-import { useEffect, useState } from 'react'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -10,32 +5,36 @@ import {
   CardContent,
   CardDescription,
   CardFooter,
-  CardHeader,
-  CardTitle,
+  CardHeader
 } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
+  SheetTrigger
 } from '@/components/ui/sheet'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { useLocation } from 'wouter'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import ChichoHablaPerfil from './ComponentesEspecifico/ChichoHablaPerfil'
-import { supabase } from './supabase/client'
-import { useSession } from './contexts/SessionContext'
-import Switchers from './ComponentesEspecifico/Switchers'
 import { profilePictures } from '@/constants/profilePictures'
-import { useProfilePic } from './contexts/ProfilePicContext'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Pencil } from 'lucide-react'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useLocation } from 'wouter'
+import { z } from 'zod'
+import ChichoHablaPerfil from './ComponentesEspecifico/ChichoHablaPerfil'
+import Switchers from './ComponentesEspecifico/Switchers'
 import { useEvents } from './contexts/EventsContext'
 import { useObjetivos } from './contexts/ObjetivosContext'
-import { Pencil } from 'lucide-react'
+import { usePreferences } from './contexts/PreferencesContext'
+import { useProfilePic } from './contexts/ProfilePicContext'
+import { useSession } from './contexts/SessionContext'
+import FotoSelector from './FotoSelector'
+import { supabase } from './supabase/client'
 
 const formSchema = z.object({
   username: z
@@ -50,6 +49,7 @@ export default function Usuario() {
   const [, setLocation] = useLocation()
   const { setEvents, setSelectedEvent } = useEvents()
   const { setObjetivosFav } = useObjetivos()
+  const {setDarkModePreference,setMotivationPreference,setNotificationPreference} = usePreferences()
 
   const { session } = useSession()
   const user = session?.user
@@ -57,8 +57,23 @@ export default function Usuario() {
   const handleLogin = () => {
     supabase.auth.signOut().catch((error: unknown) => console.error(error))
     setEvents([])
-    setObjetivosFav([])
     setSelectedEvent(null)
+    
+    localStorage.removeItem('darkModePreference')
+    setDarkModePreference(false)
+    
+    localStorage.removeItem('notificationPreference')
+    setNotificationPreference(true)
+    
+    localStorage.removeItem('motivationPreference')
+    setMotivationPreference('1')
+    
+    localStorage.removeItem('fotoPerfil')
+
+    localStorage.removeItem('objetivosFav')
+    setObjetivosFav([])
+    
+    localStorage.removeItem('sb-ndaahjmzdjhocmfocnbx-auth-token')
     setLocation('/login')
   }
 
