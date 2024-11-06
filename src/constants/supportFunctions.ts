@@ -70,6 +70,16 @@ const formatDateSlash = (date: Date | string) => {
   }
 }
 
+async function deleteEvent(date: Date, name: string, uuid: string) {
+  const { data, error } = await supabase
+    .from('Eventos')
+    .delete()
+    .eq('nombre', name)
+    .eq('fechaLimite', formatDateDash(date))
+    .eq('idUsuario', uuid)
+  if (error) console.log(error)
+}
+
 const formatDateDash = (date: Date) => {
   // Función que nos permite pasar de un objeto tipo date a uno de tipo string en formato YYYY-MM-DD
   const year = date.getFullYear()
@@ -396,4 +406,5 @@ export {
   recoverObjectiveFromId,
   formatDateDashARG,
   saveSession,
+  deleteEvent,
 }

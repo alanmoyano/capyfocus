@@ -28,6 +28,7 @@ import {
   formatDateDashARG,
   formatDateSlash,
   sessionInfo,
+  deleteEvent,
 } from '../../constants/supportFunctions'
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
@@ -42,6 +43,7 @@ import {
 } from '@radix-ui/react-tooltip'
 import { Button } from '@components/ui/button'
 import { Trash } from 'lucide-react'
+import { unknown } from 'zod'
 
 type Motivation =
   | {
@@ -483,6 +485,18 @@ export default function EstadisticasEvento({ name }: { name: string }) {
   //Para ver info del calendario:
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
 
+  function handleBorrar() {
+    if (session && fechaEvento) {
+      deleteEvent(fechaEvento, name, session.user.id)
+        .then(data => {
+          console.log('Evento borrado con exito')
+        })
+        .catch((error: unknown) => {
+          console.log(error)
+        })
+    }
+  }
+
   return (
     <>
       {/* info de periodo */}
@@ -724,6 +738,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                   type='button'
                   variant={'destructive'}
                   className='ml-auto'
+                  onClick={handleBorrar}
                 >
                   <Trash></Trash>
                 </Button>

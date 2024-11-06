@@ -29,8 +29,8 @@ import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
 import { useEvents } from '../contexts/EventsContext'
 import {
-  formatDateDash,
   gatherEventsOfUser,
+  deleteEvent,
 } from '../../constants/supportFunctions'
 
 export type Event = {
@@ -74,16 +74,6 @@ async function saveEvent(name: string, uuid: string, limitDate: Date) {
     .select()
 
   if (data) return data[0] as EventToRecover
-}
-
-async function deleteEvent(date: Date, name: string, uuid: string) {
-  const { data, error } = await supabase
-    .from('Eventos')
-    .delete()
-    .eq('nombre', name)
-    .eq('fechaLimite', formatDateDash(date))
-    .eq('idUsuario', uuid)
-  if (error) console.log(error)
 }
 
 const formatDate = (date: Date) => {
