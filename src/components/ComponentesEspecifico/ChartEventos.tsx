@@ -13,6 +13,7 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart'
 import { formatDateDashARG } from '@/constants/supportFunctions'
+import { Calendar } from 'lucide-react'
 
 const chartConfig = {
   horas: {
@@ -52,47 +53,60 @@ export default function ChartEventos({
         <CardDescription>Desde: {fecha}</CardDescription>
       </CardHeader>
       <CardContent className='dark:bg-neutral-850'>
-        <ChartContainer config={chartConfig}>
-          <BarChart
-            accessibilityLayer
-            data={chartData}
-            layout='vertical'
-            margin={{
-              right: 16,
-            }}
-          >
-            <CartesianGrid horizontal={false} />
-            <YAxis
-              dataKey='nombreObjetivo'
-              type='category'
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-              tickFormatter={value => value.slice(0, 3)}
-              hide
-            />
-            <XAxis dataKey='horas' type='number' hide />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator='line' />}
-            />
-            <Bar
-              dataKey='horas'
-              layout='vertical'
-              fill='var(--color-horas)'
-              radius={4}
-            >
-              <LabelList
-                dataKey='nombreObjetivo'
-                position='insideLeft'
-                offset={8}
-                className='fill-[--color-label]'
-                fontSize={12}
-              />
-            </Bar>
-          </BarChart>
-        </ChartContainer>
+        {chartData.length !== 0 ? (
+          <>
+            <ChartContainer config={chartConfig}>
+              <BarChart
+                accessibilityLayer
+                data={chartData}
+                layout='vertical'
+                margin={{
+                  right: 16,
+                }}
+              >
+                <CartesianGrid horizontal={false} />
+                <YAxis
+                  dataKey='nombreObjetivo'
+                  type='category'
+                  tickLine={false}
+                  tickMargin={10}
+                  axisLine={false}
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+                  tickFormatter={value => value.slice(0, 3)}
+                  hide
+                />
+                <XAxis dataKey='horas' type='number' hide />
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent indicator='line' />}
+                />
+                <Bar
+                  dataKey='horas'
+                  layout='vertical'
+                  fill='var(--color-horas)'
+                  radius={4}
+                >
+                  <LabelList
+                    dataKey='nombreObjetivo'
+                    position='insideLeft'
+                    offset={8}
+                    className='fill-[--color-label]'
+                    fontSize={12}
+                  />
+                </Bar>
+              </BarChart>
+            </ChartContainer>
+          </>
+        ) : (
+          <ChartContainer config={chartConfig}>
+            <div className='flex h-full items-center justify-center'>
+              <p className='flex items-center gap-2 rounded-xl bg-accent p-4 text-2xl'>
+                <Calendar></Calendar>
+                Este evento no tiene objetivos favoritos asociados
+              </p>
+            </div>
+          </ChartContainer>
+        )}
       </CardContent>
     </Card>
   )

@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { useState, useRef, useEffect } from 'react'
 import html2canvas from 'html2canvas'
-import { ImageDown } from 'lucide-react'
+import { Calendar, ChartColumn, ImageDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import EstadisticasPeriodo from './ComponentesEspecifico/EstadisticasPeriodo'
 
@@ -431,12 +431,14 @@ export default function CapyEstadisticas() {
                   </CardHeader>
                   <CardContent className='p-3 dark:bg-neutral-900'>
                     {objetivos.length === 0 && (
-                      <div className='flex h-full w-full items-center justify-center'>
-                        <p className='rounded-lg bg-accent p-4 text-center'>
-                          Para tener el gráfico de los objetivos de la sesión,
-                          coloque objetivos antes de empezar la sesión.
-                        </p>
-                      </div>
+                      <ChartContainer config={chartConfig1}>
+                        <div className='flex h-full items-center justify-center'>
+                          <p className='flex items-center gap-2 rounded-xl bg-accent p-4 text-2xl'>
+                            <ChartColumn></ChartColumn>
+                            Este evento no tiene objetivos favoritos asociados
+                          </p>
+                        </div>
+                      </ChartContainer>
                     )}
                     {objetivos.length - objetivosPend.length === 0 &&
                       objetivos.length !== 0 && (

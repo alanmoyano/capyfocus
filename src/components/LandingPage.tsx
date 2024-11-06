@@ -42,8 +42,8 @@ export default function LandingPage() {
                 </span>
               </h2>
               <p className='text-lg text-gray-600 dark:text-white'>
-                Basado en la técnica pomodoro, para sesiones de estudio
-                eficientes.
+                Elige tu tiempo de estudio y de descanso, repite para mantener
+                el foco.
               </p>
             </div>
             <div className='max-w-md transform transition-transform duration-300 hover:scale-105'>

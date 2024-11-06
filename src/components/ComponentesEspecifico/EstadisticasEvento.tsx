@@ -28,6 +28,7 @@ import {
   formatDateDashARG,
   formatDateSlash,
   sessionInfo,
+  deleteEvent,
 } from '../../constants/supportFunctions'
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
@@ -42,6 +43,8 @@ import {
 } from '@radix-ui/react-tooltip'
 import { Button } from '@components/ui/button'
 import { Trash } from 'lucide-react'
+import { unknown } from 'zod'
+import { useLocation } from 'wouter'
 
 type Motivation =
   | {
@@ -404,7 +407,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
   const [musicaFavorita, setMusicaFavorita] = useState<string>()
   const [tecnicaEstudio, setTecnicaEstudio] = useState<string>()
   const [racha, setRacha] = useState(0)
-  const { events } = useEvents()
+  const { events, setEvents } = useEvents()
   const [fechasOrdenadas, setFechasOdenadas] = useState<string[]>()
   const [eventObjectives, setEventObjectives] = useState<ObjectiveToRecover[]>(
     []
@@ -482,6 +485,22 @@ export default function EstadisticasEvento({ name }: { name: string }) {
 
   //Para ver info del calendario:
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
+
+  const [, setLocation] = useLocation()
+
+  function handleBorrar() {
+    if (session && fechaEvento) {
+      deleteEvent(fechaEvento, name, session.user.id)
+        .then(data => {
+          console.log('Evento borrado con exito')
+        })
+        .catch((error: unknown) => {
+          console.log(error)
+        })
+    }
+    setEvents([])
+    setLocation('/inicio')
+  }
 
   return (
     <>
@@ -724,6 +743,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                   type='button'
                   variant={'destructive'}
                   className='ml-auto'
+                  onClick={handleBorrar}
                 >
                   <Trash></Trash>
                 </Button>
