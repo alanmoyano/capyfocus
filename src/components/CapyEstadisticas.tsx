@@ -335,7 +335,7 @@ export default function CapyEstadisticas() {
       </div>
 
       {/* Pagina en blanco */}
-      {selectedPeriod === '' && tiempoTotal === 0 && !selectedEvent && (
+      {selectedPeriod === '' && !selectedEvent && (
         <Reproductor src='/auto.webm' />
       )}
       {/* Pagina de sesion */}

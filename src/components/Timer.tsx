@@ -68,6 +68,10 @@ export default function Timer() {
   const hoy = new Date()
   const InicioSesion = hoy
 
+  useEffect(() => {
+    console.log('Cambió el InicioSesion', InicioSesion)
+  })
+
   console.log('Dia normal', hoyNormal)
   console.log('Dia en formato', dateToTimetz(hoyRaro))
 
@@ -103,236 +107,150 @@ export default function Timer() {
 
   const { selectedEvent } = useEvents()
 
-  const { insignias } = useInsignias()
+  const { insignias, getProgresoInsignia } = useInsignias()
 
-  const requisitosInsignias = {
-    1: 25, // Estudiar 25 veces con pasivoAgresivo
-    2: 25, // Estudiar 25 veces con positiva
-    3: 1, // Alcanzar un evento
-    4: 2, // Estudiar por 2 horas seguidas
-    5: 10, // Acumular 10 horas para un evento
-    6: 5, // Finalizar 5 sesiones de estudio
-    7: 15, // Finalizar 15 sesiones de estudio
-    8: 35, // Finalizar 35 sesiones de estudio
-    9: 50, // Finalizar 50 sesiones de estudio
-    10: 100, // Finalizar 100 sesiones de estudio
-    11: 10, // Cumplir todos los objetivos de una sesión
-    12: 35, // Completa 35 objetivos
-    13: 75, // Completa 75 objetivos
-    14: 100, // Completa 100 objetivos
-    15: 30, // Pasa 30 días sin estudiar
-  } as const
+  async function saveSession(sessionToSave: SesionAGuardar) {
+    await supabase
+      .from('SesionesDeEstudio')
+      .insert([
+        {
+          idUsuario: sessionToSave.uuid,
+          horaInicioSesion: sessionToSave.horaInicioSesion,
+          fecha: sessionToSave.fecha,
+          horaFinSesion: sessionToSave.horaFinSesion,
+          tecnicaEstudio: sessionToSave.tecnicaEstudio,
+          tipoMotivacion: sessionToSave.tipoMotivacion,
+          cantidadObjetivosCumplidos: sessionToSave.cantidadObjetivosCumplidos,
+          cantidadObjetivos: sessionToSave.cantidadObjetivos,
+          tiempoEstudio: sessionToSave.tiempoEstudio,
+          musicaSeleccionada: sessionToSave.musicaSeleccionada,
+          eventoSeleccionado: sessionToSave.eventoSeleccionado,
+        },
+      ])
+      .select()
+      .then(({ data, error }) => {
+        if (error) console.log(error)
+        else console.log('Datos guardados correctamente', data)
+      })
 
-  function getProgresoInsignia(
-    idInsignia: number,
-    datosNuevosInsignias: {
-      sesionesNegativas: number
-      sesionesPositivas: number
-      tiempoEstudiado: number
-      sesionesDeEstudio: number
-      objetivosCumplidos: number
-      objetivosSesion: number
+    let capyDatosParaEstadisticas = {
+      objetivosCumplidos: 0,
+      sesionesDeEstudio: 0,
+      sesionesNegativas: 0,
+      sesionesPositivas: 0,
     }
-  ) {
-    switch (idInsignia) {
-      case 1: {
-        const porcentaje = Math.round(
-          (datosNuevosInsignias.sesionesNegativas / requisitosInsignias[1]) *
-            100
-        )
 
-        return porcentaje > 100 ? porcentaje : 100
-      }
+    await supabase
+      .from('Usuarios')
+      .select(
+        'objetivosCumplidos,sesionesDeEstudio,sesionesPositivas,sesionesNegativas'
+      )
+      .eq('id', session?.user.id)
+      .then(({ data, error }) => {
+        if (error) console.error(error)
+        if (!data) return
 
-      case 2: {
-        const porcentaje = Math.round(
-          (datosNuevosInsignias.sesionesPositivas / requisitosInsignias[2]) *
-            100
-        )
+        capyDatosParaEstadisticas = data[0] as {
+          objetivosCumplidos: number
+          sesionesDeEstudio: number
+          sesionesNegativas: number
+          sesionesPositivas: number
+        }
+      })
 
-        return porcentaje > 100 ? porcentaje : 100
-      }
-
-      case 4:
-        return datosNuevosInsignias.tiempoEstudiado > 2 * 60 * 60 ? 100 : 7
-
-      case 6:
-      case 7:
-      case 8:
-      case 9:
-      case 10: {
-        const porcentaje = Math.round(
-          (datosNuevosInsignias.sesionesDeEstudio /
-            requisitosInsignias[idInsignia]) *
-            100
-        )
-        return porcentaje > 100 ? 100 : porcentaje
-      }
-
-      case 11:
-        return datosNuevosInsignias.objetivosCumplidos >
-          datosNuevosInsignias.objetivosSesion
-          ? 100
-          : 7
-
-      case 12:
-      case 13:
-      case 14:
-        return Math.round(
-          (datosNuevosInsignias.objetivosCumplidos /
-            requisitosInsignias[idInsignia]) *
-            100
-        )
-
-      default:
-        return 1
+    const nuevosCapyDatosParaEstadisticas = {
+      objetivosCumplidos:
+        capyDatosParaEstadisticas.objetivosCumplidos + objCumplidos,
+      sesionesDeEstudio: capyDatosParaEstadisticas.sesionesDeEstudio + 1,
+      sesionesPositivas:
+        capyDatosParaEstadisticas.sesionesPositivas +
+        (motivationType === 'Positiva' ? 1 : 0),
+      sesionesNegativas:
+        capyDatosParaEstadisticas.sesionesNegativas +
+        (motivationType === 'Negativa' ? 1 : 0),
     }
+
+    await supabase
+      .from('Usuarios')
+      .update(nuevosCapyDatosParaEstadisticas)
+      .eq('id', session?.user.id)
+      .select()
+      .then(({ data, error }) => {
+        if (error) console.log(error)
+        else console.log(data)
+      })
+
+    await supabase
+      .from('CapyInsigniasXUsuarios')
+      .select()
+      .eq('idUsuario', session?.user.id)
+      .then(({ data, error }) => {
+        if (error) console.error(error)
+        if (!data) return
+
+        const insigniasXUsuario = data as InsigniaXUsuario[]
+
+        if (!session) return
+
+        const insigniaXUsuario = groupBy(insigniasXUsuario, 'idUsuario')[
+          session.user.id
+        ]
+
+        console.log(insigniaXUsuario)
+        /* eslint-disable-next-line */
+        if (!insigniaXUsuario) return
+
+        insignias.forEach(insignia => {
+          // const insigniaParticular = insigniaXUsuario.find(
+          //   insigniaUsuario => insigniaUsuario.idInsignia === insignia.id
+          // )
+
+          // if (!insigniaParticular) return
+          // console.log(insigniaParticular)
+
+          supabase
+            .from('CapyInsigniasXUsuarios')
+            .upsert({
+              idInsignia: insignia.id,
+              idUsuario: session.user.id,
+              progreso: getProgresoInsignia(insignia.id, {
+                objetivosSesion: sessionToSave.cantidadObjetivos,
+                tiempoEstudiado:
+                  (hoy.getTime() - InicioSesion.getTime()) / 1000,
+                ...nuevosCapyDatosParaEstadisticas,
+              }),
+            })
+            .eq('idInsignia', insignia.id)
+            .eq('idUsuario', session.user.id)
+            .select()
+            .then(({ data, error }) => {
+              if (error) console.error(error)
+              console.log(data)
+            })
+        })
+      })
   }
 
   const finalizarSesion = () => {
     if (session) {
       const hoy = new Date()
-      async function saveSession() {
-        const sessionToSave: SesionAGuardar = {
-          //@ts-expect-error no jodas ts, anda en la bd
-          uuid: session?.user.id,
-          horaInicioSesion: dateToTimetz(InicioSesion),
-          fecha: InicioSesion,
-          horaFinSesion: dateToTimetz(hoy),
-          tecnicaEstudio: 2,
-          tipoMotivacion: motivationType === 'Positiva' ? 1 : 2,
-          cantidadObjetivosCumplidos: objCumplidos,
-          cantidadObjetivos: objetivos.length,
-          tiempoEstudio: studyTime,
-          musicaSeleccionada: getSelectedMusic(
-            selectedMusic ? selectedMusic.title : ''
-          ),
-          eventoSeleccionado: selectedEvent ? selectedEvent.id : null,
-        }
-
-        await supabase
-          .from('SesionesDeEstudio')
-          .insert([
-            {
-              idUsuario: sessionToSave.uuid,
-              horaInicioSesion: sessionToSave.horaInicioSesion,
-              fecha: sessionToSave.fecha,
-              horaFinSesion: sessionToSave.horaFinSesion,
-              tecnicaEstudio: sessionToSave.tecnicaEstudio,
-              tipoMotivacion: sessionToSave.tipoMotivacion,
-              cantidadObjetivosCumplidos:
-                sessionToSave.cantidadObjetivosCumplidos,
-              cantidadObjetivos: sessionToSave.cantidadObjetivos,
-              tiempoEstudio: sessionToSave.tiempoEstudio,
-              musicaSeleccionada: sessionToSave.musicaSeleccionada,
-              eventoSeleccionado: sessionToSave.eventoSeleccionado,
-            },
-          ])
-          .select()
-          .then(({ data, error }) => {
-            if (error) console.log(error)
-            else console.log('Datos guardados correctamente', data)
-          })
-
-        let capyDatosParaEstadisticas = {
-          objetivosCumplidos: 0,
-          sesionesDeEstudio: 0,
-          sesionesNegativas: 0,
-          sesionesPositivas: 0,
-        }
-
-        await supabase
-          .from('Usuarios')
-          .select(
-            'objetivosCumplidos,sesionesDeEstudio,sesionesPositivas,sesionesNegativas'
-          )
-          .eq('id', session?.user.id)
-          .then(({ data, error }) => {
-            if (error) console.error(error)
-            if (!data) return
-
-            capyDatosParaEstadisticas = data[0] as {
-              objetivosCumplidos: number
-              sesionesDeEstudio: number
-              sesionesNegativas: number
-              sesionesPositivas: number
-            }
-          })
-
-        const nuevosCapyDatosParaEstadisticas = {
-          objetivosCumplidos:
-            capyDatosParaEstadisticas.objetivosCumplidos + objCumplidos,
-          sesionesDeEstudio: capyDatosParaEstadisticas.sesionesDeEstudio + 1,
-          sesionesPositivas:
-            capyDatosParaEstadisticas.sesionesPositivas +
-            (motivationType === 'Positiva' ? 1 : 0),
-          sesionesNegativas:
-            capyDatosParaEstadisticas.sesionesNegativas +
-            (motivationType === 'Negativa' ? 1 : 0),
-        }
-
-        await supabase
-          .from('Usuarios')
-          .update(nuevosCapyDatosParaEstadisticas)
-          .eq('id', session?.user.id)
-          .select()
-          .then(({ data, error }) => {
-            if (error) console.log(error)
-            else console.log(data)
-          })
-
-        await supabase
-          .from('CapyInsigniasXUsuarios')
-          .select()
-          .eq('idUsuario', session?.user.id)
-          .then(({ data, error }) => {
-            if (error) console.error(error)
-            if (!data) return
-
-            const insigniasXUsuario = data as InsigniaXUsuario[]
-
-            if (!session) return
-
-            const insigniaXUsuario = groupBy(insigniasXUsuario, 'idUsuario')[
-              session.user.id
-            ]
-
-            console.log(insigniaXUsuario)
-            /* eslint-disable-next-line */
-            if (!insigniaXUsuario) return
-
-            insignias.forEach(insignia => {
-              // const insigniaParticular = insigniaXUsuario.find(
-              //   insigniaUsuario => insigniaUsuario.idInsignia === insignia.id
-              // )
-
-              // if (!insigniaParticular) return
-              // console.log(insigniaParticular)
-
-              supabase
-                .from('CapyInsigniasXUsuarios')
-                .upsert({
-                  idInsignia: insignia.id,
-                  idUsuario: session.user.id,
-                  progreso: getProgresoInsignia(insignia.id, {
-                    objetivosSesion: sessionToSave.cantidadObjetivos,
-                    tiempoEstudiado:
-                      (hoy.getTime() - InicioSesion.getTime()) / 1000,
-                    ...nuevosCapyDatosParaEstadisticas,
-                  }),
-                })
-                .eq('idInsignia', insignia.id)
-                .eq('idUsuario', session.user.id)
-                .select()
-                .then(({ data, error }) => {
-                  if (error) console.error(error)
-                  console.log(data)
-                })
-            })
-          })
+      const sessionToSave: SesionAGuardar = {
+        uuid: session.user.id,
+        horaInicioSesion: dateToTimetz(InicioSesion),
+        fecha: InicioSesion,
+        horaFinSesion: dateToTimetz(hoy),
+        tecnicaEstudio: 2,
+        tipoMotivacion: motivationType === 'Positiva' ? 1 : 2,
+        cantidadObjetivosCumplidos: objCumplidos,
+        cantidadObjetivos: objetivos.length,
+        tiempoEstudio: studyTime,
+        musicaSeleccionada: getSelectedMusic(
+          selectedMusic ? selectedMusic.title : ''
+        ),
+        eventoSeleccionado: selectedEvent ? selectedEvent.id : null,
       }
 
-      saveSession()
+      saveSession(sessionToSave)
         .then(() => console.log('Datos guardados correctamente'))
         .catch((error: unknown) => console.log(error))
 

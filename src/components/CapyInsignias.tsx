@@ -16,7 +16,9 @@ export default function CapyInsignias() {
 
   return (
     <>
-      <h1 className='mt-4 text-4xl font-bold'>CapyInsiginias!</h1>
+      <h1 className='mt-4 text-4xl font-bold'>
+        CapyInsiginias! (Work in progress)
+      </h1>
       <div className='mr-8 flex w-full justify-end'>
         <CapyInfo desc='A medida que estudies se desbloquearán CapyInsignias, estas son un reconocimiento a tu esfuerzo y dedicación. ¡Sigue así!' />
       </div>

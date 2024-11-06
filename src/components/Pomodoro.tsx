@@ -198,11 +198,9 @@ export default function Pomodoro() {
 
     if (time > 0 && mode === 'Estudiando' && isSetted) {
       studyTime -= time
-      console.log('Entre en el primero')
       setTiempoTotal(prev => prev - time)
       setAcumuladorTiempoPausa(prev => prev - breakSeconds)
     } else if (time > 0 && mode === 'Descansando') {
-      console.log('Entre en el segundo')
       setAcumuladorTiempoPausa(prev => prev - time)
     }
 
@@ -255,6 +253,7 @@ export default function Pomodoro() {
         }))
       }
     })
+
     setLocation('/capyEstadisticas?period=sesion')
   }
   const volumenHandler = () => {
@@ -264,17 +263,6 @@ export default function Pomodoro() {
   const handleVolver = () => {
     setLocation('/inicio')
   }
-
-  //Revisar el funcionamiento de esta cosa!!!
-
-  // useEffect(() => {
-  //   const worker = new Worker('worker.js')
-
-  //   worker.postMessage('start')
-  //   worker.onmessage = () => console.log('hola!')
-
-  //   return () => worker.terminate()
-  // }, [])
 
   useEffect(() => {
     if (!isActive) return () => clearInterval(timer.current)
@@ -290,7 +278,7 @@ export default function Pomodoro() {
         setSessionSeconds(
           pomodorosRealizados[pomodorosRealizados.length - 1].tiempoEstudio
         )
-        console.log('holis, si entro')
+        // console.log('holis, si entro')
         pauseObjectiveTime()
         setMode('Descansando')
         setIsActive(false)
@@ -298,7 +286,7 @@ export default function Pomodoro() {
         pomodoroCount.current += 0.5
       } else {
         // if (time > 0) return
-        console.log('Me terminé')
+        // console.log('Me terminé')
         stopStudy()
         setTimerObjectivesAcum(prev => prev + objStudyTime)
         resetObjectiveTime()
@@ -437,8 +425,7 @@ export default function Pomodoro() {
       setSessionStart(true)
       setTiempo({})
       setTiempoSesion({})
-      const hoy = new Date()
-      setInicioSesion(hoy)
+      setInicioSesion(new Date())
     }
     setIsSetted(prev => !prev)
     setIsActive(prev => !prev)
@@ -679,6 +666,11 @@ export default function Pomodoro() {
                           className='flex'
                           variant='ghost'
                           type='button'
+                          disabled={
+                            (mode === 'Estudiando'
+                              ? time >= sessionSeconds
+                              : time >= breakSeconds) || !isActive
+                          }
                           onClick={handleSaltar}
                           // onClick={() =>
                           //   toast.warning('Desabilitado por el momento...')
