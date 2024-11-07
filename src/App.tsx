@@ -27,6 +27,7 @@ import { ProfilePicProvider } from './components/contexts/ProfilePicContext'
 import LandingPage from './components/LandingPage'
 import { PreferencesProvider } from './components/contexts/PreferencesContext'
 import { InsigniasProvider } from '@/components/contexts/InsigniasContext'
+import DiscordComponent from '@components/DiscordComponent'
 
 function App() {
   return (
@@ -68,6 +69,10 @@ function App() {
 
                             <Route path='/brenda'>
                               <ExperimentandoBrenda />
+                            </Route>
+
+                            <Route path={'/discord'}>
+                              <DiscordComponent />
                             </Route>
 
                             <Route

@@ -255,7 +255,7 @@ export default function Usuario() {
                         </SheetHeader>
                         {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
                         <form onSubmit={handleSubmit(handleConfirm)}>
-                          <ScrollArea className='h-[80vh] pr-4'>
+                          <ScrollArea className='h-[80dvh] pr-4'>
                             <SheetTitle className='text-lg font-semibold'>
                               Datos del usuario
                             </SheetTitle>

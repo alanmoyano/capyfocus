@@ -215,11 +215,11 @@ export default function CapyEstadisticas() {
   //Pero vamos a colocar el tema del mapeo de los eventos
   return (
     <>
-      <h1 className='mt-4 text-4xl font-bold'>CapyEstadisticas!</h1>
+      <h1 className='mt-4 text-4xl font-bold'>CapyEstadísticas!</h1>
       {/* Seleccion de tiempo */}
       <div className='mt-4 flex flex-col justify-center px-2 md:flex-row'>
         <p className='flex items-center'>
-          Ingresa el intervalo de tiempo para visualizar las estadisticas:{' '}
+          Ingresa el intervalo de tiempo para visualizar las estadísticas:{' '}
         </p>
         <Select
           onValueChange={value => handleSelect(value)}
@@ -298,23 +298,6 @@ export default function CapyEstadisticas() {
                     </TooltipProvider>
                   </SelectItem>
 
-                  {events.map(
-                    evento =>
-                      evento.hoursAcumulated && (
-                        <SelectItem key={evento.title} value={evento.title}>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <p>{evento.title}</p>
-                              </TooltipTrigger>
-                              <TooltipContent className='ml-40'>
-                                <p>Estadísticas del evento: {evento.title}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </SelectItem>
-                      )
-                  )}
                   {/* <SelectItem key={5} value='evento'>
                     <TooltipProvider>
                       <Tooltip>
@@ -328,6 +311,26 @@ export default function CapyEstadisticas() {
                     </TooltipProvider>
                   </SelectItem> */}
                 </>
+              )}
+            </SelectGroup>
+            <SelectGroup>
+              <SelectLabel>Eventos</SelectLabel>
+              {events.map(
+                evento =>
+                  evento.hoursAcumulated && (
+                    <SelectItem key={evento.title} value={evento.title}>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <p>{evento.title}</p>
+                          </TooltipTrigger>
+                          <TooltipContent className='ml-40'>
+                            <p>Estadísticas del evento: {evento.title}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </SelectItem>
+                  )
               )}
             </SelectGroup>
           </SelectContent>

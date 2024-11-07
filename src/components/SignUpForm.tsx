@@ -106,7 +106,7 @@ function SignupForm() {
     }
     toast.promise(signUp, {
       loading: 'Registrando...',
-      success: 'Usuario registrado correctamente',
+      success: '¡Te enviamos un capymail para que verifiques tu cuenta!',
       error: (error: AuthError | null) => {
         console.error(error)
 

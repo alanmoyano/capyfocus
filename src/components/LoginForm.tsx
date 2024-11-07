@@ -7,12 +7,20 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 
-import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useState } from 'react'
+import { Label } from '@/components/ui/label'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { AuthError } from '@supabase/supabase-js'
 import { Eye, EyeOff } from 'lucide-react'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { useLocation } from 'wouter'
+import { z } from 'zod'
 import PasswordRecovery from './ComponentesEspecifico/PasswordRecovery'
+import { useSession } from './contexts/SessionContext'
+import { supabase } from './supabase/client'
 import {
   Form,
   FormControl,
@@ -21,14 +29,6 @@ import {
   FormLabel,
   FormMessage,
 } from './ui/form'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { supabase } from './supabase/client'
-import { useSession } from './contexts/SessionContext'
-import { useLocation } from 'wouter'
-import { toast } from 'sonner'
-import { AuthError } from '@supabase/supabase-js'
 
 const formSchema = z.object({
   email: z.string().email('El email no es válido'),
