@@ -105,9 +105,9 @@ function NavItems() {
           </span>
 
           <NavbarLink to='/capyEstadisticas'>CapyEstadisticas</NavbarLink>
-          <NavbarLink to='/discord'>CapyComuniciones</NavbarLink>
         </>
       )}
+      <NavbarLink to='/discord'>CapyComuniciones</NavbarLink>
     </>
   )
 }

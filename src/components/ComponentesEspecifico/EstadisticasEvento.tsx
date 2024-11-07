@@ -45,6 +45,7 @@ import { Button } from '@components/ui/button'
 import { Trash } from 'lucide-react'
 import { unknown } from 'zod'
 import { useLocation } from 'wouter'
+import { toast } from 'sonner'
 
 type Motivation =
   | {
@@ -499,6 +500,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
         })
     }
     setEvents([])
+    toast.success(`El evento '${name}' fue eliminado con éxito`)
     setLocation('/inicio')
   }
 

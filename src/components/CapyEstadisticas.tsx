@@ -298,23 +298,6 @@ export default function CapyEstadisticas() {
                     </TooltipProvider>
                   </SelectItem>
 
-                  {events.map(
-                    evento =>
-                      evento.hoursAcumulated && (
-                        <SelectItem key={evento.title} value={evento.title}>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <p>{evento.title}</p>
-                              </TooltipTrigger>
-                              <TooltipContent className='ml-40'>
-                                <p>Estadísticas del evento: {evento.title}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </SelectItem>
-                      )
-                  )}
                   {/* <SelectItem key={5} value='evento'>
                     <TooltipProvider>
                       <Tooltip>
@@ -328,6 +311,26 @@ export default function CapyEstadisticas() {
                     </TooltipProvider>
                   </SelectItem> */}
                 </>
+              )}
+            </SelectGroup>
+            <SelectGroup>
+              <SelectLabel>Eventos</SelectLabel>
+              {events.map(
+                evento =>
+                  evento.hoursAcumulated && (
+                    <SelectItem key={evento.title} value={evento.title}>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <p>{evento.title}</p>
+                          </TooltipTrigger>
+                          <TooltipContent className='ml-40'>
+                            <p>Estadísticas del evento: {evento.title}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </SelectItem>
+                  )
               )}
             </SelectGroup>
           </SelectContent>
