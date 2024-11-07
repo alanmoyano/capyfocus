@@ -215,11 +215,11 @@ export default function CapyEstadisticas() {
   //Pero vamos a colocar el tema del mapeo de los eventos
   return (
     <>
-      <h1 className='mt-4 text-4xl font-bold'>CapyEstadisticas!</h1>
+      <h1 className='mt-4 text-4xl font-bold'>CapyEstadísticas!</h1>
       {/* Seleccion de tiempo */}
       <div className='mt-4 flex flex-col justify-center px-2 md:flex-row'>
         <p className='flex items-center'>
-          Ingresa el intervalo de tiempo para visualizar las estadisticas:{' '}
+          Ingresa el intervalo de tiempo para visualizar las estadísticas:{' '}
         </p>
         <Select
           onValueChange={value => handleSelect(value)}

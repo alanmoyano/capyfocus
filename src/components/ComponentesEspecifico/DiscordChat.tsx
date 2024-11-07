@@ -35,19 +35,22 @@ const DiscordChat: React.FC = () => {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     <form onSubmit={handleSubmit}>
       <textarea
-        className='w-full resize-none rounded-md border border-gray-300 bg-transparent p-2 focus:border-[#e16d3f] focus:outline-none dark:text-white'
-        placeholder='Describe el error...'
+        className='w-full mt-2 resize-none rounded-md border border-gray-300 bg-transparent p-2 focus:border-[#e16d3f] focus:outline-none dark:text-white'
+        placeholder='Describe un error o deja un comentario.'
         rows={3}
         value={message}
         onChange={e => setMessage(e.target.value)}
         required
       />
+      <div className='flex w-full justify-end '>
+
       <Button
-        className='mt-2 rounded-lg bg-[#f2b76a] px-4 py-1 text-white transition-colors duration-300 hover:bg-[#e16d3f]'
+        className='mt-2 rounded-lg  bg-[#f2b76a] px-4 py-1 text-white transition-colors duration-300 hover:bg-[#e16d3f]'
         type='submit'
-      >
+        >
         Enviar
       </Button>
+        </div>
     </form>
   )
 }
