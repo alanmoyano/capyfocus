@@ -42,8 +42,11 @@ export default function PasswordRecovery() {
     //   })
     //   .then(res => console.log(res))
     //   .catch((err: unknown) => console.error(err))
-    console.log('submit') //TODO agregar validacion de mail
-    toast.success('Enviado!')
+    console.log(email)
+    // toast.success('Enviado!')
+    toast.warning(
+      'Esta funcionalidad aún no está disponible, pero pronto lo estará. ¡Gracias por tu paciencia!'
+    )
   }
 
   return (
