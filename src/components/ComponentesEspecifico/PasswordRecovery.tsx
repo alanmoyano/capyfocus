@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { DialogClose } from '@radix-ui/react-dialog'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -22,8 +21,6 @@ import {
   FormLabel,
   FormMessage,
 } from '../ui/form'
-import { useState } from 'react'
-import { supabase } from '@/components/supabase/client'
 
 const formSchema = z.object({
   email: z.string().email('El email no es válido'),
@@ -38,16 +35,15 @@ export default function PasswordRecovery() {
     },
   })
 
-  const [open, setOpen] = useState(false)
-
-  //@ts-expect-error esto hasta que alan lo arregle 
-  function onSubmit(data) {
-    console.log(data)
-    supabase.from('Usuarios')
-    // supabase.auth.resetPasswordForEmail()
+  function onSubmit({ email }: { email: string }) {
+    // supabase.auth
+    //   .resetPasswordForEmail(email, {
+    //     redirectTo: 'https://www.capyfocus.com/login',
+    //   })
+    //   .then(res => console.log(res))
+    //   .catch((err: unknown) => console.error(err))
     console.log('submit') //TODO agregar validacion de mail
     toast.success('Enviado!')
-    setOpen(prev => !prev)
   }
 
   return (
@@ -56,11 +52,7 @@ export default function PasswordRecovery() {
       //  open={open} si bien esto ayuda, también hace que no se pueda cerrar con ESC o con la X, repensar! (alan)
       >
         <DialogTrigger asChild>
-          <Button
-            type='button'
-            variant='link'
-            onClick={() => setOpen(prev => !prev)}
-          >
+          <Button type='button' variant='link'>
             Recuperar
           </Button>
         </DialogTrigger>
