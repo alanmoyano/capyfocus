@@ -21,6 +21,7 @@ import {
   FormLabel,
   FormMessage,
 } from '../ui/form'
+import { supabase } from '@/components/supabase/client'
 
 const formSchema = z.object({
   email: z.string().email('El email no es válido'),
@@ -44,6 +45,20 @@ export default function PasswordRecovery() {
     //   .catch((err: unknown) => console.error(err))
     console.log(email)
     // toast.success('Enviado!')
+    async function signInWithEmail() {
+      const { data, error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          // set this to false if you do not want the user to be automatically signed up
+          shouldCreateUser: false,
+          emailRedirectTo: 'https://www.capyfocus.com',
+        },
+      })
+
+      if (error) console.error('Error:', error)
+      console.log(data)
+    }
+    // signInWithEmail().catch((error: unknown) => console.error(error)) esto manda el magic link!
     toast.warning(
       'Esta funcionalidad aún no está disponible, pero pronto lo estará. ¡Gracias por tu paciencia!'
     )
