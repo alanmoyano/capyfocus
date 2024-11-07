@@ -13,15 +13,16 @@ export default function DiscordComponent() {
   return (
     <div className='h-full w-full text-pretty bg-gradient-to-r from-yellow-50 to-purple-50 py-12 text-center dark:from-slate-900 dark:to-orange-950'>
       <div className=''>
-        <section className=' text-center'>
-          <h1 className='mb-4 text-5xl font-extrabold text-gray-800 dark:text-white '>
-          Conectate con otros usuarios o detecta errores
+        <section className='text-center'>
+          <h1 className='mb-4 text-5xl font-extrabold text-gray-800 dark:text-white'>
+            Conectate con otros usuarios o detecta errores
           </h1>
           <p className='mb-6 p-2 text-xl text-gray-700 dark:text-white'>
-            
-            Contamos con un servidor de discord en el que relacionarte con personas
-            que usan la página o ponerte en contacto directo con los
-            desarrolladores para realizar consultas, sugerencias o notificar cualquier error que encuentres. ¡Tu feedback es clave para seguir mejorando!
+            Contamos con un servidor de discord en el que relacionarte con
+            personas que usan la página o ponerte en contacto directo con los
+            desarrolladores para realizar consultas, sugerencias o notificar
+            cualquier error que encuentres. ¡Tu feedback es clave para seguir
+            mejorando!
           </p>
           <span className='text-2xl text-[#e16d3f]'>¡Solo hay 2 reglas!</span>
           <div className='flex flex-col items-center justify-center gap-x-6 py-8 sm:flex-row sm:items-start sm:gap-8'>
@@ -63,8 +64,8 @@ export default function DiscordComponent() {
                   </span>
                 </h2>
                 <p className='text-lg text-gray-600 dark:text-white'>
-                  Estamos contra reloj, mejorando constantemente y con café en mano.
-                  ¡Tu paciencia y apoyo son muy valiosos para nosotros!
+                  Estamos contra reloj, mejorando constantemente y con café en
+                  mano. ¡Tu paciencia y apoyo son muy valiosos para nosotros!
                 </p>
                 <DiscordChat />
               </div>
@@ -73,7 +74,7 @@ export default function DiscordComponent() {
 
           <h3 className='mb-4 text-xl font-extrabold text-gray-800 dark:text-white'>
             Sin más, esperamos que disfrutes la página y te esperamos en el
-             servidor de discord
+            servidor de discord
           </h3>
           <h2 className='mb-2 text-3xl font-bold text-[#f2b76a]'>
             CapySaludos

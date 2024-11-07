@@ -40,6 +40,7 @@ export default function PasswordRecovery() {
 
   const [open, setOpen] = useState(false)
 
+  //@ts-expect-error esto hasta que alan lo arregle 
   function onSubmit(data) {
     console.log(data)
     supabase.from('Usuarios')
