@@ -58,7 +58,6 @@ const formSchema = z.object({
   email: z.string().email('El email no es válido'),
   birthdate: z
     .date()
-    .min(new Date(now.getFullYear() - 100))
     .max(
       new Date(now.getFullYear() - 10, now.getMonth(), now.getDate()),
       'Debes tener al menos 10 años'
