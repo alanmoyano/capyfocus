@@ -287,8 +287,28 @@ export default function LandingPage() {
             </Carousel>
           </div>
         </section>
-        {/* Agradecimientos: */}
+        {/* Reconocimiento */}
         <section className='flex flex-col items-center justify-center p-8 sm:flex-row dark:bg-black'>
+          {/* Columna 1 */}
+          <div className='sm:ml-16 sm:w-2/3'>
+            <p className='text-left text-2xl font-semibold text-[#2599bc] dark:text-[#a7eaff]'>
+              Reconocimientos:
+            </p>
+            <p className='mb-2 mt-4 text-left text-lg text-gray-700 dark:text-gray-200'>
+              Queremos dedicar este espacio a reconocer el arduo trabajo de
+              nuestras mascotas, que sin pedir nada a cambio, se convierten en
+              nuestro soporte emocional, psicólogos, terapeutas y más leales
+              compañeros de estudio. Con su presencia nos brindan calma, nos
+              arrancan una sonrisa y nos recuerdan que, incluso en los días más
+              difíciles, no estamos solos. Son el apoyo silencioso que nos da
+              fuerzas para seguir adelante, y la motivación para continuar
+              estudiando, ¡para poder darles el mejor alimento! Gracias por ser
+              los héroes silenciosos que nos dan fuerzas para seguir adelante.
+            </p>
+          </div>
+        </section>
+        {/* Agradecimientos: */}
+        <section className='flex flex-col items-center justify-center bg-gradient-to-r from-blue-50 to-purple-50 p-8 py-12 sm:flex-row dark:from-gray-900 dark:to-slate-900'>
           {/* Columna 1 */}
           <div className='sm:ml-16 sm:w-2/3'>
             <p className='text-left text-2xl font-semibold text-[#2599bc] dark:text-[#a7eaff]'>
