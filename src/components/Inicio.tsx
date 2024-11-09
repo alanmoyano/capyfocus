@@ -636,22 +636,24 @@ export default function Inicio() {
           {/* Musica */}
           <div className='mt-4'>
             {selectedPlaylist !== -1 ? (
-              <div className='rounded-lg bg-accent p-2'>
-                <h2>
+              <div className='flex justify-between'>
+                <h2 className='rounded-lg bg-accent p-2'>
                   Playlist seleccionada:{' '}
                   <span className='font-semibold text-accent-foreground'>
                     {playlists[selectedPlaylist - 1].title}
                   </span>
                 </h2>
+                <CapyInfo desc='Haz click en la CapyPlaylist que más te guste para estudiar con música de fondo.' />
               </div>
             ) : (
-              <div className='rounded-lg bg-accent p-2'>
-                <h2>
+              <div className='flex justify-between'>
+                <h2 className='rounded-lg bg-accent p-2'>
                   Playlist seleccionada:{' '}
                   <span className='font-semibold text-accent-foreground'>
                     Sin música
                   </span>
                 </h2>
+                <CapyInfo desc='Haz click en la CapyPlaylist que más te guste para estudiar con música de fondo.' />
               </div>
             )}
 
