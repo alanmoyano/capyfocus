@@ -200,7 +200,7 @@ export default function Usuario() {
           <div className='flex h-full w-full items-center justify-center'>
             <div className='m-auto'>
               <ChichoHablaPerfil imagen={confirmedPicture} />
-              <video src='/idle.webm' autoPlay loop muted playsInline />
+              <video src='/CapyNada.webm' autoPlay loop muted playsInline />
             </div>
           </div>
           <Card className='flex h-full w-full flex-col bg-secondary shadow-md dark:bg-secondary/80'>
