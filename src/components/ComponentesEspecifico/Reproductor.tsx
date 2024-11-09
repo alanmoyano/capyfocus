@@ -16,8 +16,10 @@ export default function Reproductor({
       playsInline
       muted
       loop
-      src={src}
       className={cn('aspect-auto', className)}
-    />
+    >
+      <source src={src.split('.')[0].concat('.mov')} />
+      <source src={src} />
+    </video>
   )
 }
