@@ -15,7 +15,8 @@ export default function Reproductor({
   return (
     <>
       {test ? (
-        <img src={src.split('.')[0].concat('.avif')} />
+        <img src={src.split('.')[0].concat('.gif')} />
+        // <img src={src.split('.')[0].concat('.avif')} />
       ) : (
         <video
           autoPlay
