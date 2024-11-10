@@ -28,6 +28,7 @@ import LandingPage from './components/LandingPage'
 import { PreferencesProvider } from './components/contexts/PreferencesContext'
 import { InsigniasProvider } from '@/components/contexts/InsigniasContext'
 import DiscordComponent from '@components/DiscordComponent'
+import PasswordChange from '@/components/PasswordChange'
 
 function App() {
   return (
@@ -85,6 +86,8 @@ function App() {
                             />
 
                             <Route path='/usuario' component={Usuario} />
+
+                            <Route component={PasswordChange} />
 
                             <Route path='/prueba' component={Prueba} />
 
