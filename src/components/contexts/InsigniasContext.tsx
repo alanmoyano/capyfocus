@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '@/components/supabase/client'
 import { useSession } from './SessionContext'
 
-type Insignia = {
+export type Insignia = {
   id: number
   nombre: string
   descripcionBloqueada: string
@@ -75,7 +75,9 @@ function getProgresoInsignia(
         (datosNuevosInsignias.sesionesNegativas / requisitosInsignias[1]) * 100
       )
 
-      return porcentaje > 100 ? porcentaje : 100
+      console.log('porcentaje', porcentaje)
+
+      return porcentaje > 100 ? 100 : porcentaje
     }
 
     case 2: {
@@ -83,7 +85,7 @@ function getProgresoInsignia(
         (datosNuevosInsignias.sesionesPositivas / requisitosInsignias[2]) * 100
       )
 
-      return porcentaje > 100 ? porcentaje : 100
+      return porcentaje > 100 ? 100 : porcentaje
     }
 
     case 4:

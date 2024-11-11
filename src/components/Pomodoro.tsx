@@ -3,6 +3,7 @@ import {
   acumulateHoursInSelectedEvent,
   dateToTimetz,
   getSelectedMusic,
+  saveSession,
   SesionAGuardar,
 } from '@/constants/supportFunctions'
 import usePomodoro from '@/hooks/usePomodoro'
@@ -31,7 +32,6 @@ import { useMusic } from './contexts/MusicContext'
 import { useObjetivos } from './contexts/ObjetivosContext'
 import { useSesion } from './contexts/SesionContext'
 import { useSession } from './contexts/SessionContext'
-import { supabase } from './supabase/client'
 import { Button } from './ui/button'
 import { Checkbox } from './ui/checkbox'
 
@@ -122,101 +122,6 @@ export default function Pomodoro() {
     tiempoTotal,
   } = useSesion()
 
-  async function saveSession(sessionToSave: SesionAGuardar) {
-    await supabase
-      .from('SesionesDeEstudio')
-      .insert([
-        {
-          idUsuario: sessionToSave.uuid,
-          horaInicioSesion: sessionToSave.horaInicioSesion,
-          fecha: sessionToSave.fecha,
-          horaFinSesion: sessionToSave.horaFinSesion,
-          tecnicaEstudio: sessionToSave.tecnicaEstudio,
-          tipoMotivacion: sessionToSave.tipoMotivacion,
-          cantidadObjetivosCumplidos: sessionToSave.cantidadObjetivosCumplidos,
-          cantidadObjetivos: sessionToSave.cantidadObjetivos,
-          tiempoEstudio: sessionToSave.tiempoEstudio,
-          musicaSeleccionada: sessionToSave.musicaSeleccionada,
-          eventoSeleccionado: sessionToSave.eventoSeleccionado,
-        },
-      ])
-      .select()
-      .then(({ data, error }) => {
-        if (error) console.log(error)
-        else console.log('Datos guardados correctamente', data)
-      })
-
-    let capyDatosParaEstadisticas = {
-      objetivosCumplidos: 0,
-      sesionesDeEstudio: 0,
-      sesionesNegativas: 0,
-      sesionesPositivas: 0,
-    }
-
-    await supabase
-      .from('Usuarios')
-      .select(
-        'objetivosCumplidos,sesionesDeEstudio,sesionesPositivas,sesionesNegativas'
-      )
-      .eq('id', sessionToSave.uuid)
-      .then(({ data, error }) => {
-        if (error) console.error(error)
-        if (!data) return
-
-        capyDatosParaEstadisticas = data[0] as {
-          objetivosCumplidos: number
-          sesionesDeEstudio: number
-          sesionesNegativas: number
-          sesionesPositivas: number
-        }
-      })
-
-    const nuevosCapyDatosParaEstadisticas = {
-      objetivosCumplidos:
-        capyDatosParaEstadisticas.objetivosCumplidos +
-        sessionToSave.cantidadObjetivosCumplidos,
-      sesionesDeEstudio: capyDatosParaEstadisticas.sesionesDeEstudio + 1,
-      sesionesPositivas:
-        capyDatosParaEstadisticas.sesionesPositivas +
-        (sessionToSave.tipoMotivacion === 1 ? 1 : 0),
-      sesionesNegativas:
-        capyDatosParaEstadisticas.sesionesNegativas +
-        (sessionToSave.tipoMotivacion === 2 ? 1 : 0),
-    }
-
-    await supabase
-      .from('Usuarios')
-      .update(nuevosCapyDatosParaEstadisticas)
-      .eq('id', sessionToSave.uuid)
-      .select()
-      .then(({ data, error }) => {
-        if (error) console.log(error)
-        else console.log(data)
-      })
-
-    // Add insignias progress update
-    insignias.forEach(insignia => {
-      supabase
-        .from('CapyInsigniasXUsuarios')
-        .upsert({
-          idInsignia: insignia.id,
-          idUsuario: sessionToSave.uuid,
-          progreso: getProgresoInsignia(insignia.id, {
-            objetivosSesion: sessionToSave.cantidadObjetivos,
-            tiempoEstudiado: sessionToSave.tiempoEstudio,
-            ...nuevosCapyDatosParaEstadisticas,
-          }),
-        })
-        .eq('idInsignia', insignia.id)
-        .eq('idUsuario', sessionToSave.uuid)
-        .select()
-        .then(({ data, error }) => {
-          if (error) console.error(error)
-          console.log(data)
-        })
-    })
-  }
-
   const finalizarSesion = () => {
     clearInterval(timer.current)
 
@@ -252,7 +157,22 @@ export default function Pomodoro() {
         eventoSeleccionado: selectedEvent ? selectedEvent.id : null,
       }
 
-      saveSession(sessionToSave)
+      if (!InicioSesion) return
+
+      saveSession(
+        sessionToSave,
+        {
+          objCumplidos,
+          hoy,
+          InicioSesion,
+        },
+        {
+          session,
+          motivationType,
+          insignias,
+          getProgresoInsignia,
+        }
+      )
         .then(() => console.log('Los datos fueron guardados correctamente'))
         .catch((error: unknown) => {
           console.log('Ocurrio un error', error)
