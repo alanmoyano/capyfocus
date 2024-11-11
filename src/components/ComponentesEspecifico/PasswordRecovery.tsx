@@ -45,7 +45,6 @@ export default function PasswordRecovery() {
         email,
         options: {
           shouldCreateUser: false,
-          emailRedirectTo: 'https://www.capyfocus.com/cambiarContraseña',
         },
       })
       .then(res => console.log(res))
