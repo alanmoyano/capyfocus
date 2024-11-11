@@ -1,24 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { useState, useRef, useEffect } from 'react'
-import html2canvas from 'html2canvas'
-import { Calendar, ChartColumn, ImageDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import html2canvas from 'html2canvas'
+import { ChartColumn, ImageDown } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import EstadisticasPeriodo from './ComponentesEspecifico/EstadisticasPeriodo'
 
-import { Tooltip as ChartTooltip, Pie, PieChart, Cell } from 'recharts'
+import { Cell, Tooltip as ChartTooltip, Pie, PieChart } from 'recharts'
 
-import { useSearch } from 'wouter'
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   ChartConfig,
@@ -35,6 +25,14 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -42,18 +40,19 @@ import {
 } from '@/components/ui/tooltip'
 import { ChartLegend, ChartLegendContent } from '@components/ui/chart'
 
-import { useObjetivos } from '@contexts/ObjetivosContext'
 import { useMotivation } from '@contexts/MotivationContext'
 import { useMusic } from '@contexts/MusicContext'
+import { useObjetivos } from '@contexts/ObjetivosContext'
 import { useSesion } from '@contexts/SesionContext'
 
+import { useSession } from '@/components/contexts/SessionContext'
+import { gatherEventsOfUser } from '@/constants/supportFunctions'
 import { formatTime } from '@/lib/utils'
 import useSearchParams from '@hooks/useSearchParams'
-import Reproductor from './ComponentesEspecifico/Reproductor'
-import { useSession } from './contexts/SessionContext'
-import { useEvents } from './contexts/EventsContext'
-import { gatherEventsOfUser } from '@/constants/supportFunctions'
+import { useLocation } from 'wouter'
 import EstadisticasEvento from './ComponentesEspecifico/EstadisticasEvento'
+import Reproductor from './ComponentesEspecifico/Reproductor'
+import { useEvents } from './contexts/EventsContext'
 
 type Period =
   | 'sesion'
@@ -124,6 +123,10 @@ export default function CapyEstadisticas() {
   const { session } = useSession()
   const { events, setEvents } = useEvents()
   const periodos = ['sesion', 'semanal', 'mensual', 'bimestral', 'semestral']
+
+  const [, setLocation] = useLocation()
+
+  if (!session) setLocation('/login')
 
   const recoverEvents = () => {
     if (session) {
@@ -379,11 +382,11 @@ export default function CapyEstadisticas() {
                   {[
                     {
                       label: 'Tiempo total de estudio',
-                      value: formatTime(tiempoTotal ?? 0),
+                      value: formatTime(tiempoTotal),
                     },
                     {
                       label: 'Tiempo total de descanso',
-                      value: formatTime(acumuladorTiempoPausa ?? 0),
+                      value: formatTime(acumuladorTiempoPausa),
                     },
                     { label: 'Total de objetivos', value: objetivos.length },
                     {

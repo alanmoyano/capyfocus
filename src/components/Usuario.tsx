@@ -316,13 +316,15 @@ export default function Usuario() {
             </CardContent>
             <CardFooter className='mt-auto flex select-none justify-end'>
               <div className='space-x-4'>
-                <Button
-                  onClick={() => {
-                    setLocation('/cambiarContraseña')
-                  }}
-                >
-                  Cambiar contraseña
-                </Button>
+                {session && (
+                  <Button
+                    onClick={() => {
+                      setLocation('/cambiarContraseña')
+                    }}
+                  >
+                    Cambiar contraseña
+                  </Button>
+                )}
                 <Button
                   variant={session ? 'destructive' : 'default'}
                   onClick={() => handleLogin()}

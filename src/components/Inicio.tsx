@@ -146,7 +146,7 @@ async function gatherUserPendingObjectives(uuid: string) {
     .select()
     .eq('idUsuario', uuid)
     .eq('idEstado', 1)
-  if (data) return data
+  if (data) return data as ObjectiveRecovered[]
   else console.log(error)
 }
 
@@ -171,14 +171,13 @@ async function persistFavoriteObjective(
 }
 
 async function deletePersistedObjective(nombre: string, uuid: string) {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('ObjetivosFavoritos')
     .update({ idEstado: 2 })
     .eq('descripcion', nombre)
     .eq('idUsuario', uuid)
 
-  if (data) console.log(data)
-  else console.log(error)
+  if (error) console.log(error)
 }
 
 export default function Inicio() {

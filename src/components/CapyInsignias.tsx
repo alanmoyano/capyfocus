@@ -5,10 +5,14 @@ import CapyInsigniasCards from '@/components/ComponentesEspecifico/ComponenteIns
 
 import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
 import { useInsignias } from '@/components/contexts/InsigniasContext'
+import { useSession } from '@/components/contexts/SessionContext'
 
 export default function CapyInsignias() {
   const { insignias, insigniasXUsuario } = useInsignias()
+  const { session } = useSession()
   const [, setLocation] = useLocation()
+
+  if (!session) setLocation('/login')
 
   const handleVolver = () => {
     setLocation('/inicio')

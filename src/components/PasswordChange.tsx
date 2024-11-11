@@ -13,12 +13,19 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { supabase } from '@/components/supabase/client'
 import { toast } from 'sonner'
+import { useLocation } from 'wouter'
+import { useSession } from '@/components/contexts/SessionContext'
 
 const formSchema = z.object({
   password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
 })
 
 export default function PasswordChange() {
+  const { session } = useSession()
+  const [, setLocation] = useLocation()
+
+  if (!session) setLocation('/login')
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -32,12 +39,15 @@ export default function PasswordChange() {
     supabase.auth
       .updateUser({ password: values.password })
       .catch((err: unknown) => toast.error(err as string))
+
+    toast.success('Contraseña cambiada correctamente')
+    setLocation('/usuario')
   }
 
   return (
     <Form {...form}>
       <form
-        className='mx-auto w-full max-w-md space-y-6 rounded-lg border p-6 shadow-sm'
+        className='mx-auto mt-4 w-full max-w-md space-y-6 rounded-lg border p-6 shadow-sm'
         // eslint-disable-next-line
         onSubmit={form.handleSubmit(onSubmit)}
       >
