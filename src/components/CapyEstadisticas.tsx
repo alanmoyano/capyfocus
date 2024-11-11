@@ -49,7 +49,6 @@ import { useSession } from '@/components/contexts/SessionContext'
 import { gatherEventsOfUser } from '@/constants/supportFunctions'
 import { formatTime } from '@/lib/utils'
 import useSearchParams from '@hooks/useSearchParams'
-import { useLocation } from 'wouter'
 import EstadisticasEvento from './ComponentesEspecifico/EstadisticasEvento'
 import Reproductor from './ComponentesEspecifico/Reproductor'
 import { useEvents } from './contexts/EventsContext'
@@ -123,10 +122,6 @@ export default function CapyEstadisticas() {
   const { session } = useSession()
   const { events, setEvents } = useEvents()
   const periodos = ['sesion', 'semanal', 'mensual', 'bimestral', 'semestral']
-
-  const [, setLocation] = useLocation()
-
-  if (!session) setLocation('/login')
 
   const recoverEvents = () => {
     if (session) {

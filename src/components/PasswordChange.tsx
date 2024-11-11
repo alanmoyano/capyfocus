@@ -1,4 +1,3 @@
-import { useSession } from '@/components/contexts/SessionContext'
 import { supabase } from '@/components/supabase/client'
 import {
   Form,
@@ -21,10 +20,7 @@ const formSchema = z.object({
 })
 
 export default function PasswordChange() {
-  const { session } = useSession()
   const [, setLocation] = useLocation()
-
-  if (!session) setLocation('/login')
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
