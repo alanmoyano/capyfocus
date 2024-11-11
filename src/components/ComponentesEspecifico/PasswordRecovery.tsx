@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -37,30 +38,17 @@ export default function PasswordRecovery() {
   })
 
   function onSubmit({ email }: { email: string }) {
-    // supabase.auth
-    //   .resetPasswordForEmail(email, {
-    //     redirectTo: 'https://www.capyfocus.com/login',
-    //   })
-    //   .then(res => console.log(res))
-    //   .catch((err: unknown) => console.error(err))
     console.log(email)
-    // toast.success('Enviado!')
-    async function signInWithEmail() {
-      const { data, error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          // set this to false if you do not want the user to be automatically signed up
-          shouldCreateUser: false,
-          emailRedirectTo: 'https://www.capyfocus.com',
-        },
-      })
 
-      if (error) console.error('Error:', error)
-      console.log(data)
-    }
-    // signInWithEmail().catch((error: unknown) => console.error(error)) esto manda el magic link!
-    toast.warning(
-      'Esta funcionalidad aún no está disponible, pero pronto lo estará. ¡Gracias por tu paciencia!'
+    supabase.auth
+      .resetPasswordForEmail(email, {
+        redirectTo: 'https://www.capyfocus.com/cambiarContraseña',
+      })
+      .then(res => console.log(res))
+      .catch((err: unknown) => console.error(err))
+
+    toast.success(
+      'Se ha enviado un correo con las instrucciones para cambiar la contraseña'
     )
   }
 
@@ -109,7 +97,9 @@ export default function PasswordRecovery() {
                   )}
                 />
                 <DialogFooter>
-                  <Button>Enviar</Button>
+                  <DialogClose asChild>
+                    <Button type='submit'>Enviar</Button>
+                  </DialogClose>
                 </DialogFooter>
               </form>
             </Form>

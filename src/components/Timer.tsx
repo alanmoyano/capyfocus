@@ -180,55 +180,26 @@ export default function Timer() {
         else console.log(data)
       })
 
-    await supabase
-      .from('CapyInsigniasXUsuarios')
-      .select()
-      .eq('idUsuario', session?.user.id)
-      .then(({ data, error }) => {
-        if (error) console.error(error)
-        if (!data) return
-
-        const insigniasXUsuario = data as InsigniaXUsuario[]
-
-        if (!session) return
-
-        const insigniaXUsuario = groupBy(insigniasXUsuario, 'idUsuario')[
-          session.user.id
-        ]
-
-        console.log(insigniaXUsuario)
-        /* eslint-disable-next-line */
-        if (!insigniaXUsuario) return
-
-        insignias.forEach(insignia => {
-          // const insigniaParticular = insigniaXUsuario.find(
-          //   insigniaUsuario => insigniaUsuario.idInsignia === insignia.id
-          // )
-
-          // if (!insigniaParticular) return
-          // console.log(insigniaParticular)
-
-          supabase
-            .from('CapyInsigniasXUsuarios')
-            .upsert({
-              idInsignia: insignia.id,
-              idUsuario: session.user.id,
-              progreso: getProgresoInsignia(insignia.id, {
-                objetivosSesion: sessionToSave.cantidadObjetivos,
-                tiempoEstudiado:
-                  (hoy.getTime() - InicioSesion.getTime()) / 1000,
-                ...nuevosCapyDatosParaEstadisticas,
-              }),
-            })
-            .eq('idInsignia', insignia.id)
-            .eq('idUsuario', session.user.id)
-            .select()
-            .then(({ data, error }) => {
-              if (error) console.error(error)
-              console.log(data)
-            })
+    insignias.forEach(insignia => {
+      supabase
+        .from('CapyInsigniasXUsuarios')
+        .upsert({
+          idInsignia: insignia.id,
+          idUsuario: session?.user.id,
+          progreso: getProgresoInsignia(insignia.id, {
+            objetivosSesion: sessionToSave.cantidadObjetivos,
+            tiempoEstudiado: (hoy.getTime() - InicioSesion.getTime()) / 1000,
+            ...nuevosCapyDatosParaEstadisticas,
+          }),
         })
-      })
+        .eq('idInsignia', insignia.id)
+        .eq('idUsuario', session?.user.id)
+        .select()
+        .then(({ data, error }) => {
+          if (error) console.error(error)
+          console.log(data)
+        })
+    })
   }
 
   const finalizarSesion = () => {

@@ -1,23 +1,3 @@
-import { useEffect, useRef, useState } from 'react'
-import { Button } from './ui/button'
-import { Checkbox } from './ui/checkbox'
-import { useLocation } from 'wouter'
-import { useObjetivos } from './contexts/ObjetivosContext'
-import { Star, Play, Pause } from 'lucide-react'
-import CapySound from '../assets/Sonido_de_caripincho.mp3'
-import Confetti from 'react-confetti-boom'
-import useSound from 'use-sound'
-import { useMusic } from './contexts/MusicContext'
-import { useMotivation } from './contexts/MotivationContext'
-import { useSesion } from './contexts/SesionContext'
-import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
-import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
-import { Volume2, VolumeOff } from 'lucide-react'
-import { formatTime } from '@/lib/utils'
-import CountdownStudy from './ComponentesEspecifico/CountDown/CountdownStudy'
-import CountdownBreak from './ComponentesEspecifico/CountDown/CountdownBreak'
-import { SkipForward } from 'lucide-react'
-import usePomodoro from '@/hooks/usePomodoro'
 import {
   acumulateHoursInFavouriteObj,
   acumulateHoursInSelectedEvent,
@@ -25,90 +5,46 @@ import {
   getSelectedMusic,
   SesionAGuardar,
 } from '@/constants/supportFunctions'
-import { supabase } from './supabase/client'
-import { useSession } from './contexts/SessionContext'
-import { useEvents } from './contexts/EventsContext'
+import usePomodoro from '@/hooks/usePomodoro'
 import useTimer from '@/hooks/useTimer'
-
+import { formatTime } from '@/lib/utils'
 import {
-  TooltipContent,
+  Pause,
+  Play,
+  SkipForward,
+  Star,
+  Volume2,
+  VolumeOff,
+} from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import Confetti from 'react-confetti-boom'
+import useSound from 'use-sound'
+import { useLocation } from 'wouter'
+import CapySound from '../assets/Sonido_de_caripincho.mp3'
+import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
+import CountdownBreak from './ComponentesEspecifico/CountDown/CountdownBreak'
+import CountdownStudy from './ComponentesEspecifico/CountDown/CountdownStudy'
+import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
+import { useEvents } from './contexts/EventsContext'
+import { useMotivation } from './contexts/MotivationContext'
+import { useMusic } from './contexts/MusicContext'
+import { useObjetivos } from './contexts/ObjetivosContext'
+import { useSesion } from './contexts/SesionContext'
+import { useSession } from './contexts/SessionContext'
+import { supabase } from './supabase/client'
+import { Button } from './ui/button'
+import { Checkbox } from './ui/checkbox'
+
+import { useInsignias } from '@/components/contexts/InsigniasContext'
+import {
   Tooltip,
+  TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@radix-ui/react-tooltip'
-import { toast } from 'sonner'
 
 //BUG: No anda bien el contador de tiempo, no cuenta el tiempo de estudio y descanso.
 type Mode = 'Estudiando' | 'Descansando'
-
-function addZeroIfNeeded(value: number) {
-  return value.toString().padStart(2, '0')
-}
-
-async function saveSession(sessionToSave: SesionAGuardar) {
-  await supabase
-    .from('SesionesDeEstudio')
-    .insert([
-      {
-        idUsuario: sessionToSave.uuid,
-        horaInicioSesion: sessionToSave.horaInicioSesion,
-        fecha: sessionToSave.fecha,
-        horaFinSesion: sessionToSave.horaFinSesion,
-        tecnicaEstudio: sessionToSave.tecnicaEstudio,
-        tipoMotivacion: sessionToSave.tipoMotivacion,
-        cantidadObjetivosCumplidos: sessionToSave.cantidadObjetivosCumplidos,
-        cantidadObjetivos: sessionToSave.cantidadObjetivos,
-        tiempoEstudio: sessionToSave.tiempoEstudio,
-        musicaSeleccionada: sessionToSave.musicaSeleccionada,
-        eventoSeleccionado: sessionToSave.eventoSeleccionado,
-      },
-    ])
-    .select()
-    .then(({ data, error }) => {
-      if (error) console.log(error)
-      else console.log('Datos guardados correctamente', data)
-    })
-
-  const { data, error } = await supabase
-    .from('Usuarios')
-    .select(
-      'objetivosCumplidos,sesionesDeEstudio,sesionesPositivas,sesionesNegativas'
-    )
-    .eq('id', sessionToSave.uuid)
-
-  if (error) console.error(error)
-  if (!data) return
-
-  const {
-    objetivosCumplidos,
-    sesionesDeEstudio,
-    sesionesNegativas,
-    sesionesPositivas,
-  } = data[0] as {
-    objetivosCumplidos: number
-    sesionesDeEstudio: number
-    sesionesNegativas: number
-    sesionesPositivas: number
-  }
-
-  await supabase
-    .from('Usuarios')
-    .update({
-      objetivosCumplidos:
-        objetivosCumplidos + sessionToSave.cantidadObjetivosCumplidos,
-      sesionesDeEstudio: sesionesDeEstudio + 1,
-      sesionesPositivas:
-        sesionesPositivas + (sessionToSave.tipoMotivacion === 1 ? 1 : 0),
-      sesionesNegativas:
-        sesionesNegativas + (sessionToSave.tipoMotivacion === 2 ? 1 : 0),
-    })
-    .eq('id', sessionToSave.uuid)
-    .select()
-    .then(({ data, error }) => {
-      if (error) console.log(error)
-      else console.log(data)
-    })
-}
 
 export function ActualTimer({ time, mode }: { time: number; mode: Mode }) {
   return (
@@ -130,6 +66,7 @@ type Pomodoro = {
 }
 
 export default function Pomodoro() {
+  const { insignias, getProgresoInsignia } = useInsignias()
   const [sessionSeconds, setSessionSeconds] = useState(25 * 60)
   const [breakSeconds, setBreakSeconds] = useState(5 * 60)
   const [objCumplidos, setObjCumplidos] = useState(0)
@@ -150,13 +87,11 @@ export default function Pomodoro() {
   const pomodoroCount = useRef(0)
   const [pomodorosRealizados, setPomodorosRealizados] = useState<Pomodoro[]>([])
   const [capySound] = useSound(CapySound)
-  const [ObjStudyTime, setObjStudyTime] = useState(0)
   const { selectedMusic } = useMusic()
   const { motivationType } = useMotivation()
   const [sessionStart, setSessionStart] = useState(false)
   const [volumen, setVolumen] = useState(true)
   const [boom, setBoom] = useState(false)
-  const [breakStarted, setBreakStarted] = useState(false)
   const { session } = useSession()
   const [InicioSesion, setInicioSesion] = useState<Date | null>(null)
   const { selectedEvent } = useEvents()
@@ -170,7 +105,6 @@ export default function Pomodoro() {
 
   const {
     objetivos,
-    setObjetivos,
     objetivosFav,
     setTiempo,
     tiempo,
@@ -187,6 +121,101 @@ export default function Pomodoro() {
     setCantidadPausas,
     tiempoTotal,
   } = useSesion()
+
+  async function saveSession(sessionToSave: SesionAGuardar) {
+    await supabase
+      .from('SesionesDeEstudio')
+      .insert([
+        {
+          idUsuario: sessionToSave.uuid,
+          horaInicioSesion: sessionToSave.horaInicioSesion,
+          fecha: sessionToSave.fecha,
+          horaFinSesion: sessionToSave.horaFinSesion,
+          tecnicaEstudio: sessionToSave.tecnicaEstudio,
+          tipoMotivacion: sessionToSave.tipoMotivacion,
+          cantidadObjetivosCumplidos: sessionToSave.cantidadObjetivosCumplidos,
+          cantidadObjetivos: sessionToSave.cantidadObjetivos,
+          tiempoEstudio: sessionToSave.tiempoEstudio,
+          musicaSeleccionada: sessionToSave.musicaSeleccionada,
+          eventoSeleccionado: sessionToSave.eventoSeleccionado,
+        },
+      ])
+      .select()
+      .then(({ data, error }) => {
+        if (error) console.log(error)
+        else console.log('Datos guardados correctamente', data)
+      })
+
+    let capyDatosParaEstadisticas = {
+      objetivosCumplidos: 0,
+      sesionesDeEstudio: 0,
+      sesionesNegativas: 0,
+      sesionesPositivas: 0,
+    }
+
+    await supabase
+      .from('Usuarios')
+      .select(
+        'objetivosCumplidos,sesionesDeEstudio,sesionesPositivas,sesionesNegativas'
+      )
+      .eq('id', sessionToSave.uuid)
+      .then(({ data, error }) => {
+        if (error) console.error(error)
+        if (!data) return
+
+        capyDatosParaEstadisticas = data[0] as {
+          objetivosCumplidos: number
+          sesionesDeEstudio: number
+          sesionesNegativas: number
+          sesionesPositivas: number
+        }
+      })
+
+    const nuevosCapyDatosParaEstadisticas = {
+      objetivosCumplidos:
+        capyDatosParaEstadisticas.objetivosCumplidos +
+        sessionToSave.cantidadObjetivosCumplidos,
+      sesionesDeEstudio: capyDatosParaEstadisticas.sesionesDeEstudio + 1,
+      sesionesPositivas:
+        capyDatosParaEstadisticas.sesionesPositivas +
+        (sessionToSave.tipoMotivacion === 1 ? 1 : 0),
+      sesionesNegativas:
+        capyDatosParaEstadisticas.sesionesNegativas +
+        (sessionToSave.tipoMotivacion === 2 ? 1 : 0),
+    }
+
+    await supabase
+      .from('Usuarios')
+      .update(nuevosCapyDatosParaEstadisticas)
+      .eq('id', sessionToSave.uuid)
+      .select()
+      .then(({ data, error }) => {
+        if (error) console.log(error)
+        else console.log(data)
+      })
+
+    // Add insignias progress update
+    insignias.forEach(insignia => {
+      supabase
+        .from('CapyInsigniasXUsuarios')
+        .upsert({
+          idInsignia: insignia.id,
+          idUsuario: sessionToSave.uuid,
+          progreso: getProgresoInsignia(insignia.id, {
+            objetivosSesion: sessionToSave.cantidadObjetivos,
+            tiempoEstudiado: sessionToSave.tiempoEstudio,
+            ...nuevosCapyDatosParaEstadisticas,
+          }),
+        })
+        .eq('idInsignia', insignia.id)
+        .eq('idUsuario', sessionToSave.uuid)
+        .select()
+        .then(({ data, error }) => {
+          if (error) console.error(error)
+          console.log(data)
+        })
+    })
+  }
 
   const finalizarSesion = () => {
     clearInterval(timer.current)

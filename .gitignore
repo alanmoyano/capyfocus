@@ -24,6 +24,3 @@ tsconfig.*.tsbuildinfo
 *.njsproj
 *.sln
 *.sw?
-
-# Videos pesados (Alan trabajando)
-*.mov

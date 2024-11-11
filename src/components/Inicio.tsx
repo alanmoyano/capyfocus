@@ -146,7 +146,7 @@ async function gatherUserPendingObjectives(uuid: string) {
     .select()
     .eq('idUsuario', uuid)
     .eq('idEstado', 1)
-  if (data) return data
+  if (data) return data as ObjectiveRecovered[]
   else console.log(error)
 }
 
@@ -171,14 +171,13 @@ async function persistFavoriteObjective(
 }
 
 async function deletePersistedObjective(nombre: string, uuid: string) {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('ObjetivosFavoritos')
     .update({ idEstado: 2 })
     .eq('descripcion', nombre)
     .eq('idUsuario', uuid)
 
-  if (data) console.log(data)
-  else console.log(error)
+  if (error) console.log(error)
 }
 
 export default function Inicio() {
@@ -636,22 +635,24 @@ export default function Inicio() {
           {/* Musica */}
           <div className='mt-4'>
             {selectedPlaylist !== -1 ? (
-              <div className='rounded-lg bg-accent p-2'>
-                <h2>
+              <div className='flex justify-between'>
+                <h2 className='rounded-lg bg-accent p-2'>
                   Playlist seleccionada:{' '}
                   <span className='font-semibold text-accent-foreground'>
                     {playlists[selectedPlaylist - 1].title}
                   </span>
                 </h2>
+                <CapyInfo desc='Haz click en la CapyPlaylist que más te guste para estudiar con música de fondo.' />
               </div>
             ) : (
-              <div className='rounded-lg bg-accent p-2'>
-                <h2>
+              <div className='flex justify-between'>
+                <h2 className='rounded-lg bg-accent p-2'>
                   Playlist seleccionada:{' '}
                   <span className='font-semibold text-accent-foreground'>
                     Sin música
                   </span>
                 </h2>
+                <CapyInfo desc='Haz click en la CapyPlaylist que más te guste para estudiar con música de fondo.' />
               </div>
             )}
 

@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/sheet'
 import { profilePictures } from '@/constants/profilePictures'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Pencil } from 'lucide-react'
+import { BusFront, Pencil } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useLocation } from 'wouter'
@@ -35,6 +35,7 @@ import { useProfilePic } from './contexts/ProfilePicContext'
 import { useSession } from './contexts/SessionContext'
 import FotoSelector from './FotoSelector'
 import { supabase } from './supabase/client'
+import Reproductor from '@/components/ComponentesEspecifico/Reproductor'
 
 const formSchema = z.object({
   username: z
@@ -200,7 +201,7 @@ export default function Usuario() {
           <div className='flex h-full w-full items-center justify-center'>
             <div className='m-auto'>
               <ChichoHablaPerfil imagen={confirmedPicture} />
-              <video src='/idle.webm' autoPlay loop muted playsInline />
+              <Reproductor src='/CapyNada.webm' />
             </div>
           </div>
           <Card className='flex h-full w-full flex-col bg-secondary shadow-md dark:bg-secondary/80'>
@@ -221,22 +222,7 @@ export default function Usuario() {
                     .slice(0, 2)}
                 </AvatarFallback>
               </Avatar>
-              <CardDescription className='text-center'>
-                {/* { infoAvatar && (
-                                <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
-                                  <div className='bg-white p-4 rounded-lg'>
-                                    <h2 className='text-xl font-bold'>Descripción del Avatar</h2>
-                                    <p>Esta es la descripción del avatar.</p>
-                                    <button
-                                      className='mt-4 px-4 py-2 bg-primary text-white rounded'
-                                      onClick={() => setInfoAvatar(false)}
-                                    >
-                                      Cerrar
-                                    </button>
-                                  </div>
-                                </div>
-                              )} */}
-              </CardDescription>
+              <CardDescription className='text-center'></CardDescription>
             </CardHeader>
             <CardContent className='flex flex-grow flex-col items-center justify-start text-center'>
               <div className='flex items-center text-3xl font-semibold'>
@@ -330,6 +316,15 @@ export default function Usuario() {
             </CardContent>
             <CardFooter className='mt-auto flex select-none justify-end'>
               <div className='space-x-4'>
+                {session && (
+                  <Button
+                    onClick={() => {
+                      setLocation('/cambiarContraseña')
+                    }}
+                  >
+                    Cambiar contraseña
+                  </Button>
+                )}
                 <Button
                   variant={session ? 'destructive' : 'default'}
                   onClick={() => handleLogin()}
