@@ -37,9 +37,17 @@ export default function PasswordChange() {
   return (
     <Form {...form}>
       <form
+        className='mx-auto w-full max-w-md space-y-6 rounded-lg border p-6 shadow-sm'
         // eslint-disable-next-line
         onSubmit={form.handleSubmit(onSubmit)}
       >
+        <div className='space-y-2'>
+          <h2 className='text-center text-2xl font-bold'>Cambiar Contraseña</h2>
+          <p className='text-center text-sm text-muted-foreground'>
+            Ingresa tu nueva contraseña
+          </p>
+        </div>
+
         <FormField
           name='password'
           control={form.control}
@@ -50,7 +58,7 @@ export default function PasswordChange() {
                 <Input
                   type='password'
                   {...field}
-                  placeholder='Contraseña'
+                  placeholder='********'
                   className='input'
                 />
               </FormControl>
@@ -58,7 +66,9 @@ export default function PasswordChange() {
             </FormItem>
           )}
         />
-        <Button>Enviar</Button>
+        <Button className='w-full' type='submit'>
+          Cambiar Contraseña
+        </Button>
       </form>
     </Form>
   )

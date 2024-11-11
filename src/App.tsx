@@ -53,28 +53,22 @@ function App() {
 
                         <main>
                           <Switch>
-                            <Route path='/'>
-                              <LandingPage />
-                            </Route>
-                            <Route path='/inicio'>
-                              <Inicio />
-                            </Route>
+                            <Route path='/' component={LandingPage} />
+                            <Route path='/inicio' component={Inicio} />
                             <Route path='/login' component={Login} />
 
-                            <Route path='/capydoro'>
-                              <Pomodoro />
-                            </Route>
-                            <Route path='/capymetro'>
-                              <Timer />
-                            </Route>
+                            <Route path='/capydoro' component={Pomodoro} />
+                            <Route path='/capymetro' component={Timer} />
 
-                            <Route path='/brenda'>
-                              <ExperimentandoBrenda />
-                            </Route>
+                            <Route
+                              path='/brenda'
+                              component={ExperimentandoBrenda}
+                            />
 
-                            <Route path={'/discord'}>
-                              <DiscordComponent />
-                            </Route>
+                            <Route
+                              path='/discord'
+                              component={DiscordComponent}
+                            />
 
                             <Route
                               path='/capyInsignias'
@@ -87,13 +81,14 @@ function App() {
 
                             <Route path='/usuario' component={Usuario} />
 
-                            <Route component={PasswordChange} />
+                            <Route
+                              path='/cambiarContraseña'
+                              component={PasswordChange}
+                            />
 
                             <Route path='/prueba' component={Prueba} />
 
-                            <Route>
-                              <NotFound />
-                            </Route>
+                            <Route component={NotFound} />
                           </Switch>
                         </main>
 
