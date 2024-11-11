@@ -41,14 +41,18 @@ export default function PasswordRecovery() {
     console.log(email)
 
     supabase.auth
-      .resetPasswordForEmail(email, {
-        redirectTo: 'https://www.capyfocus.com/cambiarContraseña',
+      .signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: false,
+          emailRedirectTo: 'https://www.capyfocus.com/cambiarContraseña',
+        },
       })
       .then(res => console.log(res))
       .catch((err: unknown) => console.error(err))
 
     toast.success(
-      'Se ha enviado un correo con las instrucciones para cambiar la contraseña'
+      'Se ha enviado un correo con un link para cambiar la contraseña'
     )
   }
 
