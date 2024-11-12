@@ -3,8 +3,10 @@ import { createContext, useContext, useEffect, useState } from 'react'
 
 import { supabase } from '@/components/supabase/client'
 import { useSession } from './SessionContext'
+import { useEvents } from '@/components/contexts/EventsContext'
+import { Event } from '@/components/ComponentesEspecifico/Eventos'
 
-type Insignia = {
+export type Insignia = {
   id: number
   nombre: string
   descripcionBloqueada: string
@@ -32,7 +34,8 @@ type InsigniasContextType = {
       sesionesDeEstudio: number
       objetivosCumplidos: number
       objetivosSesion: number
-    }
+    },
+    events: Event[]
   ) => number
 }
 
@@ -57,7 +60,6 @@ const requisitosInsignias = {
   14: 100, // Completa 100 objetivos
   15: 30, // Pasa 30 días sin estudiar
 }
-
 function getProgresoInsignia(
   idInsignia: number,
   datosNuevosInsignias: {
@@ -67,7 +69,8 @@ function getProgresoInsignia(
     sesionesDeEstudio: number
     objetivosCumplidos: number
     objetivosSesion: number
-  }
+  },
+  events: Event[]
 ) {
   switch (idInsignia) {
     case 1: {
@@ -75,7 +78,9 @@ function getProgresoInsignia(
         (datosNuevosInsignias.sesionesNegativas / requisitosInsignias[1]) * 100
       )
 
-      return porcentaje > 100 ? porcentaje : 100
+      console.log('porcentaje', porcentaje)
+
+      return porcentaje > 100 ? 100 : porcentaje
     }
 
     case 2: {
@@ -83,8 +88,13 @@ function getProgresoInsignia(
         (datosNuevosInsignias.sesionesPositivas / requisitosInsignias[2]) * 100
       )
 
-      return porcentaje > 100 ? porcentaje : 100
+      return porcentaje > 100 ? 100 : porcentaje
     }
+
+    case 3:
+      return events.find(event => event.date.getTime() > new Date().getTime())
+        ? 100
+        : 0
 
     case 4:
       return datosNuevosInsignias.tiempoEstudiado > 2 * 60 * 60 ? 100 : 7

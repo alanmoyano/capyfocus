@@ -201,7 +201,7 @@ export default function Usuario() {
           <div className='flex h-full w-full items-center justify-center'>
             <div className='m-auto'>
               <ChichoHablaPerfil imagen={confirmedPicture} />
-              <Reproductor src='/CapyNada.webm' />
+              <Reproductor src='/CapyNada' />
             </div>
           </div>
           <Card className='flex h-full w-full flex-col bg-secondary shadow-md dark:bg-secondary/80'>

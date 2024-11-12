@@ -336,13 +336,11 @@ export default function CapyEstadisticas() {
       </div>
 
       {/* Pagina en blanco */}
-      {selectedPeriod === '' && !selectedEvent && (
-        <Reproductor src='/auto.webm' />
-      )}
+      {selectedPeriod === '' && !selectedEvent && <Reproductor src='/auto' />}
       {/* Pagina de sesion */}
       {selectedPeriod === 'sesion' && tiempoTotal === 0 && (
         <>
-          <Reproductor src='/Chicho/OtrasAcciones/CapyDesilucionado.webm' />
+          <Reproductor src='/Chicho/OtrasAcciones/CapyDesilucionado' />
           <div className='flex w-1/2 content-center justify-center rounded-lg bg-red-700 p-8 text-white shadow-lg'>
             <p>
               Primero inicia una sesión para tener estadísticas de la sesión!!

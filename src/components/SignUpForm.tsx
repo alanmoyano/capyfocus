@@ -44,6 +44,7 @@ import { useState } from 'react'
 import { supabase } from './supabase/client'
 import { toast } from 'sonner'
 import { AuthError } from '@supabase/supabase-js'
+import posthog from 'posthog-js'
 
 //Agregar las cosas que puede ver y las cosas que no si es usuario y si es invitado
 
@@ -100,8 +101,9 @@ function SignupForm() {
           },
         },
       })
-      console.log(data)
       if (error) throw error
+      posthog.capture('Capyusuario registrado')
+      console.log(data)
     }
     toast.promise(signUp, {
       loading: 'Registrando...',

@@ -78,6 +78,7 @@ import Reproductor from './ComponentesEspecifico/Reproductor'
 import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
 import { useEvents } from './contexts/EventsContext'
 import { usePreferences } from './contexts/PreferencesContext'
+import posthog from 'posthog-js'
 //BUG: Algunos objetivos Favoritos no se ponen como favoritos.
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
@@ -245,10 +246,12 @@ export default function Inicio() {
       case 'Capydoro':
         setLocation('/capydoro')
         setTecnicaEstudio(description)
+        posthog.capture('Sesión de Capydoro')
         break
       case 'Capymetro':
         setLocation('capymetro')
         setTecnicaEstudio(description)
+        posthog.capture('Sesión de Capymetro')
         break
       case undefined:
         toast.error('CapyError', {
@@ -394,7 +397,7 @@ export default function Inicio() {
         <div className='mt-4 px-4 sm:px-4'>
           <DialogoChicho />
           <div className='relative flex max-h-[300px] w-full min-w-[290px] max-w-[340px] items-center justify-center overflow-hidden sm:h-full sm:max-h-[450px] sm:min-w-[450px] sm:max-w-[450px]'>
-            <Reproductor src='/CapyNada.webm' />
+            <Reproductor src='/CapyNada' />
           </div>
         </div>
         {/* columna 2 */}

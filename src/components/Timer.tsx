@@ -1,39 +1,30 @@
-import groupBy from 'lodash.groupby'
-
-import { useEffect, useState } from 'react'
-import { Button } from './ui/button'
-import { useLocation } from 'wouter'
-import { useObjetivos } from './contexts/ObjetivosContext'
-import { Star, NotebookPen, Moon } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { Moon, NotebookPen, Star } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useLocation } from 'wouter'
+import { useObjetivos } from './contexts/ObjetivosContext'
+import { Button } from './ui/button'
 //import { navigationMenuTriggerStyle } from './ui/navigit pull gation-menu'
-import { useMusic } from './contexts/MusicContext'
-import { useMotivation } from './contexts/MotivationContext'
-import { useSesion } from './contexts/SesionContext'
-import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
-import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
-import useTimer from '@/hooks/useTimer'
-import { Helmet } from 'react-helmet'
-import { formatTime } from '@/lib/utils'
-import { useSession } from './contexts/SessionContext'
-import { supabase } from './supabase/client'
+import { useInsignias } from '@/components/contexts/InsigniasContext'
 import {
-  dateToTimetz,
-  formatDateDash,
-  SesionAGuardar,
-  getSelectedMusic,
-  acumulateHoursInSelectedEvent,
-  getObjectiveByName,
   acumulateHoursInFavouriteObj,
+  acumulateHoursInSelectedEvent,
+  dateToTimetz,
+  getSelectedMusic,
+  saveSession,
+  SesionAGuardar,
 } from '@/constants/supportFunctions'
+import useTimer from '@/hooks/useTimer'
+import { formatTime } from '@/lib/utils'
+import { Helmet } from 'react-helmet'
+import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
+import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
 import { useEvents } from './contexts/EventsContext'
-import {
-  InsigniaXUsuario,
-  useInsignias,
-} from '@/components/contexts/InsigniasContext'
-import { id } from 'date-fns/locale'
-import { PostgrestError } from '@supabase/supabase-js'
+import { useMotivation } from './contexts/MotivationContext'
+import { useMusic } from './contexts/MusicContext'
+import { useSesion } from './contexts/SesionContext'
+import { useSession } from './contexts/SessionContext'
 
 //import Confetti from 'react-confetti-boom'
 
@@ -105,102 +96,9 @@ export default function Timer() {
   const { setTiempoTotal, setAcumuladorTiempoPausa, setCantidadPausas } =
     useSesion()
 
-  const { selectedEvent } = useEvents()
+  const { events, selectedEvent } = useEvents()
 
   const { insignias, getProgresoInsignia } = useInsignias()
-
-  async function saveSession(sessionToSave: SesionAGuardar) {
-    await supabase
-      .from('SesionesDeEstudio')
-      .insert([
-        {
-          idUsuario: sessionToSave.uuid,
-          horaInicioSesion: sessionToSave.horaInicioSesion,
-          fecha: sessionToSave.fecha,
-          horaFinSesion: sessionToSave.horaFinSesion,
-          tecnicaEstudio: sessionToSave.tecnicaEstudio,
-          tipoMotivacion: sessionToSave.tipoMotivacion,
-          cantidadObjetivosCumplidos: sessionToSave.cantidadObjetivosCumplidos,
-          cantidadObjetivos: sessionToSave.cantidadObjetivos,
-          tiempoEstudio: sessionToSave.tiempoEstudio,
-          musicaSeleccionada: sessionToSave.musicaSeleccionada,
-          eventoSeleccionado: sessionToSave.eventoSeleccionado,
-        },
-      ])
-      .select()
-      .then(({ data, error }) => {
-        if (error) console.log(error)
-        else console.log('Datos guardados correctamente', data)
-      })
-
-    let capyDatosParaEstadisticas = {
-      objetivosCumplidos: 0,
-      sesionesDeEstudio: 0,
-      sesionesNegativas: 0,
-      sesionesPositivas: 0,
-    }
-
-    await supabase
-      .from('Usuarios')
-      .select(
-        'objetivosCumplidos,sesionesDeEstudio,sesionesPositivas,sesionesNegativas'
-      )
-      .eq('id', session?.user.id)
-      .then(({ data, error }) => {
-        if (error) console.error(error)
-        if (!data) return
-
-        capyDatosParaEstadisticas = data[0] as {
-          objetivosCumplidos: number
-          sesionesDeEstudio: number
-          sesionesNegativas: number
-          sesionesPositivas: number
-        }
-      })
-
-    const nuevosCapyDatosParaEstadisticas = {
-      objetivosCumplidos:
-        capyDatosParaEstadisticas.objetivosCumplidos + objCumplidos,
-      sesionesDeEstudio: capyDatosParaEstadisticas.sesionesDeEstudio + 1,
-      sesionesPositivas:
-        capyDatosParaEstadisticas.sesionesPositivas +
-        (motivationType === 'Positiva' ? 1 : 0),
-      sesionesNegativas:
-        capyDatosParaEstadisticas.sesionesNegativas +
-        (motivationType === 'Negativa' ? 1 : 0),
-    }
-
-    await supabase
-      .from('Usuarios')
-      .update(nuevosCapyDatosParaEstadisticas)
-      .eq('id', session?.user.id)
-      .select()
-      .then(({ data, error }) => {
-        if (error) console.log(error)
-        else console.log(data)
-      })
-
-    insignias.forEach(insignia => {
-      supabase
-        .from('CapyInsigniasXUsuarios')
-        .upsert({
-          idInsignia: insignia.id,
-          idUsuario: session?.user.id,
-          progreso: getProgresoInsignia(insignia.id, {
-            objetivosSesion: sessionToSave.cantidadObjetivos,
-            tiempoEstudiado: (hoy.getTime() - InicioSesion.getTime()) / 1000,
-            ...nuevosCapyDatosParaEstadisticas,
-          }),
-        })
-        .eq('idInsignia', insignia.id)
-        .eq('idUsuario', session?.user.id)
-        .select()
-        .then(({ data, error }) => {
-          if (error) console.error(error)
-          console.log(data)
-        })
-    })
-  }
 
   const finalizarSesion = () => {
     if (session) {
@@ -221,9 +119,25 @@ export default function Timer() {
         eventoSeleccionado: selectedEvent ? selectedEvent.id : null,
       }
 
-      saveSession(sessionToSave)
-        .then(() => console.log('Datos guardados correctamente'))
-        .catch((error: unknown) => console.log(error))
+      saveSession(
+        sessionToSave,
+        {
+          objCumplidos,
+          hoy,
+          InicioSesion,
+        },
+        {
+          session,
+          motivationType,
+          insignias,
+          getProgresoInsignia,
+          events,
+        }
+      )
+        .then(() => console.log('Datos guardados correctamente!'))
+        .catch((error: unknown) => {
+          console.log('Ocurrio un error', error)
+        })
 
       if (selectedEvent) {
         const nuevoTiempo =

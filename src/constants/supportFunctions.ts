@@ -1,11 +1,7 @@
-import {
-  InsigniaXUsuario,
-  useInsignias,
-} from '@/components/contexts/InsigniasContext'
-import { useMotivation } from '@/components/contexts/MotivationContext'
-import { useSession } from '@/components/contexts/SessionContext'
+import { Insignia } from '@/components/contexts/InsigniasContext'
 import { supabase } from '@/components/supabase/client'
-import groupBy from 'lodash.groupby'
+import type { Session } from '@supabase/supabase-js'
+import type { Event } from '@/components/ComponentesEspecifico/Eventos'
 
 type EventToRecover = {
   idEvento: number
@@ -155,12 +151,14 @@ async function gatherEventsOfUser(uuid: string, date?: Date) {
       .select()
       .eq('idUsuario', uuid)
       .gte('fechaLimite', formatDateDash(date))
+
     return data as EventToRecover[]
   } else {
     const { data, error } = await supabase
       .from('Eventos')
       .select()
       .eq('idUsuario', uuid)
+
     return data as EventToRecover[]
   }
 }
@@ -261,13 +259,39 @@ async function acumulateHoursInFavouriteObj(
 
 async function saveSession(
   sessionToSave: SesionAGuardar,
-  { objCumplidos }: { objCumplidos: number }
+  {
+    objCumplidos,
+    hoy,
+    InicioSesion,
+  }: { objCumplidos: number; hoy: Date; InicioSesion: Date },
+  {
+    session,
+    motivationType,
+    insignias,
+    getProgresoInsignia,
+    events,
+  }: {
+    session: Session | null
+    motivationType: string
+    insignias: Insignia[]
+    getProgresoInsignia: (
+      idInsignia: number,
+      datosNuevosInsignias: {
+        sesionesNegativas: number
+        sesionesPositivas: number
+        tiempoEstudiado: number
+        sesionesDeEstudio: number
+        objetivosCumplidos: number
+        objetivosSesion: number
+      },
+      events: Event[]
+    ) => number
+    events: Event[]
+  }
 ) {
-  const { session } = useSession()
-  const { motivationType } = useMotivation()
-  const { insignias, getProgresoInsignia } = useInsignias()
+  if (!session) return
 
-  await supabase
+  supabase
     .from('SesionesDeEstudio')
     .insert([
       {
@@ -302,7 +326,7 @@ async function saveSession(
     .select(
       'objetivosCumplidos,sesionesDeEstudio,sesionesPositivas,sesionesNegativas'
     )
-    .eq('id', session?.user.id)
+    .eq('id', session.user.id)
     .then(({ data, error }) => {
       if (error) console.error(error)
       if (!data) return
@@ -315,6 +339,8 @@ async function saveSession(
       }
     })
 
+  console.log('datos totales antes de sumar', capyDatosParaEstadisticas)
+
   const nuevosCapyDatosParaEstadisticas = {
     objetivosCumplidos:
       capyDatosParaEstadisticas.objetivosCumplidos + objCumplidos,
@@ -324,87 +350,61 @@ async function saveSession(
       (motivationType === 'Positiva' ? 1 : 0),
     sesionesNegativas:
       capyDatosParaEstadisticas.sesionesNegativas +
-      (motivationType === 'Negativa' ? 1 : 0),
+      (motivationType === 'Pasivo Agresiva' ? 1 : 0),
   }
 
-  await supabase
+  console.log(nuevosCapyDatosParaEstadisticas)
+
+  supabase
     .from('Usuarios')
     .update(nuevosCapyDatosParaEstadisticas)
-    .eq('id', session?.user.id)
+    .eq('id', session.user.id)
     .select()
     .then(({ data, error }) => {
       if (error) console.log(error)
       else console.log(data)
     })
 
-  await supabase
-    .from('CapyInsigniasXUsuarios')
-    .select()
-    .eq('idUsuario', session?.user.id)
-    .then(({ data, error }) => {
-      if (error) console.error(error)
-      if (!data) return
-
-      const insigniasXUsuario = data as InsigniaXUsuario[]
-
-      if (!session) return
-
-      const insigniaXUsuario = groupBy(insigniasXUsuario, 'idUsuario')[
-        session.user.id
-      ]
-
-      console.log(insigniaXUsuario)
-
-      const hoy = new Date()
-
-      if (!insigniaXUsuario) return
-
-      insignias.forEach(insignia => {
-        // const insigniaParticular = insigniaXUsuario.find(
-        //   insigniaUsuario => insigniaUsuario.idInsignia === insignia.id
-        // )
-
-        // if (!insigniaParticular) return
-        // console.log(insigniaParticular)
-
-        supabase
-          .from('CapyInsigniasXUsuarios')
-          .upsert({
-            idInsignia: insignia.id,
-            idUsuario: session.user.id,
-            progreso: getProgresoInsignia(insignia.id, {
-              objetivosSesion: sessionToSave.cantidadObjetivos,
-              //@ts-expect-error lo voy a parchear ahora hasta que alan lo arregle
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-              tiempoEstudiado: (hoy.getTime() - InicioSesion.getTime()) / 1000,
-              ...nuevosCapyDatosParaEstadisticas,
-            }),
-          })
-          .eq('idInsignia', insignia.id)
-          .eq('idUsuario', session.user.id)
-          .select()
-          .then(({ data, error }) => {
-            if (error) console.error(error)
-            console.log(data)
-          })
+  insignias.forEach(insignia => {
+    supabase
+      .from('CapyInsigniasXUsuarios')
+      .upsert({
+        idInsignia: insignia.id,
+        idUsuario: session.user.id,
+        progreso: getProgresoInsignia(
+          insignia.id,
+          {
+            objetivosSesion: sessionToSave.cantidadObjetivos,
+            tiempoEstudiado: (hoy.getTime() - InicioSesion.getTime()) / 1000,
+            ...nuevosCapyDatosParaEstadisticas,
+          },
+          events
+        ),
       })
-    })
+      .eq('idInsignia', insignia.id)
+      .eq('idUsuario', session.user.id)
+      .select()
+      .then(({ data, error }) => {
+        if (error) console.error(error)
+        console.log(data)
+      })
+  })
 }
 
 export {
-  dateToTimetz,
-  formatDateDash,
-  formatDateSlash,
-  obtenerClaveMayorValor,
-  getElementNameById,
-  convertirAFecha,
-  gatherEventsOfUser,
-  getSelectedMusic,
-  acumulateHoursInSelectedEvent,
-  getObjectiveByName,
   acumulateHoursInFavouriteObj,
-  recoverObjectiveFromId,
-  formatDateDashARG,
-  saveSession,
+  acumulateHoursInSelectedEvent,
+  convertirAFecha,
+  dateToTimetz,
   deleteEvent,
+  formatDateDash,
+  formatDateDashARG,
+  formatDateSlash,
+  gatherEventsOfUser,
+  getElementNameById,
+  getObjectiveByName,
+  getSelectedMusic,
+  obtenerClaveMayorValor,
+  recoverObjectiveFromId,
+  saveSession,
 }
