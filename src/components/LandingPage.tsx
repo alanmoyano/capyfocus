@@ -213,17 +213,11 @@ export default function LandingPage() {
                 recordatorio de que podemos tomarnos las cosas con calma,
                 disfrutar el proceso y acompañarnos mutuamente en el camino.
               </p>
-              <Reproductor
-                src='\Chicho\Positivo\CapyPiano'
-                className='w-80'
-              />
+              <Reproductor src='\Chicho\Positivo\CapyPiano' className='w-80' />
             </div>
 
             <div className='mb-8 flex flex-col items-center sm:mr-10 sm:flex-row'>
-              <Reproductor
-                src='\Chicho\Positivo\CapyLibro'
-                className='w-80'
-              />
+              <Reproductor src='\Chicho\Positivo\CapyLibro' className='w-80' />
               <p className='mb-8 text-center text-lg'>
                 En este equipo, cada uno aporta algo especial. Desde las ideas
                 locas, las bromas interminables, hasta la seriedad requerida al

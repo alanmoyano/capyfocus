@@ -94,7 +94,7 @@ export default function Pomodoro() {
   const [boom, setBoom] = useState(false)
   const { session } = useSession()
   const [InicioSesion, setInicioSesion] = useState<Date | null>(null)
-  const { selectedEvent } = useEvents()
+  const { events, selectedEvent } = useEvents()
   const {
     studyTime: objStudyTime,
     startStudy: startObjTime,
@@ -171,6 +171,7 @@ export default function Pomodoro() {
           motivationType,
           insignias,
           getProgresoInsignia,
+          events,
         }
       )
         .then(() => console.log('Los datos fueron guardados correctamente'))

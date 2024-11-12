@@ -62,7 +62,7 @@ export default function LoginForm() {
       if (error) throw error
 
       setSession(data.session)
-      posthog.identify(data.user.id) 
+      posthog.identify(data.user.id)
       posthog.capture('Capysesión iniciada')
       console.log(data)
     }

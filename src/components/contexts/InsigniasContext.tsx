@@ -94,7 +94,7 @@ function getProgresoInsignia(
     case 3:
       return events.find(event => event.date.getTime() > new Date().getTime())
         ? 100
-        : 0 
+        : 0
 
     case 4:
       return datosNuevosInsignias.tiempoEstudiado > 2 * 60 * 60 ? 100 : 7

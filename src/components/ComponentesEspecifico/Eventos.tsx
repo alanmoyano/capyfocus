@@ -9,7 +9,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger
+  SheetTrigger,
 } from '@/components/ui/sheet'
 import {
   Tooltip,
@@ -24,9 +24,7 @@ import { toast } from 'sonner'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Fragment, KeyboardEvent, useState } from 'react'
 import { useLocation } from 'wouter'
-import {
-  deleteEvent
-} from '../../constants/supportFunctions'
+import { deleteEvent } from '../../constants/supportFunctions'
 import { useEvents } from '../contexts/EventsContext'
 import { useSession } from '../contexts/SessionContext'
 import { supabase } from '../supabase/client'
