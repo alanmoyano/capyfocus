@@ -96,7 +96,7 @@ export default function Timer() {
   const { setTiempoTotal, setAcumuladorTiempoPausa, setCantidadPausas } =
     useSesion()
 
-  const { selectedEvent } = useEvents()
+  const {events,selectedEvent } = useEvents()
 
   const { insignias, getProgresoInsignia } = useInsignias()
 
@@ -131,6 +131,7 @@ export default function Timer() {
           motivationType,
           insignias,
           getProgresoInsignia,
+          events
         }
       )
         .then(() => console.log('Datos guardados correctamente!'))

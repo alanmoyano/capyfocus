@@ -1,14 +1,7 @@
-import {
-  Insignia,
-  InsigniaXUsuario,
-  useInsignias,
-} from '@/components/contexts/InsigniasContext'
-import { useMotivation } from '@/components/contexts/MotivationContext'
-import { useSession } from '@/components/contexts/SessionContext'
+import { Insignia } from '@/components/contexts/InsigniasContext'
 import { supabase } from '@/components/supabase/client'
 import type { Session } from '@supabase/supabase-js'
-
-import groupBy from 'lodash.groupby'
+import type { Event } from '@/components/ComponentesEspecifico/Eventos'
 
 type EventToRecover = {
   idEvento: number
@@ -158,12 +151,14 @@ async function gatherEventsOfUser(uuid: string, date?: Date) {
       .select()
       .eq('idUsuario', uuid)
       .gte('fechaLimite', formatDateDash(date))
+
     return data as EventToRecover[]
   } else {
     const { data, error } = await supabase
       .from('Eventos')
       .select()
       .eq('idUsuario', uuid)
+
     return data as EventToRecover[]
   }
 }
@@ -274,6 +269,7 @@ async function saveSession(
     motivationType,
     insignias,
     getProgresoInsignia,
+    events,
   }: {
     session: Session | null
     motivationType: string
@@ -287,8 +283,10 @@ async function saveSession(
         sesionesDeEstudio: number
         objetivosCumplidos: number
         objetivosSesion: number
-      }
+      },
+      events: Event[]
     ) => number
+    events: Event[]
   }
 ) {
   if (!session) return
@@ -373,11 +371,15 @@ async function saveSession(
       .upsert({
         idInsignia: insignia.id,
         idUsuario: session.user.id,
-        progreso: getProgresoInsignia(insignia.id, {
-          objetivosSesion: sessionToSave.cantidadObjetivos,
-          tiempoEstudiado: (hoy.getTime() - InicioSesion.getTime()) / 1000,
-          ...nuevosCapyDatosParaEstadisticas,
-        }),
+        progreso: getProgresoInsignia(
+          insignia.id,
+          {
+            objetivosSesion: sessionToSave.cantidadObjetivos,
+            tiempoEstudiado: (hoy.getTime() - InicioSesion.getTime()) / 1000,
+            ...nuevosCapyDatosParaEstadisticas,
+          },
+          events
+        ),
       })
       .eq('idInsignia', insignia.id)
       .eq('idUsuario', session.user.id)
@@ -390,19 +392,19 @@ async function saveSession(
 }
 
 export {
-  dateToTimetz,
-  formatDateDash,
-  formatDateSlash,
-  obtenerClaveMayorValor,
-  getElementNameById,
-  convertirAFecha,
-  gatherEventsOfUser,
-  getSelectedMusic,
-  acumulateHoursInSelectedEvent,
-  getObjectiveByName,
   acumulateHoursInFavouriteObj,
-  recoverObjectiveFromId,
-  formatDateDashARG,
-  saveSession,
+  acumulateHoursInSelectedEvent,
+  convertirAFecha,
+  dateToTimetz,
   deleteEvent,
+  formatDateDash,
+  formatDateDashARG,
+  formatDateSlash,
+  gatherEventsOfUser,
+  getElementNameById,
+  getObjectiveByName,
+  getSelectedMusic,
+  obtenerClaveMayorValor,
+  recoverObjectiveFromId,
+  saveSession,
 }

@@ -78,6 +78,7 @@ import Reproductor from './ComponentesEspecifico/Reproductor'
 import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
 import { useEvents } from './contexts/EventsContext'
 import { usePreferences } from './contexts/PreferencesContext'
+import posthog from 'posthog-js'
 //BUG: Algunos objetivos Favoritos no se ponen como favoritos.
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
@@ -245,10 +246,12 @@ export default function Inicio() {
       case 'Capydoro':
         setLocation('/capydoro')
         setTecnicaEstudio(description)
+        posthog.capture('Sesión de Capydoro')
         break
       case 'Capymetro':
         setLocation('capymetro')
         setTecnicaEstudio(description)
+        posthog.capture('Sesión de Capymetro')
         break
       case undefined:
         toast.error('CapyError', {

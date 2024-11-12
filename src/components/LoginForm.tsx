@@ -29,6 +29,7 @@ import {
   FormLabel,
   FormMessage,
 } from './ui/form'
+import posthog from 'posthog-js'
 
 const formSchema = z.object({
   email: z.string().email('El email no es válido'),
@@ -61,6 +62,8 @@ export default function LoginForm() {
       if (error) throw error
 
       setSession(data.session)
+      posthog.identify(data.user.id) 
+      posthog.capture('Capysesión iniciada')
       console.log(data)
     }
 

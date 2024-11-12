@@ -1,37 +1,35 @@
-import { Trash } from 'lucide-react'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
-import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
+  SheetTrigger
 } from '@/components/ui/sheet'
-import { Calendar } from '@/components/ui/calendar'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { es } from 'date-fns/locale'
+import { Trash } from 'lucide-react'
+import { toast } from 'sonner'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useState, KeyboardEvent } from 'react'
+import { Fragment, KeyboardEvent, useState } from 'react'
 import { useLocation } from 'wouter'
-import { supabase } from '../supabase/client'
-import { useSession } from '../contexts/SessionContext'
-import { useEvents } from '../contexts/EventsContext'
 import {
-  gatherEventsOfUser,
-  deleteEvent,
+  deleteEvent
 } from '../../constants/supportFunctions'
+import { useEvents } from '../contexts/EventsContext'
+import { useSession } from '../contexts/SessionContext'
+import { supabase } from '../supabase/client'
 
 export type Event = {
   id: number
@@ -113,41 +111,6 @@ export default function Eventos() {
     setLocation('/inicio')
   }
 
-  const recoverEvents = () => {
-    if (session) {
-      if (events.length === 0) {
-        const hoy = new Date()
-        hoy.setHours(0, 0, 0, 0)
-        gatherEventsOfUser(session.user.id)
-          .then(data =>
-            data.forEach(evento => {
-              // @ts-expect-error no te preocupes type, anda
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-              const fechaParsed = evento.fechaLimite.replaceAll(
-                '-',
-                '/'
-              ) as string
-
-              const id = evento.idEvento
-
-              const date = new Date(fechaParsed)
-
-              const title = evento.nombre
-
-              const hours = evento.horasAcumuladas
-
-              // @ts-expect-error no te preocupes type, anda
-              setEvents(prev => [
-                ...prev,
-                { date, title: title, hoursAcumulated: hours, id: id },
-              ])
-            })
-          )
-          .catch((error: unknown) => console.log(error))
-      }
-    }
-  }
-
   const addEvent = (googleCalendar: boolean, context: EventAddContext) => {
     if (date && eventTitle) {
       const dateString = date.toLocaleDateString('es-ES', {
@@ -220,7 +183,6 @@ export default function Eventos() {
         <Button
           variant='secondary'
           className='mt-6 w-full bg-secondary sm:w-auto'
-          onClick={recoverEvents}
         >
           Eventos
         </Button>
@@ -352,13 +314,10 @@ export default function Eventos() {
                 </h2>
                 <ul className='list-inside list-disc space-y-2 text-sm text-black sm:text-base dark:text-white'>
                   {events.map((event, index) => (
-                    <>
+                    <Fragment key={event.id}>
                       {event.date >=
                         new Date(new Date().setHours(0, 0, 0, 0)) && (
-                        <li
-                          key={index}
-                          className='flex items-center justify-between'
-                        >
+                        <li className='flex items-center justify-between'>
                           <span
                             onClick={() => setSelectedEvent(event)}
                             className={`cursor-pointer ${
@@ -385,7 +344,7 @@ export default function Eventos() {
                           </Button>
                         </li>
                       )}
-                    </>
+                    </Fragment>
                   ))}
                 </ul>
                 <h2 className='mt-4 text-lg font-bold sm:text-xl'>
