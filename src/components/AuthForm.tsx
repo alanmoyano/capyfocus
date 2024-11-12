@@ -11,7 +11,7 @@ export default function Login() {
       <div className='flex flex-col sm:gap-10 sm:p-10 md:flex-row lg:gap-20 2xl:gap-40'>
         <div className='m-auto w-full max-w-[300px] md:max-w-[366px]'>
           <Reproductor
-            src='/girando.webm'
+            src='/girando'
             className='aspect-[366/301] h-auto w-full object-contain'
           />
         </div>

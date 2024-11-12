@@ -394,7 +394,7 @@ export default function Inicio() {
         <div className='mt-4 px-4 sm:px-4'>
           <DialogoChicho />
           <div className='relative flex max-h-[300px] w-full min-w-[290px] max-w-[340px] items-center justify-center overflow-hidden sm:h-full sm:max-h-[450px] sm:min-w-[450px] sm:max-w-[450px]'>
-            <Reproductor src='/CapyNada.webm' />
+            <Reproductor src='/CapyNada' />
           </div>
         </div>
         {/* columna 2 */}

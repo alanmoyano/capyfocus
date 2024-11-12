@@ -557,7 +557,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
               ))}
             </div>
             <div className='mt-8 flex justify-center'>
-              <Reproductor src='/auto.webm' className='w-1/2' />
+              <Reproductor src='/auto' className='w-1/2' />
             </div>
           </div>
 
