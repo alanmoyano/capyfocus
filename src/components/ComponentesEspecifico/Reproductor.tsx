@@ -8,6 +8,12 @@ export default function Reproductor({
   className?: string
 }) {
   return (
-    <img src={src.concat('.gif')} className={cn('aspect-auto', className)} />
+    <img
+      src={src.concat('.gif')}
+      className={cn('aspect-auto', className)}
+      loading='lazy'
+      decoding='async'
+      fetchPriority='high'
+    />
   )
 }
