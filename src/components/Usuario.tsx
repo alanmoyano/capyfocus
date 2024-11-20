@@ -125,10 +125,11 @@ export default function Usuario() {
       })
       .catch((error: unknown) => console.error(error))
 
+    if (!session) return
     supabase
       .from('Usuarios')
       .update({ nombre: data.username })
-      .eq('id', session?.user.id)
+      .eq('id', session.user.id)
       .then(({ data, error }) => {
         if (error) console.error(error)
         console.log(data)

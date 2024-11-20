@@ -35,10 +35,12 @@ export default function Switchers() {
   const { setTheme } = useTheme()
 
   const handleToggleDark = () => {
+    if (!session) return
+
     supabase
       .from('Usuarios')
       .update({ modoOscuro: !isDark })
-      .eq('id', session?.user.id)
+      .eq('id', session.user.id)
       .select()
       .then(({ data, error }) => {
         if (error) console.error(error)
@@ -51,10 +53,12 @@ export default function Switchers() {
   }
 
   const handleToggleNotification = () => {
+    if (!session) return
+
     supabase
       .from('Usuarios')
       .update({ notificaciones: !isNotificaction })
-      .eq('id', session?.user.id)
+      .eq('id', session.user.id)
       .select()
       .then(({ data, error }) => {
         if (error) console.error(error)
@@ -66,10 +70,12 @@ export default function Switchers() {
   }
 
   function handleSelectMotivation(value: '1' | '2') {
+    if (!session) return
+
     supabase
       .from('Usuarios')
       .update({ motivacionFavorita: value })
-      .eq('id', session?.user.id)
+      .eq('id', session.user.id)
       .select()
       .then(({ data, error }) => {
         if (error) console.error(error)
