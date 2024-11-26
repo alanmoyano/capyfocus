@@ -223,7 +223,7 @@ export default function Inicio() {
   const { motivationPreference } = usePreferences()
 
   const recoverObjectives = () => {
-    if (session && !objectivesRecovered) {
+    if (session && objetivosFav.length < 1) {
       setObjectivesRecovered(true)
       gatherUserPendingObjectives(session.user.id)
         .then(data =>
