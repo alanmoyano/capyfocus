@@ -48,7 +48,7 @@ type FormValues = z.infer<typeof formSchema>
 export default function Usuario() {
   const [, setLocation] = useLocation()
   const { setEvents, setSelectedEvent } = useEvents()
-  const { setObjetivosFav } = useObjetivos()
+  const { setObjetivosFav, setObjetivos } = useObjetivos()
   const {
     setDarkModePreference,
     setMotivationPreference,
@@ -76,6 +76,7 @@ export default function Usuario() {
 
     localStorage.removeItem('objetivosFav')
     setObjetivosFav([])
+    setObjetivos([])
 
     localStorage.removeItem('sb-ndaahjmzdjhocmfocnbx-auth-token')
     setLocation('/login')
@@ -125,10 +126,11 @@ export default function Usuario() {
       })
       .catch((error: unknown) => console.error(error))
 
+    if (!session) return
     supabase
       .from('Usuarios')
       .update({ nombre: data.username })
-      .eq('id', session?.user.id)
+      .eq('id', session.user.id)
       .then(({ data, error }) => {
         if (error) console.error(error)
         console.log(data)

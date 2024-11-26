@@ -151,10 +151,11 @@ export function InsigniasProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => {
+    if (!session) return
     supabase
       .from('CapyInsigniasXUsuarios')
       .select()
-      .eq('idUsuario', session?.user.id)
+      .eq('idUsuario', session.user.id)
       .then(({ data }) => {
         console.log(data)
         if (!data) return

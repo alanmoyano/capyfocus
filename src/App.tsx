@@ -29,13 +29,11 @@ import { PreferencesProvider } from './components/contexts/PreferencesContext'
 import { InsigniasProvider } from '@/components/contexts/InsigniasContext'
 import DiscordComponent from '@components/DiscordComponent'
 import PasswordChange from '@/components/PasswordChange'
+import type { ReactNode } from 'react'
 
-function App() {
+function Providers({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider defaultTheme='light' storageKey='theme'>
-      <SpeedInsights />
-      <Analytics />
-
       <SessionProvider>
         <ProfilePicProvider>
           <PreferencesProvider>
@@ -44,61 +42,7 @@ function App() {
                 <SesionProvider>
                   <MusicProvider>
                     <EventsProvider>
-                      <InsigniasProvider>
-                        <Navbar />
-
-                        <Helmet>
-                          <title>Capyfocus</title>
-                        </Helmet>
-
-                        <main>
-                          <Switch>
-                            <Route path='/' component={LandingPage} />
-                            <Route path='/inicio' component={Inicio} />
-                            <Route path='/login' component={Login} />
-
-                            <Route path='/capydoro' component={Pomodoro} />
-                            <Route path='/capymetro' component={Timer} />
-
-                            <Route
-                              path='/brenda'
-                              component={ExperimentandoBrenda}
-                            />
-
-                            <Route
-                              path='/discord'
-                              component={DiscordComponent}
-                            />
-
-                            <Route
-                              path='/capyInsignias'
-                              component={CapyInsignias}
-                            />
-                            <Route
-                              path='/capyEstadisticas'
-                              component={CapyEstadisticas}
-                            />
-
-                            <Route path='/usuario' component={Usuario} />
-
-                            <Route
-                              path='/cambiarContraseña'
-                              component={PasswordChange}
-                            />
-
-                            <Route path='/prueba' component={Prueba} />
-
-                            <Route component={NotFound} />
-                          </Switch>
-                        </main>
-
-                        <Toaster
-                          richColors
-                          closeButton
-                          toastOptions={{}}
-                          theme='light'
-                        />
-                      </InsigniasProvider>
+                      <InsigniasProvider>{children}</InsigniasProvider>
                     </EventsProvider>
                   </MusicProvider>
                 </SesionProvider>
@@ -108,6 +52,49 @@ function App() {
         </ProfilePicProvider>
       </SessionProvider>
     </ThemeProvider>
+  )
+}
+
+function App() {
+  return (
+    <Providers>
+      <SpeedInsights />
+      <Analytics />
+
+      <Navbar />
+
+      <Helmet>
+        <title>Capyfocus</title>
+      </Helmet>
+
+      <main>
+        <Switch>
+          <Route path='/' component={LandingPage} />
+          <Route path='/inicio' component={Inicio} />
+          <Route path='/login' component={Login} />
+
+          <Route path='/capydoro' component={Pomodoro} />
+          <Route path='/capymetro' component={Timer} />
+
+          <Route path='/brenda' component={ExperimentandoBrenda} />
+
+          <Route path='/discord' component={DiscordComponent} />
+
+          <Route path='/capyInsignias' component={CapyInsignias} />
+          <Route path='/capyEstadisticas' component={CapyEstadisticas} />
+
+          <Route path='/usuario' component={Usuario} />
+
+          <Route path='/cambiarContraseña' component={PasswordChange} />
+
+          <Route path='/prueba' component={Prueba} />
+
+          <Route component={NotFound} />
+        </Switch>
+      </main>
+
+      <Toaster richColors closeButton toastOptions={{}} theme='light' />
+    </Providers>
   )
 }
 
