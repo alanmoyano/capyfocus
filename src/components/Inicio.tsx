@@ -79,6 +79,7 @@ import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
 import { useEvents } from './contexts/EventsContext'
 import { usePreferences } from './contexts/PreferencesContext'
 import posthog from 'posthog-js'
+import { gatherEventsOfUser } from '@/constants/supportFunctions'
 //BUG: Algunos objetivos Favoritos no se ponen como favoritos.
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
