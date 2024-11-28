@@ -24,7 +24,10 @@ import { toast } from 'sonner'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Fragment, KeyboardEvent, useState } from 'react'
 import { useLocation } from 'wouter'
-import { deleteEvent } from '../../constants/supportFunctions'
+import {
+  deleteEvent,
+  gatherEventsOfUser,
+} from '../../constants/supportFunctions'
 import { useEvents } from '../contexts/EventsContext'
 import { useSession } from '../contexts/SessionContext'
 import { supabase } from '../supabase/client'
@@ -169,6 +172,39 @@ export default function Eventos() {
     }
   }
 
+  const handleRecover = () => {
+    if (!session || events.length > 0) return
+    gatherEventsOfUser(session.user.id)
+      .then(data => {
+        console.log('Datos: ', data)
+        data.forEach(evento => {
+          // @ts-expect-error no te preocupes type, anda
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+          const fechaParsed = evento.fechaLimite.replaceAll('-', '/') as string
+
+          const id = evento.idEvento
+
+          const date = new Date(fechaParsed)
+
+          const title = evento.nombre
+
+          const hours = evento.horasAcumuladas
+
+          setEvents(prev => {
+            const index = prev.findIndex(event => event.id === id)
+
+            if (index === -1)
+              return [
+                ...prev,
+                { date, title, hoursAcumulated: hours, id } as Event,
+              ]
+            else return prev
+          })
+        })
+      })
+      .catch((error: unknown) => console.log(error))
+  }
+
   const handleAdd = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key == 'Enter' && eventTitle.trim() != '' && date) {
       addEvent(false, 'New')
@@ -181,8 +217,9 @@ export default function Eventos() {
         <Button
           variant='secondary'
           className='mt-6 w-full bg-secondary sm:w-auto'
+          onClick={handleRecover}
         >
-          Eventos
+          Eventos re cabrones
         </Button>
       </SheetTrigger>
       <SheetContent className='w-full sm:max-w-md'>
