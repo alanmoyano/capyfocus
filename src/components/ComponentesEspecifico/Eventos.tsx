@@ -22,7 +22,7 @@ import { Trash } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Fragment, KeyboardEvent, useState } from 'react'
+import { Fragment, KeyboardEvent, useState, useEffect } from 'react'
 import { useLocation } from 'wouter'
 import {
   deleteEvent,
@@ -126,9 +126,7 @@ export default function Eventos() {
           duration: 4000,
           position: 'bottom-center',
         })
-        if (googleCalendar) {
-          window.open(createGoogleCalendarLink(eventTitle, date))
-        }
+
         if (session) {
           console.log(date)
           const mañana = new Date('2024/11/2')
@@ -140,6 +138,9 @@ export default function Eventos() {
                   ...events,
                   { date, title: eventTitle, id: data.idEvento },
                 ])
+              }
+              if (googleCalendar) {
+                window.open(createGoogleCalendarLink(eventTitle, date))
               }
             })
             .catch((error: unknown) => console.log(error))
@@ -210,6 +211,10 @@ export default function Eventos() {
       addEvent(false, 'New')
     }
   }
+
+  useEffect(() => {
+    handleRecover()
+  }, [events])
 
   return (
     <Sheet>
