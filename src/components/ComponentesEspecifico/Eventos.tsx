@@ -219,7 +219,7 @@ export default function Eventos() {
           className='mt-6 w-full bg-secondary sm:w-auto'
           onClick={handleRecover}
         >
-          Eventos re cabrones
+          Eventos
         </Button>
       </SheetTrigger>
       <SheetContent className='w-full sm:max-w-md'>
