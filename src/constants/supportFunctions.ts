@@ -331,12 +331,7 @@ async function saveSession(
       if (error) console.error(error)
       if (!data) return
 
-      capyDatosParaEstadisticas = data[0] as {
-        objetivosCumplidos: number
-        sesionesDeEstudio: number
-        sesionesNegativas: number
-        sesionesPositivas: number
-      }
+      capyDatosParaEstadisticas = data[0] as typeof capyDatosParaEstadisticas
     })
 
   console.log('datos totales antes de sumar', capyDatosParaEstadisticas)
@@ -383,6 +378,7 @@ async function saveSession(
       })
       .eq('idInsignia', insignia.id)
       .eq('idUsuario', session.user.id)
+      .neq('progreso', 100)
       .select()
       .then(({ data, error }) => {
         if (error) console.error(error)
