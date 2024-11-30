@@ -646,7 +646,8 @@ export default function Inicio() {
                     {playlists[selectedPlaylist - 1].title}
                   </span>
                 </h2>
-                <CapyInfo desc='Haz click en la CapyPlaylist que más te guste para estudiar con música de fondo.' />
+                <CapyInfo desc='Haz click en la CapyPlaylist que más te guste para estudiar con música de fondo.
+                Recuerde tener tu cuenta de Spotify iniciada en el navegador' />
               </div>
             ) : (
               <div className='flex justify-between'>
@@ -656,7 +657,8 @@ export default function Inicio() {
                     Sin música
                   </span>
                 </h2>
-                <CapyInfo desc='Haz click en la CapyPlaylist que más te guste para estudiar con música de fondo.' />
+                <CapyInfo desc='Haz click en la CapyPlaylist que más te guste para estudiar con música de fondo.
+                Recuerde tener tu cuenta de Spotify iniciada en el navegador' />
               </div>
             )}
 
