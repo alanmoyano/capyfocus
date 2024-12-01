@@ -54,9 +54,22 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
+import { cn, formatTime } from '@/lib/utils'
 
 import { Card, CardContent } from '@/components/ui/card'
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
+
 import {
   Carousel,
   CarouselContent,
@@ -79,9 +92,17 @@ import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
 import { useEvents } from './contexts/EventsContext'
 import { usePreferences } from './contexts/PreferencesContext'
 import posthog from 'posthog-js'
-import { gatherEventsOfUser } from '@/constants/supportFunctions'
+import {
+  gatherEventsOfUser,
+  getObjectivesCompletedByName,
+  objetivoARecuperar,
+  ObjetivoCompletadoAGuardar,
+  unCompleteObjectiveByNameAndId,
+} from '@/constants/supportFunctions'
 //BUG: Algunos objetivos Favoritos no se ponen como favoritos.
 type CapyMetodos = 'Capydoro' | 'Capymetro'
+
+type objectiveActions = 'Completar' | 'Nuevo'
 
 const playlists = [
   {
@@ -203,6 +224,16 @@ export default function Inicio() {
   } = useObjetivos()
 
   const [description, setDescription] = useState<CapyMetodos>()
+  const [objetivoFavExistente, setObjetivoFavExistente] = useState(false)
+  const [nombreObjFavExistente, setNombreObjFavExistente] = useState('')
+  const [selectedObjetivoId, setSelectedObjetivoId] = useState(0)
+  const [objetivosCompletados, setObjetivosCompletados] = useState<
+    ObjetivoCompletadoAGuardar[]
+  >([])
+  const [
+    horasObjetivoFavoritoCompletadoSeleccionadas,
+    setHorasObjetivoFavoritoCompletadoSeleccionadas,
+  ] = useState(0)
 
   const [, setLocation] = useLocation()
 
@@ -301,6 +332,80 @@ export default function Inicio() {
     setInputValue(objetivos[index]) // Set the input value to the current objective
   }
 
+  const preHandleFav = (nombreObjetivo: string) => {
+    setNombreObjFavExistente(nombreObjetivo)
+    if (session) {
+      getObjectivesCompletedByName(nombreObjetivo, session.user.id)
+        .then(data => {
+          if (data) {
+            if (data.length > 0) {
+              const objetivosCompletados: ObjetivoCompletadoAGuardar[] = []
+
+              for (const objetivo of data as objetivoARecuperar[]) {
+                objetivosCompletados.push({
+                  descripcion: objetivo.descripcion,
+                  horasAcumuladas: objetivo.horasAcumuladas,
+                  idObjetivo: objetivo.id,
+                })
+              }
+              setObjetivosCompletados(objetivosCompletados)
+              setObjetivoFavExistente(true)
+            } else {
+              handleFav(nombreObjetivo, 'Nuevo')
+            }
+          }
+        })
+        .catch((error: unknown) => {
+          console.log('Error al obtener los objetivos', error)
+        })
+    } else {
+      if (objetivosFav.includes(nombreObjetivo)) {
+        handleFav(nombreObjetivo, 'Completar')
+      } else {
+        handleFav(nombreObjetivo, 'Nuevo')
+      }
+    }
+  }
+
+  //@ts-expect-error no te preocupes ts, eso funciona de maravilla
+  const handleRadioChange = event => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+    setSelectedObjetivoId(event.target.value)
+  }
+
+  const handleContinueWithProgress = (
+    uuid: string,
+    id: number,
+    objetivoFavorito: string,
+    horasAcumuladas: number
+  ) => {
+    console.log('horas acumuladas', horasAcumuladas)
+    unCompleteObjectiveByNameAndId(uuid, id)
+      .then(() => {
+        setObjetivos(
+          objetivos.filter(objetivo => objetivo !== objetivoFavorito)
+        )
+        if (objetivosFav.length === 0) {
+          recoverObjectives()
+        } else {
+          setObjetivosFav([...objetivosFav, objetivoFavorito])
+          setTiempoFavorito(prev => ({
+            ...prev,
+            [objetivoFavorito]: horasAcumuladas,
+          }))
+        }
+        setObjetivoFavExistente(false)
+        toast.success('Objetivo Recuperado', {
+          description:
+            'El objetivo favorito se encuentra en la pestaña de favoritos',
+          duration: 5000,
+        })
+      })
+      .catch((error: unknown) => {
+        console.log('Ocurrio un error', error)
+      })
+  }
+
   const handleSaveEdit = (
     e: KeyboardEvent<HTMLInputElement>,
     index: number
@@ -313,19 +418,21 @@ export default function Inicio() {
     }
   }
 
-  const handleFav = (objetivo: string) => {
+  const handleFav = (objetivo: string, action: objectiveActions) => {
     if (objetivosFav.includes(objetivo)) {
       setObjetivosFav(
         objetivosFav.filter(objetivoFav => objetivoFav !== objetivo)
       )
-      if (session) {
-        deletePersistedObjective(objetivo, session.user.id)
-          .then(() => {
-            console.log('Objetivo completado, felicitaciones')
-          })
-          .catch((error: unknown) => {
-            console.log('Ocurrio un error', error)
-          })
+      if (action === 'Completar') {
+        if (session) {
+          deletePersistedObjective(objetivo, session.user.id)
+            .then(() => {
+              console.log('Objetivo completado, felicitaciones')
+            })
+            .catch((error: unknown) => {
+              console.log('Ocurrio un error', error)
+            })
+        }
       }
     } else {
       if (session) {
@@ -340,6 +447,9 @@ export default function Inicio() {
           .catch((error: unknown) => {
             console.log('Ocurrio un error: ', error)
           })
+        if (objetivoFavExistente) {
+          setObjetivoFavExistente(false)
+        }
       }
       setObjetivosFav([...objetivosFav, objetivo])
     }
@@ -575,7 +685,11 @@ export default function Inicio() {
                                 <Button
                                   variant='icon'
                                   size='icon'
-                                  onClick={() => handleFav(String(objetivo))}
+                                  onClick={() =>
+                                    objetivosFav.includes(String(objetivo))
+                                      ? handleFav(objetivo, 'Completar')
+                                      : preHandleFav(objetivo)
+                                  }
                                 >
                                   {objetivosFav.includes(String(objetivo)) ? (
                                     <StarOff
@@ -595,6 +709,68 @@ export default function Inicio() {
                               </TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
+                          <AlertDialog
+                            onOpenChange={setObjetivoFavExistente}
+                            open={objetivoFavExistente}
+                          >
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Progreso anterior encontrado
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Este objetivo favorito tiene progreso ya
+                                  registrado ¿Quiere empezarlo desde 0 o
+                                  continuar con el tiempo acumulado?
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <form>
+                                {objetivosCompletados.map(objetivo => (
+                                  <div key={objetivo.idObjetivo}>
+                                    <label>
+                                      <input
+                                        type='radio'
+                                        name='objetivo'
+                                        value={objetivo.idObjetivo}
+                                        onChange={handleRadioChange}
+                                      />
+                                      Horas acumuladas:{' '}
+                                      {formatTime(objetivo.horasAcumuladas)}
+                                    </label>
+                                  </div>
+                                ))}
+                              </form>
+                              <AlertDialogFooter>
+                                <Button
+                                  variant={'destructive'}
+                                  onClick={() =>
+                                    handleFav(nombreObjFavExistente, 'Nuevo')
+                                  }
+                                >
+                                  Resetear
+                                </Button>
+                                <Button
+                                  variant={'default'}
+                                  onClick={() =>
+                                    handleContinueWithProgress(
+                                      //@ts-expect-error no te preocupes ts, eso funciona de maravilla
+                                      session.user.id,
+                                      selectedObjetivoId,
+                                      nombreObjFavExistente,
+                                      //@ts-expect-error no te preocupes ts, eso funciona de maravilla
+                                      objetivosCompletados.find(
+                                        objetivo =>
+                                          objetivo.idObjetivo.toString() ===
+                                          selectedObjetivoId.toString()
+                                      ).horasAcumuladas
+                                    )
+                                  }
+                                >
+                                  Continuar
+                                </Button>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       </div>
                     )}
@@ -646,8 +822,10 @@ export default function Inicio() {
                     {playlists[selectedPlaylist - 1].title}
                   </span>
                 </h2>
-                <CapyInfo desc='Haz click en la CapyPlaylist que más te guste para estudiar con música de fondo.
-                Recuerde tener tu cuenta de Spotify iniciada en el navegador' />
+                <CapyInfo
+                  desc='Haz click en la CapyPlaylist que más te guste para estudiar con música de fondo.
+                Recuerde tener tu cuenta de Spotify iniciada en el navegador'
+                />
               </div>
             ) : (
               <div className='flex justify-between'>
@@ -657,8 +835,10 @@ export default function Inicio() {
                     Sin música
                   </span>
                 </h2>
-                <CapyInfo desc='Haz click en la CapyPlaylist que más te guste para estudiar con música de fondo.
-                Recuerde tener tu cuenta de Spotify iniciada en el navegador' />
+                <CapyInfo
+                  desc='Haz click en la CapyPlaylist que más te guste para estudiar con música de fondo.
+                Recuerde tener tu cuenta de Spotify iniciada en el navegador'
+                />
               </div>
             )}
 
