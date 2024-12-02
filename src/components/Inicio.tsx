@@ -2,25 +2,23 @@ import { KeyboardEvent, useEffect, useState } from 'react'
 
 import { useLocation } from 'wouter'
 
-import Eventos from './ComponentesEspecifico/Eventos'
 import { toast } from 'sonner'
+import Eventos from './ComponentesEspecifico/Eventos'
 
 import { useSession } from './contexts/SessionContext'
 
 import {
+  Check,
+  ChevronsUpDown,
   Edit3,
   Hourglass,
   Star,
+  StarOff,
   Timer,
   Trash,
-  StarOff,
-  Check,
-  ChevronsUpDown,
-  Info,
 } from 'lucide-react'
 
 import { Input } from '@/components/ui/input'
-import { useObjetivos } from './contexts/ObjetivosContext'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import {
   Tooltip,
@@ -28,6 +26,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { useObjetivos } from './contexts/ObjetivosContext'
 
 import { Button } from './ui/button'
 
@@ -60,14 +59,11 @@ import { Card, CardContent } from '@/components/ui/card'
 
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 
 import {
@@ -83,22 +79,22 @@ import { useMusic } from './contexts/MusicContext'
 
 import { useSesion } from '@/components/contexts/SesionContext'
 
+import { Helmet } from 'react-helmet'
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
 import { supabase } from './supabase/client'
-import { Helmet } from 'react-helmet'
 
-import Reproductor from './ComponentesEspecifico/Reproductor'
-import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
-import { useEvents } from './contexts/EventsContext'
-import { usePreferences } from './contexts/PreferencesContext'
-import posthog from 'posthog-js'
 import {
-  gatherEventsOfUser,
   getObjectivesCompletedByName,
+  insigniaQuince,
   objetivoARecuperar,
   ObjetivoCompletadoAGuardar,
   unCompleteObjectiveByNameAndId,
 } from '@/constants/supportFunctions'
+import posthog from 'posthog-js'
+import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
+import Reproductor from './ComponentesEspecifico/Reproductor'
+import { useEvents } from './contexts/EventsContext'
+import { usePreferences } from './contexts/PreferencesContext'
 //BUG: Algunos objetivos Favoritos no se ponen como favoritos.
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
@@ -218,8 +214,6 @@ export default function Inicio() {
     setObjetivos,
     objetivosFav,
     setObjetivosFav,
-    setTiempo,
-    setTiempoSesion,
     setTiempoFavorito,
   } = useObjetivos()
 
@@ -241,14 +235,7 @@ export default function Inicio() {
 
   const { setSelectedMusic } = useMusic()
 
-  const {
-    setTecnicaEstudio,
-    setTiempoTotal,
-    setAcumuladorTiempoPausa,
-    setCantidadPausas,
-    banderaUnicaVez,
-    setBanderaUnicaVez,
-  } = useSesion()
+  const { setTecnicaEstudio, banderaUnicaVez, setBanderaUnicaVez } = useSesion()
 
   const [motivaciones, setMotivaciones] = useState<Motivacion[]>([])
 
@@ -492,6 +479,14 @@ export default function Inicio() {
       setBanderaUnicaVez(false)
     }
   }, [])
+
+  useEffect(() => {
+    if (!session) return
+
+    insigniaQuince(session)
+      .then(data => console.log('insignia 15 ya estaba desbloqueada: ', data))
+      .catch((error: unknown) => console.log(error))
+  }, [session])
 
   return (
     <>
