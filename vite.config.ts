@@ -90,7 +90,7 @@ export default defineConfig({
             '@vercel/speed-insights',
           ],
           sonner: ['sonner'],
-          core:["react", "react-dom", "wouter"],
+          core: ['react', 'react-dom', 'wouter'],
           form: ['./src/components/ui/form.tsx', 'react-hook-form', 'zod'],
           charts: ['recharts', './src/components/ui/chart.tsx'],
           icons: ['lucide-react'],

@@ -1,10 +1,9 @@
 import type { Dispatch, ReactNode, SetStateAction } from 'react'
 import { createContext, useContext, useEffect, useState } from 'react'
 
+import { Event } from '@/components/ComponentesEspecifico/Eventos'
 import { supabase } from '@/components/supabase/client'
 import { useSession } from './SessionContext'
-import { useEvents } from '@/components/contexts/EventsContext'
-import { Event } from '@/components/ComponentesEspecifico/Eventos'
 
 export type Insignia = {
   id: number
@@ -60,6 +59,7 @@ const requisitosInsignias = {
   14: 100, // Completa 100 objetivos
   15: 30, // Pasa 30 días sin estudiar
 }
+
 function getProgresoInsignia(
   idInsignia: number,
   datosNuevosInsignias: {
