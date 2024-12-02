@@ -13,21 +13,6 @@ type EventToRecover = {
   fechaLimite: string
   horasAcumuladas: number | null
 }
-
-export type objetivoARecuperar = {
-  id: number
-  descripcion: string
-  idUsuario: string
-  horasAcumuladas: number
-  idEstado: number
-}
-
-export type ObjetivoCompletadoAGuardar = {
-  descripcion: string
-  horasAcumuladas: number
-  idObjetivo: number
-}
-
 export type SesionAGuardar = {
   uuid: string
   horaInicioSesion: string
@@ -246,34 +231,6 @@ async function getObjectiveByName(objectiveName: string, uuid: string) {
   else console.log(error)
 }
 
-async function getObjectivesCompletedByName(
-  objectiveName: string,
-  uuid: string
-) {
-  //Dado un nombre de un objetivo favorito y un usuario identificado con la UUID, devuelve todos los objetivos completados que tengan ese nombre
-
-  const { data, error } = await supabase
-    .from('ObjetivosFavoritos')
-    .select()
-    .eq('descripcion', objectiveName)
-    .eq('idUsuario', uuid)
-    .eq('idEstado', 2)
-
-  if (data) return data
-  else console.log(error)
-}
-
-async function unCompleteObjectiveByNameAndId(uuid: string, id: number) {
-  //Dado un nombre de un objetivo favorito y un usuario identificado con la UUID, cambia el estado del objetivo que tiene como id, el id pasado por parámetro
-  const { data, error } = await supabase
-    .from('ObjetivosFavoritos')
-    .update({ idEstado: 1 })
-    .eq('idUsuario', uuid)
-    .eq('id', id)
-
-  if (error) console.log(error)
-}
-
 async function acumulateHoursInFavouriteObj(
   //Dado un objetivo, un usuario y un tiempo a guardar, guarda el nuevo tiempo en el parámetro de horasAcumuladas del mismo y si se le pasa una id de evento seleccionado
   // crea una referencia en la tabla de ObjetivosFavoritosXEventos para que quede referenciado que en ESE evento se realizó ESE objetivo
@@ -287,7 +244,6 @@ async function acumulateHoursInFavouriteObj(
     .update({ horasAcumuladas: time })
     .eq('descripcion', objName)
     .eq('idUsuario', uuid)
-    .eq('idEstado', 1)
 
   if (error) console.log(error)
   console.log(eventId)
@@ -601,7 +557,5 @@ export {
   obtenerClaveMayorValor,
   recoverObjectiveFromId,
   saveSession,
-  getObjectivesCompletedByName,
-  unCompleteObjectiveByNameAndId,
   insigniaQuince,
 }
