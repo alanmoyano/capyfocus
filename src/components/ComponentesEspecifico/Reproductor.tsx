@@ -13,7 +13,6 @@ export default function Reproductor({
       className={cn('aspect-auto', className)}
       loading='lazy'
       decoding='async'
-      fetchPriority='high'
     />
   )
 }
