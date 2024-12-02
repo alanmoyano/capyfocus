@@ -129,12 +129,7 @@ export default function CapyEstadisticas() {
         gatherEventsOfUser(session.user.id)
           .then(data =>
             data.forEach(evento => {
-              // @ts-expect-error no te preocupes type, anda
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-              const fechaParsed = evento.fechaLimite.replaceAll(
-                '-',
-                '/'
-              ) as string
+              const fechaParsed = evento.fechaLimite.replaceAll('-', '/')
 
               const id = evento.idEvento
 
