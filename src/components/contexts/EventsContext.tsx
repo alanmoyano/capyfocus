@@ -42,9 +42,7 @@ export const EventsProvider = ({ children }: { children: ReactNode }) => {
       .then(data => {
         console.log('Datos: ', data)
         data.forEach(evento => {
-          // @ts-expect-error no te preocupes type, anda
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-          const fechaParsed = evento.fechaLimite.replaceAll('-', '/') as string
+          const fechaParsed = evento.fechaLimite.replaceAll('-', '/')
 
           const id = evento.idEvento
 

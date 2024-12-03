@@ -618,7 +618,7 @@ export default function EstadisticasPeriodo({ period }: { period: Period }) {
               {/* Aca va a ir lo que se consulte en la BD  */}
               {[
                 {
-                  label: 'Tiempo total de estudio',
+                  label: 'Tiempo total de estudio (HH:MM:SS)',
                   value: formatTime(tiempoEstudio),
                 },
                 { label: 'Total de objetivos', value: objetivosTotales },

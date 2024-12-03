@@ -519,7 +519,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
               {/* Aca va a ir lo que se consulte en la BD  */}
               {[
                 {
-                  label: 'Tiempo total de estudio',
+                  label: 'Tiempo total de estudio (HH:MM:SS)',
                   value: formatTime(tiempoEstudio),
                 },
                 { label: 'Total de objetivos', value: objetivosTotales },
@@ -702,7 +702,7 @@ export default function EstadisticasEvento({ name }: { name: string }) {
                 <TableHead>Objetivo</TableHead>
                 <TableHead>Estado</TableHead>
                 <TableHead>Fecha Creado</TableHead>
-                <TableHead className='text-center'>Tiempo Acumulado</TableHead>
+                <TableHead className='text-center'>Tiempo Acumulado (HH:MM:SS)</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

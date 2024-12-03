@@ -1,4 +1,7 @@
-import { Insignia } from '@/components/contexts/InsigniasContext'
+import {
+  Insignia,
+  InsigniaXUsuario,
+} from '@/components/contexts/InsigniasContext'
 import { supabase } from '@/components/supabase/client'
 import type { Session } from '@supabase/supabase-js'
 import type { Event } from '@/components/ComponentesEspecifico/Eventos'
@@ -256,6 +259,167 @@ async function acumulateHoursInFavouriteObj(
     if (error) console.log(error)
   }
 }
+const requisitosInsignias = {
+  1: 25, // Estudiar 25 veces con pasivoAgresivo
+  2: 25, // Estudiar 25 veces con positiva
+  3: 1, // Alcanzar un evento
+  4: 2, // Estudiar por 2 horas seguidas
+  5: 10, // Acumular 10 horas para un evento
+  6: 5, // Finalizar 5 sesiones de estudio
+  7: 15, // Finalizar 15 sesiones de estudio
+  8: 35, // Finalizar 35 sesiones de estudio
+  9: 50, // Finalizar 50 sesiones de estudio
+  10: 100, // Finalizar 100 sesiones de estudio
+  11: 10, // Cumplir todos los objetivos de una sesión
+  12: 35, // Completa 35 objetivos
+  13: 75, // Completa 75 objetivos
+  14: 100, // Completa 100 objetivos
+  15: 30, // Pasa 30 días sin estudiar
+}
+
+export async function getProgresoInsignia(
+  idInsignia: number,
+  datosNuevosInsignias: {
+    sesionesNegativas: number
+    sesionesPositivas: number
+    tiempoEstudiado: number
+    sesionesDeEstudio: number
+    objetivosCumplidos: number
+    objetivosSesion: number
+  },
+  events: Event[],
+  session: Session
+) {
+  switch (idInsignia) {
+    case 1: {
+      const porcentaje = Math.round(
+        (datosNuevosInsignias.sesionesNegativas / requisitosInsignias[1]) * 100
+      )
+
+      console.log('porcentaje', porcentaje)
+
+      return porcentaje > 100 ? 100 : porcentaje
+    }
+
+    case 2: {
+      const porcentaje = Math.round(
+        (datosNuevosInsignias.sesionesPositivas / requisitosInsignias[2]) * 100
+      )
+
+      return porcentaje > 100 ? 100 : porcentaje
+    }
+
+    case 3:
+      return events.find(event => event.date.getTime() > new Date().getTime())
+        ? 100
+        : 0
+
+    case 4:
+      return datosNuevosInsignias.tiempoEstudiado >= 2 * 60 * 60 ? 100 : 0
+
+    case 5:
+      return events.find(
+        event => event.hoursAcumulated && event.hoursAcumulated >= 10 * 60 * 60
+      )
+        ? 100
+        : 0
+
+    case 6:
+    case 7:
+    case 8:
+    case 9:
+    case 10: {
+      const porcentaje = Math.round(
+        (datosNuevosInsignias.sesionesDeEstudio /
+          requisitosInsignias[idInsignia]) *
+          100
+      )
+      return porcentaje > 100 ? 100 : porcentaje
+    }
+
+    case 11:
+      return datosNuevosInsignias.objetivosCumplidos >
+        datosNuevosInsignias.objetivosSesion
+        ? 100
+        : 0
+
+    case 12:
+    case 13:
+    case 14: {
+      const calculation = Math.round(
+        (datosNuevosInsignias.objetivosCumplidos /
+          requisitosInsignias[idInsignia]) *
+          100
+      )
+      return calculation > 100 ? 100 : calculation
+    }
+
+    case 15: {
+      const { data, error } = await supabase
+        .from('SesionesDeEstudio')
+        .select()
+        .eq('idUsuario', session.user.id)
+
+      if (error) return 0
+
+      const sesiones = data.map(
+        (sesion: { fecha: string; horaInicioSesion: string }) => {
+          const [año, mes, día] = sesion.fecha.split('-').map(Number)
+          const [horas, minutos, segundos] = sesion.horaInicioSesion
+            .split('+')[0]
+            .split(':')
+            .map(Number)
+
+          return new Date(año, mes - 1, día, horas, minutos, segundos)
+        }
+      )
+
+      const ultimaSesion = sesiones.toSorted(
+        (a, b) => b.getTime() - a.getTime()
+      )[0]
+
+      return new Date().getTime() - ultimaSesion.getTime() >
+        1000 * 60 * 60 * 24 * 30
+        ? 100
+        : 0
+    }
+
+    default:
+      return 1
+  }
+}
+
+async function insigniaQuince(session: Session) {
+  const { data } = await supabase
+    .from('CapyInsigniasXUsuarios')
+    .select()
+    .eq('idUsuario', session.user.id)
+    .eq('idInsignia', 15)
+
+  if (data && (data[0] as InsigniaXUsuario).progreso === 100) return true
+
+  await supabase
+    .from('CapyInsigniasXUsuarios')
+    .update({
+      progreso: await getProgresoInsignia(
+        15,
+        {
+          objetivosSesion: 0,
+          sesionesDeEstudio: 0,
+          sesionesNegativas: 0,
+          sesionesPositivas: 0,
+          objetivosCumplidos: 0,
+          tiempoEstudiado: 0,
+        },
+        [],
+        session
+      ),
+    })
+    .eq('idUsuario', session.user.id)
+    .eq('idInsignia', 15)
+
+  return false
+}
 
 async function saveSession(
   sessionToSave: SesionAGuardar,
@@ -268,24 +432,11 @@ async function saveSession(
     session,
     motivationType,
     insignias,
-    getProgresoInsignia,
     events,
   }: {
     session: Session | null
     motivationType: string
     insignias: Insignia[]
-    getProgresoInsignia: (
-      idInsignia: number,
-      datosNuevosInsignias: {
-        sesionesNegativas: number
-        sesionesPositivas: number
-        tiempoEstudiado: number
-        sesionesDeEstudio: number
-        objetivosCumplidos: number
-        objetivosSesion: number
-      },
-      events: Event[]
-    ) => number
     events: Event[]
   }
 ) {
@@ -360,20 +511,25 @@ async function saveSession(
       else console.log(data)
     })
 
-  insignias.forEach(insignia => {
+  const datosNuevosInsignias = {
+    objetivosSesion: sessionToSave.cantidadObjetivos,
+    tiempoEstudiado: (hoy.getTime() - InicioSesion.getTime()) / 1000,
+    ...nuevosCapyDatosParaEstadisticas,
+  }
+
+  for (const insignia of insignias) {
+    if (insignia.id === 15) continue
+
     supabase
       .from('CapyInsigniasXUsuarios')
       .upsert({
         idInsignia: insignia.id,
         idUsuario: session.user.id,
-        progreso: getProgresoInsignia(
+        progreso: await getProgresoInsignia(
           insignia.id,
-          {
-            objetivosSesion: sessionToSave.cantidadObjetivos,
-            tiempoEstudiado: (hoy.getTime() - InicioSesion.getTime()) / 1000,
-            ...nuevosCapyDatosParaEstadisticas,
-          },
-          events
+          datosNuevosInsignias,
+          events,
+          session
         ),
       })
       .eq('idInsignia', insignia.id)
@@ -384,7 +540,7 @@ async function saveSession(
         if (error) console.error(error)
         console.log(data)
       })
-  })
+  }
 }
 
 export {
@@ -403,4 +559,5 @@ export {
   obtenerClaveMayorValor,
   recoverObjectiveFromId,
   saveSession,
+  insigniaQuince,
 }

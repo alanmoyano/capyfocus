@@ -98,7 +98,7 @@ export default function Timer() {
 
   const { events, selectedEvent } = useEvents()
 
-  const { insignias, getProgresoInsignia } = useInsignias()
+  const { insignias, reloadInsignias } = useInsignias()
 
   const finalizarSesion = () => {
     if (session) {
@@ -130,7 +130,6 @@ export default function Timer() {
           session,
           motivationType,
           insignias,
-          getProgresoInsignia,
           events,
         }
       )
@@ -172,6 +171,9 @@ export default function Timer() {
         setTiempoSesion(prev => ({ ...prev, [objetivo]: 0 }))
       }
     })
+
+    reloadInsignias()
+
     setLocation('/capyEstadisticas?period=sesion')
   }
 

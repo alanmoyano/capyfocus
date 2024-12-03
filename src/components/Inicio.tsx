@@ -2,25 +2,23 @@ import { KeyboardEvent, useEffect, useState } from 'react'
 
 import { useLocation } from 'wouter'
 
-import Eventos from './ComponentesEspecifico/Eventos'
 import { toast } from 'sonner'
+import Eventos from './ComponentesEspecifico/Eventos'
 
 import { useSession } from './contexts/SessionContext'
 
 import {
+  Check,
+  ChevronsUpDown,
   Edit3,
   Hourglass,
   Star,
+  StarOff,
   Timer,
   Trash,
-  StarOff,
-  Check,
-  ChevronsUpDown,
-  Info,
 } from 'lucide-react'
 
 import { Input } from '@/components/ui/input'
-import { useObjetivos } from './contexts/ObjetivosContext'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import {
   Tooltip,
@@ -28,6 +26,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { useObjetivos } from './contexts/ObjetivosContext'
 
 import { Button } from './ui/button'
 
@@ -57,6 +56,7 @@ import {
 import { cn } from '@/lib/utils'
 
 import { Card, CardContent } from '@/components/ui/card'
+
 import {
   Carousel,
   CarouselContent,
@@ -70,16 +70,16 @@ import { useMusic } from './contexts/MusicContext'
 
 import { useSesion } from '@/components/contexts/SesionContext'
 
+import { Helmet } from 'react-helmet'
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
 import { supabase } from './supabase/client'
-import { Helmet } from 'react-helmet'
 
-import Reproductor from './ComponentesEspecifico/Reproductor'
+import { insigniaQuince } from '@/constants/supportFunctions'
+import posthog from 'posthog-js'
 import CapyInfo from './ComponentesEspecifico/CapyToast/CapyInfo'
+import Reproductor from './ComponentesEspecifico/Reproductor'
 import { useEvents } from './contexts/EventsContext'
 import { usePreferences } from './contexts/PreferencesContext'
-import posthog from 'posthog-js'
-import { gatherEventsOfUser } from '@/constants/supportFunctions'
 //BUG: Algunos objetivos Favoritos no se ponen como favoritos.
 type CapyMetodos = 'Capydoro' | 'Capymetro'
 
@@ -197,8 +197,6 @@ export default function Inicio() {
     setObjetivos,
     objetivosFav,
     setObjetivosFav,
-    setTiempo,
-    setTiempoSesion,
     setTiempoFavorito,
   } = useObjetivos()
 
@@ -210,14 +208,7 @@ export default function Inicio() {
 
   const { setSelectedMusic } = useMusic()
 
-  const {
-    setTecnicaEstudio,
-    setTiempoTotal,
-    setAcumuladorTiempoPausa,
-    setCantidadPausas,
-    banderaUnicaVez,
-    setBanderaUnicaVez,
-  } = useSesion()
+  const { setTecnicaEstudio, banderaUnicaVez, setBanderaUnicaVez } = useSesion()
 
   const [motivaciones, setMotivaciones] = useState<Motivacion[]>([])
 
@@ -382,6 +373,14 @@ export default function Inicio() {
       setBanderaUnicaVez(false)
     }
   }, [])
+
+  useEffect(() => {
+    if (!session) return
+
+    insigniaQuince(session)
+      .then(data => console.log('insignia 15 ya estaba desbloqueada: ', data))
+      .catch((error: unknown) => console.log(error))
+  }, [session])
 
   return (
     <>
@@ -646,8 +645,10 @@ export default function Inicio() {
                     {playlists[selectedPlaylist - 1].title}
                   </span>
                 </h2>
-                <CapyInfo desc='Haz click en la CapyPlaylist que más te guste para estudiar con música de fondo.
-                Recuerde tener su cuenta de Spotify iniciada en el navegador' />
+                <CapyInfo
+                  desc='Haz click en la CapyPlaylist que más te guste para estudiar con música de fondo.
+                Recuerde tener su cuenta de Spotify iniciada en el navegador'
+                />
               </div>
             ) : (
               <div className='flex justify-between'>
@@ -657,8 +658,10 @@ export default function Inicio() {
                     Sin música
                   </span>
                 </h2>
-                <CapyInfo desc='Haz click en la CapyPlaylist que más te guste para estudiar con música de fondo.
-                Recuerde tener su cuenta de Spotify iniciada en el navegador' />
+                <CapyInfo
+                  desc='Haz click en la CapyPlaylist que más te guste para estudiar con música de fondo.
+                Recuerde tener su cuenta de Spotify iniciada en el navegador'
+                />
               </div>
             )}
 

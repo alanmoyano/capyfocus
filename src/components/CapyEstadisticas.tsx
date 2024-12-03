@@ -129,12 +129,7 @@ export default function CapyEstadisticas() {
         gatherEventsOfUser(session.user.id)
           .then(data =>
             data.forEach(evento => {
-              // @ts-expect-error no te preocupes type, anda
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-              const fechaParsed = evento.fechaLimite.replaceAll(
-                '-',
-                '/'
-              ) as string
+              const fechaParsed = evento.fechaLimite.replaceAll('-', '/')
 
               const id = evento.idEvento
 
@@ -374,7 +369,7 @@ export default function CapyEstadisticas() {
                 <div className='grid grid-cols-2 gap-6'>
                   {[
                     {
-                      label: 'Tiempo total de estudio',
+                      label: 'Tiempo total de estudio (HH:MM:SS)',
                       value: formatTime(tiempoTotal),
                     },
                     {
@@ -512,12 +507,12 @@ export default function CapyEstadisticas() {
                     <TableRow>
                       <TableHead className='w-[200px]'>Objetivo</TableHead>
                       <TableHead className='text-center'>Estado</TableHead>
-                      <TableHead className='text-center'>Tiempo</TableHead>
+                      <TableHead className='text-center'>Tiempo (HH:MM:SS)</TableHead>
                       <TableHead className='text-center'>
-                        Tiempo Acumulado Favorito
+                        Tiempo Acumulado Favorito (HH:MM:SS)
                       </TableHead>
                       <TableHead className='text-center'>
-                        Tiempo Cumplido en sesion
+                        Tiempo Cumplido en sesion (HH:MM:SS)
                       </TableHead>
                     </TableRow>
                   </TableHeader>
