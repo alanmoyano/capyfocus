@@ -329,6 +329,11 @@ export default function CapyEstadisticas() {
           </SelectContent>
         </Select>
       </div>
+      <div>
+      <p className='mt-4 flex items-center text-muted font-light'>
+          El formato del tiempo se mostrará como (HH:MM:SS) o (MM:SS) según corresponda.
+        </p>
+      </div>
 
       {/* Pagina en blanco */}
       {selectedPeriod === '' && !selectedEvent && <Reproductor src='/auto' />}

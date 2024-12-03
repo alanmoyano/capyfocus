@@ -198,7 +198,7 @@ export default function Usuario() {
   return (
     <>
       <h1 className='mt-4 text-4xl font-bold'>CapyDatos!</h1>
-      <div className='mt-10 flex flex-col gap-20 p-10 md:flex-row'>
+      <div className='flex flex-col gap-20 p-10 md:flex-row'>
         <div className='grid grid-cols-1 gap-10 md:grid-cols-2'>
           <div className='flex h-full w-full items-center justify-center'>
             <div className='m-auto'>
