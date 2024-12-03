@@ -341,16 +341,18 @@ export async function getProgresoInsignia(
       return datosNuevosInsignias.objetivosCumplidos >
         datosNuevosInsignias.objetivosSesion
         ? 100
-        : 7
+        : 0
 
     case 12:
     case 13:
-    case 14:
-      return Math.round(
+    case 14: {
+      const calculation = Math.round(
         (datosNuevosInsignias.objetivosCumplidos /
           requisitosInsignias[idInsignia]) *
           100
       )
+      return calculation > 100 ? 100 : calculation
+    }
 
     case 15: {
       const { data, error } = await supabase

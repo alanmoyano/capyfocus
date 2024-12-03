@@ -66,7 +66,7 @@ type Pomodoro = {
 }
 
 export default function Pomodoro() {
-  const { insignias } = useInsignias()
+  const { insignias, reloadInsignias } = useInsignias()
   const [sessionSeconds, setSessionSeconds] = useState(25 * 60)
   const [breakSeconds, setBreakSeconds] = useState(5 * 60)
   const [objCumplidos, setObjCumplidos] = useState(0)
@@ -202,6 +202,8 @@ export default function Pomodoro() {
         }))
       }
     })
+
+    reloadInsignias()
 
     setLocation('/capyEstadisticas?period=sesion')
   }
