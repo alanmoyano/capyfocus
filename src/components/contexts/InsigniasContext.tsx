@@ -1,5 +1,11 @@
 import type { Dispatch, ReactNode, SetStateAction } from 'react'
-import { createContext, useContext, useEffect, useState } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 
 import { supabase } from '@/components/supabase/client'
 import { useSession } from './SessionContext'
@@ -22,6 +28,7 @@ type InsigniasContextType = {
   setInsignias: Dispatch<SetStateAction<Insignia[]>>
   insigniasXUsuario: InsigniaXUsuario[]
   setInsigniasXUsuario: Dispatch<SetStateAction<InsigniaXUsuario[]>>
+  reloadInsignias: () => void
 }
 
 const InsigniasContext = createContext<InsigniasContextType | undefined>(
@@ -41,7 +48,6 @@ export function InsigniasProvider({ children }: { children: ReactNode }) {
       .from('CapyInsignias')
       .select()
       .then(({ data }) => {
-        console.log(data)
         setInsignias(data as Insignia[])
       })
   }, [])
@@ -53,7 +59,18 @@ export function InsigniasProvider({ children }: { children: ReactNode }) {
       .select()
       .eq('idUsuario', session.user.id)
       .then(({ data }) => {
-        console.log(data)
+        if (!data) return
+        setInsigniasXUsuario(data as InsigniaXUsuario[])
+      })
+  }, [session])
+
+  const reloadInsignias = useCallback(() => {
+    if (!session) return
+    supabase
+      .from('CapyInsigniasXUsuarios')
+      .select()
+      .eq('idUsuario', session.user.id)
+      .then(({ data }) => {
         if (!data) return
         setInsigniasXUsuario(data as InsigniaXUsuario[])
       })
@@ -66,6 +83,7 @@ export function InsigniasProvider({ children }: { children: ReactNode }) {
         setInsignias,
         insigniasXUsuario,
         setInsigniasXUsuario,
+        reloadInsignias,
       }}
     >
       {children}

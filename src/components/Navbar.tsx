@@ -30,6 +30,7 @@ import { Button } from '@/components/ui/button'
 import { useProfilePic } from './contexts/ProfilePicContext'
 import { profilePictures } from '@/constants/profilePictures'
 import { supabase } from './supabase/client'
+import { useInsignias } from '@/components/contexts/InsigniasContext'
 
 type NavbarLinkProps = {
   to: string
@@ -37,10 +38,14 @@ type NavbarLinkProps = {
 }
 
 function NavbarLink({ to, children }: NavbarLinkProps) {
-  // const isActive = useRoute(to)[0]
+  const { reloadInsignias } = useInsignias()
 
   return (
-    <Link className={navigationMenuTriggerStyle()} href={to}>
+    <Link
+      className={navigationMenuTriggerStyle()}
+      href={to}
+      onClick={() => reloadInsignias()}
+    >
       {children}
     </Link>
   )
