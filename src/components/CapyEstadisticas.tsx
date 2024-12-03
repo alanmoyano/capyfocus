@@ -329,11 +329,6 @@ export default function CapyEstadisticas() {
           </SelectContent>
         </Select>
       </div>
-      <div>
-      <p className='mt-4 flex items-center text-muted font-light'>
-          El formato del tiempo se mostrará como (HH:MM:SS) o (MM:SS) según corresponda.
-        </p>
-      </div>
 
       {/* Pagina en blanco */}
       {selectedPeriod === '' && !selectedEvent && <Reproductor src='/auto' />}
@@ -374,7 +369,7 @@ export default function CapyEstadisticas() {
                 <div className='grid grid-cols-2 gap-6'>
                   {[
                     {
-                      label: 'Tiempo total de estudio',
+                      label: 'Tiempo total de estudio (HH:MM:SS)',
                       value: formatTime(tiempoTotal),
                     },
                     {
@@ -512,12 +507,12 @@ export default function CapyEstadisticas() {
                     <TableRow>
                       <TableHead className='w-[200px]'>Objetivo</TableHead>
                       <TableHead className='text-center'>Estado</TableHead>
-                      <TableHead className='text-center'>Tiempo</TableHead>
+                      <TableHead className='text-center'>Tiempo (HH:MM:SS)</TableHead>
                       <TableHead className='text-center'>
-                        Tiempo Acumulado Favorito
+                        Tiempo Acumulado Favorito (HH:MM:SS)
                       </TableHead>
                       <TableHead className='text-center'>
-                        Tiempo Cumplido en sesion
+                        Tiempo Cumplido en sesion (HH:MM:SS)
                       </TableHead>
                     </TableRow>
                   </TableHeader>
