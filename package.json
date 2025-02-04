@@ -46,7 +46,7 @@
     "html2canvas": "^1.4.1",
     "lucide-react": "^0.474.0",
     "next-themes": "^0.4.4",
-    "posthog-js": "^1.215.1",
+    "posthog-js": "^1.215.3",
     "react": "^18.3.1",
     "react-confetti-boom": "^1.1.2",
     "react-countdown-circle-timer": "^3.2.1",
@@ -60,12 +60,12 @@
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "use-sound": "^4.0.3",
-    "wouter": "^3.3.5",
+    "wouter": "^3.5.1",
     "zod": "^3.24.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
-    "@types/node": "^20.17.16",
+    "@types/node": "^20.17.17",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@types/react-helmet": "^6.1.11",
@@ -81,7 +81,7 @@
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3",
-    "typescript-eslint": "^8.22.0",
+    "typescript-eslint": "^8.23.0",
     "vite": "^6.0.11"
   }
 }
