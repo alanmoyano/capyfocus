@@ -1,0 +1,8 @@
+{
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "typescript.preferences.autoImportFileExcludePatterns": [
+    "@radix-ui/*"
+  ]
+}
