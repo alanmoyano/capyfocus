@@ -537,17 +537,15 @@ export default function Inicio() {
             </ToggleGroupItem>
           </ToggleGroup>
           {/* Agregar evento  */}
-          {session && (
-            <div className='flex h-auto w-1/2 items-center space-x-4'>
-              <Eventos />
-              <div className='mt-6'>
-                <CapyInfo
-                  label='Más información sobre eventos'
-                  desc='Organiza tus sesiones de estudio con eventos y objetivos. Selecciona el evento, haz clic en "Aceptar", añade los objetivos de la sesión y ¡Controla tu progreso en las CapyEstadísticas!'
-                />
-              </div>
+          <div className='flex h-auto w-1/2 items-center space-x-4'>
+            <Eventos />
+            <div className='mt-6'>
+              <CapyInfo
+                label='Más información sobre eventos'
+                desc='Organiza tus sesiones de estudio con eventos y objetivos. Selecciona el evento, haz clic en "Aceptar", añade los objetivos de la sesión y ¡Controla tu progreso en las CapyEstadísticas!'
+              />
             </div>
-          )}
+          </div>
 
           {/* Objetivos */}
           <div className='mt-4 rounded-xl bg-secondary/70 p-4 dark:bg-secondary/90'>
