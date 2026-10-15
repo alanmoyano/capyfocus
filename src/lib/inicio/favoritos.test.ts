@@ -119,7 +119,10 @@ describe('FavoritosSync', () => {
     const alta = sync.agregar('Leer')
     lenta.resolve([remoto(7, 'Leer', 30)])
 
-    assert.equal(await alta, 'existente')
+    assert.deepEqual(await alta, {
+      estado: 'existente',
+      favorito: remoto(7, 'Leer', 30),
+    })
     assert.deepEqual(llamadas.insertar, [])
     assert.equal(sync.idDe('Leer'), 7)
   })
@@ -134,7 +137,7 @@ describe('FavoritosSync', () => {
     const segunda = sync.agregar('Nuevo')
     assert.equal(primera, segunda)
     insert.resolve(remoto(9, 'Nuevo'))
-    assert.equal(await primera, 'insertado')
+    assert.equal((await primera).estado, 'insertado')
     assert.deepEqual(llamadas.insertar, ['Nuevo'])
     assert.equal(sync.tieneAltaPendiente('Nuevo'), false)
   })
@@ -179,7 +182,7 @@ describe('FavoritosSync', () => {
     await assert.rejects(sync.agregar('Y'), /red/)
     assert.equal(sync.tieneAltaPendiente('Y'), false)
     falla = false
-    assert.equal(await sync.agregar('Y'), 'insertado')
+    assert.equal((await sync.agregar('Y')).estado, 'insertado')
     assert.equal(llamadas.insertar.length, 2)
   })
 
@@ -217,14 +220,59 @@ describe('FavoritosSync', () => {
     sync.setIdentidad('b')
     assert.deepEqual(llamadas.insertar, ['A'])
     insert.reject(new Error('red'))
-    assert.equal(await alta, 'obsoleto')
+    assert.deepEqual(await alta, { estado: 'obsoleto' })
+  })
+
+  it('un alta que reutiliza la fila remota devuelve sus horas', async () => {
+    const { api } = apiFalsa({
+      listar: () => Promise.reject(new Error('red')),
+      insertar: descripcion => Promise.resolve(remoto(5, descripcion, 900)),
+    })
+    const sync = new FavoritosSync(api)
+    sync.setIdentidad('a')
+    await assert.rejects(sync.cargar(), /red/)
+    const alta = await sync.agregar('Leer')
+    assert.ok(alta.estado !== 'obsoleto')
+    assert.equal(alta.favorito.horasAcumuladas, 900)
+  })
+
+  it('una carga leída antes de archivar no restaura el favorito', async () => {
+    const lenta = diferido<FavoritoRemoto[]>()
+    let llamada = 0
+    const { api } = apiFalsa({
+      listar: () =>
+        llamada++ === 0
+          ? Promise.resolve([remoto(1, 'A'), remoto(2, 'B')])
+          : lenta.promise,
+    })
+    const sync = new FavoritosSync(api)
+    sync.setIdentidad('a')
+    await sync.cargar()
+    const recarga = sync.cargar()
+    assert.equal(await sync.quitar('A'), 'archivado')
+    lenta.resolve([remoto(1, 'A'), remoto(2, 'B')])
+    assert.deepEqual(await recarga, [remoto(2, 'B')])
+    assert.equal(sync.idDe('A'), undefined)
+  })
+
+  it('invalidar descarta respuestas pendientes aunque la identidad sea la misma', async () => {
+    const lenta = diferido<FavoritoRemoto[]>()
+    const { api } = apiFalsa({ listar: () => lenta.promise })
+    const sync = new FavoritosSync(api)
+    sync.setIdentidad('a')
+    const carga = sync.cargar()
+    sync.invalidar()
+    lenta.resolve([remoto(1, 'A')])
+    assert.equal(await carga, null)
+    assert.equal(sync.identidadActual(), null)
+    assert.deepEqual(await sync.agregar('A'), { estado: 'obsoleto' })
   })
 
   it('sin identidad no toca el backend', async () => {
     const { api, llamadas } = apiFalsa()
     const sync = new FavoritosSync(api)
     assert.equal(await sync.cargar(), null)
-    assert.equal(await sync.agregar('A'), 'obsoleto')
+    assert.deepEqual(await sync.agregar('A'), { estado: 'obsoleto' })
     assert.equal(await sync.quitar('A'), 'obsoleto')
     assert.equal(llamadas.listar, 0)
     assert.deepEqual(llamadas.insertar, [])

@@ -83,6 +83,7 @@ import Reproductor from './ComponentesEspecifico/Reproductor'
 import { useEvents } from './contexts/EventsContext'
 import {
   MAX_OBJETIVOS,
+  buscarEquivalente,
   mensajesErrorObjetivo,
   renombrarClave,
   renombrarEnLista,
@@ -190,10 +191,18 @@ const favoritosApi: FavoritosApi = {
       .from('ObjetivosFavoritos')
       .update({ idEstado: 2 })
       .eq('idUsuario', uuid)
-    const { error } = await (id === undefined
-      ? consulta.eq('descripcion', descripcion).eq('idEstado', 1)
-      : consulta.eq('id', id))
+    if (id === undefined) {
+      // Sin id conocido: archiva las filas activas con ese texto (puede no haber)
+      const { error } = await consulta
+        .eq('descripcion', descripcion)
+        .eq('idEstado', 1)
+      if (error) throw error
+      return
+    }
+    // Con id, cero filas afectadas significa que el cambio no se confirmó
+    const { data, error } = await consulta.eq('id', id).select('id')
     if (error) throw error
+    if (data.length === 0) throw new Error('No se archivó el favorito')
   },
 }
 
@@ -262,13 +271,23 @@ export default function Inicio() {
       })
   }, [setObjetivosFav, setTiempoFavorito])
 
-  // Los favoritos se cargan por identidad al montar y al cambiar de usuario
+  // Los favoritos se cargan por identidad al montar y al cambiar de usuario.
+  // Al desmontar o cambiar de usuario se invalidan las operaciones en curso.
+  const uuidAnterior = useRef<string | null | undefined>(undefined)
   useEffect(() => {
-    favoritosSync.current?.setIdentidad(uuid)
+    const sync = favoritosSync.current
+    if (uuidAnterior.current !== undefined && uuidAnterior.current !== uuid) {
+      // No mostrar favoritos de otra identidad mientras carga la nueva
+      setObjetivosFav([])
+      setTiempoFavorito({})
+    }
+    uuidAnterior.current = uuid
+    sync?.setIdentidad(uuid)
     setFavoritosPendientes([])
     if (uuid) cargarFavoritos()
     else setEstadoFavoritos('inactivo')
-  }, [uuid, cargarFavoritos])
+    return () => sync?.invalidar()
+  }, [uuid, cargarFavoritos, setObjetivosFav, setTiempoFavorito])
 
   const handleAccept = () => {
     switch (description) {
@@ -308,10 +327,12 @@ export default function Inicio() {
       setMensajeObjetivo(mensajesErrorObjetivo[resultado.error])
       return false
     }
+    // Si equivale a un favorito, se usa su texto exacto: tiempos y helpers
+    // compartidos lo identifican por igualdad de descripción
+    const valor =
+      buscarEquivalente(resultado.valor, objetivosFav) ?? resultado.valor
     setObjetivos(prev =>
-      validarNuevoObjetivo(resultado.valor, prev).ok
-        ? [...prev, resultado.valor]
-        : prev
+      validarNuevoObjetivo(valor, prev).ok ? [...prev, valor] : prev
     )
     setMensajeObjetivo(
       objetivos.length + 1 === MAX_OBJETIVOS
@@ -361,7 +382,8 @@ export default function Inicio() {
       return
     }
     const anterior = objetivos[indice]
-    const nuevo = resultado.valor
+    const nuevo =
+      buscarEquivalente(resultado.valor, objetivosFav) ?? resultado.valor
     if (nuevo !== anterior) {
       setObjetivos(prev =>
         prev.map((objetivo, i) =>
@@ -418,6 +440,14 @@ export default function Inicio() {
     const operacion =
       accion === 'agregar' ? sync.agregar(objetivo) : sync.quitar(objetivo)
     operacion
+      .then(resultado => {
+        // Si la fila ya existía, conservar sus horas acumuladas
+        if (typeof resultado === 'object' && resultado.estado !== 'obsoleto') {
+          setTiempoFavorito(prev =>
+            combinarTiempoFavorito(prev, [resultado.favorito])
+          )
+        }
+      })
       .catch((error: unknown) => {
         console.error('No se pudo actualizar el favorito', error)
         if (sync.identidadActual() !== uuid) return
@@ -599,8 +629,11 @@ export default function Inicio() {
                     />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className='p-0'>
-                  <Command>
+                <PopoverContent
+                  className='p-0'
+                  aria-label='Objetivos favoritos'
+                >
+                  <Command label='Objetivos favoritos'>
                     <CommandInput
                       ref={buscadorFavoritos}
                       placeholder='Seleccionar objetivo favorito...'

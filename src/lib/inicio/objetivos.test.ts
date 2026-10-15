@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import {
+  buscarEquivalente,
   MAX_OBJETIVOS,
   normalizarObjetivo,
   renombrarClave,
@@ -88,5 +89,13 @@ describe('renombrar estados relacionados', () => {
 
   it('renombra dentro de la lista de pendientes', () => {
     assert.deepEqual(renombrarEnLista(['A', 'B'], 'A', 'C'), ['C', 'B'])
+  })
+})
+
+describe('buscarEquivalente', () => {
+  it('encuentra el texto exacto de un favorito histórico con otros espacios', () => {
+    const favoritos = ['  Leer   capítulo 1 ', 'Otro']
+    assert.equal(buscarEquivalente('leer capítulo 1', favoritos), favoritos[0])
+    assert.equal(buscarEquivalente('Nada', favoritos), undefined)
   })
 })

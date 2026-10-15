@@ -36,6 +36,14 @@ export function esObjetivoDuplicado(
   )
 }
 
+// Devuelve el texto exacto de un elemento equivalente (mismo texto normalizado).
+// Sirve para reutilizar la descripción remota de un favorito guardado con
+// otros espacios, ya que los helpers compartidos la buscan por igualdad exacta.
+export function buscarEquivalente(texto: string, lista: readonly string[]) {
+  const clave = claveComparacion(texto)
+  return lista.find(item => claveComparacion(item) === clave)
+}
+
 // Valida un objetivo nuevo (escrito a mano o elegido desde favoritos)
 export function validarNuevoObjetivo(
   texto: string,

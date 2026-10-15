@@ -20,7 +20,11 @@ export type FavoritosApi = {
 
 // 'obsoleto': la identidad cambió mientras la operación estaba en curso, así
 // que el resultado no se tiene que aplicar al estado actual.
-export type ResultadoAlta = 'insertado' | 'existente' | 'obsoleto'
+// En un alta confirmada se devuelve la fila remota: si ya existía, trae sus
+// horas acumuladas, que no se deben perder.
+export type ResultadoAlta =
+  | { estado: 'insertado' | 'existente'; favorito: FavoritoRemoto }
+  | { estado: 'obsoleto' }
 export type ResultadoBaja = 'archivado' | 'obsoleto'
 
 export class FavoritosSync {
@@ -29,6 +33,9 @@ export class FavoritosSync {
   private identidad = 0
   private ultimaCarga = 0
   private ids = new Map<string, number>()
+  // Bajas confirmadas desde que empezó la última carga: un snapshot leído
+  // antes de archivar no las tiene que restaurar
+  private archivadosDuranteCarga = new Set<string>()
   private carga: Promise<FavoritoRemoto[] | null> | null = null
   private altas = new Map<string, Promise<ResultadoAlta>>()
   private bajas = new Map<string, Promise<ResultadoBaja>>()
@@ -41,11 +48,21 @@ export class FavoritosSync {
 
   setIdentidad(uuid: string | null) {
     if (uuid === this.uuid) return
+    this.reiniciar(uuid)
+  }
+
+  // Al desmontar: ninguna respuesta pendiente se aplica ni se puede reintentar
+  invalidar() {
+    this.reiniciar(null)
+  }
+
+  private reiniciar(uuid: string | null) {
     this.uuid = uuid
     this.identidad++
     this.ids.clear()
     this.altas.clear()
     this.bajas.clear()
+    this.archivadosDuranteCarga.clear()
     this.carga = null
   }
 
@@ -72,15 +89,19 @@ export class FavoritosSync {
     if (!uuid) return Promise.resolve(null)
     const identidad = this.identidad
     const numeroCarga = ++this.ultimaCarga
+    this.archivadosDuranteCarga.clear()
     const vigente = () =>
       identidad === this.identidad && numeroCarga === this.ultimaCarga
     const carga = this.api.listar(uuid).then(
       favoritos => {
         if (!vigente()) return null
-        favoritos.forEach(favorito => {
+        const vigentes = favoritos.filter(
+          favorito => !this.archivadosDuranteCarga.has(favorito.descripcion)
+        )
+        vigentes.forEach(favorito => {
           this.ids.set(favorito.descripcion, favorito.id)
         })
-        return favoritos
+        return vigentes
       },
       (error: unknown) => {
         if (!vigente()) return null
@@ -102,22 +123,28 @@ export class FavoritosSync {
     const carga = this.carga
     const baja = this.bajas.get(descripcion)
     const alta = (async (): Promise<ResultadoAlta> => {
-      if (!uuid) return 'obsoleto'
-      if (carga) await carga.catch(() => null)
+      const obsoleto = { estado: 'obsoleto' } as const
+      if (!uuid) return obsoleto
+      const remotos = carga ? await carga.catch(() => null) : null
       // Si se está archivando el mismo texto, esperar para no reutilizar su id
       if (baja) await baja.catch(() => null)
-      if (identidad !== this.identidad) return 'obsoleto'
-      if (this.ids.has(descripcion)) return 'existente'
+      if (identidad !== this.identidad) return obsoleto
+      const id = this.ids.get(descripcion)
+      const cargado = remotos?.find(f => f.descripcion === descripcion)
+      if (id !== undefined && cargado?.id === id) {
+        return { estado: 'existente', favorito: cargado }
+      }
       let favorito: FavoritoRemoto
       try {
+        // La API reutiliza la fila activa si ya existía (con sus horas)
         favorito = await this.api.insertar(descripcion, uuid)
       } catch (error) {
-        if (identidad !== this.identidad) return 'obsoleto'
+        if (identidad !== this.identidad) return obsoleto
         throw error
       }
-      if (identidad !== this.identidad) return 'obsoleto'
+      if (identidad !== this.identidad) return obsoleto
       this.ids.set(favorito.descripcion, favorito.id)
-      return 'insertado'
+      return { estado: 'insertado', favorito }
     })().finally(() => {
       if (this.altas.get(descripcion) === alta) this.altas.delete(descripcion)
     })
@@ -148,6 +175,7 @@ export class FavoritosSync {
       }
       if (identidad !== this.identidad) return 'obsoleto'
       this.ids.delete(descripcion)
+      this.archivadosDuranteCarga.add(descripcion)
       return 'archivado'
     })().finally(() => {
       if (this.bajas.get(descripcion) === baja) this.bajas.delete(descripcion)
