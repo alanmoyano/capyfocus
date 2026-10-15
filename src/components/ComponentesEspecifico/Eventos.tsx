@@ -140,8 +140,9 @@ export default function Eventos() {
   // Sólo se aplica la lectura más reciente: una anterior que llegue tarde
   // pisaría horas acumuladas más nuevas
   const ultimaLectura = useRef(0)
-  // Creados con confirmación que una lectura iniciada antes todavía no trae
-  const creados = useRef(new Set<number>())
+  // Creados con confirmación → número de la última lectura iniciada antes de
+  // crearlos. Sólo esas lecturas pueden no traerlos; una posterior es completa
+  const creados = useRef(new Map<number, number>())
 
   // Cambia con cada identidad y al desmontar: las respuestas de una
   // generación anterior (incluso A → B → A) no se aplican
@@ -206,7 +207,7 @@ export default function Eventos() {
           toast.dismiss(toastId)
           return
         }
-        creados.current.add(data.idEvento)
+        creados.current.set(data.idEvento, ultimaLectura.current)
         setEvents(prev =>
           agregarEventos(prev, [
             { ...eventoDesdeRemoto(data), date: fecha, title: titulo },
@@ -371,7 +372,15 @@ export default function Eventos() {
         const recuperados = data
           .map(eventoDesdeRemoto)
           .filter(evento => !borrados.current.has(evento.id))
-        recuperados.forEach(evento => creados.current.delete(evento.id))
+        // Una lectura iniciada después de crear un evento ya lo refleja: si no
+        // lo trae, fue borrado (p. ej. en otra pestaña) y deja de protegerse
+        creados.current.forEach((lecturaAlCrear, id) => {
+          if (
+            lecturaAlCrear < lectura ||
+            recuperados.some(evento => evento.id === id)
+          )
+            creados.current.delete(id)
+        })
         const vigenteLocal = (evento: Event) =>
           esEventoTemporal(evento) ||
           creados.current.has(evento.id) ||
