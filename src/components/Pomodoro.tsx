@@ -122,14 +122,26 @@ export default function Pomodoro() {
   const saveJobRef = useRef<SaveSessionJob | null>(null)
   const guardandoRef = useRef(false)
   const [guardando, setGuardando] = useState(false)
-  const finalizada = phase === 'finished'
+  // Se activa al pedir el cierre, antes de que el worker confirme
+  const [cerrando, setCerrando] = useState(false)
+  const finalizada = cerrando || phase === 'finished'
 
   const finalizarSesion = async () => {
     if (guardandoRef.current) return
     guardandoRef.current = true
+    // Desde acá no se pueden marcar objetivos ni usar los controles
+    setCerrando(true)
     setGuardando(true)
 
-    resumenFinalRef.current ??= await finalize()
+    try {
+      resumenFinalRef.current ??= await finalize()
+    } catch (error: unknown) {
+      console.error('No se pudo detener el temporizador', error)
+      toast.error('No pudimos cerrar la sesión. Volvé a intentarlo.')
+      guardandoRef.current = false
+      setGuardando(false)
+      return
+    }
     const { studySeconds: tiempoEstudio, breakSeconds: tiempoDescanso } =
       resumenFinalRef.current
 
@@ -227,6 +239,7 @@ export default function Pomodoro() {
   }
 
   const handleCheckbox = (objetivo: string) => {
+    if (finalizada || guardandoRef.current) return
     if (marked.includes(objetivo)) {
       return
     }
@@ -578,7 +591,7 @@ export default function Pomodoro() {
                 <li key={key} className='flex items-center space-x-2'>
                   <Checkbox
                     checked={marked.includes(objetivo)}
-                    disabled={mode === 'Descansando' || !isActive}
+                    disabled={mode === 'Descansando' || !isActive || finalizada}
                     onClick={() => handleCheckbox(objetivo)}
                     className='mr-2'
                   />

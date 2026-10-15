@@ -78,16 +78,14 @@ export default function usePomodoro() {
     send({ action: 'skip', segmentId: snapshotRef.current.segmentId })
   }
 
-  // Termina la sesión y resuelve con los acumulados exactos al momento de finalizar
+  // Termina la sesión y resuelve con los acumulados confirmados por el worker.
+  // Rechaza si el worker no responde; se puede volver a llamar sin efectos extra.
   function finalize() {
-    return requestsRef.current.request(
-      requestId => {
-        if (!workerRef.current) return false
-        workerRef.current.postMessage({ action: 'finalize', requestId })
-        return true
-      },
-      () => snapshotRef.current
-    )
+    return requestsRef.current.request(requestId => {
+      if (!workerRef.current) return false
+      workerRef.current.postMessage({ action: 'finalize', requestId })
+      return true
+    })
   }
 
   return {

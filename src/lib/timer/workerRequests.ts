@@ -1,29 +1,41 @@
 // Asocia comandos enviados al worker con su respuesta, para poder esperar el
 // estado exacto en el que quedó el motor (por ejemplo, al finalizar la sesión).
+// Si el worker no existe o no responde a tiempo, la promesa se rechaza: un valor
+// sin confirmar no debe usarse para persistir datos.
 
 type Pending<T> = {
   resolve: (value: T) => void
+  reject: (error: Error) => void
   timeoutId: ReturnType<typeof setTimeout>
 }
 
-export function createWorkerRequests<T>(timeoutMs = 2000) {
+export class WorkerRequestError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'WorkerRequestError'
+  }
+}
+
+export function createWorkerRequests<T>(timeoutMs = 5000) {
   let nextId = 1
   const pending = new Map<number, Pending<T>>()
 
   return {
-    // `fallback` se usa si el worker no responde a tiempo o no existe
-    request(send: (requestId: number) => boolean, fallback: () => T) {
+    // `send` devuelve false si no pudo enviar el comando
+    request(send: (requestId: number) => boolean) {
       const requestId = nextId++
-      return new Promise<T>(resolve => {
+      return new Promise<T>((resolve, reject) => {
         const timeoutId = setTimeout(() => {
           pending.delete(requestId)
-          resolve(fallback())
+          reject(
+            new WorkerRequestError('El temporizador no respondió a tiempo')
+          )
         }, timeoutMs)
-        pending.set(requestId, { resolve, timeoutId })
+        pending.set(requestId, { resolve, reject, timeoutId })
         if (!send(requestId)) {
           clearTimeout(timeoutId)
           pending.delete(requestId)
-          resolve(fallback())
+          reject(new WorkerRequestError('El temporizador no está disponible'))
         }
       })
     },

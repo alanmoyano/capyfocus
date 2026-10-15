@@ -200,9 +200,10 @@ async function acumulateHoursInSelectedEvent(
     .eq('idUsuario', uuid)
     .eq('nombre', name)
     .eq('fechaLimite', dateFormatted)
+    .select()
 
   if (error) throw error
-  return data
+  return data as unknown[]
 }
 
 function getSelectedMusic(title: string) {
@@ -373,21 +374,29 @@ const supabaseSessionRepository: SessionRepository = {
     return ((data as AgregadosUsuario[] | null) ?? [])[0] ?? null
   },
 
+  // Un UPDATE que no coincide con ninguna fila no devuelve error: se verifica con .select()
   async updateAgregadosUsuario(userId, agregados) {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('Usuarios')
       .update(agregados)
       .eq('id', userId)
+      .select('id')
     if (error) throw error
+    if ((data as unknown[]).length === 0) {
+      throw new Error('No se actualizaron los datos del usuario')
+    }
   },
 
   async updateHorasEvento(userId, evento, horas) {
-    await acumulateHoursInSelectedEvent(
+    const filas = await acumulateHoursInSelectedEvent(
       horas,
       userId,
       evento.title,
       evento.date
     )
+    if (filas.length === 0) {
+      throw new Error(`No se encontró el evento "${evento.title}"`)
+    }
   },
 
   async getProgresoInsignias(userId) {

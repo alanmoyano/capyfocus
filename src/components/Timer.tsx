@@ -102,12 +102,21 @@ export default function Timer() {
   const finalizarSesion = async () => {
     if (guardandoRef.current) return
     guardandoRef.current = true
+    // Desde acá no se pueden marcar objetivos ni cambiar de modo
+    setFinalizada(true)
     setGuardando(true)
 
-    totalesFinalesRef.current ??= await finalizeTimers()
+    try {
+      totalesFinalesRef.current ??= await finalizeTimers()
+    } catch (error: unknown) {
+      console.error('No se pudo detener el cronómetro', error)
+      toast.error('No pudimos cerrar la sesión. Volvé a intentarlo.')
+      guardandoRef.current = false
+      setGuardando(false)
+      return
+    }
     const { studyTime: tiempoEstudio, breakTime: tiempoDescanso } =
       totalesFinalesRef.current
-    setFinalizada(true)
 
     if (session) {
       if (!saveJobRef.current) {
@@ -200,7 +209,7 @@ export default function Timer() {
 
   /* Esto es para que los botones si los tocas mas de una vez no hagan nada */
   const handleToggle = (value: boolean) => {
-    if (finalizada) return
+    if (finalizada || guardandoRef.current) return
     if (isStudying && value) return
     if (!isStudying && !value) return
 
@@ -223,7 +232,7 @@ export default function Timer() {
   }
 
   const handleCheckbox = (objetivo: string, key: number) => {
-    if (finalizada) return
+    if (finalizada || guardandoRef.current) return
     if (marked.includes(objetivo)) {
       // Esto sirve para no poder desmarcar los objetivos
       return

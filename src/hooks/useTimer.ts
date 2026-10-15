@@ -13,7 +13,6 @@ export default function useTimer() {
   const [isStudying, setIsStudying] = useState(true)
 
   const workerRef = useRef<Worker | null>()
-  const totalsRef = useRef<TimerTotals>({ studyTime: 0, breakTime: 0 })
   const requestsRef = useRef(createWorkerRequests<TimerTotals>())
 
   useEffect(() => {
@@ -27,10 +26,12 @@ export default function useTimer() {
       event: MessageEvent<CapymetroSnapshot & { requestId?: number }>
     ) => {
       const { timer1, timer2, requestId } = event.data
-      totalsRef.current = { studyTime: timer1, breakTime: timer2 }
       setStudyTime(timer1)
       setBreakTime(timer2)
-      requestsRef.current.settle(requestId, totalsRef.current)
+      requestsRef.current.settle(requestId, {
+        studyTime: timer1,
+        breakTime: timer2,
+      })
     }
 
     return () => {
@@ -59,22 +60,19 @@ export default function useTimer() {
   function resetTimers() {
     send('reset')
 
-    totalsRef.current = { studyTime: 0, breakTime: 0 }
     setStudyTime(0)
     setBreakTime(0)
     setIsStudying(false)
   }
 
-  // Detiene ambos contadores y resuelve con los totales exactos del worker
+  // Detiene ambos contadores y resuelve con los totales confirmados por el worker.
+  // Rechaza si el worker no responde; se puede volver a llamar sin efectos extra.
   function finalizeTimers() {
-    return requestsRef.current.request(
-      requestId => {
-        if (!workerRef.current) return false
-        workerRef.current.postMessage({ command: 'finalize', requestId })
-        return true
-      },
-      () => totalsRef.current
-    )
+    return requestsRef.current.request(requestId => {
+      if (!workerRef.current) return false
+      workerRef.current.postMessage({ command: 'finalize', requestId })
+      return true
+    })
   }
 
   return {

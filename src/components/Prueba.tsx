@@ -9,13 +9,15 @@ type props = {
 }
 
 export default function Prueba() {
-  const { time, isStudying, pauseStudy, resumeStudy, startStudy } =
+  const { time, phase, isRunning, pauseStudy, resumeStudy, startStudy } =
     usePomodoro()
 
   const [sessionTime, setSessionTime] = useState(1 * 60)
   const [restTime, setRestTime] = useState(1 * 60)
 
-  const [started, setStarted] = useState<boolean>(false)
+  // Al terminar el descanso el motor vuelve a 'setup' y se puede iniciar otro ciclo
+  const started = phase !== 'setup'
+  const isStudying = phase === 'study'
 
   function mode() {
     if (!started) return 'Estudio'
@@ -74,14 +76,13 @@ export default function Prueba() {
         </div>
         <div className='flex flex-row items-center justify-center gap-4'>
           {started ? (
-            <Button onClick={() => (isStudying ? pauseStudy() : resumeStudy())}>
-              {isStudying ? 'Pausar' : 'Resumir'}
+            <Button onClick={() => (isRunning ? pauseStudy() : resumeStudy())}>
+              {isRunning ? 'Pausar' : 'Resumir'}
             </Button>
           ) : (
             <Button
               onClick={() => {
                 startStudy({ studyTime: sessionTime, breakTime: restTime })
-                setStarted(prev => !prev)
               }}
             >
               Iniciar
