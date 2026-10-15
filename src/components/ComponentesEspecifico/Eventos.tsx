@@ -155,6 +155,20 @@ export default function Eventos() {
     }
   }, [uuid])
 
+  // Al volver de una sesión (Eventos se remonta con Inicio), la lista toma las
+  // horas que Timer/Pomodoro sumaron sobre la selección
+  useEffect(() => {
+    if (!selectedEvent || esEventoTemporal(selectedEvent)) return
+    const actual = selectedEvent
+    setEvents(prev =>
+      prev.map(evento =>
+        evento.id === actual.id ? fusionarEvento(evento, actual) : evento
+      )
+    )
+    // Sólo al montar: después lo cubren seleccionar/deseleccionar
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // Un evento temporal no existe en el backend: no puede quedar seleccionado
   // para una sesión que se va a guardar con usuario
   useEffect(() => {
@@ -275,12 +289,29 @@ export default function Eventos() {
     }
   }
 
-  // Volver a elegir el evento seleccionado no puede bajar sus horas: Timer y
-  // Pomodoro las suman sólo sobre la selección, no sobre la fila de la lista
+  // Timer y Pomodoro suman horas sólo sobre el objeto seleccionado: antes de
+  // cambiar o quitar la selección, su fila de la lista absorbe esas horas
+  const sincronizarSeleccion = () => {
+    const actual = selectedEvent
+    if (!actual || esEventoTemporal(actual)) return
+    setEvents(prev =>
+      prev.map(evento =>
+        evento.id === actual.id ? fusionarEvento(evento, actual) : evento
+      )
+    )
+  }
+
+  // Volver a elegir el evento seleccionado no puede bajar sus horas
   const seleccionar = (evento: Event) => {
+    sincronizarSeleccion()
     setSelectedEvent(prev =>
       prev?.id === evento.id ? fusionarEvento(evento, prev) : evento
     )
+  }
+
+  const deseleccionar = () => {
+    sincronizarSeleccion()
+    setSelectedEvent(null)
   }
 
   const quitarEventoLocal = (id: number) => {
@@ -496,7 +527,7 @@ export default function Eventos() {
                     event => event.date.toDateString() === day.toDateString()
                   )
                   if (clickedEvent) seleccionar(clickedEvent)
-                  else setSelectedEvent(null)
+                  else deseleccionar()
                 }}
                 components={{
                   DayContent: ({ date }) => {
@@ -678,7 +709,7 @@ export default function Eventos() {
                 className='w-full sm:mr-2 sm:w-auto'
                 onClick={() => {
                   handleVolver()
-                  setSelectedEvent(null)
+                  deseleccionar()
                 }}
               >
                 Cancelar
