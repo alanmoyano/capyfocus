@@ -130,10 +130,22 @@ export default function Eventos() {
   const { session } = useSession()
   const uuid = session?.user.id ?? null
 
-  // Identidad vigente, para ignorar respuestas de un usuario anterior
-  const uuidActual = useRef(uuid)
+  const [cargaEventos, setCargaEventos] = useState<
+    'inactiva' | 'cargando' | 'lista' | 'error'
+  >('inactiva')
+  // Ids borrados con confirmación: una lectura anterior no los reincorpora
+  const borrados = useRef(new Set<number>())
+
+  // Cambia con cada identidad y al desmontar: las respuestas de una
+  // generación anterior (incluso A → B → A) no se aplican
+  const generacion = useRef({ valor: 0 })
   useEffect(() => {
-    uuidActual.current = uuid
+    const contador = generacion.current
+    contador.valor++
+    setCargaEventos('inactiva')
+    return () => {
+      contador.valor++
+    }
   }, [uuid])
 
   // Un evento temporal no existe en el backend: no puede quedar seleccionado
@@ -154,6 +166,7 @@ export default function Eventos() {
     googleCalendar: boolean
   ) => {
     if (!uuid) return
+    const gen = generacion.current.valor
     // La pestaña se abre durante el click para que no la bloquee el navegador,
     // y sólo se navega a Calendar si el evento se guardó
     const ventanaCalendar = googleCalendar ? window.open('', '_blank') : null
@@ -167,7 +180,7 @@ export default function Eventos() {
 
     saveEvent(titulo, uuid, fecha)
       .then(data => {
-        if (uuidActual.current !== uuid) {
+        if (generacion.current.valor !== gen) {
           ventanaCalendar?.close()
           toast.dismiss(toastId)
           return
@@ -193,7 +206,7 @@ export default function Eventos() {
       .catch((error: unknown) => {
         console.error('No se pudo guardar el evento', error)
         ventanaCalendar?.close()
-        if (uuidActual.current !== uuid) {
+        if (generacion.current.valor !== gen) {
           toast.dismiss(toastId)
           return
         }
@@ -256,11 +269,13 @@ export default function Eventos() {
     if (!uuid || eliminando.includes(event.id)) return
 
     // Se quita de la lista sólo cuando el backend confirma el borrado
+    const gen = generacion.current.valor
     setEliminando(prev => [...prev, event.id])
     setErrorEliminar(null)
     deleteEventById(event.id, uuid)
       .then(() => {
-        if (uuidActual.current !== uuid) return
+        if (generacion.current.valor !== gen) return
+        borrados.current.add(event.id)
         quitarEventoLocal(event.id)
         toast.success('Evento eliminado', {
           description: `"${event.title}"`,
@@ -269,7 +284,7 @@ export default function Eventos() {
       })
       .catch((error: unknown) => {
         console.error('No se pudo eliminar el evento', error)
-        if (uuidActual.current !== uuid) return
+        if (generacion.current.valor !== gen) return
         setErrorEliminar(
           `No se pudo eliminar "${event.title}"; sigue guardado. Podés volver a intentarlo.`
         )
@@ -283,15 +298,24 @@ export default function Eventos() {
       })
   }
 
+  // Se relee al abrir el panel: la validación de duplicados necesita la
+  // lista completa y no alcanza con que haya algún evento en memoria
   const handleRecover = () => {
-    if (!uuid || events.length > 0) return
+    if (!uuid) return
+    const gen = generacion.current.valor
+    setCargaEventos('cargando')
     gatherEvents(uuid)
       .then(data => {
-        if (uuidActual.current !== uuid) return
-        setEvents(prev => agregarEventos(prev, data.map(eventoDesdeRemoto)))
+        if (generacion.current.valor !== gen) return
+        const recuperados = data
+          .map(eventoDesdeRemoto)
+          .filter(evento => !borrados.current.has(evento.id))
+        setEvents(prev => agregarEventos(prev, recuperados))
+        setCargaEventos('lista')
       })
       .catch((error: unknown) => {
         console.error('No se pudieron recuperar los eventos', error)
+        if (generacion.current.valor === gen) setCargaEventos('error')
       })
   }
 
@@ -358,6 +382,26 @@ export default function Eventos() {
                 className='col-span-1 sm:col-span-3 dark:placeholder:text-gray-500'
               />
             </div>
+            {cargaEventos === 'cargando' && (
+              <p
+                role='status'
+                className='flex items-center gap-2 text-sm text-muted-foreground'
+              >
+                <Loader2 className='h-4 w-4 animate-spin' aria-hidden />
+                Cargando tus eventos…
+              </p>
+            )}
+            {cargaEventos === 'error' && (
+              <div
+                role='alert'
+                className='flex items-center justify-between gap-2 text-sm'
+              >
+                No se pudieron cargar tus eventos; puede haber duplicados.
+                <Button size='sm' variant='outline' onClick={handleRecover}>
+                  Reintentar
+                </Button>
+              </div>
+            )}
             <p
               id='evento-error'
               role='alert'
@@ -431,7 +475,7 @@ export default function Eventos() {
                   }}
                   variant={'accent'}
                   className='w-full sm:w-auto'
-                  disabled={guardando}
+                  disabled={guardando || cargaEventos === 'cargando'}
                   aria-busy={guardando}
                 >
                   {guardando && (
@@ -448,7 +492,7 @@ export default function Eventos() {
                   }}
                   variant={'accent'}
                   className='ml-2 w-full sm:w-auto'
-                  disabled={guardando}
+                  disabled={guardando || cargaEventos === 'cargando'}
                 >
                   Crear en Calendar
                 </Button>
