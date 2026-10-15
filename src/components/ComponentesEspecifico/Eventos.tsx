@@ -265,6 +265,14 @@ export default function Eventos() {
     }
   }
 
+  // Volver a elegir el evento seleccionado no puede bajar sus horas: Timer y
+  // Pomodoro las suman sólo sobre la selección, no sobre la fila de la lista
+  const seleccionar = (evento: Event) => {
+    setSelectedEvent(prev =>
+      prev?.id === evento.id ? fusionarEvento(evento, prev) : evento
+    )
+  }
+
   const quitarEventoLocal = (id: number) => {
     setEvents(prev => prev.filter(event => event.id !== id))
     setSelectedEvent(prev => (prev?.id === id ? null : prev))
@@ -322,7 +330,14 @@ export default function Eventos() {
         const recuperados = data
           .map(eventoDesdeRemoto)
           .filter(evento => !borrados.current.has(evento.id))
-        setEvents(prev => agregarEventos(prev, recuperados))
+        // La fila del evento seleccionado absorbe las horas que Timer/Pomodoro
+        // sumaron en memoria sobre la selección
+        setEvents(prev =>
+          agregarEventos(
+            agregarEventos(prev, recuperados),
+            selectedEvent ? [selectedEvent] : []
+          )
+        )
         // El evento seleccionado también toma las horas actualizadas
         setSelectedEvent(prev => {
           const actualizado = prev && recuperados.find(e => e.id === prev.id)
@@ -458,7 +473,8 @@ export default function Eventos() {
                   const clickedEvent = events.find(
                     event => event.date.toDateString() === day.toDateString()
                   )
-                  setSelectedEvent(clickedEvent ?? null)
+                  if (clickedEvent) seleccionar(clickedEvent)
+                  else setSelectedEvent(null)
                 }}
                 components={{
                   DayContent: ({ date }) => {
@@ -537,7 +553,7 @@ export default function Eventos() {
                             <button
                               type='button'
                               aria-pressed={seleccionado}
-                              onClick={() => setSelectedEvent(event)}
+                              onClick={() => seleccionar(event)}
                               className={cn(
                                 'rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                                 seleccionado
