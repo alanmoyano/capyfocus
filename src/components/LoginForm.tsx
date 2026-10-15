@@ -64,7 +64,6 @@ export default function LoginForm() {
       setSession(data.session)
       posthog.identify(data.user.id)
       posthog.capture('Capysesión iniciada')
-      console.log(data)
     }
 
     toast.promise(logIn, {

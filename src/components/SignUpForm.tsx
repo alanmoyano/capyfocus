@@ -89,9 +89,8 @@ function SignupForm() {
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
     async function signUp() {
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
         options: {
@@ -103,14 +102,11 @@ function SignupForm() {
       })
       if (error) throw error
       posthog.capture('Capyusuario registrado')
-      console.log(data)
     }
     toast.promise(signUp, {
       loading: 'Registrando...',
       success: '¡Te enviamos un capymail para que verifiques tu cuenta!',
       error: (error: AuthError | null) => {
-        console.error(error)
-
         if (error?.message === 'User already registered')
           return 'El mail que esta utilizando ya esta vinculado a una cuenta'
 

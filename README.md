@@ -2,8 +2,16 @@
 
 Nuestro hermoso trabajo para el seminario integrador
 
-> [!Important]
-> Antes de pushear: `npm run prePush`
+## Instalación y validación
+
+Se usa npm:
+
+```sh
+npm ci --no-audit --no-fund
+npm run dev
+```
+
+Antes de pushear, ejecutar `npm run check`.
 
 ## Cómo funcionan los secretos? 
 [Documentación](https://vitejs.dev/guide/env-and-mode.html)

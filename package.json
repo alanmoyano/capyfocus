@@ -9,8 +9,9 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "format": "prettier --write ./src",
-    "check": "tsc -b && echo 'todo bien!' || echo 'todo no bien :('",
-    "prePush": "npm run format && npm run check",
+    "format:check": "prettier --check ./src",
+    "typecheck": "tsc -b",
+    "check": "npm run format:check && npm run typecheck",
     "preview": "vite preview"
   },
   "dependencies": {
