@@ -143,9 +143,11 @@ export default function Eventos() {
   // Creados con confirmación → número de la última lectura iniciada antes de
   // crearlos. Sólo esas lecturas pueden no traerlos; una posterior es completa
   const creados = useRef(new Map<number, number>())
+  // No se restaura una selección si el usuario la cambió durante el borrado
+  const revisionSeleccion = useRef(0)
 
-  // Cambia con cada identidad y al desmontar: las respuestas de una
-  // generación anterior (incluso A → B → A) no se aplican
+  // Cambia con cada identidad y al desmontar: las lecturas, altas y avisos
+  // de una generación anterior (incluso A → B → A) no se aplican
   const generacion = useRef({ valor: 0 })
   useEffect(() => {
     const contador = generacion.current
@@ -304,6 +306,9 @@ export default function Eventos() {
 
   // Volver a elegir el evento seleccionado no puede bajar sus horas
   const seleccionar = (evento: Event) => {
+    if (eliminando.includes(evento.id) || borrados.current.has(evento.id))
+      return
+    revisionSeleccion.current++
     sincronizarSeleccion()
     setSelectedEvent(prev =>
       prev?.id === evento.id ? fusionarEvento(evento, prev) : evento
@@ -311,6 +316,7 @@ export default function Eventos() {
   }
 
   const deseleccionar = () => {
+    revisionSeleccion.current++
     sincronizarSeleccion()
     setSelectedEvent(null)
   }
@@ -329,13 +335,31 @@ export default function Eventos() {
 
     // Se quita de la lista sólo cuando el backend confirma el borrado
     const gen = generacion.current.valor
+    const seleccionAnterior =
+      selectedEvent?.id === event.id
+        ? fusionarEvento(event, selectedEvent)
+        : null
+    // Timer/Pomodoro no deben recibir un id cuyo borrado está pendiente.
+    // deseleccionar conserva en la lista las horas acumuladas en la selección
+    if (seleccionAnterior) deseleccionar()
+    const revision = revisionSeleccion.current
+    // La identidad se vigila hasta que termine la solicitud, incluso después
+    // del desmontaje. Un cambio A → B → A también invalida este resultado
+    let identidadVigente = true
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_evento, sesionActual) => {
+      if (sesionActual?.user.id !== uuid) identidadVigente = false
+    })
     setEliminando(prev => [...prev, event.id])
     setErrorEliminar(null)
     deleteEventById(event.id, uuid)
       .then(() => {
-        if (generacion.current.valor !== gen) return
+        if (!identidadVigente) return
+        // Estos setters pertenecen al provider y siguen vigentes al navegar
         borrados.current.add(event.id)
         quitarEventoLocal(event.id)
+        if (generacion.current.valor !== gen) return
         toast.success('Evento eliminado', {
           description: `"${event.title}"`,
           position: 'bottom-center',
@@ -343,7 +367,10 @@ export default function Eventos() {
       })
       .catch((error: unknown) => {
         console.error('No se pudo eliminar el evento', error)
-        if (generacion.current.valor !== gen) return
+        if (!identidadVigente || generacion.current.valor !== gen) return
+        if (seleccionAnterior && revisionSeleccion.current === revision) {
+          setSelectedEvent(prev => prev ?? seleccionAnterior)
+        }
         setErrorEliminar(
           `No se pudo eliminar "${event.title}"; sigue guardado. Podés volver a intentarlo.`
         )
@@ -353,6 +380,7 @@ export default function Eventos() {
         })
       })
       .finally(() => {
+        subscription.unsubscribe()
         setEliminando(prev => prev.filter(id => id !== event.id))
       })
   }
@@ -623,6 +651,7 @@ export default function Eventos() {
                             <button
                               type='button'
                               aria-pressed={seleccionado}
+                              disabled={borrando}
                               onClick={() => seleccionar(event)}
                               className={cn(
                                 'rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
