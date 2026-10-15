@@ -33,17 +33,22 @@ export const EventsProvider = ({ children }: { children: ReactNode }) => {
     void gatherEventsOfUser(userId)
       .then(data => {
         if (!active) return
-        setEvents(
-          data.map(
-            evento =>
-              ({
-                date: new Date(evento.fechaLimite.replaceAll('-', '/')),
-                title: evento.nombre,
-                hoursAcumulated: evento.horasAcumuladas,
-                id: evento.idEvento,
-              }) as Event
-          )
+        const recoveredEvents = data.map(
+          evento =>
+            ({
+              date: new Date(evento.fechaLimite.replaceAll('-', '/')),
+              title: evento.nombre,
+              hoursAcumulated: evento.horasAcumuladas,
+              id: evento.idEvento,
+            }) as Event
         )
+        setEvents(current => {
+          const currentIds = new Set(current.map(event => event.id))
+          return [
+            ...current,
+            ...recoveredEvents.filter(event => !currentIds.has(event.id)),
+          ]
+        })
       })
       .catch((error: unknown) => {
         if (active) console.error(error)

@@ -23,7 +23,7 @@ const entry =
   ]
     .map(name => `export * from './src/components/contexts/${name}Context.tsx'`)
     .join('\n') +
-  `\nexport {default as Usuario} from './src/components/Usuario.tsx'\nexport {default as Switchers} from './src/components/ComponentesEspecifico/Switchers.tsx'`
+  `\nexport {profilePictures} from './src/constants/profilePictures'\nexport {default as Usuario} from './src/components/Usuario.tsx'\nexport {default as Switchers} from './src/components/ComponentesEspecifico/Switchers.tsx'`
 const bundle = await build({
   stdin: { contents: entry, resolveDir: process.cwd(), loader: 'tsx' },
   bundle: true,
@@ -78,7 +78,7 @@ const bundle = await build({
               ? 'export const useLocation = () => ["/usuario", path => globalThis.__contextNavigate(path)]'
               : args.path === 'sonner'
                 ? 'export const toast = { error: text => globalThis.__contextErrors.push(text) }'
-                : 'const noop = () => {}; export const useForm = () => ({register: () => ({}), handleSubmit: () => noop, watch: () => "Usuario", setValue: noop, formState: {errors: {}}})',
+                : 'const noop = () => {}; export const useForm = () => ({register: () => ({}), handleSubmit: handler => () => handler({username: "Usuario"}), watch: () => "Usuario", setValue: noop, formState: {errors: {}}})',
         }))
 
         build.onResolve({ filter: /supabase\/client$/ }, () => ({
@@ -114,6 +114,7 @@ const deferred = () => {
 globalThis.__contextBackend = {
   auth: {
     signOut: () => globalThis.__contextSignOut(),
+    updateUser: async () => ({ data: {}, error: null }),
     onAuthStateChange(callback) {
       auth = callback
       return {
@@ -130,7 +131,8 @@ globalThis.__contextBackend = {
   from(table) {
     const request = { table, ...deferred() }
     const query = {
-      select() {
+      select(columns) {
+        request.columns = columns
         return query
       },
       update(value) {
@@ -500,5 +502,70 @@ test('preference controls apply confirmed writes and expose failures for retry',
   assert.equal(values.preferences.darkModePreference, true)
   assert.equal(dark().props.checked, true)
   assert.equal(storage.get('capyfocus:user:A:darkModePreference'), 'true')
+  await unmount()
+})
+
+test('initial event recovery preserves events created or updated while the query is pending', async () => {
+  await mount()
+  await emit('SIGNED_IN', account('A'))
+  const request = requests.find(r => r.table === 'events' && r.id === 'A')
+  const local = [
+    { id: 5, title: 'Creado ahora', hoursAcumulated: 0 },
+    { id: 7, title: 'Edición local', hoursAcumulated: 3 },
+  ]
+  await act(async () => values.events.setEvents(local))
+  await act(async () =>
+    request.resolve([
+      {
+        idEvento: 7,
+        nombre: 'Nombre anterior',
+        horasAcumuladas: 1,
+        fechaLimite: '2026-10-14',
+      },
+      {
+        idEvento: 9,
+        nombre: 'Evento remoto',
+        horasAcumuladas: 2,
+        fechaLimite: '2026-10-15',
+      },
+    ])
+  )
+  assert.deepEqual(values.events.events.slice(0, 2), local)
+  assert.equal(values.events.events[2].id, 9)
+  assert.equal(values.events.events.length, 3)
+  await unmount()
+})
+
+test('profile photo updates the context after confirmed save and ignores initial stale photo', async () => {
+  extraView = c.Usuario
+  await mount()
+  await emit('SIGNED_IN', account('A'))
+  const initialPhoto = requests.find(
+    r => r.columns === 'fotoPerfil' && r.id === 'A'
+  )
+  const picture = c.profilePictures[1]
+  await act(async () =>
+    root.root
+      .find(node => typeof node.props.onSelect === 'function')
+      .props.onSelect(picture)
+  )
+  const submit = () => root.root.findByType('form').props.onSubmit()
+  await act(async () => submit())
+  let save = requests.find(r => r.update?.fotoPerfil === 1)
+  assert.ok(save)
+  assert.notEqual(values.profile.profilePic, picture)
+  await act(async () => save.resolve({ error: new Error('write failed') }))
+  assert.notEqual(values.profile.profilePic, picture)
+  assert.ok(globalThis.__contextErrors.at(-1).includes('foto de perfil'))
+  await act(async () => submit())
+  save = requests.filter(r => r.update?.fotoPerfil === 1).at(-1)
+  await act(async () => save.resolve({ error: null }))
+  assert.equal(values.profile.profilePic, picture)
+  await act(async () =>
+    initialPhoto.resolve({ data: [{ fotoPerfil: 0 }], error: null })
+  )
+  assert.equal(values.profile.profilePic, picture)
+  const image = root.root.findAllByType('avatarimage')[0]
+  assert.equal(image.props.src, picture)
   await unmount()
 })

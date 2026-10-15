@@ -22,7 +22,7 @@ import {
 import { profilePictures } from '@/constants/profilePictures'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Pencil } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useLocation } from 'wouter'
 import { z } from 'zod'
@@ -83,6 +83,7 @@ export default function Usuario() {
   const [confirmedUsername, setConfirmedUsername] = useState(currentUsername)
 
   const [sheetOpen, setSheetOpen] = useState(false)
+  const pictureRevision = useRef(0)
 
   const handleConfirm = (data: FormValues) => {
     setConfirmedUsername(data.username)
@@ -105,14 +106,22 @@ export default function Usuario() {
       })
 
     if (selectedPicture) {
-      console.log(user?.id)
-      setConfirmedPicture(selectedPicture)
+      const picture = selectedPicture
+      const revision = ++pictureRevision.current
       supabase
         .from('Usuarios')
-        .update({ fotoPerfil: profilePictures.indexOf(selectedPicture) })
+        .update({ fotoPerfil: profilePictures.indexOf(picture) })
         .eq('id', user?.id)
-        .then(res => {
-          console.log(res)
+        .then(({ error }) => {
+          if (revision !== pictureRevision.current) return
+          if (error) {
+            toast.error(
+              'No se pudo guardar la foto de perfil. Intenta de nuevo.'
+            )
+            return
+          }
+          setConfirmedPicture(picture)
+          setProfilePic(picture)
         })
     }
     setSheetOpen(false)
@@ -152,12 +161,13 @@ export default function Usuario() {
   useEffect(() => {
     if (!userId) return
     let active = true
+    const revision = pictureRevision.current
     void supabase
       .from('Usuarios')
       .select('fotoPerfil')
       .eq('id', userId)
       .then(({ data, error }) => {
-        if (!active) return
+        if (!active || revision !== pictureRevision.current) return
         if (error) {
           console.error(error)
           return
