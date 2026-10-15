@@ -71,9 +71,10 @@ async function saveEvent(name: string, uuid: string, limitDate: Date) {
   return respuesta.data as EventoRemoto
 }
 
-// Borra por id remoto (no por nombre y fecha) y confirma que hubo una fila
+// Borra por id remoto. Si ya no existe, el resultado también es exitoso:
+// otra pestaña o dispositivo puede haberlo eliminado desde la última lectura.
 async function deleteEventById(id: number, uuid: string) {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('Eventos')
     .delete()
     .eq('idEvento', id)
@@ -81,7 +82,6 @@ async function deleteEventById(id: number, uuid: string) {
     .select('idEvento')
 
   if (error) throw error
-  if (data.length === 0) throw new Error('No se eliminó ningún evento')
 }
 
 async function gatherEvents(uuid: string) {
