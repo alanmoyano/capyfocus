@@ -26,46 +26,32 @@ export const EventsProvider = ({ children }: { children: ReactNode }) => {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const { session } = useSession()
 
-  useEffect(() => console.log('eventos:', events), [events])
+  const userId = session?.user.id
   useEffect(() => {
-    recoverEvents()
-    return () => setEvents([])
-  }, [session])
-
-  function recoverEvents() {
-    if (!session) return
-    if (events.length > 0) return
-
-    const hoy = new Date()
-    hoy.setHours(0, 0, 0, 0)
-    gatherEventsOfUser(session.user.id)
+    if (!userId) return
+    let active = true
+    void gatherEventsOfUser(userId)
       .then(data => {
-        console.log('Datos: ', data)
-        data.forEach(evento => {
-          const fechaParsed = evento.fechaLimite.replaceAll('-', '/')
-
-          const id = evento.idEvento
-
-          const date = new Date(fechaParsed)
-
-          const title = evento.nombre
-
-          const hours = evento.horasAcumuladas
-
-          setEvents(prev => {
-            const index = prev.findIndex(event => event.id === id)
-
-            if (index === -1)
-              return [
-                ...prev,
-                { date, title, hoursAcumulated: hours, id } as Event,
-              ]
-            else return prev
-          })
-        })
+        if (!active) return
+        setEvents(
+          data.map(
+            evento =>
+              ({
+                date: new Date(evento.fechaLimite.replaceAll('-', '/')),
+                title: evento.nombre,
+                hoursAcumulated: evento.horasAcumuladas,
+                id: evento.idEvento,
+              }) as Event
+          )
+        )
       })
-      .catch((error: unknown) => console.log(error))
-  }
+      .catch((error: unknown) => {
+        if (active) console.error(error)
+      })
+    return () => {
+      active = false
+    }
+  }, [userId])
 
   return (
     <EventsContext.Provider

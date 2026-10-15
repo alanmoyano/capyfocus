@@ -18,10 +18,7 @@ export const ProfilePicProvider = ({ children }: { children: ReactNode }) => {
     <ProfilePicContext.Provider
       value={{
         profilePic,
-        setProfilePic: newProfilePic => {
-          localStorage.setItem('fotoPerfil', JSON.stringify(newProfilePic))
-          setProfilePic(newProfilePic)
-        },
+        setProfilePic,
       }}
     >
       {children}
