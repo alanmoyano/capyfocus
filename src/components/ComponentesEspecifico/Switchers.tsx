@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import {
   Select,
   SelectContent,
@@ -10,160 +11,97 @@ import {
 import { supabase } from '../supabase/client'
 import { useSession } from '../contexts/SessionContext'
 import { usePreferences } from '../contexts/PreferencesContext'
-import { useTheme } from '../contexts/ThemeContext'
-
-//TODO: Cambiar los colores de los switchers en modo oscuro
 
 export type Motivation = '1' | '2'
 
 export default function Switchers() {
-  /* Maneja los Switch */
-
   const {
     motivationPreference,
     darkModePreference,
     notificationPreference,
     setMotivationPreference,
     setDarkModePreference,
-    setNotificationPreference,
   } = usePreferences()
-
-  const [motivation, setMotivation] = useState<Motivation>(motivationPreference) // 1 es positiva, 2 es agresiva
-  const [isDark, setIsDark] = useState(darkModePreference)
-  const [isNotificaction, setIsNotificaction] = useState(notificationPreference)
   const { session } = useSession()
-  const { setTheme } = useTheme()
-
-  const handleToggleDark = () => {
-    if (!session) return
-
-    supabase
-      .from('Usuarios')
-      .update({ modoOscuro: !isDark })
-      .eq('id', session.user.id)
-      .select()
-      .then(({ data, error }) => {
-        if (error) console.error(error)
-        console.log(data)
-      })
-
-    setIsDark(prev => !prev)
-    setDarkModePreference(prev => !prev)
-    setTheme(!isDark ? 'dark' : 'light')
-  }
-
-  const handleToggleNotification = () => {
-    if (!session) return
-
-    supabase
-      .from('Usuarios')
-      .update({ notificaciones: !isNotificaction })
-      .eq('id', session.user.id)
-      .select()
-      .then(({ data, error }) => {
-        if (error) console.error(error)
-        console.log(data)
-      })
-
-    setIsNotificaction(prev => !prev)
-    setNotificationPreference(prev => !prev)
-  }
-
-  function handleSelectMotivation(value: '1' | '2') {
-    if (!session) return
-
-    supabase
-      .from('Usuarios')
-      .update({ motivacionFavorita: value })
-      .eq('id', session.user.id)
-      .select()
-      .then(({ data, error }) => {
-        if (error) console.error(error)
-        console.log(data)
-      })
-
-    setMotivation(value)
-    setMotivationPreference(value)
-  }
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+  const active = useRef(false)
+  const pending = useRef(false)
 
   useEffect(() => {
-    if (!session) return
+    active.current = true
+    return () => {
+      active.current = false
+    }
+  }, [])
 
-    supabase
-      .from('Usuarios')
-      .select('motivacionFavorita,modoOscuro,notificaciones')
-      .eq('id', session.user.id)
-      .then(({ data, error }) => {
-        if (error) console.error(error)
-
-        console.log(data)
-        if (!data) return
-
-        setMotivation(String(data[0].motivacionFavorita) as Motivation)
-        setMotivationPreference(
-          String(data[0].motivacionFavorita) as Motivation
-        )
-
-        setIsDark(data[0].modoOscuro as boolean)
-        setDarkModePreference(data[0].modoOscuro as boolean)
-
-        setIsNotificaction(data[0].notificaciones as boolean)
-        setNotificationPreference(data[0].notificaciones as boolean)
-      })
-  }, [session])
+  async function savePreference(value: boolean | Motivation) {
+    if (!session || pending.current) return
+    pending.current = true
+    setSaving(true)
+    setError('')
+    try {
+      const update =
+        typeof value === 'boolean'
+          ? { modoOscuro: value }
+          : { motivacionFavorita: value }
+      const { error } = await supabase
+        .from('Usuarios')
+        .update(update)
+        .eq('id', session.user.id)
+      if (error) throw error
+      if (!active.current) return
+      if (typeof value === 'boolean') setDarkModePreference(value)
+      else setMotivationPreference(value)
+    } catch {
+      if (active.current)
+        setError('No se pudo guardar la preferencia. Intenta de nuevo.')
+    } finally {
+      pending.current = false
+      if (active.current) setSaving(false)
+    }
+  }
 
   return (
-    <div className='select-none'>
-      <div className='mt-2 flex items-center justify-between'>
-        <p className='text-left text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
-          Modo oscuro predeterminado: {isDark ? 'Sí' : 'No'}
-        </p>
-        {/* Switch Modo oscuro */}
-        <div
-          onClick={handleToggleDark}
-          className={`${
-            isDark ? 'bg-[#ac99eb]' : 'bg-[#433323]'
-          } relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full`}
-        >
-          <span
-            className={`${
-              isDark ? 'translate-x-5' : 'translate-x-1'
-            } inline-block h-5 w-5 transform rounded-full bg-[#f0ece9] transition dark:bg-[#110d09]`}
-          />
-        </div>
+    <div className='flex select-none flex-col gap-2'>
+      <div className='flex items-center justify-between gap-2'>
+        <Label htmlFor='default-dark-mode'>
+          Modo oscuro predeterminado: {darkModePreference ? 'Sí' : 'No'}
+        </Label>
+        <Switch
+          id='default-dark-mode'
+          checked={darkModePreference}
+          disabled={saving || !session}
+          onCheckedChange={value => {
+            void savePreference(value)
+          }}
+        />
       </div>
-
-      {/* Notificaciones */}
-      <div className='mt-2 flex items-center justify-between'>
-        <p className='text-left text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
-          Recibir notificaciones: {isNotificaction ? 'Sí' : 'No'}
-        </p>
-
-        <div
-          onClick={handleToggleNotification}
-          className={`${
-            isNotificaction ? 'bg-[#728fe6]' : 'bg-[#433323]'
-          } relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full`}
-        >
-          <span
-            className={`${
-              isNotificaction ? 'translate-x-5' : 'translate-x-1'
-            } inline-block h-5 w-5 transform rounded-full bg-[#f0ece9] transition dark:bg-[#110d09]`}
-          />
-        </div>
+      <div className='flex items-center justify-between gap-2'>
+        <Label htmlFor='notifications'>Recibir notificaciones</Label>
+        <Switch
+          id='notifications'
+          checked={notificationPreference}
+          disabled
+          aria-describedby='notifications-unavailable'
+        />
       </div>
-
-      {/* Motivación */}
-      <div className='mt-2 flex items-center justify-between'>
-        <p className='text-left text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
-          Motivación favorita:
-        </p>
-
+      <p
+        id='notifications-unavailable'
+        className='text-sm text-muted-foreground'
+      >
+        No disponible. Capyfocus todavía no envía notificaciones.
+      </p>
+      <div className='flex items-center justify-between gap-2'>
+        <Label htmlFor='favorite-motivation'>Motivación favorita</Label>
         <Select
-          defaultValue={motivation}
-          onValueChange={handleSelectMotivation}
+          value={motivationPreference}
+          disabled={saving || !session}
+          onValueChange={value => {
+            if (value === '1' || value === '2') void savePreference(value)
+          }}
         >
-          <SelectTrigger className='max-w-40'>
+          <SelectTrigger id='favorite-motivation' className='max-w-40'>
             <SelectValue placeholder='Selecciona tu motivación favorita' />
           </SelectTrigger>
           <SelectContent>
@@ -172,19 +110,9 @@ export default function Switchers() {
           </SelectContent>
         </Select>
       </div>
-
-      {/* <div
-        onClick={handleToggle}
-        className={`${
-          isPositive ? 'bg-[#e78282]' : 'bg-[#433323]'
-        } relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full`}
-      >
-        <span
-          className={`${
-            isPositive ? 'translate-x-5' : 'translate-x-1'
-          } inline-block h-5 w-5 transform rounded-full bg-[#f0ece9] transition dark:bg-[#110d09]`}
-        />
-      </div> */}
+      <p role='status' className='text-sm'>
+        {error}
+      </p>
     </div>
   )
 }

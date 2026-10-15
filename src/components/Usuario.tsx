@@ -21,20 +21,18 @@ import {
 } from '@/components/ui/sheet'
 import { profilePictures } from '@/constants/profilePictures'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { BusFront, Pencil } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Pencil } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useLocation } from 'wouter'
 import { z } from 'zod'
 import ChichoHablaPerfil from './ComponentesEspecifico/ChichoHablaPerfil'
 import Switchers from './ComponentesEspecifico/Switchers'
-import { useEvents } from './contexts/EventsContext'
-import { useObjetivos } from './contexts/ObjetivosContext'
-import { usePreferences } from './contexts/PreferencesContext'
 import { useProfilePic } from './contexts/ProfilePicContext'
 import { useSession } from './contexts/SessionContext'
 import FotoSelector from './FotoSelector'
 import { supabase } from './supabase/client'
+import { toast } from 'sonner'
 import Reproductor from '@/components/ComponentesEspecifico/Reproductor'
 
 const formSchema = z.object({
@@ -47,64 +45,34 @@ type FormValues = z.infer<typeof formSchema>
 
 export default function Usuario() {
   const [, setLocation] = useLocation()
-  const { setEvents, setSelectedEvent } = useEvents()
-  const { setObjetivosFav, setObjetivos } = useObjetivos()
-  const {
-    setDarkModePreference,
-    setMotivationPreference,
-    setNotificationPreference,
-  } = usePreferences()
-
   const { session } = useSession()
   const user = session?.user
 
-  const handleLogin = () => {
-    supabase.auth.signOut().catch((error: unknown) => console.error(error))
-    setEvents([])
-    setSelectedEvent(null)
-
-    localStorage.removeItem('darkModePreference')
-    setDarkModePreference(false)
-
-    localStorage.removeItem('notificationPreference')
-    setNotificationPreference(true)
-
-    localStorage.removeItem('motivationPreference')
-    setMotivationPreference('1')
-
-    localStorage.removeItem('fotoPerfil')
-
-    localStorage.removeItem('objetivosFav')
-    setObjetivosFav([])
-    setObjetivos([])
-
-    localStorage.removeItem('sb-ndaahjmzdjhocmfocnbx-auth-token')
-    setLocation('/login')
+  const [signingOut, setSigningOut] = useState(false)
+  const handleLogin = async () => {
+    if (!session) {
+      setLocation('/login')
+      return
+    }
+    setSigningOut(true)
+    try {
+      // El SDK administra su storage y devuelve los fallos en `error`.
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
+      setLocation('/login')
+    } catch {
+      toast.error('No se pudo cerrar sesión. Intenta de nuevo.')
+    } finally {
+      setSigningOut(false)
+    }
   }
 
-  const [currentUsername, setCurrentUsername] = useState(
+  const [currentUsername] = useState(
     () =>
       (user?.user_metadata.name as string | undefined) ?? 'Invitado de Chicho'
   )
 
-  useEffect(() => {
-    console.log(currentUsername)
-  })
-
-  const [currentEmail, setCurrentEmail] = useState(
-    () => user?.email ?? 'invchicho@cmail.capy'
-  )
-
-  supabase.auth
-    .getUser()
-    .then(({ data: { user } }) => {
-      if (user?.user_metadata) {
-        setCurrentUsername(user.user_metadata.name as string)
-        setConfirmedUsername(user.user_metadata.name as string)
-      }
-      if (user?.email) setCurrentEmail(user.email)
-    })
-    .catch((error: unknown) => console.error(error))
+  const currentEmail = user?.email ?? 'invchicho@cmail.capy'
 
   const [selectedPicture, setSelectedPicture] = useState<string | undefined>(
     undefined
@@ -115,6 +83,7 @@ export default function Usuario() {
   const [confirmedUsername, setConfirmedUsername] = useState(currentUsername)
 
   const [sheetOpen, setSheetOpen] = useState(false)
+  const pictureRevision = useRef(0)
 
   const handleConfirm = (data: FormValues) => {
     setConfirmedUsername(data.username)
@@ -137,14 +106,22 @@ export default function Usuario() {
       })
 
     if (selectedPicture) {
-      console.log(user?.id)
-      setConfirmedPicture(selectedPicture)
+      const picture = selectedPicture
+      const revision = ++pictureRevision.current
       supabase
         .from('Usuarios')
-        .update({ fotoPerfil: profilePictures.indexOf(selectedPicture) })
+        .update({ fotoPerfil: profilePictures.indexOf(picture) })
         .eq('id', user?.id)
-        .then(res => {
-          console.log(res)
+        .then(({ error }) => {
+          if (revision !== pictureRevision.current) return
+          if (error) {
+            toast.error(
+              'No se pudo guardar la foto de perfil. Intenta de nuevo.'
+            )
+            return
+          }
+          setConfirmedPicture(picture)
+          setProfilePic(picture)
         })
     }
     setSheetOpen(false)
@@ -166,7 +143,7 @@ export default function Usuario() {
 
   useEffect(() => {
     if (session) setValue('username', session.user.user_metadata.name as string)
-  }, [session])
+  }, [session, setValue])
 
   const watchUsername = watch('username')
   const watchPicture = selectedPicture
@@ -180,20 +157,32 @@ export default function Usuario() {
 
   const { profilePic, setProfilePic } = useProfilePic()
 
-  function getProfilePicture() {
-    supabase
+  const userId = user?.id
+  useEffect(() => {
+    if (!userId) return
+    let active = true
+    const revision = pictureRevision.current
+    void supabase
       .from('Usuarios')
       .select('fotoPerfil')
-      .eq('id', user?.id)
-      .then(({ data }) => {
-        if (!data) return
-        const fotoSrc = profilePictures[data[0].fotoPerfil as number]
+      .eq('id', userId)
+      .then(({ data, error }) => {
+        if (!active || revision !== pictureRevision.current) return
+        if (error) {
+          console.error(error)
+          return
+        }
+        const index: unknown = data.at(0)?.fotoPerfil
+        const fotoSrc =
+          typeof index === 'number' ? profilePictures[index] : undefined
+        if (!fotoSrc) return
         setConfirmedPicture(fotoSrc)
         setProfilePic(fotoSrc)
       })
-
-    return profilePic
-  }
+    return () => {
+      active = false
+    }
+  }, [userId, setProfilePic])
 
   return (
     <>
@@ -209,10 +198,7 @@ export default function Usuario() {
           <Card className='flex h-full w-full flex-col bg-secondary shadow-md dark:bg-secondary/80'>
             <CardHeader className='text-center'>
               <Avatar className='mx-auto h-40 w-40'>
-                <AvatarImage
-                  src={getProfilePicture()}
-                  className='h-full w-full'
-                />
+                <AvatarImage src={profilePic} className='h-full w-full' />
                 <AvatarFallback className='border border-accent-foreground bg-accent text-4xl font-medium'>
                   {confirmedUsername
                     .split(' ')
@@ -329,7 +315,10 @@ export default function Usuario() {
                 )}
                 <Button
                   variant={session ? 'destructive' : 'default'}
-                  onClick={() => handleLogin()}
+                  disabled={signingOut}
+                  onClick={() => {
+                    void handleLogin()
+                  }}
                   className='mt-4'
                 >
                   {session ? 'Cerrar sesión' : 'Iniciar Sesión'}

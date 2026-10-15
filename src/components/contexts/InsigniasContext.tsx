@@ -5,6 +5,7 @@ import {
   useContext,
   useEffect,
   useState,
+  useRef,
 } from 'react'
 
 import { supabase } from '@/components/supabase/client'
@@ -43,38 +44,42 @@ export function InsigniasProvider({ children }: { children: ReactNode }) {
 
   const { session } = useSession()
 
+  const userId = session?.user.id
+  const request = useRef(0)
+  const mounted = useRef(false)
+
+  const reloadInsignias = useCallback(() => {
+    if (!userId || !mounted.current) return
+    const currentRequest = ++request.current
+    void supabase
+      .from('CapyInsigniasXUsuarios')
+      .select()
+      .eq('idUsuario', userId)
+      .then(({ data, error }) => {
+        if (!mounted.current || currentRequest !== request.current) return
+        if (error) {
+          console.error(error)
+          return
+        }
+        setInsigniasXUsuario(data as InsigniaXUsuario[])
+      })
+  }, [userId])
+
   useEffect(() => {
-    supabase
+    let active = true
+    mounted.current = true
+    void supabase
       .from('CapyInsignias')
       .select()
       .then(({ data }) => {
-        setInsignias(data as Insignia[])
+        if (active && data) setInsignias(data as Insignia[])
       })
-  }, [])
-
-  useEffect(() => {
-    if (!session) return
-    supabase
-      .from('CapyInsigniasXUsuarios')
-      .select()
-      .eq('idUsuario', session.user.id)
-      .then(({ data }) => {
-        if (!data) return
-        setInsigniasXUsuario(data as InsigniaXUsuario[])
-      })
-  }, [session])
-
-  const reloadInsignias = useCallback(() => {
-    if (!session) return
-    supabase
-      .from('CapyInsigniasXUsuarios')
-      .select()
-      .eq('idUsuario', session.user.id)
-      .then(({ data }) => {
-        if (!data) return
-        setInsigniasXUsuario(data as InsigniaXUsuario[])
-      })
-  }, [session])
+    reloadInsignias()
+    return () => {
+      active = false
+      mounted.current = false
+    }
+  }, [reloadInsignias])
 
   return (
     <InsigniasContext.Provider

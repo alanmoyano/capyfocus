@@ -1,4 +1,10 @@
-import { useEffect, useState, createContext, useContext } from 'react'
+import {
+  useEffect,
+  useState,
+  createContext,
+  useContext,
+  useCallback,
+} from 'react'
 
 type ThemeProviderProps = {
   children: React.ReactNode
@@ -31,13 +37,15 @@ export function ThemeProvider({
     root.classList.add(theme)
   }, [theme])
 
-  const value = {
-    theme,
-    setTheme: (theme: Theme) => {
+  const updateTheme = useCallback(
+    (theme: Theme) => {
       localStorage.setItem(storageKey, theme)
       setTheme(theme)
     },
-  }
+    [storageKey]
+  )
+
+  const value = { theme, setTheme: updateTheme }
 
   return (
     <ThemeProviderContext.Provider {...props} value={value}>
