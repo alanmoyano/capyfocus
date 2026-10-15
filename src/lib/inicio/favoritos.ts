@@ -116,7 +116,10 @@ export class FavoritosSync {
         if (!vigente()) return null
         const vigentes = this.agruparEquivalentes(
           favoritos.filter(
-            favorito => !this.archivadosDuranteCarga.has(favorito.descripcion)
+            favorito =>
+              this.equivalente(favorito.descripcion, [
+                ...this.archivadosDuranteCarga,
+              ]) === undefined
           )
         )
         vigentes.forEach(favorito => {
