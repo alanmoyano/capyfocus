@@ -223,6 +223,11 @@ const favoritosApi: FavoritosApi = {
   },
 }
 
+// Identidad dueña de objetivosFav/tiempoFavorito en el contexto global. Vive a
+// nivel de módulo, como el contexto, para sobrevivir a los remontajes de Inicio
+// (p. ej. logout desde Usuario, que no limpia tiempoFavorito)
+let duenoFavoritos: string | null | undefined
+
 export default function Inicio() {
   const [open, setOpen] = useState(false)
   const [inputValue, setInputValue] = useState('')
@@ -317,15 +322,16 @@ export default function Inicio() {
 
   // Los favoritos se cargan por identidad al montar y al cambiar de usuario.
   // Al desmontar o cambiar de usuario se invalidan las operaciones en curso.
-  const uuidAnterior = useRef<string | null | undefined>(undefined)
   useEffect(() => {
     const sync = favoritosSync.current
-    if (uuidAnterior.current !== undefined && uuidAnterior.current !== uuid) {
-      // No mostrar favoritos de otra identidad mientras carga la nueva
+    if (duenoFavoritos !== uuid) {
+      // Los favoritos y sus tiempos del contexto global pertenecen a otra
+      // identidad (o a una desconocida): no se muestran ni se combinan con
+      // los remotos, porque el merge por máximo inflaría las horas
       setObjetivosFav([])
       setTiempoFavorito({})
+      duenoFavoritos = uuid
     }
-    uuidAnterior.current = uuid
     sync?.setIdentidad(uuid)
     setFavoritosPendientes([])
     if (uuid) cargarFavoritos()
