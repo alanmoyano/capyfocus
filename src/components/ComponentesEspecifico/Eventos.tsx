@@ -228,6 +228,11 @@ export default function Eventos() {
 
   const addEvent = (googleCalendar: boolean) => {
     if (guardando) return
+    // Los duplicados se validan contra la lista completa (también con Enter)
+    if (cargaEventos === 'cargando') {
+      setErrorEvento('Esperá a que terminen de cargar tus eventos.')
+      return
+    }
     const resultado = validarEvento(eventTitle, date, events)
     if (!resultado.ok) {
       setErrorEvento(mensajesErrorEvento[resultado.error])
