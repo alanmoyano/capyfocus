@@ -203,23 +203,31 @@ const favoritosApi: FavoritosApi = {
       if (error) throw error
       if (data.length === 0) throw new Error('No se archivó el favorito')
     }
-    // También las demás filas activas con ese texto: sin constraint de
-    // unicidad, otra pestaña puede haber creado un duplicado que la carga
-    // muestra como un único favorito
-    const { error } = await archivar()
-      .eq('descripcion', descripcion)
-      .eq('idEstado', 1)
-    if (error) throw error
-    // Sólo es éxito si se confirma que no queda ninguna activa
-    const activas = await supabase
-      .from('ObjetivosFavoritos')
-      .select('id')
-      .eq('idUsuario', uuid)
-      .eq('descripcion', descripcion)
-      .eq('idEstado', 1)
-      .limit(1)
-    if (activas.error) throw activas.error
-    if (activas.data.length > 0) throw new Error('No se archivó el favorito')
+    // También las demás filas activas equivalentes (mismo texto normalizado,
+    // como en el alta): sin constraint de unicidad, otra pestaña puede haber
+    // creado un duplicado
+    const equivalentes = async () => {
+      const activas = await supabase
+        .from('ObjetivosFavoritos')
+        .select('id, descripcion')
+        .eq('idUsuario', uuid)
+        .eq('idEstado', 1)
+      if (activas.error) throw activas.error
+      return (activas.data as { id: number; descripcion: string }[])
+        .filter(
+          fila =>
+            buscarEquivalente(fila.descripcion, [descripcion]) !== undefined
+        )
+        .map(fila => fila.id)
+    }
+    const ids = await equivalentes()
+    if (ids.length > 0) {
+      const { error } = await archivar().in('id', ids)
+      if (error) throw error
+    }
+    // Sólo es éxito si se confirma que no queda ninguna activa equivalente
+    if ((await equivalentes()).length > 0)
+      throw new Error('No se archivó el favorito')
   },
 }
 
@@ -498,6 +506,12 @@ export default function Inicio() {
       accion === 'agregar' ? sync.agregar(objetivo) : sync.quitar(objetivo)
     operacion
       .then(resultado => {
+        // La baja archiva también los favoritos equivalentes
+        if (resultado === 'archivado') {
+          setObjetivosFav(prev =>
+            prev.filter(f => buscarEquivalente(f, [objetivo]) === undefined)
+          )
+        }
         // Si la fila ya existía, conservar sus horas acumuladas
         if (typeof resultado === 'object' && resultado.estado !== 'obsoleto') {
           const { favorito } = resultado

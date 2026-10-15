@@ -199,8 +199,14 @@ export class FavoritosSync {
         throw error
       }
       if (identidad !== this.identidad) return 'obsoleto'
-      this.ids.delete(descripcion)
-      this.archivadosDuranteCarga.add(descripcion)
+      // La API archiva también los textos equivalentes: olvidar sus ids
+      const archivados = [...this.ids.keys()].filter(
+        clave => this.equivalente(clave, [descripcion]) !== undefined
+      )
+      ;[descripcion, ...archivados].forEach(clave => {
+        this.ids.delete(clave)
+        this.archivadosDuranteCarga.add(clave)
+      })
       return 'archivado'
     })().finally(() => {
       if (this.bajas.get(descripcion) === baja) this.bajas.delete(descripcion)
@@ -235,8 +241,10 @@ export function combinarTiempoFavorito(
 ) {
   const siguiente = { ...previo }
   remotos.forEach(({ descripcion, horasAcumuladas }) => {
+    // Contra lo ya acumulado: con filas duplicadas el resultado no depende
+    // del orden en que lleguen
     siguiente[descripcion] = Math.max(
-      previo[descripcion] ?? 0,
+      siguiente[descripcion] ?? 0,
       horasAcumuladas ?? 0
     )
   })
