@@ -87,9 +87,22 @@ export function eventoDesdeRemoto(evento: EventoRemoto): EventoLocal {
   }
 }
 
-// Agrega o actualiza por id: una recuperación tardía no duplica, y una fila
-// remota más nueva (p. ej. horas sumadas en otra pestaña) reemplaza los datos
-// locales, que Timer/Pomodoro usan como base para acumular
+// Combina un evento local con su fila remota. Las horas acumuladas sólo
+// crecen: se toma el máximo para no perder un total optimista que Timer o
+// Pomodoro todavía están escribiendo, ni uno más nuevo sumado en otra pestaña
+export function fusionarEvento(
+  local: EventoLocal,
+  remoto: EventoLocal
+): EventoLocal {
+  const horas =
+    local.hoursAcumulated === undefined && remoto.hoursAcumulated === undefined
+      ? undefined
+      : Math.max(local.hoursAcumulated ?? 0, remoto.hoursAcumulated ?? 0)
+  return { ...local, ...remoto, hoursAcumulated: horas }
+}
+
+// Agrega o actualiza por id: una recuperación tardía no duplica, y la fila
+// remota actualiza los datos locales, que Timer/Pomodoro usan como base
 export function agregarEventos(
   eventos: EventoLocal[],
   nuevos: readonly EventoLocal[]
@@ -99,7 +112,7 @@ export function agregarEventos(
   nuevos.forEach(nuevo => {
     const indice = siguiente.findIndex(evento => evento.id === nuevo.id)
     if (indice === -1) siguiente.push(nuevo)
-    else siguiente[indice] = { ...siguiente[indice], ...nuevo }
+    else siguiente[indice] = fusionarEvento(siguiente[indice], nuevo)
   })
   return siguiente
 }

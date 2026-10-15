@@ -29,6 +29,7 @@ import {
   esEventoTemporal,
   eventoDesdeRemoto,
   fechaLimiteDesdeFecha,
+  fusionarEvento,
   mensajesErrorEvento,
   validarEvento,
   type EventoLocal,
@@ -325,7 +326,7 @@ export default function Eventos() {
         // El evento seleccionado también toma las horas actualizadas
         setSelectedEvent(prev => {
           const actualizado = prev && recuperados.find(e => e.id === prev.id)
-          return actualizado ? { ...prev, ...actualizado } : prev
+          return actualizado ? fusionarEvento(prev, actualizado) : prev
         })
         setCargaEventos('lista')
       })
