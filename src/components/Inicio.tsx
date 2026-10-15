@@ -366,6 +366,22 @@ export default function Inicio() {
       })
       return
     }
+    // Sin una carga exitosa, los tiempos en memoria pueden estar viejos y el
+    // timer los usaría como base para guardar: sólo importa si la sesión
+    // incluye objetivos favoritos
+    if (
+      uuid &&
+      description &&
+      estadoFavoritos === 'error' &&
+      objetivos.some(objetivo => objetivosFav.includes(objetivo))
+    ) {
+      toast.error('No se pudieron cargar tus favoritos', {
+        description:
+          'Reintentá antes de empezar para sumar el tiempo sobre las horas guardadas, o quitá los favoritos de esta sesión.',
+        action: { label: 'Reintentar', onClick: cargarFavoritos },
+      })
+      return
+    }
     switch (description) {
       case 'Capydoro':
         setLocation('/capydoro')
