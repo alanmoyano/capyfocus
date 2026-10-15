@@ -192,34 +192,34 @@ const favoritosApi: FavoritosApi = {
     return favorito
   },
   async archivar({ id, descripcion }, uuid) {
-    const consulta = supabase
-      .from('ObjetivosFavoritos')
-      .update({ idEstado: 2 })
-      .eq('idUsuario', uuid)
-    if (id === undefined) {
-      // Sin id conocido: archiva las filas activas con ese texto
-      const { data, error } = await consulta
-        .eq('descripcion', descripcion)
-        .eq('idEstado', 1)
-        .select('id')
-      if (error) throw error
-      if (data.length > 0) return
-      // Cero filas sólo es éxito si se confirma que no queda ninguna activa
-      const activas = await supabase
+    const archivar = () =>
+      supabase
         .from('ObjetivosFavoritos')
-        .select('id')
+        .update({ idEstado: 2 })
         .eq('idUsuario', uuid)
-        .eq('descripcion', descripcion)
-        .eq('idEstado', 1)
-        .limit(1)
-      if (activas.error) throw activas.error
-      if (activas.data.length > 0) throw new Error('No se archivó el favorito')
-      return
+    if (id !== undefined) {
+      // Con id, cero filas afectadas significa que el cambio no se confirmó
+      const { data, error } = await archivar().eq('id', id).select('id')
+      if (error) throw error
+      if (data.length === 0) throw new Error('No se archivó el favorito')
     }
-    // Con id, cero filas afectadas significa que el cambio no se confirmó
-    const { data, error } = await consulta.eq('id', id).select('id')
+    // También las demás filas activas con ese texto: sin constraint de
+    // unicidad, otra pestaña puede haber creado un duplicado que la carga
+    // muestra como un único favorito
+    const { error } = await archivar()
+      .eq('descripcion', descripcion)
+      .eq('idEstado', 1)
     if (error) throw error
-    if (data.length === 0) throw new Error('No se archivó el favorito')
+    // Sólo es éxito si se confirma que no queda ninguna activa
+    const activas = await supabase
+      .from('ObjetivosFavoritos')
+      .select('id')
+      .eq('idUsuario', uuid)
+      .eq('descripcion', descripcion)
+      .eq('idEstado', 1)
+      .limit(1)
+    if (activas.error) throw activas.error
+    if (activas.data.length > 0) throw new Error('No se archivó el favorito')
   },
 }
 
