@@ -259,7 +259,7 @@ export default function CapyEstadisticas() {
                           <p>Mensual</p>
                         </TooltipTrigger>
                         <TooltipContent className='ml-40'>
-                          <p>Estadísticas del último mes</p>
+                          <p>Estadísticas del mes actual hasta hoy</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -272,7 +272,9 @@ export default function CapyEstadisticas() {
                           <p>Bimestral</p>
                         </TooltipTrigger>
                         <TooltipContent className='ml-40'>
-                          <p>Estadísticas de los últimos dos meses</p>
+                          <p>
+                            Estadísticas del mes anterior y el actual hasta hoy
+                          </p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -285,7 +287,10 @@ export default function CapyEstadisticas() {
                           <p>6 Meses</p>
                         </TooltipTrigger>
                         <TooltipContent className='ml-40'>
-                          <p>Estadísticas de los últimos seis meses</p>
+                          <p>
+                            Estadísticas del mes actual y los cinco anteriores
+                            hasta hoy
+                          </p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
