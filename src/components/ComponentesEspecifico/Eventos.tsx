@@ -37,7 +37,14 @@ import {
   type EventoRemoto,
 } from '@/lib/inicio/eventos'
 import { cn } from '@/lib/utils'
-import { Fragment, KeyboardEvent, useEffect, useRef, useState } from 'react'
+import {
+  Fragment,
+  KeyboardEvent,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react'
 import { useLocation } from 'wouter'
 import { useEvents } from '../contexts/EventsContext'
 import { useSession } from '../contexts/SessionContext'
@@ -136,6 +143,19 @@ function marcasDe(mapa: Map<string, Set<number>>, uuid: string) {
   return marcas
 }
 
+// Los borrados en vuelo son la fuente de verdad del estado "eliminando" de
+// todos los montajes: cambiarlos avisa a los montados para re-renderizar
+const avisosBorrando = new Set<() => void>()
+
+function marcarBorrando(uuid: string, id: number, activo: boolean) {
+  const marcas = marcasDe(borrandoPorUsuario, uuid)
+  if (activo) marcas.add(id)
+  else marcas.delete(id)
+  avisosBorrando.forEach(avisar => {
+    avisar()
+  })
+}
+
 export default function Eventos() {
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [, setLocation] = useLocation()
@@ -143,11 +163,21 @@ export default function Eventos() {
   const [eventTitle, setEventTitle] = useState<string>('') //el titulos del evento
   const [errorEvento, setErrorEvento] = useState<string | null>(null)
   const [guardando, setGuardando] = useState(false)
-  const [eliminando, setEliminando] = useState<number[]>([])
   const [errorEliminar, setErrorEliminar] = useState<string | null>(null)
   const { session } = useSession()
   const uuid = session?.user.id ?? null
 
+  // Borrados en vuelo de este usuario, compartidos entre montajes
+  const [, refrescarBorrando] = useReducer((n: number) => n + 1, 0)
+  useEffect(() => {
+    avisosBorrando.add(refrescarBorrando)
+    return () => {
+      avisosBorrando.delete(refrescarBorrando)
+    }
+  }, [])
+  const eliminando = uuid
+    ? marcasDe(borrandoPorUsuario, uuid)
+    : new Set<number>()
   const [cargaEventos, setCargaEventos] = useState<
     'inactiva' | 'cargando' | 'lista' | 'error'
   >('inactiva')
@@ -321,10 +351,8 @@ export default function Eventos() {
   // Volver a elegir el evento seleccionado no puede bajar sus horas
   const seleccionar = (evento: Event) => {
     if (
-      eliminando.includes(evento.id) ||
-      (uuid !== null &&
-        (marcasDe(borrandoPorUsuario, uuid).has(evento.id) ||
-          marcasDe(borradosPorUsuario, uuid).has(evento.id)))
+      eliminando.has(evento.id) ||
+      (uuid !== null && marcasDe(borradosPorUsuario, uuid).has(evento.id))
     )
       return
     revisionSeleccion.current++
@@ -350,7 +378,8 @@ export default function Eventos() {
       quitarEventoLocal(event.id)
       return
     }
-    if (!uuid || eliminando.includes(event.id)) return
+    // Un borrado en vuelo (también de un montaje anterior) no se repite
+    if (!uuid || eliminando.has(event.id)) return
 
     // Se quita de la lista sólo cuando el backend confirma el borrado
     const gen = generacion.current.valor
@@ -370,8 +399,7 @@ export default function Eventos() {
     } = supabase.auth.onAuthStateChange((_evento, sesionActual) => {
       if (sesionActual?.user.id !== uuid) identidadVigente = false
     })
-    marcasDe(borrandoPorUsuario, uuid).add(event.id)
-    setEliminando(prev => [...prev, event.id])
+    marcarBorrando(uuid, event.id, true)
     setErrorEliminar(null)
     deleteEventById(event.id, uuid)
       .then(() => {
@@ -401,8 +429,8 @@ export default function Eventos() {
       })
       .finally(() => {
         subscription.unsubscribe()
-        marcasDe(borrandoPorUsuario, uuid).delete(event.id)
-        setEliminando(prev => prev.filter(id => id !== event.id))
+        // Sólo la operación que registró el marcador lo libera
+        marcarBorrando(uuid, event.id, false)
       })
   }
 
@@ -663,7 +691,7 @@ export default function Eventos() {
                 <ul className='list-inside list-disc space-y-2 text-sm text-black sm:text-base dark:text-white'>
                   {events.map(event => {
                     const seleccionado = selectedEvent?.id === event.id
-                    const borrando = eliminando.includes(event.id)
+                    const borrando = eliminando.has(event.id)
                     const temporal = esEventoTemporal(event)
                     return (
                       <Fragment key={event.id}>
