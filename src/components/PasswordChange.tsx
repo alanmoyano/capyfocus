@@ -10,6 +10,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@components/ui/button'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { useLocation } from 'wouter'
@@ -21,6 +22,7 @@ const formSchema = z.object({
 
 export default function PasswordChange() {
   const [, setLocation] = useLocation()
+  const pending = useRef(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -29,12 +31,21 @@ export default function PasswordChange() {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (pending.current) return
+    pending.current = true
 
-    supabase.auth
-      .updateUser({ password: values.password })
-      .catch((err: unknown) => toast.error(err as string))
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: values.password,
+      })
+      if (error) throw error
+    } catch {
+      toast.error('No se pudo cambiar la contraseña. Intentá nuevamente.')
+      return
+    } finally {
+      pending.current = false
+    }
 
     toast.success('Contraseña cambiada correctamente')
     setLocation('/usuario')
@@ -72,8 +83,13 @@ export default function PasswordChange() {
             </FormItem>
           )}
         />
-        <Button className='w-full' type='submit'>
-          Cambiar Contraseña
+        <Button
+          className='w-full'
+          type='submit'
+          disabled={form.formState.isSubmitting}
+          aria-busy={form.formState.isSubmitting}
+        >
+          {form.formState.isSubmitting ? 'Cambiando...' : 'Cambiar Contraseña'}
         </Button>
       </form>
     </Form>
