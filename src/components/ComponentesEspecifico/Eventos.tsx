@@ -120,6 +120,22 @@ const formatoLargo = (date: Date) =>
     day: 'numeric',
   })
 
+// Marcadores de borrado por usuario a nivel de módulo: sobreviven a los
+// remontajes de Eventos (p. ej. ir al timer y volver con un borrado en vuelo),
+// así una lectura de un montaje nuevo no reincorpora un evento ya borrado ni
+// permite elegir uno cuyo borrado sigue pendiente
+const borradosPorUsuario = new Map<string, Set<number>>()
+const borrandoPorUsuario = new Map<string, Set<number>>()
+
+function marcasDe(mapa: Map<string, Set<number>>, uuid: string) {
+  let marcas = mapa.get(uuid)
+  if (!marcas) {
+    marcas = new Set()
+    mapa.set(uuid, marcas)
+  }
+  return marcas
+}
+
 export default function Eventos() {
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [, setLocation] = useLocation()
@@ -135,8 +151,6 @@ export default function Eventos() {
   const [cargaEventos, setCargaEventos] = useState<
     'inactiva' | 'cargando' | 'lista' | 'error'
   >('inactiva')
-  // Ids borrados con confirmación: una lectura anterior no los reincorpora
-  const borrados = useRef(new Set<number>())
   // Sólo se aplica la lectura más reciente: una anterior que llegue tarde
   // pisaría horas acumuladas más nuevas
   const ultimaLectura = useRef(0)
@@ -306,7 +320,12 @@ export default function Eventos() {
 
   // Volver a elegir el evento seleccionado no puede bajar sus horas
   const seleccionar = (evento: Event) => {
-    if (eliminando.includes(evento.id) || borrados.current.has(evento.id))
+    if (
+      eliminando.includes(evento.id) ||
+      (uuid !== null &&
+        (marcasDe(borrandoPorUsuario, uuid).has(evento.id) ||
+          marcasDe(borradosPorUsuario, uuid).has(evento.id)))
+    )
       return
     revisionSeleccion.current++
     sincronizarSeleccion()
@@ -351,13 +370,14 @@ export default function Eventos() {
     } = supabase.auth.onAuthStateChange((_evento, sesionActual) => {
       if (sesionActual?.user.id !== uuid) identidadVigente = false
     })
+    marcasDe(borrandoPorUsuario, uuid).add(event.id)
     setEliminando(prev => [...prev, event.id])
     setErrorEliminar(null)
     deleteEventById(event.id, uuid)
       .then(() => {
         if (!identidadVigente) return
         // Estos setters pertenecen al provider y siguen vigentes al navegar
-        borrados.current.add(event.id)
+        marcasDe(borradosPorUsuario, uuid).add(event.id)
         quitarEventoLocal(event.id)
         if (generacion.current.valor !== gen) return
         toast.success('Evento eliminado', {
@@ -381,6 +401,7 @@ export default function Eventos() {
       })
       .finally(() => {
         subscription.unsubscribe()
+        marcasDe(borrandoPorUsuario, uuid).delete(event.id)
         setEliminando(prev => prev.filter(id => id !== event.id))
       })
   }
@@ -399,7 +420,7 @@ export default function Eventos() {
         if (!vigente()) return
         const recuperados = data
           .map(eventoDesdeRemoto)
-          .filter(evento => !borrados.current.has(evento.id))
+          .filter(evento => !marcasDe(borradosPorUsuario, uuid).has(evento.id))
         // Una lectura iniciada después de crear un evento ya lo refleja: si no
         // lo trae, fue borrado (p. ej. en otra pestaña) y deja de protegerse
         creados.current.forEach((lecturaAlCrear, id) => {
