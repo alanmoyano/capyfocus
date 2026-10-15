@@ -225,6 +225,8 @@ export default function Timer() {
   // }, [mode, sessionSeconds, breakSeconds])
 
   const handleAccept = () => {
+    // Mientras se guarda no se puede salir: el cierre todavía puede fallar y reintentarse
+    if (guardandoRef.current) return
     setLocation('/inicio')
     setObjetivos(prevObjetivos =>
       prevObjetivos.filter(obj => !marked.includes(obj))
@@ -508,7 +510,11 @@ export default function Timer() {
             </ul>
           </div>
           <div className='mb-2 mt-6 flex items-center justify-between sm:mb-0 sm:flex-row'>
-            <Button className='w-auto' onClick={handleAccept}>
+            <Button
+              className='w-auto'
+              disabled={guardando}
+              onClick={handleAccept}
+            >
               Volver
             </Button>
             <Button
