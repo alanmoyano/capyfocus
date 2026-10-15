@@ -92,6 +92,7 @@ import {
   validarNuevoObjetivo,
 } from '@/lib/inicio/objetivos'
 import {
+  agruparEquivalentes,
   combinarFavoritos,
   combinarTiempoFavorito,
   FavoritosSync,
@@ -167,7 +168,11 @@ const favoritosApi: FavoritosApi = {
       .eq('idUsuario', uuid)
       .eq('idEstado', 1)
     if (existentes.error) throw existentes.error
-    const activos = existentes.data as FavoritoRemoto[]
+    // Misma regla que la carga: canónico de menor id con el mayor total
+    const activos = agruparEquivalentes(
+      existentes.data as FavoritoRemoto[],
+      buscarEquivalente
+    )
     const texto = buscarEquivalente(
       descripcion,
       activos.map(favorito => favorito.descripcion)
