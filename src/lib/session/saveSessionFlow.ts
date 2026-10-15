@@ -8,6 +8,7 @@
 // entrega): si una escritura se aplicó pero la respuesta se perdió, el reintento
 // puede repetirla.
 
+import { formatDateDash } from '../dates.ts'
 import {
   calcularProgresoInsignia,
   ID_INSIGNIA_INACTIVIDAD,
@@ -15,8 +16,9 @@ import {
   type EventoInsignia,
 } from './insignias.ts'
 
-export type SesionRow = {
-  idUsuario: string
+// Datos de la sesión tal como los arman Timer y Pomodoro
+export type SesionAGuardar = {
+  uuid: string
   horaInicioSesion: string
   fecha: Date
   horaFinSesion: string
@@ -27,6 +29,40 @@ export type SesionRow = {
   tiempoEstudio: number
   musicaSeleccionada: number
   eventoSeleccionado: number | null
+}
+
+// Fila que se inserta en SesionesDeEstudio
+export type SesionRow = {
+  idUsuario: string
+  horaInicioSesion: string
+  fecha: string // YYYY-MM-DD, día local de inicio de la sesión
+  horaFinSesion: string
+  tecnicaEstudio: number
+  tipoMotivacion: number
+  cantidadObjetivosCumplidos: number
+  cantidadObjetivos: number
+  tiempoEstudio: number
+  musicaSeleccionada: number
+  eventoSeleccionado: number | null
+}
+
+// `fecha` se envía como día local YYYY-MM-DD. Un Date se serializaría en UTC y
+// una sesión empezada después de las 21 h en Argentina quedaría con el día siguiente.
+// Esto normaliza las nuevas escrituras; no corrige fechas ya guardadas.
+export function buildSesionRow(sessionToSave: SesionAGuardar): SesionRow {
+  return {
+    idUsuario: sessionToSave.uuid,
+    horaInicioSesion: sessionToSave.horaInicioSesion,
+    fecha: formatDateDash(sessionToSave.fecha),
+    horaFinSesion: sessionToSave.horaFinSesion,
+    tecnicaEstudio: sessionToSave.tecnicaEstudio,
+    tipoMotivacion: sessionToSave.tipoMotivacion,
+    cantidadObjetivosCumplidos: sessionToSave.cantidadObjetivosCumplidos,
+    cantidadObjetivos: sessionToSave.cantidadObjetivos,
+    tiempoEstudio: sessionToSave.tiempoEstudio,
+    musicaSeleccionada: sessionToSave.musicaSeleccionada,
+    eventoSeleccionado: sessionToSave.eventoSeleccionado,
+  }
 }
 
 export type AgregadosUsuario = {

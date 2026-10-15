@@ -12,18 +12,22 @@ import {
   type DatosInsignias,
   type SesionParaInactividad,
 } from '@/lib/session/insignias'
+import { formatDateDash } from '@/lib/dates'
 import {
+  buildSesionRow,
   createSaveSessionJob,
   runSaveSessionJob,
   type AgregadosUsuario,
   type ProgresoInsignia,
   type SaveSessionJob,
+  type SesionAGuardar,
   type SessionRepository,
 } from '@/lib/session/saveSessionFlow'
 
 export {
   SaveSessionError,
   type SaveSessionJob,
+  type SesionAGuardar,
 } from '@/lib/session/saveSessionFlow'
 
 type EventToRecover = {
@@ -32,19 +36,6 @@ type EventToRecover = {
   idUsuario: string
   fechaLimite: string
   horasAcumuladas: number | null
-}
-export type SesionAGuardar = {
-  uuid: string
-  horaInicioSesion: string
-  fecha: Date
-  horaFinSesion: string
-  tecnicaEstudio: number
-  tipoMotivacion: number
-  cantidadObjetivosCumplidos: number
-  cantidadObjetivos: number
-  tiempoEstudio: number
-  musicaSeleccionada: number
-  eventoSeleccionado: number | null
 }
 
 export type sessionInfo = {
@@ -97,15 +88,6 @@ async function deleteEvent(date: Date, name: string, uuid: string) {
     .eq('fechaLimite', formatDateDash(date))
     .eq('idUsuario', uuid)
   if (error) console.log(error)
-}
-
-const formatDateDash = (date: Date) => {
-  // Función que nos permite pasar de un objeto tipo date a uno de tipo string en formato YYYY-MM-DD
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-
-  return `${year}-${month}-${day}`
 }
 
 const formatDateDashARG = (date: Date) => {
@@ -435,19 +417,7 @@ function buildSaveSessionJob(
   }
 ) {
   return createSaveSessionJob({
-    sesion: {
-      idUsuario: sessionToSave.uuid,
-      horaInicioSesion: sessionToSave.horaInicioSesion,
-      fecha: sessionToSave.fecha,
-      horaFinSesion: sessionToSave.horaFinSesion,
-      tecnicaEstudio: sessionToSave.tecnicaEstudio,
-      tipoMotivacion: sessionToSave.tipoMotivacion,
-      cantidadObjetivosCumplidos: sessionToSave.cantidadObjetivosCumplidos,
-      cantidadObjetivos: sessionToSave.cantidadObjetivos,
-      tiempoEstudio: sessionToSave.tiempoEstudio,
-      musicaSeleccionada: sessionToSave.musicaSeleccionada,
-      eventoSeleccionado: sessionToSave.eventoSeleccionado,
-    },
+    sesion: buildSesionRow(sessionToSave),
     motivationType,
     insigniaIds: insignias.map(insignia => insignia.id),
     events,

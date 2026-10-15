@@ -24,7 +24,7 @@ function sesion(overrides: Partial<SesionRow> = {}): SesionRow {
   return {
     idUsuario: 'user-1',
     horaInicioSesion: '16:00:00',
-    fecha: new Date(2026, 9, 14, 16),
+    fecha: '2026-10-14',
     horaFinSesion: '18:00:00',
     tecnicaEstudio: 1,
     tipoMotivacion: 1,
