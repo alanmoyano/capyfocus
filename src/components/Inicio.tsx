@@ -577,7 +577,7 @@ export default function Inicio() {
   }
 
   const handleFav = (objetivo: string) => {
-    if (favoritosPendientes.includes(objetivo)) return
+    if (buscarEquivalente(objetivo, favoritosPendientes) !== undefined) return
     cambiarFavorito(
       objetivo,
       objetivosFav.includes(objetivo) ? 'quitar' : 'agregar'
@@ -814,7 +814,8 @@ export default function Inicio() {
                 {objetivos.map((objetivo, key) => {
                   const esFavorito = objetivosFav.includes(objetivo)
                   const favoritoPendiente =
-                    favoritosPendientes.includes(objetivo)
+                    buscarEquivalente(objetivo, favoritosPendientes) !==
+                    undefined
                   return (
                     <li
                       key={objetivo}

@@ -93,12 +93,20 @@ export class FavoritosSync {
     return this.ids.get(descripcion)
   }
 
+  private pendienteEquivalente<T>(
+    pendientes: Map<string, T>,
+    descripcion: string
+  ) {
+    const clave = this.equivalente(descripcion, [...pendientes.keys()])
+    return clave === undefined ? undefined : pendientes.get(clave)
+  }
+
   tieneAltaPendiente(descripcion: string) {
-    return this.altas.has(descripcion)
+    return this.pendienteEquivalente(this.altas, descripcion) !== undefined
   }
 
   tieneBajaPendiente(descripcion: string) {
-    return this.bajas.has(descripcion)
+    return this.pendienteEquivalente(this.bajas, descripcion) !== undefined
   }
 
   // Devuelve null si la respuesta llegó tarde (cambió la identidad o hubo una
@@ -137,21 +145,21 @@ export class FavoritosSync {
     return carga
   }
 
-  // Una sola alta en vuelo por texto, y siempre después de la carga en curso:
+  // Una sola alta en vuelo por texto equivalente, y siempre después de la carga en curso:
   // si el texto ya era favorito no se vuelve a insertar.
   agregar(descripcion: string): Promise<ResultadoAlta> {
-    const pendiente = this.altas.get(descripcion)
+    const pendiente = this.pendienteEquivalente(this.altas, descripcion)
     if (pendiente) return pendiente
 
     const uuid = this.uuid
     const identidad = this.identidad
     const carga = this.carga
-    const baja = this.bajas.get(descripcion)
+    const baja = this.pendienteEquivalente(this.bajas, descripcion)
     const alta = (async (): Promise<ResultadoAlta> => {
       const obsoleto = { estado: 'obsoleto' } as const
       if (!uuid) return obsoleto
       const remotos = carga ? await carga.catch(() => null) : null
-      // Si se está archivando el mismo texto, esperar para no reutilizar su id
+      // Esperar también bajas de textos equivalentes para no reutilizar su id
       if (baja) await baja.catch(() => null)
       if (identidad !== this.identidad) return obsoleto
       // Un favorito ya cargado con el mismo texto (o uno equivalente) se reutiliza
@@ -177,19 +185,20 @@ export class FavoritosSync {
       this.ids.set(favorito.descripcion, favorito.id)
       return { estado: 'insertado', favorito }
     })().finally(() => {
-      if (this.altas.get(descripcion) === alta) this.altas.delete(descripcion)
+      if (this.pendienteEquivalente(this.altas, descripcion) === alta)
+        this.altas.delete(descripcion)
     })
     this.altas.set(descripcion, alta)
     return alta
   }
 
   quitar(descripcion: string): Promise<ResultadoBaja> {
-    const pendiente = this.bajas.get(descripcion)
+    const pendiente = this.pendienteEquivalente(this.bajas, descripcion)
     if (pendiente) return pendiente
 
     const uuid = this.uuid
     const identidad = this.identidad
-    const altaPrevia = this.altas.get(descripcion)
+    const altaPrevia = this.pendienteEquivalente(this.altas, descripcion)
     const baja = (async (): Promise<ResultadoBaja> => {
       if (!uuid) return 'obsoleto'
       // Si el alta todavía está en vuelo, esperarla para archivar por id
@@ -215,7 +224,8 @@ export class FavoritosSync {
       })
       return 'archivado'
     })().finally(() => {
-      if (this.bajas.get(descripcion) === baja) this.bajas.delete(descripcion)
+      if (this.pendienteEquivalente(this.bajas, descripcion) === baja)
+        this.bajas.delete(descripcion)
     })
     this.bajas.set(descripcion, baja)
     return baja
