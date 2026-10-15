@@ -91,7 +91,16 @@ describe('eventos remotos y temporales', () => {
       resultado.map(e => e.id),
       [5, 6]
     )
-    assert.equal(resultado[0], existente)
+  })
+
+  it('actualiza las horas de un evento existente con la fila remota', () => {
+    const existente = { id: 5, date: hoy, title: 'A', hoursAcumulated: 10 }
+    const [actualizado] = agregarEventos(
+      [existente],
+      [{ id: 5, date: hoy, title: 'A', hoursAcumulated: 90 }]
+    )
+    assert.equal(actualizado.hoursAcumulated, 90)
+    assert.equal(existente.hoursAcumulated, 10)
   })
 
   it('el evento de invitado es temporal con id negativo único', () => {

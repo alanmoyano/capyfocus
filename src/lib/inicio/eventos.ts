@@ -86,7 +86,9 @@ export function eventoDesdeRemoto(evento: EventoRemoto): EventoLocal {
   }
 }
 
-// Agrega o reemplaza por id, para que una recuperación tardía no duplique
+// Agrega o actualiza por id: una recuperación tardía no duplica, y una fila
+// remota más nueva (p. ej. horas sumadas en otra pestaña) reemplaza los datos
+// locales, que Timer/Pomodoro usan como base para acumular
 export function agregarEventos(
   eventos: EventoLocal[],
   nuevos: readonly EventoLocal[]
@@ -96,6 +98,7 @@ export function agregarEventos(
   nuevos.forEach(nuevo => {
     const indice = siguiente.findIndex(evento => evento.id === nuevo.id)
     if (indice === -1) siguiente.push(nuevo)
+    else siguiente[indice] = { ...siguiente[indice], ...nuevo }
   })
   return siguiente
 }

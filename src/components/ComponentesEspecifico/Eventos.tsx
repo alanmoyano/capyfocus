@@ -316,6 +316,11 @@ export default function Eventos() {
           .map(eventoDesdeRemoto)
           .filter(evento => !borrados.current.has(evento.id))
         setEvents(prev => agregarEventos(prev, recuperados))
+        // El evento seleccionado también toma las horas actualizadas
+        setSelectedEvent(prev => {
+          const actualizado = prev && recuperados.find(e => e.id === prev.id)
+          return actualizado ? { ...prev, ...actualizado } : prev
+        })
         setCargaEventos('lista')
       })
       .catch((error: unknown) => {
