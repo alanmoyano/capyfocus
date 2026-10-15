@@ -157,6 +157,7 @@ function marcarBorrando(uuid: string, id: number, activo: boolean) {
 }
 
 export default function Eventos() {
+  const [abierto, setAbierto] = useState(false)
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [, setLocation] = useLocation()
   const { events, setEvents, selectedEvent, setSelectedEvent } = useEvents() //todos los eventos
@@ -298,7 +299,7 @@ export default function Eventos() {
   const addEvent = (googleCalendar: boolean) => {
     if (guardando) return
     // Los duplicados se validan contra la lista completa (también con Enter)
-    if (cargaEventos === 'cargando') {
+    if (uuid && cargaEventos !== 'lista' && cargaEventos !== 'error') {
       setErrorEvento('Esperá a que terminen de cargar tus eventos.')
       return
     }
@@ -462,6 +463,9 @@ export default function Eventos() {
           esEventoTemporal(evento) ||
           creados.current.has(evento.id) ||
           recuperados.some(e => e.id === evento.id)
+        // La reconciliación invalida también el rollback de un borrado en vuelo:
+        // su selección anterior puede haber desaparecido de esta lectura.
+        revisionSeleccion.current++
         // La lectura es completa: se quitan los borrados en otro dispositivo.
         // La fila del evento seleccionado absorbe las horas que Timer/Pomodoro
         // sumaron en memoria sobre la selección
@@ -489,6 +493,13 @@ export default function Eventos() {
       })
   }
 
+  // Abrir el panel o cambiar de cuenta exige una lectura completa nueva.
+  useEffect(() => {
+    if (abierto && uuid) handleRecover()
+    // La lectura se inicia por apertura o identidad, no por cada render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [abierto, uuid])
+
   const handleAdd = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key == 'Enter') {
       e.preventDefault()
@@ -499,12 +510,11 @@ export default function Eventos() {
   const hoy = new Date(new Date().setHours(0, 0, 0, 0))
 
   return (
-    <Sheet>
+    <Sheet open={abierto} onOpenChange={setAbierto}>
       <SheetTrigger asChild>
         <Button
           variant='secondary'
           className='mt-6 w-full bg-secondary sm:w-auto'
-          onClick={handleRecover}
         >
           Eventos
         </Button>
@@ -650,7 +660,7 @@ export default function Eventos() {
                   disabled={
                     guardando ||
                     cargaEventos === 'cargando' ||
-                    (uuid !== null && cargaEventos === 'error')
+                    (uuid !== null && cargaEventos !== 'lista')
                   }
                   aria-busy={guardando}
                 >
@@ -671,7 +681,7 @@ export default function Eventos() {
                   disabled={
                     guardando ||
                     cargaEventos === 'cargando' ||
-                    (uuid !== null && cargaEventos === 'error')
+                    (uuid !== null && cargaEventos !== 'lista')
                   }
                 >
                   Crear en Calendar
