@@ -117,6 +117,27 @@ export function agregarEventos(
   return siguiente
 }
 
+// Reconcilia la lista local con la lectura completa del servidor: los eventos
+// remotos ausentes (p. ej. borrados en otro dispositivo) se quitan, salvo los
+// temporales y los que `conservar` indica (creados después de iniciar la
+// lectura); los presentes se combinan con fusionarEvento
+export function reconciliarEventos(
+  locales: readonly EventoLocal[],
+  remotos: readonly EventoLocal[],
+  conservar: (evento: EventoLocal) => boolean
+) {
+  const resultado = remotos.map(remoto => {
+    const local = locales.find(evento => evento.id === remoto.id)
+    return local ? fusionarEvento(local, remoto) : remoto
+  })
+  locales.forEach(local => {
+    const enRemotos = remotos.some(remoto => remoto.id === local.id)
+    if (!enRemotos && (esEventoTemporal(local) || conservar(local)))
+      resultado.push(local)
+  })
+  return resultado
+}
+
 // Los eventos temporales usan ids negativos para no chocar con los remotos
 let ultimoIdTemporal = 0
 export function crearEventoTemporal(titulo: string, fecha: Date): EventoLocal {

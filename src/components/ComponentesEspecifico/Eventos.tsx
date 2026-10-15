@@ -30,6 +30,7 @@ import {
   eventoDesdeRemoto,
   fechaLimiteDesdeFecha,
   fusionarEvento,
+  reconciliarEventos,
   mensajesErrorEvento,
   validarEvento,
   type EventoLocal,
@@ -139,6 +140,8 @@ export default function Eventos() {
   // Sólo se aplica la lectura más reciente: una anterior que llegue tarde
   // pisaría horas acumuladas más nuevas
   const ultimaLectura = useRef(0)
+  // Creados con confirmación que una lectura iniciada antes todavía no trae
+  const creados = useRef(new Set<number>())
 
   // Cambia con cada identidad y al desmontar: las respuestas de una
   // generación anterior (incluso A → B → A) no se aplican
@@ -189,6 +192,7 @@ export default function Eventos() {
           toast.dismiss(toastId)
           return
         }
+        creados.current.add(data.idEvento)
         setEvents(prev =>
           agregarEventos(prev, [
             { ...eventoDesdeRemoto(data), date: fecha, title: titulo },
@@ -235,6 +239,12 @@ export default function Eventos() {
     // Los duplicados se validan contra la lista completa (también con Enter)
     if (cargaEventos === 'cargando') {
       setErrorEvento('Esperá a que terminen de cargar tus eventos.')
+      return
+    }
+    if (uuid && cargaEventos === 'error') {
+      setErrorEvento(
+        'No se pudieron cargar tus eventos. Reintentá antes de crear uno nuevo.'
+      )
       return
     }
     const resultado = validarEvento(eventTitle, date, events)
@@ -330,18 +340,29 @@ export default function Eventos() {
         const recuperados = data
           .map(eventoDesdeRemoto)
           .filter(evento => !borrados.current.has(evento.id))
+        recuperados.forEach(evento => creados.current.delete(evento.id))
+        const vigenteLocal = (evento: Event) =>
+          esEventoTemporal(evento) ||
+          creados.current.has(evento.id) ||
+          recuperados.some(e => e.id === evento.id)
+        // La lectura es completa: se quitan los borrados en otro dispositivo.
         // La fila del evento seleccionado absorbe las horas que Timer/Pomodoro
         // sumaron en memoria sobre la selección
         setEvents(prev =>
           agregarEventos(
-            agregarEventos(prev, recuperados),
-            selectedEvent ? [selectedEvent] : []
+            reconciliarEventos(prev, recuperados, evento =>
+              creados.current.has(evento.id)
+            ),
+            selectedEvent && vigenteLocal(selectedEvent) ? [selectedEvent] : []
           )
         )
-        // El evento seleccionado también toma las horas actualizadas
+        // El evento seleccionado toma las horas actualizadas, o se deselecciona
+        // si ya no existe
         setSelectedEvent(prev => {
-          const actualizado = prev && recuperados.find(e => e.id === prev.id)
-          return actualizado ? fusionarEvento(prev, actualizado) : prev
+          if (!prev) return prev
+          const actualizado = recuperados.find(e => e.id === prev.id)
+          if (actualizado) return fusionarEvento(prev, actualizado)
+          return vigenteLocal(prev) ? prev : null
         })
         setCargaEventos('lista')
       })
@@ -428,7 +449,8 @@ export default function Eventos() {
                 role='alert'
                 className='flex items-center justify-between gap-2 text-sm'
               >
-                No se pudieron cargar tus eventos; puede haber duplicados.
+                No se pudieron cargar tus eventos. Reintentá para poder crear
+                uno nuevo.
                 <Button size='sm' variant='outline' onClick={handleRecover}>
                   Reintentar
                 </Button>
@@ -508,7 +530,11 @@ export default function Eventos() {
                   }}
                   variant={'accent'}
                   className='w-full sm:w-auto'
-                  disabled={guardando || cargaEventos === 'cargando'}
+                  disabled={
+                    guardando ||
+                    cargaEventos === 'cargando' ||
+                    (uuid !== null && cargaEventos === 'error')
+                  }
                   aria-busy={guardando}
                 >
                   {guardando && (
@@ -525,7 +551,11 @@ export default function Eventos() {
                   }}
                   variant={'accent'}
                   className='ml-2 w-full sm:w-auto'
-                  disabled={guardando || cargaEventos === 'cargando'}
+                  disabled={
+                    guardando ||
+                    cargaEventos === 'cargando' ||
+                    (uuid !== null && cargaEventos === 'error')
+                  }
                 >
                   Crear en Calendar
                 </Button>
