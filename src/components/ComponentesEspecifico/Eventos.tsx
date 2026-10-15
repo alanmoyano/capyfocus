@@ -135,6 +135,9 @@ export default function Eventos() {
   >('inactiva')
   // Ids borrados con confirmación: una lectura anterior no los reincorpora
   const borrados = useRef(new Set<number>())
+  // Sólo se aplica la lectura más reciente: una anterior que llegue tarde
+  // pisaría horas acumuladas más nuevas
+  const ultimaLectura = useRef(0)
 
   // Cambia con cada identidad y al desmontar: las respuestas de una
   // generación anterior (incluso A → B → A) no se aplican
@@ -308,10 +311,13 @@ export default function Eventos() {
   const handleRecover = () => {
     if (!uuid) return
     const gen = generacion.current.valor
+    const lectura = ++ultimaLectura.current
+    const vigente = () =>
+      generacion.current.valor === gen && ultimaLectura.current === lectura
     setCargaEventos('cargando')
     gatherEvents(uuid)
       .then(data => {
-        if (generacion.current.valor !== gen) return
+        if (!vigente()) return
         const recuperados = data
           .map(eventoDesdeRemoto)
           .filter(evento => !borrados.current.has(evento.id))
@@ -325,7 +331,7 @@ export default function Eventos() {
       })
       .catch((error: unknown) => {
         console.error('No se pudieron recuperar los eventos', error)
-        if (generacion.current.valor === gen) setCargaEventos('error')
+        if (vigente()) setCargaEventos('error')
       })
   }
 
