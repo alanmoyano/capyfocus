@@ -6,6 +6,7 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
+  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
@@ -18,61 +19,79 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { es } from 'date-fns/locale'
-import { Trash } from 'lucide-react'
+import { Loader2, Trash } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Fragment, KeyboardEvent, useState, useEffect } from 'react'
-import { useLocation } from 'wouter'
 import {
-  deleteEvent,
-  gatherEventsOfUser,
-} from '../../constants/supportFunctions'
+  agregarEventos,
+  crearEventoTemporal,
+  esEventoTemporal,
+  eventoDesdeRemoto,
+  fechaLimiteDesdeFecha,
+  fusionarEvento,
+  reconciliarEventos,
+  mensajesErrorEvento,
+  validarEvento,
+  type EventoLocal,
+  type EventoRemoto,
+} from '@/lib/inicio/eventos'
+import { cn } from '@/lib/utils'
+import {
+  Fragment,
+  KeyboardEvent,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react'
+import { useLocation } from 'wouter'
 import { useEvents } from '../contexts/EventsContext'
 import { useSession } from '../contexts/SessionContext'
 import { supabase } from '../supabase/client'
 
-export type Event = {
-  id: number
-  date: Date
-  title: string
-  hoursAcumulated?: number
-}
+export type Event = EventoLocal
 
-type EventToSave = {
-  nombre: string
-  uuid: string
-  fechaLimite: Date
-}
-
-type EventToRecover = {
-  idEvento: number
-  nombre: string
-  idUsuario: string
-  fechaLimite: string
-  horasAcumuladas: number | null
-}
-
-type EventAddContext = 'New' | 'Existing'
-
+// Helpers propios de este módulo: a diferencia de los compartidos en
+// supportFunctions, propagan los errores para poder avisar y reintentar.
 async function saveEvent(name: string, uuid: string, limitDate: Date) {
-  const eventToSave: EventToSave = {
-    nombre: name,
-    uuid: uuid,
-    fechaLimite: limitDate,
-  }
-  const { data, error } = await supabase
+  const respuesta = await supabase
     .from('Eventos')
     .insert([
       {
-        nombre: eventToSave.nombre,
-        idUsuario: eventToSave.uuid,
-        fechaLimite: eventToSave.fechaLimite,
+        nombre: name,
+        idUsuario: uuid,
+        fechaLimite: fechaLimiteDesdeFecha(limitDate),
       },
     ])
     .select()
+    .single()
 
-  if (data) return data[0] as EventToRecover
+  if (respuesta.error) throw respuesta.error
+  return respuesta.data as EventoRemoto
+}
+
+// Borra por id remoto. Si ya no existe, el resultado también es exitoso:
+// otra pestaña o dispositivo puede haberlo eliminado desde la última lectura.
+async function deleteEventById(id: number, uuid: string) {
+  const { error } = await supabase
+    .from('Eventos')
+    .delete()
+    .eq('idEvento', id)
+    .eq('idUsuario', uuid)
+    .select('idEvento')
+
+  if (error) throw error
+}
+
+async function gatherEvents(uuid: string) {
+  const { data, error } = await supabase
+    .from('Eventos')
+    .select()
+    .eq('idUsuario', uuid)
+
+  if (error) throw error
+  return data as EventoRemoto[]
 }
 
 const formatDate = (date: Date) => {
@@ -101,126 +120,401 @@ const createGoogleCalendarLink = (name: string, date: Date) => {
   return `${baseUrl}?${params.toString()}`
 }
 
+const formatoLargo = (date: Date) =>
+  date.toLocaleDateString('es-ES', {
+    weekday: 'long',
+    month: 'numeric',
+    day: 'numeric',
+  })
+
+// Marcadores de borrado por usuario a nivel de módulo: sobreviven a los
+// remontajes de Eventos (p. ej. ir al timer y volver con un borrado en vuelo),
+// así una lectura de un montaje nuevo no reincorpora un evento ya borrado ni
+// permite elegir uno cuyo borrado sigue pendiente
+const borradosPorUsuario = new Map<string, Set<number>>()
+const borrandoPorUsuario = new Map<string, Set<number>>()
+
+function marcasDe(mapa: Map<string, Set<number>>, uuid: string) {
+  let marcas = mapa.get(uuid)
+  if (!marcas) {
+    marcas = new Set()
+    mapa.set(uuid, marcas)
+  }
+  return marcas
+}
+
+// Los borrados en vuelo son la fuente de verdad del estado "eliminando" de
+// todos los montajes: cambiarlos avisa a los montados para re-renderizar
+const avisosBorrando = new Set<() => void>()
+
+function marcarBorrando(uuid: string, id: number, activo: boolean) {
+  const marcas = marcasDe(borrandoPorUsuario, uuid)
+  if (activo) marcas.add(id)
+  else marcas.delete(id)
+  avisosBorrando.forEach(avisar => {
+    avisar()
+  })
+}
+
 export default function Eventos() {
+  const [abierto, setAbierto] = useState(false)
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [, setLocation] = useLocation()
   const { events, setEvents, selectedEvent, setSelectedEvent } = useEvents() //todos los eventos
   const [eventTitle, setEventTitle] = useState<string>('') //el titulos del evento
+  const [errorEvento, setErrorEvento] = useState<string | null>(null)
+  const [guardando, setGuardando] = useState(false)
+  const [errorEliminar, setErrorEliminar] = useState<string | null>(null)
   const { session } = useSession()
+  const uuid = session?.user.id ?? null
+
+  // Borrados en vuelo de este usuario, compartidos entre montajes
+  const [, refrescarBorrando] = useReducer((n: number) => n + 1, 0)
+  useEffect(() => {
+    avisosBorrando.add(refrescarBorrando)
+    return () => {
+      avisosBorrando.delete(refrescarBorrando)
+    }
+  }, [])
+  const eliminando = uuid
+    ? marcasDe(borrandoPorUsuario, uuid)
+    : new Set<number>()
+  const [cargaEventos, setCargaEventos] = useState<
+    'inactiva' | 'cargando' | 'lista' | 'error'
+  >('inactiva')
+  // Sólo se aplica la lectura más reciente: una anterior que llegue tarde
+  // pisaría horas acumuladas más nuevas
+  const ultimaLectura = useRef(0)
+  // Creados con confirmación → número de la última lectura iniciada antes de
+  // crearlos. Sólo esas lecturas pueden no traerlos; una posterior es completa
+  const creados = useRef(new Map<number, number>())
+  // No se restaura una selección si el usuario la cambió durante el borrado
+  const revisionSeleccion = useRef(0)
+
+  // Cambia con cada identidad y al desmontar: las lecturas, altas y avisos
+  // de una generación anterior (incluso A → B → A) no se aplican
+  const generacion = useRef({ valor: 0 })
+  useEffect(() => {
+    const contador = generacion.current
+    contador.valor++
+    setCargaEventos('inactiva')
+    return () => {
+      contador.valor++
+    }
+  }, [uuid])
+
+  // Al volver de una sesión (Eventos se remonta con Inicio), la lista toma las
+  // horas que Timer/Pomodoro sumaron sobre la selección
+  useEffect(() => {
+    if (!selectedEvent || esEventoTemporal(selectedEvent)) return
+    const actual = selectedEvent
+    setEvents(prev =>
+      prev.map(evento =>
+        evento.id === actual.id ? fusionarEvento(evento, actual) : evento
+      )
+    )
+    // Sólo al montar: después lo cubren seleccionar/deseleccionar
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Un evento temporal no existe en el backend: no puede quedar seleccionado
+  // para una sesión que se va a guardar con usuario
+  useEffect(() => {
+    if (uuid && selectedEvent && esEventoTemporal(selectedEvent)) {
+      setSelectedEvent(null)
+    }
+  }, [uuid, selectedEvent, setSelectedEvent])
 
   const handleVolver = () => {
     setLocation('/inicio')
   }
 
-  const addEvent = (googleCalendar: boolean, context: EventAddContext) => {
-    if (date && eventTitle) {
-      const dateString = date.toLocaleDateString('es-ES', {
-        weekday: 'long',
-        month: 'numeric',
-        day: 'numeric',
-      })
+  const guardarEvento = (
+    titulo: string,
+    fecha: Date,
+    googleCalendar: boolean
+  ) => {
+    if (!uuid) return
+    const gen = generacion.current.valor
+    // La pestaña se abre durante el click para que no la bloquee el navegador,
+    // y sólo se navega a Calendar si el evento se guardó
+    const ventanaCalendar = googleCalendar ? window.open('', '_blank') : null
+    if (ventanaCalendar) ventanaCalendar.opener = null
+    const toastId = toast.loading('Guardando evento…', {
+      description: `"${titulo}" el ${formatoLargo(fecha)}`,
+      position: 'bottom-center',
+    })
+    setGuardando(true)
+    setErrorEvento(null)
 
-      if (context === 'New') {
+    saveEvent(titulo, uuid, fecha)
+      .then(data => {
+        if (generacion.current.valor !== gen) {
+          ventanaCalendar?.close()
+          toast.dismiss(toastId)
+          return
+        }
+        creados.current.set(data.idEvento, ultimaLectura.current)
+        setEvents(prev =>
+          agregarEventos(prev, [
+            { ...eventoDesdeRemoto(data), date: fecha, title: titulo },
+          ])
+        )
+        setEventTitle(prev => (prev.trim() === titulo ? '' : prev))
         toast.success('Se ha creado el evento:', {
-          description: '"' + eventTitle + '"' + ' en el dia: ' + dateString,
+          id: toastId,
+          description: `"${titulo}" en el día: ${formatoLargo(fecha)}`,
           duration: 4000,
           position: 'bottom-center',
         })
-
-        if (session) {
-          console.log(date)
-          const mañana = new Date('2024/11/2')
-          console.log(mañana)
-          saveEvent(eventTitle, session.user.id, date)
-            .then(data => {
-              if (data) {
-                setEvents([
-                  ...events,
-                  { date, title: eventTitle, id: data.idEvento },
-                ])
-              }
-              if (googleCalendar) {
-                window.open(createGoogleCalendarLink(eventTitle, date))
-              }
-            })
-            .catch((error: unknown) => console.log(error))
-        } else {
-          toast.error('ADVERTENCIA', {
-            description:
-              'Si no tienes sesion iniciada tu evento se borrará de la pagina',
-          })
+        if (googleCalendar) {
+          const link = createGoogleCalendarLink(titulo, fecha)
+          if (ventanaCalendar) ventanaCalendar.location.href = link
+          else window.open(link, '_blank', 'noopener')
         }
-        // setEvents([...events, { date, title: eventTitle }])
-        setEventTitle('') // Limpiar el título después de añadir el evento
-        console.log(events)
-      }
-    } else {
-      toast.error('No se ha podido crear el evento:', {
-        description: 'Por favor, ingresa un título para el evento.',
       })
-    }
-  }
-
-  const handleDelete = (event: Event, index: number) => {
-    setEvents(events.filter((_, i) => i !== index))
-    if (selectedEvent === event) {
-      setSelectedEvent(null)
-    }
-    if (session) {
-      deleteEvent(event.date, event.title, session.user.id)
-        .then(() => console.log('Evento borrado con exito'))
-        .catch((error: unknown) => console.log('Ocurrio un error', error))
-    }
-  }
-
-  const handleRecover = () => {
-    if (!session || events.length > 0) return
-    gatherEventsOfUser(session.user.id)
-      .then(data => {
-        console.log('Datos: ', data)
-        data.forEach(evento => {
-          const fechaParsed = evento.fechaLimite.replaceAll('-', '/')
-
-          const id = evento.idEvento
-
-          const date = new Date(fechaParsed)
-
-          const title = evento.nombre
-
-          const hours = evento.horasAcumuladas
-
-          setEvents(prev => {
-            const index = prev.findIndex(event => event.id === id)
-
-            if (index === -1)
-              return [
-                ...prev,
-                { date, title, hoursAcumulated: hours, id } as Event,
-              ]
-            else return prev
-          })
+      .catch((error: unknown) => {
+        console.error('No se pudo guardar el evento', error)
+        ventanaCalendar?.close()
+        if (generacion.current.valor !== gen) {
+          toast.dismiss(toastId)
+          return
+        }
+        // El reintento es inline: con el Sheet abierto (modal) no se puede
+        // interactuar con las acciones de los toasts
+        setErrorEvento(
+          `No se pudo guardar "${titulo}". Revisá tu conexión y volvé a presionar "${googleCalendar ? 'Crear en Calendar' : 'Agregar'}".`
+        )
+        toast.error('No se pudo crear el evento', {
+          id: toastId,
+          description: `"${titulo}". Revisá tu conexión e intentá de nuevo.`,
+          position: 'bottom-center',
         })
       })
-      .catch((error: unknown) => console.log(error))
+      .finally(() => {
+        setGuardando(false)
+      })
   }
 
-  const handleAdd = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key == 'Enter' && eventTitle.trim() != '' && date) {
-      addEvent(false, 'New')
+  const addEvent = (googleCalendar: boolean) => {
+    if (guardando) return
+    // Los duplicados se validan contra la lista completa (también con Enter)
+    if (uuid && cargaEventos !== 'lista' && cargaEventos !== 'error') {
+      setErrorEvento('Esperá a que terminen de cargar tus eventos.')
+      return
+    }
+    if (uuid && cargaEventos === 'error') {
+      setErrorEvento(
+        'No se pudieron cargar tus eventos. Reintentá antes de crear uno nuevo.'
+      )
+      return
+    }
+    const resultado = validarEvento(eventTitle, date, events)
+    if (!resultado.ok) {
+      setErrorEvento(mensajesErrorEvento[resultado.error])
+      toast.error('No se ha podido crear el evento:', {
+        description: mensajesErrorEvento[resultado.error],
+      })
+      return
+    }
+    const { titulo, fecha } = resultado
+
+    if (uuid) {
+      guardarEvento(titulo, fecha, googleCalendar)
+      return
+    }
+
+    // Invitado: el evento vive sólo en memoria hasta recargar o iniciar sesión
+    setEvents(prev => [...prev, crearEventoTemporal(titulo, fecha)])
+    setEventTitle('')
+    setErrorEvento(null)
+    toast.warning('Evento temporal creado', {
+      description: `"${titulo}" no se guardó porque no iniciaste sesión. Se perderá al recargar la página o al iniciar sesión.`,
+      duration: 8000,
+    })
+    if (googleCalendar) {
+      window.open(createGoogleCalendarLink(titulo, fecha), '_blank', 'noopener')
     }
   }
 
+  // Timer y Pomodoro suman horas sólo sobre el objeto seleccionado: antes de
+  // cambiar o quitar la selección, su fila de la lista absorbe esas horas
+  const sincronizarSeleccion = () => {
+    const actual = selectedEvent
+    if (!actual || esEventoTemporal(actual)) return
+    setEvents(prev =>
+      prev.map(evento =>
+        evento.id === actual.id ? fusionarEvento(evento, actual) : evento
+      )
+    )
+  }
+
+  // Volver a elegir el evento seleccionado no puede bajar sus horas
+  const seleccionar = (evento: Event) => {
+    if (
+      eliminando.has(evento.id) ||
+      (uuid !== null && marcasDe(borradosPorUsuario, uuid).has(evento.id))
+    )
+      return
+    revisionSeleccion.current++
+    sincronizarSeleccion()
+    setSelectedEvent(prev =>
+      prev?.id === evento.id ? fusionarEvento(evento, prev) : evento
+    )
+  }
+
+  const deseleccionar = () => {
+    revisionSeleccion.current++
+    sincronizarSeleccion()
+    setSelectedEvent(null)
+  }
+
+  const quitarEventoLocal = (id: number) => {
+    setEvents(prev => prev.filter(event => event.id !== id))
+    setSelectedEvent(prev => (prev?.id === id ? null : prev))
+  }
+
+  const handleDelete = (event: Event) => {
+    if (esEventoTemporal(event)) {
+      quitarEventoLocal(event.id)
+      return
+    }
+    // Un borrado en vuelo (también de un montaje anterior) no se repite
+    if (!uuid || eliminando.has(event.id)) return
+
+    // Se quita de la lista sólo cuando el backend confirma el borrado
+    const gen = generacion.current.valor
+    const seleccionAnterior =
+      selectedEvent?.id === event.id
+        ? fusionarEvento(event, selectedEvent)
+        : null
+    // Timer/Pomodoro no deben recibir un id cuyo borrado está pendiente.
+    // deseleccionar conserva en la lista las horas acumuladas en la selección
+    if (seleccionAnterior) deseleccionar()
+    const revision = revisionSeleccion.current
+    // La identidad se vigila hasta que termine la solicitud, incluso después
+    // del desmontaje. Un cambio A → B → A también invalida este resultado
+    let identidadVigente = true
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_evento, sesionActual) => {
+      if (sesionActual?.user.id !== uuid) identidadVigente = false
+    })
+    marcarBorrando(uuid, event.id, true)
+    setErrorEliminar(null)
+    deleteEventById(event.id, uuid)
+      .then(() => {
+        if (!identidadVigente) return
+        // Estos setters pertenecen al provider y siguen vigentes al navegar
+        marcasDe(borradosPorUsuario, uuid).add(event.id)
+        quitarEventoLocal(event.id)
+        if (generacion.current.valor !== gen) return
+        toast.success('Evento eliminado', {
+          description: `"${event.title}"`,
+          position: 'bottom-center',
+        })
+      })
+      .catch((error: unknown) => {
+        console.error('No se pudo eliminar el evento', error)
+        if (!identidadVigente || generacion.current.valor !== gen) return
+        if (seleccionAnterior && revisionSeleccion.current === revision) {
+          setSelectedEvent(prev => prev ?? seleccionAnterior)
+        }
+        setErrorEliminar(
+          `No se pudo eliminar "${event.title}"; sigue guardado. Podés volver a intentarlo.`
+        )
+        toast.error('No se pudo eliminar el evento', {
+          description: `"${event.title}" sigue guardado.`,
+          position: 'bottom-center',
+        })
+      })
+      .finally(() => {
+        subscription.unsubscribe()
+        // Sólo la operación que registró el marcador lo libera
+        marcarBorrando(uuid, event.id, false)
+      })
+  }
+
+  // Se relee al abrir el panel: la validación de duplicados necesita la
+  // lista completa y no alcanza con que haya algún evento en memoria
+  const handleRecover = () => {
+    if (!uuid) return
+    const gen = generacion.current.valor
+    const lectura = ++ultimaLectura.current
+    const vigente = () =>
+      generacion.current.valor === gen && ultimaLectura.current === lectura
+    setCargaEventos('cargando')
+    gatherEvents(uuid)
+      .then(data => {
+        if (!vigente()) return
+        const recuperados = data
+          .map(eventoDesdeRemoto)
+          .filter(evento => !marcasDe(borradosPorUsuario, uuid).has(evento.id))
+        // Una lectura iniciada después de crear un evento ya lo refleja: si no
+        // lo trae, fue borrado (p. ej. en otra pestaña) y deja de protegerse
+        creados.current.forEach((lecturaAlCrear, id) => {
+          if (
+            lecturaAlCrear < lectura ||
+            recuperados.some(evento => evento.id === id)
+          )
+            creados.current.delete(id)
+        })
+        const vigenteLocal = (evento: Event) =>
+          esEventoTemporal(evento) ||
+          creados.current.has(evento.id) ||
+          recuperados.some(e => e.id === evento.id)
+        // La reconciliación invalida también el rollback de un borrado en vuelo:
+        // su selección anterior puede haber desaparecido de esta lectura.
+        revisionSeleccion.current++
+        // La lectura es completa: se quitan los borrados en otro dispositivo.
+        // La fila del evento seleccionado absorbe las horas que Timer/Pomodoro
+        // sumaron en memoria sobre la selección
+        setEvents(prev =>
+          agregarEventos(
+            reconciliarEventos(prev, recuperados, evento =>
+              creados.current.has(evento.id)
+            ),
+            selectedEvent && vigenteLocal(selectedEvent) ? [selectedEvent] : []
+          )
+        )
+        // El evento seleccionado toma las horas actualizadas, o se deselecciona
+        // si ya no existe
+        setSelectedEvent(prev => {
+          if (!prev) return prev
+          const actualizado = recuperados.find(e => e.id === prev.id)
+          if (actualizado) return fusionarEvento(prev, actualizado)
+          return vigenteLocal(prev) ? prev : null
+        })
+        setCargaEventos('lista')
+      })
+      .catch((error: unknown) => {
+        console.error('No se pudieron recuperar los eventos', error)
+        if (vigente()) setCargaEventos('error')
+      })
+  }
+
+  // Abrir el panel o cambiar de cuenta exige una lectura completa nueva.
   useEffect(() => {
-    handleRecover()
-  }, [events])
+    if (abierto && uuid) handleRecover()
+    // La lectura se inicia por apertura o identidad, no por cada render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [abierto, uuid])
+
+  const handleAdd = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key == 'Enter') {
+      e.preventDefault()
+      addEvent(false)
+    }
+  }
+
+  const hoy = new Date(new Date().setHours(0, 0, 0, 0))
 
   return (
-    <Sheet>
+    <Sheet open={abierto} onOpenChange={setAbierto}>
       <SheetTrigger asChild>
         <Button
           variant='secondary'
           className='mt-6 w-full bg-secondary sm:w-auto'
-          onClick={handleRecover}
         >
           Eventos
         </Button>
@@ -230,37 +524,78 @@ export default function Eventos() {
           <SheetTitle className='flex items-center justify-between text-xl font-bold sm:text-2xl'>
             Agregar evento
           </SheetTitle>
+          <SheetDescription>
+            Ingresa un nombre y selecciona una fecha para el evento.
+          </SheetDescription>
         </SheetHeader>
         <ScrollArea className='h-[80vh] pr-4'>
-          <p className='text-sm text-muted-foreground'>
-            Selecciona una fecha para el evento.
-          </p>
+          {!session && (
+            <p
+              role='note'
+              className='mb-2 rounded-md border border-accent bg-accent/20 p-2 text-sm'
+            >
+              No iniciaste sesión: los eventos que crees serán temporales. Sólo
+              existen en esta pestaña y se pierden al recargar o al iniciar
+              sesión.
+            </p>
+          )}
           <div className='mt-1 grid gap-4'>
             <div className='grid grid-cols-1 items-center gap-2 sm:grid-cols-4 sm:gap-4'>
               <Label
-                htmlFor='name'
+                htmlFor='evento-nombre'
                 className='text-sm font-bold sm:text-right sm:text-base'
               >
                 Nombre
               </Label>
               <Input
-                id='name'
+                id='evento-nombre'
                 type='text'
                 value={eventTitle}
-                onChange={e => setEventTitle(e.target.value)}
+                onChange={e => {
+                  setEventTitle(e.target.value)
+                  setErrorEvento(null)
+                }}
                 onKeyDown={handleAdd}
                 placeholder='Nuevo evento'
+                aria-invalid={errorEvento !== null}
+                aria-describedby='evento-error'
                 className='col-span-1 sm:col-span-3 dark:placeholder:text-gray-500'
               />
             </div>
-            <p className='text-sm text-muted-foreground'>
-              Selecciona una fecha para el evento.
+            {cargaEventos === 'cargando' && (
+              <p
+                role='status'
+                className='flex items-center gap-2 text-sm text-muted-foreground'
+              >
+                <Loader2 className='h-4 w-4 animate-spin' aria-hidden />
+                Cargando tus eventos…
+              </p>
+            )}
+            {cargaEventos === 'error' && (
+              <div
+                role='alert'
+                className='flex items-center justify-between gap-2 text-sm'
+              >
+                No se pudieron cargar tus eventos. Reintentá para poder crear
+                uno nuevo.
+                <Button size='sm' variant='outline' onClick={handleRecover}>
+                  Reintentar
+                </Button>
+              </div>
+            )}
+            <p
+              id='evento-error'
+              role='alert'
+              className='text-sm text-red-600 empty:hidden'
+            >
+              {errorEvento}
             </p>
-            <div className='grid grid-cols-1 items-center gap-4 sm:grid-cols-4'>
-              <Label className='text-sm font-bold sm:text-right sm:text-base'>
-                Calendario
-              </Label>
-            </div>
+            <p
+              id='evento-calendario'
+              className='text-sm font-bold sm:text-base'
+            >
+              Calendario
+            </p>
             {/* Calendario */}
 
             <div className='w-full sm:w-auto'>
@@ -268,20 +603,15 @@ export default function Eventos() {
                 mode='single'
                 selected={date}
                 onSelect={selectedDate => {
-                  const today = new Date()
-                  today.setHours(0, 0, 0, 0)
-                  if (selectedDate && selectedDate >= today) {
+                  if (selectedDate && selectedDate >= hoy) {
                     setDate(selectedDate)
+                    setErrorEvento(null)
                   }
                 }}
                 className='flex w-full justify-center rounded-md border sm:w-auto'
                 modifiers={{
                   eventDay: events.map(event => event.date),
-                  disabled: date => {
-                    const today = new Date()
-                    today.setHours(0, 0, 0, 0)
-                    return date < today
-                  },
+                  disabled: date => date < hoy,
                 }}
                 modifiersClassNames={{
                   eventDay: 'bg-secondary',
@@ -292,7 +622,8 @@ export default function Eventos() {
                   const clickedEvent = events.find(
                     event => event.date.toDateString() === day.toDateString()
                   )
-                  setSelectedEvent(clickedEvent ?? null)
+                  if (clickedEvent) seleccionar(clickedEvent)
+                  else deseleccionar()
                 }}
                 components={{
                   DayContent: ({ date }) => {
@@ -322,19 +653,36 @@ export default function Eventos() {
               <div className='mt-4 flex flex-row items-center justify-center gap-2'>
                 <Button
                   onClick={() => {
-                    addEvent(false, 'New')
+                    addEvent(false)
                   }}
                   variant={'accent'}
                   className='w-full sm:w-auto'
+                  disabled={
+                    guardando ||
+                    cargaEventos === 'cargando' ||
+                    (uuid !== null && cargaEventos !== 'lista')
+                  }
+                  aria-busy={guardando}
                 >
-                  Agregar
+                  {guardando && (
+                    <Loader2
+                      className='mr-2 h-4 w-4 animate-spin'
+                      aria-hidden
+                    />
+                  )}
+                  {guardando ? 'Guardando…' : 'Agregar'}
                 </Button>
                 <Button
                   onClick={() => {
-                    addEvent(true, 'New')
+                    addEvent(true)
                   }}
                   variant={'accent'}
                   className='ml-2 w-full sm:w-auto'
+                  disabled={
+                    guardando ||
+                    cargaEventos === 'cargando' ||
+                    (uuid !== null && cargaEventos !== 'lista')
+                  }
                 >
                   Crear en Calendar
                 </Button>
@@ -351,40 +699,67 @@ export default function Eventos() {
                   Eventos programados:
                 </h2>
                 <ul className='list-inside list-disc space-y-2 text-sm text-black sm:text-base dark:text-white'>
-                  {events.map((event, index) => (
-                    <Fragment key={event.id}>
-                      {event.date >=
-                        new Date(new Date().setHours(0, 0, 0, 0)) && (
-                        <li className='flex items-center justify-between'>
-                          <span
-                            onClick={() => setSelectedEvent(event)}
-                            className={`cursor-pointer ${
-                              selectedEvent === event
-                                ? 'text-accent'
-                                : 'opacity-100 hover:text-accent'
-                            }`}
-                          >
-                            {event.date.toLocaleDateString('es-ES', {
-                              weekday: 'short',
-                              month: 'numeric',
-                              day: 'numeric',
-                            })}
-                            - {event.title}
-                          </span>
-                          <Button
-                            variant='ghost'
-                            size='sm'
-                            onClick={() => {
-                              handleDelete(event, index)
-                            }}
-                          >
-                            <Trash size={16} />
-                          </Button>
-                        </li>
-                      )}
-                    </Fragment>
-                  ))}
+                  {events.map(event => {
+                    const seleccionado = selectedEvent?.id === event.id
+                    const borrando = eliminando.has(event.id)
+                    const temporal = esEventoTemporal(event)
+                    return (
+                      <Fragment key={event.id}>
+                        {event.date >= hoy && (
+                          <li className='flex items-center justify-between'>
+                            <button
+                              type='button'
+                              aria-pressed={seleccionado}
+                              disabled={borrando}
+                              onClick={() => seleccionar(event)}
+                              className={cn(
+                                'rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                                seleccionado
+                                  ? 'font-semibold text-accent'
+                                  : 'hover:text-accent'
+                              )}
+                            >
+                              {event.date.toLocaleDateString('es-ES', {
+                                weekday: 'short',
+                                month: 'numeric',
+                                day: 'numeric',
+                              })}{' '}
+                              - {event.title}
+                              {temporal && (
+                                <span className='ml-1 text-xs text-muted-foreground'>
+                                  (temporal)
+                                </span>
+                              )}
+                            </button>
+                            <Button
+                              variant='ghost'
+                              size='sm'
+                              aria-label={`Eliminar evento: ${event.title}`}
+                              aria-busy={borrando}
+                              disabled={borrando}
+                              onClick={() => {
+                                handleDelete(event)
+                              }}
+                            >
+                              {borrando ? (
+                                <Loader2
+                                  size={16}
+                                  className='animate-spin'
+                                  aria-hidden
+                                />
+                              ) : (
+                                <Trash size={16} aria-hidden />
+                              )}
+                            </Button>
+                          </li>
+                        )}
+                      </Fragment>
+                    )
+                  })}
                 </ul>
+                <p role='alert' className='text-sm text-red-600 empty:hidden'>
+                  {errorEliminar}
+                </p>
                 <h2 className='mt-4 text-lg font-bold sm:text-xl'>
                   Evento seleccionado:
                 </h2>
@@ -392,7 +767,10 @@ export default function Eventos() {
                   <div className='mt-2'>
                     <p className='font-bold'>
                       Evento:{' '}
-                      <span className='font-normal'>{selectedEvent.title}</span>
+                      <span className='font-normal'>
+                        {selectedEvent.title}
+                        {esEventoTemporal(selectedEvent) && ' (temporal)'}
+                      </span>
                     </p>
                     <p>
                       Fecha:{' '}
@@ -428,7 +806,7 @@ export default function Eventos() {
                 className='w-full sm:mr-2 sm:w-auto'
                 onClick={() => {
                   handleVolver()
-                  setSelectedEvent(null)
+                  deseleccionar()
                 }}
               >
                 Cancelar
