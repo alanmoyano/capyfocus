@@ -2,8 +2,37 @@
 
 Nuestro hermoso trabajo para el seminario integrador
 
-> [!Important]
-> Antes de pushear: `npm run prePush`
+## Instalación y validación
+
+Usamos npm y su lockfile para instalaciones reproducibles. La validación de estas correcciones se ejecutó con Node.js 24 y npm 11.
+
+```sh
+npm ci --no-audit --no-fund
+npm run dev
+```
+
+Antes de pushear, ejecutar `npm run prePush`. Este comando comprueba formato y tipos sin reescribir el source; falla si cualquiera de los dos checks falla.
+
+```sh
+npm run check        # TypeScript, propaga el código de salida del compilador
+npm run build        # TypeScript y bundle de producción
+npm run lint         # ESLint, puede reportar deuda existente
+npm test             # Regresiones locales, sin conexión a Supabase
+npm run format:check # Prettier sin modificar archivos
+npm run format       # Reescribe el formato de todo src, solo por elección explícita
+```
+
+El lockfile de Bun se conserva como artefacto histórico. El workflow documentado usa npm; no alternar package managers para actualizar dependencias. Los checks pueden detectar deuda previa de lint o formato: corregirla en cambios separados, sin reformatear todo el proyecto para validar un arreglo.
+
+### Estado de validación de estas correcciones
+
+La instalación limpia con `npm ci --ignore-scripts --no-audit --no-fund` y con `npm ci --no-audit --no-fund` completó correctamente. La reparación agrega 26 entradas opcionales de SWC y Rollup y conserva todas las entradas y versiones previamente resueltas.
+
+`npm run check`, `npm run build` y las pruebas locales pasan. Las pruebas de auth usan Supabase y hooks simulados: cubren éxito diferido, errores devueltos, rejection, reintentos, envíos simultáneos y el payload de registro sin logs sensibles. Las pruebas de scripts ejecutan los scripts reales en un directorio temporal con herramientas simuladas para comprobar los códigos de salida.
+
+`npm run lint` reporta 28 errores y 74 warnings, los mismos que el commit inicial `05aa839`. `npm run prePush` falla por dos archivos con formato pendiente, también presentes en ese commit. Los tres formularios modificados pasan lint y Prettier. El build advierte sobre datos antiguos de Browserslist. No se reformateó el source completo ni se actualizaron dependencias para resolver esa deuda.
+
+No se realizaron pruebas de auth contra Supabase remoto ni recorridos de browser. Queda pendiente comprobar el flujo con una cuenta de prueba en un entorno autorizado.
 
 ## Cómo funcionan los secretos? 
 [Documentación](https://vitejs.dev/guide/env-and-mode.html)
