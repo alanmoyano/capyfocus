@@ -1,5 +1,5 @@
 // Reglas locales de los eventos de Inicio, sin dependencias de React ni de
-// Supabase para poder probarlas.
+// Supabase.
 
 export type EventoLocal = {
   id: number
@@ -20,7 +20,8 @@ export type EventoRemoto = {
 export type ErrorEvento = 'sinTitulo' | 'sinFecha' | 'fechaPasada' | 'duplicado'
 
 export type ResultadoEvento =
-  { ok: true; titulo: string; fecha: Date } | { ok: false; error: ErrorEvento }
+  | { ok: true; titulo: string; fecha: Date }
+  | { ok: false; error: ErrorEvento }
 
 export const mensajesErrorEvento: Record<ErrorEvento, string> = {
   sinTitulo: 'Ingresá un título para el evento.',

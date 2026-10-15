@@ -1,5 +1,5 @@
-// Sincronización de objetivos favoritos con el backend, aislada de React para
-// poder probarla. El modelo de la app sigue usando el texto como identificador
+// Sincronización de objetivos favoritos con el backend, separada de React para
+// concentrar las reglas de concurrencia. El modelo de la app sigue usando el texto como identificador
 // (Timer y Pomodoro dependen de eso); acá se guarda además el id remoto de cada
 // favorito para operar por id cuando ya se conoce.
 

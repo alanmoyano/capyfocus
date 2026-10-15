@@ -7,7 +7,8 @@ export const MAX_OBJETIVOS = 10
 export type ErrorObjetivo = 'vacio' | 'duplicado' | 'limite'
 
 export type ResultadoObjetivo =
-  { ok: true; valor: string } | { ok: false; error: ErrorObjetivo }
+  | { ok: true; valor: string }
+  | { ok: false; error: ErrorObjetivo }
 
 export const mensajesErrorObjetivo: Record<ErrorObjetivo, string> = {
   vacio: 'Escribí un objetivo antes de agregarlo.',
