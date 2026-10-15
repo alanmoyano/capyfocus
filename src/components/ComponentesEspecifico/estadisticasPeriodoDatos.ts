@@ -8,7 +8,10 @@ import {
 } from 'date-fns'
 
 export type PeriodoEstadisticas =
-  'semanal' | 'mensual' | 'bimestral' | 'semestre'
+  | 'semanal'
+  | 'mensual'
+  | 'bimestral'
+  | 'semestre'
 export type RangoPeriodo = { desde: Date; hasta: Date }
 export type SesionPeriodo = {
   fecha: string
