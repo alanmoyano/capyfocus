@@ -114,8 +114,10 @@ export class FavoritosSync {
     const carga = this.api.listar(uuid).then(
       favoritos => {
         if (!vigente()) return null
-        const vigentes = favoritos.filter(
-          favorito => !this.archivadosDuranteCarga.has(favorito.descripcion)
+        const vigentes = this.agruparEquivalentes(
+          favoritos.filter(
+            favorito => !this.archivadosDuranteCarga.has(favorito.descripcion)
+          )
         )
         vigentes.forEach(favorito => {
           this.ids.set(favorito.descripcion, favorito.id)
@@ -129,6 +131,31 @@ export class FavoritosSync {
     )
     this.carga = carga
     return carga
+  }
+
+  // Filas equivalentes (p. ej. creadas desde pestañas concurrentes) se
+  // muestran como un único favorito: el de menor id es el canónico y conserva
+  // el mayor total de horas del grupo, que es el que Timer/Pomodoro actualizan
+  private agruparEquivalentes(favoritos: FavoritoRemoto[]) {
+    const canonicos: FavoritoRemoto[] = []
+    ;[...favoritos]
+      .sort((a, b) => a.id - b.id)
+      .forEach(favorito => {
+        const texto = this.equivalente(
+          favorito.descripcion,
+          canonicos.map(c => c.descripcion)
+        )
+        const canonico = canonicos.find(c => c.descripcion === texto)
+        if (!canonico) {
+          canonicos.push({ ...favorito })
+          return
+        }
+        canonico.horasAcumuladas = Math.max(
+          canonico.horasAcumuladas ?? 0,
+          favorito.horasAcumuladas ?? 0
+        )
+      })
+    return canonicos
   }
 
   // Una sola alta en vuelo por texto, y siempre después de la carga en curso:
