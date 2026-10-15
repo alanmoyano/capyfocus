@@ -5,6 +5,7 @@ import { describe, it } from 'node:test'
 import {
   buscarEquivalente,
   MAX_OBJETIVOS,
+  reconciliarConFavoritos,
   normalizarObjetivo,
   renombrarClave,
   renombrarEnLista,
@@ -97,5 +98,21 @@ describe('buscarEquivalente', () => {
     const favoritos = ['  Leer   capítulo 1 ', 'Otro']
     assert.equal(buscarEquivalente('leer capítulo 1', favoritos), favoritos[0])
     assert.equal(buscarEquivalente('Nada', favoritos), undefined)
+  })
+})
+
+describe('reconciliarConFavoritos', () => {
+  it('propone renombrar objetivos escritos antes de cargar un favorito equivalente', () => {
+    assert.deepEqual(
+      reconciliarConFavoritos(
+        ['Leer capítulo 1', 'Otro', 'Exacto'],
+        ['  Leer   capítulo 1 ', 'Exacto']
+      ),
+      [['Leer capítulo 1', '  Leer   capítulo 1 ']]
+    )
+  })
+
+  it('no renombra si el texto del favorito ya está en la lista', () => {
+    assert.deepEqual(reconciliarConFavoritos(['leer', 'Leer'], ['Leer']), [])
   })
 })

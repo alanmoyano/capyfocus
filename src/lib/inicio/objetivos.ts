@@ -44,6 +44,23 @@ export function buscarEquivalente(texto: string, lista: readonly string[]) {
   return lista.find(item => claveComparacion(item) === clave)
 }
 
+// Objetivos que equivalen a un favorito pero con otro texto exacto (p. ej. el
+// favorito llegó después de escribirlos): pares [anterior, texto del favorito]
+export function reconciliarConFavoritos(
+  objetivos: readonly string[],
+  favoritos: readonly string[]
+): [string, string][] {
+  const pares: [string, string][] = []
+  objetivos.forEach(objetivo => {
+    if (favoritos.includes(objetivo)) return
+    const favorito = buscarEquivalente(objetivo, favoritos)
+    if (favorito !== undefined && !objetivos.includes(favorito)) {
+      pares.push([objetivo, favorito])
+    }
+  })
+  return pares
+}
+
 // Valida un objetivo nuevo (escrito a mano o elegido desde favoritos)
 export function validarNuevoObjetivo(
   texto: string,

@@ -41,9 +41,22 @@ export class FavoritosSync {
   private bajas = new Map<string, Promise<ResultadoBaja>>()
 
   private readonly api: FavoritosApi
+  // Resuelve un texto equivalente (mismo texto normalizado) entre candidatos
+  private readonly equivalente: (
+    descripcion: string,
+    candidatos: string[]
+  ) => string | undefined
 
-  constructor(api: FavoritosApi) {
+  constructor(
+    api: FavoritosApi,
+    equivalente: (
+      descripcion: string,
+      candidatos: string[]
+    ) => string | undefined = (descripcion, candidatos) =>
+      candidatos.find(candidato => candidato === descripcion)
+  ) {
     this.api = api
+    this.equivalente = equivalente
   }
 
   setIdentidad(uuid: string | null) {
@@ -68,6 +81,12 @@ export class FavoritosSync {
 
   identidadActual() {
     return this.uuid
+  }
+
+  // Cambia con cada identidad e invalidación: sirve para descartar retries
+  // creados en una generación anterior aunque el usuario vuelva a ser el mismo
+  generacion() {
+    return this.identidad
   }
 
   idDe(descripcion: string) {
@@ -129,9 +148,15 @@ export class FavoritosSync {
       // Si se está archivando el mismo texto, esperar para no reutilizar su id
       if (baja) await baja.catch(() => null)
       if (identidad !== this.identidad) return obsoleto
-      const id = this.ids.get(descripcion)
-      const cargado = remotos?.find(f => f.descripcion === descripcion)
-      if (id !== undefined && cargado?.id === id) {
+      // Un favorito ya cargado con el mismo texto (o uno equivalente) se reutiliza
+      const textoCargado = remotos
+        ? this.equivalente(
+            descripcion,
+            remotos.map(f => f.descripcion)
+          )
+        : undefined
+      const cargado = remotos?.find(f => f.descripcion === textoCargado)
+      if (cargado && this.ids.get(cargado.descripcion) === cargado.id) {
         return { estado: 'existente', favorito: cargado }
       }
       let favorito: FavoritoRemoto

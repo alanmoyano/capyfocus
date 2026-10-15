@@ -85,6 +85,7 @@ import {
   MAX_OBJETIVOS,
   buscarEquivalente,
   mensajesErrorObjetivo,
+  reconciliarConFavoritos,
   renombrarClave,
   renombrarEnLista,
   validarEdicionObjetivo,
@@ -158,16 +159,20 @@ const favoritosApi: FavoritosApi = {
     return favoritos
   },
   async insertar(descripcion, uuid) {
-    // Si ya existe activo (p. ej. la carga inicial falló), se reutiliza
-    const existente = await supabase
+    // Si ya existe uno activo equivalente (p. ej. la carga inicial falló o se
+    // guardó con otros espacios), se reutiliza con sus horas
+    const existentes = await supabase
       .from('ObjetivosFavoritos')
       .select(columnasFavorito)
       .eq('idUsuario', uuid)
-      .eq('descripcion', descripcion)
       .eq('idEstado', 1)
-      .limit(1)
-    if (existente.error) throw existente.error
-    const favoritoExistente = (existente.data as FavoritoRemoto[]).at(0)
+    if (existentes.error) throw existentes.error
+    const activos = existentes.data as FavoritoRemoto[]
+    const texto = buscarEquivalente(
+      descripcion,
+      activos.map(favorito => favorito.descripcion)
+    )
+    const favoritoExistente = activos.find(f => f.descripcion === texto)
     if (favoritoExistente) return favoritoExistente
 
     const { data, error } = await supabase
@@ -192,11 +197,23 @@ const favoritosApi: FavoritosApi = {
       .update({ idEstado: 2 })
       .eq('idUsuario', uuid)
     if (id === undefined) {
-      // Sin id conocido: archiva las filas activas con ese texto (puede no haber)
-      const { error } = await consulta
+      // Sin id conocido: archiva las filas activas con ese texto
+      const { data, error } = await consulta
         .eq('descripcion', descripcion)
         .eq('idEstado', 1)
+        .select('id')
       if (error) throw error
+      if (data.length > 0) return
+      // Cero filas sólo es éxito si se confirma que no queda ninguna activa
+      const activas = await supabase
+        .from('ObjetivosFavoritos')
+        .select('id')
+        .eq('idUsuario', uuid)
+        .eq('descripcion', descripcion)
+        .eq('idEstado', 1)
+        .limit(1)
+      if (activas.error) throw activas.error
+      if (activas.data.length > 0) throw new Error('No se archivó el favorito')
       return
     }
     // Con id, cero filas afectadas significa que el cambio no se confirmó
@@ -232,7 +249,7 @@ export default function Inicio() {
   } = useObjetivos()
 
   const favoritosSync = useRef<FavoritosSync | null>(null)
-  favoritosSync.current ??= new FavoritosSync(favoritosApi)
+  favoritosSync.current ??= new FavoritosSync(favoritosApi, buscarEquivalente)
   const [estadoFavoritos, setEstadoFavoritos] =
     useState<EstadoFavoritos>('inactivo')
   const [favoritosPendientes, setFavoritosPendientes] = useState<string[]>([])
@@ -252,6 +269,24 @@ export default function Inicio() {
 
   const [motivaciones, setMotivaciones] = useState<Motivacion[]>([])
 
+  // Objetivos vigentes para callbacks asíncronos (reconciliación tras cargar)
+  const objetivosActuales = useRef(objetivos)
+  useEffect(() => {
+    objetivosActuales.current = objetivos
+  }, [objetivos])
+
+  // Renombra un objetivo y las claves relacionadas (tiempos y pendientes)
+  const renombrarObjetivo = useCallback(
+    (anterior: string, nuevo: string) => {
+      if (anterior === nuevo) return
+      setObjetivos(prev => renombrarEnLista(prev, anterior, nuevo))
+      setTiempo(prev => renombrarClave(prev, anterior, nuevo))
+      setTiempoSesion(prev => renombrarClave(prev, anterior, nuevo))
+      setObjetivosPend(prev => renombrarEnLista(prev, anterior, nuevo))
+    },
+    [setObjetivos, setTiempo, setTiempoSesion, setObjetivosPend]
+  )
+
   const cargarFavoritos = useCallback(() => {
     const sync = favoritosSync.current
     if (!sync?.identidadActual()) return
@@ -263,13 +298,20 @@ export default function Inicio() {
         if (!remotos) return
         setObjetivosFav(prev => combinarFavoritos(remotos, prev, sync))
         setTiempoFavorito(prev => combinarTiempoFavorito(prev, remotos))
+        // Objetivos escritos antes de la carga que equivalen a un favorito
+        reconciliarConFavoritos(
+          objetivosActuales.current,
+          remotos.map(favorito => favorito.descripcion)
+        ).forEach(([anterior, nuevo]) => {
+          renombrarObjetivo(anterior, nuevo)
+        })
         setEstadoFavoritos('listo')
       })
       .catch((error: unknown) => {
         console.error('No se pudieron recuperar los favoritos', error)
         setEstadoFavoritos('error')
       })
-  }, [setObjetivosFav, setTiempoFavorito])
+  }, [setObjetivosFav, setTiempoFavorito, renombrarObjetivo])
 
   // Los favoritos se cargan por identidad al montar y al cambiar de usuario.
   // Al desmontar o cambiar de usuario se invalidan las operaciones en curso.
@@ -290,6 +332,19 @@ export default function Inicio() {
   }, [uuid, cargarFavoritos, setObjetivosFav, setTiempoFavorito])
 
   const handleAccept = () => {
+    // Al desmontar Inicio se invalidan las operaciones de favoritos: esperar a
+    // que terminen para que el timer sume sobre las horas guardadas
+    if (
+      uuid &&
+      description &&
+      (estadoFavoritos === 'cargando' || favoritosPendientes.length > 0)
+    ) {
+      toast.info('Guardando tus favoritos', {
+        description:
+          'Esperá un momento antes de empezar para que el tiempo se sume a tus favoritos.',
+      })
+      return
+    }
     switch (description) {
       case 'Capydoro':
         setLocation('/capydoro')
@@ -385,15 +440,8 @@ export default function Inicio() {
     const nuevo =
       buscarEquivalente(resultado.valor, objetivosFav) ?? resultado.valor
     if (nuevo !== anterior) {
-      setObjetivos(prev =>
-        prev.map((objetivo, i) =>
-          i === indice && objetivo === anterior ? nuevo : objetivo
-        )
-      )
       // Los tiempos y pendientes usan el texto como clave
-      setTiempo(prev => renombrarClave(prev, anterior, nuevo))
-      setTiempoSesion(prev => renombrarClave(prev, anterior, nuevo))
-      setObjetivosPend(prev => renombrarEnLista(prev, anterior, nuevo))
+      renombrarObjetivo(anterior, nuevo)
       if (objetivosFav.includes(anterior) && !objetivosFav.includes(nuevo)) {
         toast.info('El favorito anterior sigue guardado', {
           description: `"${anterior}" sigue en tus favoritos. Marcá "${nuevo}" si querés guardarlo también.`,
@@ -437,20 +485,29 @@ export default function Inicio() {
     if (!uuid || !sync) return
 
     marcarFavoritoPendiente(objetivo, true)
+    const generacion = sync.generacion()
     const operacion =
       accion === 'agregar' ? sync.agregar(objetivo) : sync.quitar(objetivo)
     operacion
       .then(resultado => {
         // Si la fila ya existía, conservar sus horas acumuladas
         if (typeof resultado === 'object' && resultado.estado !== 'obsoleto') {
-          setTiempoFavorito(prev =>
-            combinarTiempoFavorito(prev, [resultado.favorito])
-          )
+          const { favorito } = resultado
+          setTiempoFavorito(prev => combinarTiempoFavorito(prev, [favorito]))
+          // Se reutilizó un favorito equivalente: adoptar su texto exacto
+          if (favorito.descripcion !== objetivo) {
+            setObjetivosFav(prev => [
+              ...new Set(
+                prev.map(f => (f === objetivo ? favorito.descripcion : f))
+              ),
+            ])
+            renombrarObjetivo(objetivo, favorito.descripcion)
+          }
         }
       })
       .catch((error: unknown) => {
         console.error('No se pudo actualizar el favorito', error)
-        if (sync.identidadActual() !== uuid) return
+        if (sync.generacion() !== generacion) return
         setObjetivosFav(accion === 'agregar' ? quitar : agregar)
         toast.error(
           accion === 'agregar'
@@ -461,7 +518,7 @@ export default function Inicio() {
             action: {
               label: 'Reintentar',
               onClick: () => {
-                if (sync.identidadActual() === uuid)
+                if (sync.generacion() === generacion)
                   cambiarFavorito(objetivo, accion)
               },
             },

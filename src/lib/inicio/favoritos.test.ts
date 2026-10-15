@@ -268,6 +268,33 @@ describe('FavoritosSync', () => {
     assert.deepEqual(await sync.agregar('A'), { estado: 'obsoleto' })
   })
 
+  it('reutiliza un favorito cargado con texto equivalente sin insertar', async () => {
+    const { api, llamadas } = apiFalsa({
+      listar: () => Promise.resolve([remoto(3, '  Leer   cap 1 ', 500)]),
+    })
+    const normalizar = (t: string) =>
+      t.trim().replace(/\s+/g, ' ').toLowerCase()
+    const sync = new FavoritosSync(api, (descripcion, candidatos) =>
+      candidatos.find(c => normalizar(c) === normalizar(descripcion))
+    )
+    sync.setIdentidad('a')
+    void sync.cargar()
+    assert.deepEqual(await sync.agregar('Leer cap 1'), {
+      estado: 'existente',
+      favorito: remoto(3, '  Leer   cap 1 ', 500),
+    })
+    assert.deepEqual(llamadas.insertar, [])
+  })
+
+  it('la generación cambia aunque se vuelva a la misma identidad', () => {
+    const sync = new FavoritosSync(apiFalsa().api)
+    sync.setIdentidad('a')
+    const generacionA = sync.generacion()
+    sync.setIdentidad('b')
+    sync.setIdentidad('a')
+    assert.notEqual(sync.generacion(), generacionA)
+  })
+
   it('sin identidad no toca el backend', async () => {
     const { api, llamadas } = apiFalsa()
     const sync = new FavoritosSync(api)
