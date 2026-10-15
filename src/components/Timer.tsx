@@ -1,7 +1,7 @@
 import { Checkbox } from '@/components/ui/checkbox'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Moon, NotebookPen, Star } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'wouter'
 import { useObjetivos } from './contexts/ObjetivosContext'
 import { Button } from './ui/button'
@@ -9,15 +9,17 @@ import { Button } from './ui/button'
 import { useInsignias } from '@/components/contexts/InsigniasContext'
 import {
   acumulateHoursInFavouriteObj,
-  acumulateHoursInSelectedEvent,
+  buildSaveSessionJob,
   dateToTimetz,
   getSelectedMusic,
-  saveSession,
-  SesionAGuardar,
+  runSaveSession,
+  type SaveSessionJob,
+  type SesionAGuardar,
 } from '@/constants/supportFunctions'
-import useTimer from '@/hooks/useTimer'
+import useTimer, { type TimerTotals } from '@/hooks/useTimer'
 import { formatTime } from '@/lib/utils'
 import { Helmet } from 'react-helmet'
+import { toast } from 'sonner'
 import AnimacionChicho from './ComponentesEspecifico/AnimacionChicho'
 import DialogoChicho from './ComponentesEspecifico/DialogoChicho'
 import { useEvents } from './contexts/EventsContext'
@@ -53,23 +55,13 @@ export default function Timer() {
     finalizeTimers,
   } = useTimer()
 
-  const hoyNormal = new Date()
-  const hoyRaro = new Date()
-
-  const hoy = new Date()
-  const InicioSesion = hoy
-
-  useEffect(() => {
-    console.log('Cambió el InicioSesion', InicioSesion)
-  })
-
-  console.log('Dia normal', hoyNormal)
-  console.log('Dia en formato', dateToTimetz(hoyRaro))
+  // La sesión empieza al montar el componente, junto con el cronómetro
+  const [InicioSesion] = useState(() => new Date())
 
   const [tiempoObjAcumulado, setTiempoObjAcumulado] = useState(0)
   const [objCumplidos, setObjCumplidos] = useState(0)
 
-  const [mode, setMode] = useState<Mode>('Sesión')
+  const [, setMode] = useState<Mode>('Sesión')
 
   const { motivationType } = useMotivation()
   // // @ts-expect-error vamos a usar la descripción después, no te enojes typescript!!! 🥺
@@ -100,68 +92,76 @@ export default function Timer() {
 
   const { insignias, reloadInsignias } = useInsignias()
 
-  const finalizarSesion = () => {
-    if (session) {
-      const hoy = new Date()
-      const sessionToSave: SesionAGuardar = {
-        uuid: session.user.id,
-        horaInicioSesion: dateToTimetz(InicioSesion),
-        fecha: InicioSesion,
-        horaFinSesion: dateToTimetz(hoy),
-        tecnicaEstudio: 2,
-        tipoMotivacion: motivationType === 'Positiva' ? 1 : 2,
-        cantidadObjetivosCumplidos: objCumplidos,
-        cantidadObjetivos: objetivos.length,
-        tiempoEstudio: studyTime,
-        musicaSeleccionada: getSelectedMusic(
-          selectedMusic ? selectedMusic.title : ''
-        ),
-        eventoSeleccionado: selectedEvent ? selectedEvent.id : null,
-      }
+  // Totales congelados al finalizar y job de guardado, reutilizados en los reintentos
+  const totalesFinalesRef = useRef<TimerTotals | null>(null)
+  const saveJobRef = useRef<SaveSessionJob | null>(null)
+  const guardandoRef = useRef(false)
+  const [finalizada, setFinalizada] = useState(false)
+  const [guardando, setGuardando] = useState(false)
 
-      saveSession(
-        sessionToSave,
-        {
-          objCumplidos,
-          hoy,
-          InicioSesion,
-        },
-        {
-          session,
+  const finalizarSesion = async () => {
+    if (guardandoRef.current) return
+    guardandoRef.current = true
+    // Desde acá no se pueden marcar objetivos ni cambiar de modo
+    setFinalizada(true)
+    setGuardando(true)
+
+    try {
+      totalesFinalesRef.current ??= await finalizeTimers()
+    } catch (error: unknown) {
+      console.error('No se pudo detener el cronómetro', error)
+      toast.error('No pudimos cerrar la sesión. Volvé a intentarlo.')
+      guardandoRef.current = false
+      setGuardando(false)
+      return
+    }
+    const { studyTime: tiempoEstudio, breakTime: tiempoDescanso } =
+      totalesFinalesRef.current
+
+    if (session) {
+      if (!saveJobRef.current) {
+        const hoy = new Date()
+        const sessionToSave: SesionAGuardar = {
+          uuid: session.user.id,
+          horaInicioSesion: dateToTimetz(InicioSesion),
+          fecha: InicioSesion,
+          horaFinSesion: dateToTimetz(hoy),
+          tecnicaEstudio: 2,
+          tipoMotivacion: motivationType === 'Positiva' ? 1 : 2,
+          cantidadObjetivosCumplidos: objCumplidos,
+          cantidadObjetivos: objetivos.length,
+          tiempoEstudio,
+          musicaSeleccionada: getSelectedMusic(
+            selectedMusic ? selectedMusic.title : ''
+          ),
+          eventoSeleccionado: selectedEvent ? selectedEvent.id : null,
+        }
+        saveJobRef.current = buildSaveSessionJob(sessionToSave, {
           motivationType,
           insignias,
           events,
-        }
-      )
-        .then(() => console.log('Datos guardados correctamente!'))
-        .catch((error: unknown) => {
-          console.log('Ocurrio un error', error)
+          selectedEvent,
         })
+      }
 
-      if (selectedEvent) {
-        const nuevoTiempo =
-          (selectedEvent.hoursAcumulated ? selectedEvent.hoursAcumulated : 0) +
-          studyTime
-
-        selectedEvent.hoursAcumulated = nuevoTiempo
-        acumulateHoursInSelectedEvent(
-          nuevoTiempo,
-          session.user.id,
-          selectedEvent.title,
-          selectedEvent.date
+      try {
+        const job = await runSaveSession(saveJobRef.current)
+        if (selectedEvent && job.horasEvento !== null) {
+          selectedEvent.hoursAcumulated = job.horasEvento
+        }
+      } catch (error: unknown) {
+        console.error('No se pudo guardar la sesión', error)
+        toast.error(
+          'No pudimos guardar tu sesión. Revisá tu conexión y volvé a intentarlo.'
         )
-          .then(() => {
-            console.log('Datos cargados en evento de manera exitosa')
-          })
-          .catch((error: unknown) => {
-            console.log('Ocurrio un error', error)
-          })
+        guardandoRef.current = false
+        setGuardando(false)
+        return
       }
     }
 
-    finalizeTimers()
-    setTiempoTotal(studyTime)
-    setAcumuladorTiempoPausa(breakTime)
+    setTiempoTotal(tiempoEstudio)
+    setAcumuladorTiempoPausa(tiempoDescanso)
     objetivos.forEach(objetivo => {
       if (!tiempo[objetivo]) {
         setTiempo(prev => ({
@@ -193,24 +193,26 @@ export default function Timer() {
   useEffect(() => {
     if (!isStudying) {
       setMode('Descanso')
-      // Esto esta hecho para que ts no joda pero es una barbaridad y debe ser cambiado lo antes posible
-      console.log(mode)
       setCantidadPausas(prev => prev + 1)
-      console.log('pausaste')
     } else {
       setMode('Sesión')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isStudying])
+
+  useEffect(() => {
     if (objetivos.length === objCumplidos && objetivos.length > 0) {
-      finalizarSesion()
+      void finalizarSesion()
     }
-  }, [isStudying, objCumplidos])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [objCumplidos])
 
   /* Esto es para que los botones si los tocas mas de una vez no hagan nada */
   const handleToggle = (value: boolean) => {
+    if (finalizada || guardandoRef.current) return
     if (isStudying && value) return
     if (!isStudying && !value) return
 
-    finalizeTimers()
     if (value) {
       startStudy()
     } else {
@@ -223,6 +225,8 @@ export default function Timer() {
   // }, [mode, sessionSeconds, breakSeconds])
 
   const handleAccept = () => {
+    // Mientras se guarda no se puede salir: el cierre todavía puede fallar y reintentarse
+    if (guardandoRef.current) return
     setLocation('/inicio')
     setObjetivos(prevObjetivos =>
       prevObjetivos.filter(obj => !marked.includes(obj))
@@ -230,6 +234,7 @@ export default function Timer() {
   }
 
   const handleCheckbox = (objetivo: string, key: number) => {
+    if (finalizada || guardandoRef.current) return
     if (marked.includes(objetivo)) {
       // Esto sirve para no poder desmarcar los objetivos
       return
@@ -397,8 +402,6 @@ export default function Timer() {
     setLastCheckedObj(key)
   }
 
-  console.log(selectedEvent)
-
   return (
     <>
       <Helmet>
@@ -462,6 +465,7 @@ export default function Timer() {
               >
                 <ToggleGroupItem
                   value='Estudiar'
+                  disabled={finalizada}
                   className={`flex w-1/2 items-center justify-center ${isStudying ? 'bg-muted text-muted-foreground' : 'bg-primary/90'}`}
                   onClick={() => handleToggle(true)}
                 >
@@ -470,6 +474,7 @@ export default function Timer() {
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value='Descansar'
+                  disabled={finalizada}
                   className={`flex w-1/2 items-center justify-center ${isStudying ? 'bg-primary/90' : 'bg-muted text-muted-foreground'}`}
                   onClick={() => handleToggle(false)}
                 >
@@ -489,6 +494,7 @@ export default function Timer() {
                   <span className='flex-grow'>
                     <Checkbox
                       checked={marked.includes(objetivo)}
+                      disabled={finalizada}
                       onClick={() => {
                         handleCheckbox(objetivo, key)
                       }}
@@ -504,17 +510,26 @@ export default function Timer() {
             </ul>
           </div>
           <div className='mb-2 mt-6 flex items-center justify-between sm:mb-0 sm:flex-row'>
-            <Button className='w-auto' onClick={handleAccept}>
+            <Button
+              className='w-auto'
+              disabled={guardando}
+              onClick={handleAccept}
+            >
               Volver
             </Button>
             <Button
               className='w-auto'
               variant={'destructive'}
+              disabled={guardando}
               onClick={() => {
-                finalizarSesion()
+                void finalizarSesion()
               }}
             >
-              Finalizar sesión
+              {guardando
+                ? 'Guardando...'
+                : finalizada
+                  ? 'Reintentar guardado'
+                  : 'Finalizar sesión'}
             </Button>
           </div>
         </div>

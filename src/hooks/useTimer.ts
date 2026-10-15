@@ -1,4 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
+import type {
+  CapymetroCommand,
+  CapymetroSnapshot,
+} from '@/lib/timer/capymetroEngine'
+import { createWorkerRequests } from '@/lib/timer/workerRequests'
+
+export type TimerTotals = { studyTime: number; breakTime: number }
 
 export default function useTimer() {
   const [studyTime, setStudyTime] = useState(0)
@@ -6,46 +13,66 @@ export default function useTimer() {
   const [isStudying, setIsStudying] = useState(true)
 
   const workerRef = useRef<Worker | null>()
+  const requestsRef = useRef(createWorkerRequests<TimerTotals>())
 
   useEffect(() => {
-    workerRef.current = new Worker(
-      new URL('../workers/capymetro.ts', import.meta.url)
+    const worker = new Worker(
+      new URL('../workers/capymetro.ts', import.meta.url),
+      { type: 'module' }
     )
+    workerRef.current = worker
 
-    workerRef.current.onmessage = event => {
-      const { timer1, timer2 } = event.data as Record<string, number>
+    worker.onmessage = (
+      event: MessageEvent<CapymetroSnapshot & { requestId?: number }>
+    ) => {
+      const { timer1, timer2, requestId } = event.data
       setStudyTime(timer1)
       setBreakTime(timer2)
+      requestsRef.current.settle(requestId, {
+        studyTime: timer1,
+        breakTime: timer2,
+      })
     }
 
     return () => {
       // Limpiar el worker al desmontar el componente
-      workerRef.current?.terminate()
+      worker.terminate()
+      workerRef.current = null
     }
   }, [])
 
+  function send(command: CapymetroCommand) {
+    workerRef.current?.postMessage(command)
+  }
+
   function startStudy() {
-    workerRef.current?.postMessage('startTimer1')
+    send('startTimer1')
 
     setIsStudying(true)
   }
 
   function pauseStudy() {
-    workerRef.current?.postMessage('pauseTimer1')
+    send('pauseTimer1')
 
     setIsStudying(false)
   }
 
   function resetTimers() {
-    workerRef.current?.postMessage('reset')
+    send('reset')
 
     setStudyTime(0)
     setBreakTime(0)
     setIsStudying(false)
   }
 
+  // Detiene ambos contadores y resuelve con los totales confirmados por el worker.
+  // Rechaza si el worker no responde; se puede volver a llamar sin efectos extra.
   function finalizeTimers() {
-    workerRef.current?.postMessage('finalize')
+    return requestsRef.current.request(requestId => {
+      if (!workerRef.current) return false
+      workerRef.current.postMessage({ command: 'finalize', requestId })
+      return true
+    })
   }
 
   return {

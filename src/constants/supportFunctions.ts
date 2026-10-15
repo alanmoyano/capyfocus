@@ -5,6 +5,30 @@ import {
 import { supabase } from '@/components/supabase/client'
 import type { Session } from '@supabase/supabase-js'
 import type { Event } from '@/components/ComponentesEspecifico/Eventos'
+import {
+  calcularProgresoInactividad,
+  calcularProgresoInsignia,
+  ID_INSIGNIA_INACTIVIDAD,
+  type DatosInsignias,
+  type SesionParaInactividad,
+} from '@/lib/session/insignias'
+import { formatDateDash } from '@/lib/dates'
+import {
+  buildSesionRow,
+  createSaveSessionJob,
+  runSaveSessionJob,
+  type AgregadosUsuario,
+  type ProgresoInsignia,
+  type SaveSessionJob,
+  type SesionAGuardar,
+  type SessionRepository,
+} from '@/lib/session/saveSessionFlow'
+
+export {
+  SaveSessionError,
+  type SaveSessionJob,
+  type SesionAGuardar,
+} from '@/lib/session/saveSessionFlow'
 
 type EventToRecover = {
   idEvento: number
@@ -12,19 +36,6 @@ type EventToRecover = {
   idUsuario: string
   fechaLimite: string
   horasAcumuladas: number | null
-}
-export type SesionAGuardar = {
-  uuid: string
-  horaInicioSesion: string
-  fecha: Date
-  horaFinSesion: string
-  tecnicaEstudio: number
-  tipoMotivacion: number
-  cantidadObjetivosCumplidos: number
-  cantidadObjetivos: number
-  tiempoEstudio: number
-  musicaSeleccionada: number
-  eventoSeleccionado: number | null
 }
 
 export type sessionInfo = {
@@ -77,15 +88,6 @@ async function deleteEvent(date: Date, name: string, uuid: string) {
     .eq('fechaLimite', formatDateDash(date))
     .eq('idUsuario', uuid)
   if (error) console.log(error)
-}
-
-const formatDateDash = (date: Date) => {
-  // Función que nos permite pasar de un objeto tipo date a uno de tipo string en formato YYYY-MM-DD
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-
-  return `${year}-${month}-${day}`
 }
 
 const formatDateDashARG = (date: Date) => {
@@ -180,8 +182,10 @@ async function acumulateHoursInSelectedEvent(
     .eq('idUsuario', uuid)
     .eq('nombre', name)
     .eq('fechaLimite', dateFormatted)
+    .select()
 
-  return data
+  if (error) throw error
+  return data as unknown[]
 }
 
 function getSelectedMusic(title: string) {
@@ -239,195 +243,208 @@ async function acumulateHoursInFavouriteObj(
   uuid: string,
   eventId?: number
 ) {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('ObjetivosFavoritos')
     .update({ horasAcumuladas: time })
     .eq('descripcion', objName)
     .eq('idUsuario', uuid)
 
-  if (error) console.log(error)
-  console.log(eventId)
+  if (error) throw error
   if (eventId) {
-    const ObjetivoMarcado = await getObjectiveByName(objName, uuid)
-    //@ts-expect-error no te preocupes ts, confia en nosotros
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    const idObjetivoMarcado = ObjetivoMarcado[0].id
-    const { data, error } = await supabase
+    const ObjetivoMarcado = (await getObjectiveByName(objName, uuid)) as
+      | { id: number }[]
+      | undefined
+    const idObjetivoMarcado = ObjetivoMarcado?.[0]?.id
+    if (idObjetivoMarcado === undefined) {
+      throw new Error(`No se encontró el objetivo favorito "${objName}"`)
+    }
+    const { error } = await supabase
       .from('ObjetivosFavoritosXEventos')
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       .insert([{ idEvento: eventId, idObjetivoFavorito: idObjetivoMarcado }])
-    if (error) console.log(error)
+    if (error) throw error
   }
-}
-const requisitosInsignias = {
-  1: 25, // Estudiar 25 veces con pasivoAgresivo
-  2: 25, // Estudiar 25 veces con positiva
-  3: 1, // Alcanzar un evento
-  4: 2, // Estudiar por 2 horas seguidas
-  5: 10, // Acumular 10 horas para un evento
-  6: 5, // Finalizar 5 sesiones de estudio
-  7: 15, // Finalizar 15 sesiones de estudio
-  8: 35, // Finalizar 35 sesiones de estudio
-  9: 50, // Finalizar 50 sesiones de estudio
-  10: 100, // Finalizar 100 sesiones de estudio
-  11: 10, // Cumplir todos los objetivos de una sesión
-  12: 35, // Completa 35 objetivos
-  13: 75, // Completa 75 objetivos
-  14: 100, // Completa 100 objetivos
-  15: 30, // Pasa 30 días sin estudiar
 }
 
 export async function getProgresoInsignia(
   idInsignia: number,
-  datosNuevosInsignias: {
-    sesionesNegativas: number
-    sesionesPositivas: number
-    tiempoEstudiado: number
-    sesionesDeEstudio: number
-    objetivosCumplidos: number
-    objetivosSesion: number
-  },
+  datosNuevosInsignias: DatosInsignias,
   events: Event[],
   session: Session
 ) {
-  switch (idInsignia) {
-    case 1: {
-      const porcentaje = Math.round(
-        (datosNuevosInsignias.sesionesNegativas / requisitosInsignias[1]) * 100
-      )
-
-      console.log('porcentaje', porcentaje)
-
-      return porcentaje > 100 ? 100 : porcentaje
-    }
-
-    case 2: {
-      const porcentaje = Math.round(
-        (datosNuevosInsignias.sesionesPositivas / requisitosInsignias[2]) * 100
-      )
-
-      return porcentaje > 100 ? 100 : porcentaje
-    }
-
-    case 3:
-      return events.find(event => event.date.getTime() > new Date().getTime())
-        ? 100
-        : 0
-
-    case 4:
-      return datosNuevosInsignias.tiempoEstudiado >= 2 * 60 * 60 ? 100 : 0
-
-    case 5:
-      return events.find(
-        event => event.hoursAcumulated && event.hoursAcumulated >= 10 * 60 * 60
-      )
-        ? 100
-        : 0
-
-    case 6:
-    case 7:
-    case 8:
-    case 9:
-    case 10: {
-      const porcentaje = Math.round(
-        (datosNuevosInsignias.sesionesDeEstudio /
-          requisitosInsignias[idInsignia]) *
-          100
-      )
-      return porcentaje > 100 ? 100 : porcentaje
-    }
-
-    case 11:
-      return datosNuevosInsignias.objetivosCumplidos >
-        datosNuevosInsignias.objetivosSesion
-        ? 100
-        : 0
-
-    case 12:
-    case 13:
-    case 14: {
-      const calculation = Math.round(
-        (datosNuevosInsignias.objetivosCumplidos /
-          requisitosInsignias[idInsignia]) *
-          100
-      )
-      return calculation > 100 ? 100 : calculation
-    }
-
-    case 15: {
-      const { data, error } = await supabase
-        .from('SesionesDeEstudio')
-        .select()
-        .eq('idUsuario', session.user.id)
-
-      if (error) return 0
-
-      const sesiones = data.map(
-        (sesion: { fecha: string; horaInicioSesion: string }) => {
-          const [año, mes, día] = sesion.fecha.split('-').map(Number)
-          const [horas, minutos, segundos] = sesion.horaInicioSesion
-            .split('+')[0]
-            .split(':')
-            .map(Number)
-
-          return new Date(año, mes - 1, día, horas, minutos, segundos)
-        }
-      )
-
-      const ultimaSesion = sesiones.toSorted(
-        (a, b) => b.getTime() - a.getTime()
-      )[0]
-
-      return new Date().getTime() - ultimaSesion.getTime() >
-        1000 * 60 * 60 * 24 * 30
-        ? 100
-        : 0
-    }
-
-    default:
-      return 1
+  if (idInsignia !== ID_INSIGNIA_INACTIVIDAD) {
+    return calcularProgresoInsignia(
+      idInsignia,
+      datosNuevosInsignias,
+      events,
+      new Date()
+    )
   }
+
+  const { data, error } = await supabase
+    .from('SesionesDeEstudio')
+    .select('fecha,horaInicioSesion')
+    .eq('idUsuario', session.user.id)
+
+  if (error) throw error
+
+  const sesiones: SesionParaInactividad[] = data
+  return calcularProgresoInactividad(sesiones, new Date())
 }
 
 async function insigniaQuince(session: Session) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('CapyInsigniasXUsuarios')
     .select()
     .eq('idUsuario', session.user.id)
-    .eq('idInsignia', 15)
+    .eq('idInsignia', ID_INSIGNIA_INACTIVIDAD)
 
-  if (data && (data[0] as InsigniaXUsuario).progreso === 100) return true
+  if (error) throw error
 
-  await supabase
-    .from('CapyInsigniasXUsuarios')
-    .update({
-      progreso: await getProgresoInsignia(
-        15,
-        {
-          objetivosSesion: 0,
-          sesionesDeEstudio: 0,
-          sesionesNegativas: 0,
-          sesionesPositivas: 0,
-          objetivosCumplidos: 0,
-          tiempoEstudiado: 0,
-        },
-        [],
-        session
-      ),
-    })
-    .eq('idUsuario', session.user.id)
-    .eq('idInsignia', 15)
+  // Un usuario nuevo puede no tener fila de progreso todavía
+  const filaActual = (data as InsigniaXUsuario[]).at(0)
+  if (filaActual?.progreso === 100) return true
+
+  const progreso = await getProgresoInsignia(
+    ID_INSIGNIA_INACTIVIDAD,
+    {
+      objetivosSesion: 0,
+      objetivosCumplidosSesion: 0,
+      sesionesDeEstudio: 0,
+      sesionesNegativas: 0,
+      sesionesPositivas: 0,
+      objetivosCumplidos: 0,
+      tiempoEstudiado: 0,
+    },
+    [],
+    session
+  )
+
+  if (progreso === (filaActual?.progreso ?? 0)) return false
+
+  const { error: saveError } =
+    filaActual === undefined
+      ? await supabase.from('CapyInsigniasXUsuarios').upsert({
+          idInsignia: ID_INSIGNIA_INACTIVIDAD,
+          idUsuario: session.user.id,
+          progreso,
+        })
+      : await supabase
+          .from('CapyInsigniasXUsuarios')
+          .update({ progreso })
+          .eq('idUsuario', session.user.id)
+          .eq('idInsignia', ID_INSIGNIA_INACTIVIDAD)
+
+  if (saveError) throw saveError
 
   return false
 }
 
-async function saveSession(
+// Implementación de SessionRepository sobre Supabase: cada método rechaza ante un error
+const supabaseSessionRepository: SessionRepository = {
+  async insertSesion(row) {
+    const { error } = await supabase.from('SesionesDeEstudio').insert([row])
+    if (error) throw error
+  },
+
+  async getAgregadosUsuario(userId) {
+    const { data, error } = await supabase
+      .from('Usuarios')
+      .select(
+        'objetivosCumplidos,sesionesDeEstudio,sesionesPositivas,sesionesNegativas'
+      )
+      .eq('id', userId)
+    if (error) throw error
+    return ((data as AgregadosUsuario[] | null) ?? [])[0] ?? null
+  },
+
+  // Un UPDATE que no coincide con ninguna fila no devuelve error: se verifica con .select()
+  async updateAgregadosUsuario(userId, agregados) {
+    const { data, error } = await supabase
+      .from('Usuarios')
+      .update(agregados)
+      .eq('id', userId)
+      .select('id')
+    if (error) throw error
+    if ((data as unknown[]).length === 0) {
+      throw new Error('No se actualizaron los datos del usuario')
+    }
+  },
+
+  async updateHorasEvento(userId, evento, horas) {
+    const filas = await acumulateHoursInSelectedEvent(
+      horas,
+      userId,
+      evento.title,
+      evento.date
+    )
+    if (filas.length === 0) {
+      throw new Error(`No se encontró el evento "${evento.title}"`)
+    }
+  },
+
+  async getProgresoInsignias(userId) {
+    const { data, error } = await supabase
+      .from('CapyInsigniasXUsuarios')
+      .select('idInsignia,progreso')
+      .eq('idUsuario', userId)
+    if (error) throw error
+    const filas: ProgresoInsignia[] = data
+    return filas
+  },
+
+  async upsertProgresoInsignia(userId, { idInsignia, progreso }) {
+    const { error } = await supabase
+      .from('CapyInsigniasXUsuarios')
+      .upsert({ idInsignia, idUsuario: userId, progreso })
+      .eq('idInsignia', idInsignia)
+      .eq('idUsuario', userId)
+      .neq('progreso', 100)
+    if (error) throw error
+  },
+}
+
+function buildSaveSessionJob(
   sessionToSave: SesionAGuardar,
   {
-    objCumplidos,
-    hoy,
-    InicioSesion,
-  }: { objCumplidos: number; hoy: Date; InicioSesion: Date },
+    motivationType,
+    insignias,
+    events,
+    selectedEvent,
+  }: {
+    motivationType: string
+    insignias: Insignia[]
+    events: Event[]
+    selectedEvent?: Event | null
+  }
+) {
+  return createSaveSessionJob({
+    sesion: buildSesionRow(sessionToSave),
+    motivationType,
+    insigniaIds: insignias.map(insignia => insignia.id),
+    events,
+    evento: selectedEvent
+      ? {
+          id: selectedEvent.id,
+          title: selectedEvent.title,
+          date: selectedEvent.date,
+          horasPrevias: selectedEvent.hoursAcumulated ?? 0,
+        }
+      : null,
+  })
+}
+
+// Ejecuta o reintenta un job. Rechaza con SaveSessionError si algún paso falla.
+function runSaveSession(job: SaveSessionJob) {
+  return runSaveSessionJob(job, supabaseSessionRepository)
+}
+
+// Guarda la sesión, los agregados del usuario y el progreso de insignias.
+// Resuelve cuando todas las escrituras terminaron y rechaza ante cualquier error.
+// Para poder reintentar sin duplicar escrituras, usar buildSaveSessionJob + runSaveSession.
+async function saveSession(
+  sessionToSave: SesionAGuardar,
+  // Se conserva por compatibilidad; la duración sale de sessionToSave.tiempoEstudio
+  _datosSesion: { objCumplidos: number; hoy: Date; InicioSesion: Date },
   {
     session,
     motivationType,
@@ -442,105 +459,9 @@ async function saveSession(
 ) {
   if (!session) return
 
-  supabase
-    .from('SesionesDeEstudio')
-    .insert([
-      {
-        idUsuario: sessionToSave.uuid,
-        horaInicioSesion: sessionToSave.horaInicioSesion,
-        fecha: sessionToSave.fecha,
-        horaFinSesion: sessionToSave.horaFinSesion,
-        tecnicaEstudio: sessionToSave.tecnicaEstudio,
-        tipoMotivacion: sessionToSave.tipoMotivacion,
-        cantidadObjetivosCumplidos: sessionToSave.cantidadObjetivosCumplidos,
-        cantidadObjetivos: sessionToSave.cantidadObjetivos,
-        tiempoEstudio: sessionToSave.tiempoEstudio,
-        musicaSeleccionada: sessionToSave.musicaSeleccionada,
-        eventoSeleccionado: sessionToSave.eventoSeleccionado,
-      },
-    ])
-    .select()
-    .then(({ data, error }) => {
-      if (error) console.log(error)
-      else console.log('Datos guardados correctamente', data)
-    })
-
-  let capyDatosParaEstadisticas = {
-    objetivosCumplidos: 0,
-    sesionesDeEstudio: 0,
-    sesionesNegativas: 0,
-    sesionesPositivas: 0,
-  }
-
-  await supabase
-    .from('Usuarios')
-    .select(
-      'objetivosCumplidos,sesionesDeEstudio,sesionesPositivas,sesionesNegativas'
-    )
-    .eq('id', session.user.id)
-    .then(({ data, error }) => {
-      if (error) console.error(error)
-      if (!data) return
-
-      capyDatosParaEstadisticas = data[0] as typeof capyDatosParaEstadisticas
-    })
-
-  console.log('datos totales antes de sumar', capyDatosParaEstadisticas)
-
-  const nuevosCapyDatosParaEstadisticas = {
-    objetivosCumplidos:
-      capyDatosParaEstadisticas.objetivosCumplidos + objCumplidos,
-    sesionesDeEstudio: capyDatosParaEstadisticas.sesionesDeEstudio + 1,
-    sesionesPositivas:
-      capyDatosParaEstadisticas.sesionesPositivas +
-      (motivationType === 'Positiva' ? 1 : 0),
-    sesionesNegativas:
-      capyDatosParaEstadisticas.sesionesNegativas +
-      (motivationType === 'Pasivo Agresiva' ? 1 : 0),
-  }
-
-  console.log(nuevosCapyDatosParaEstadisticas)
-
-  supabase
-    .from('Usuarios')
-    .update(nuevosCapyDatosParaEstadisticas)
-    .eq('id', session.user.id)
-    .select()
-    .then(({ data, error }) => {
-      if (error) console.log(error)
-      else console.log(data)
-    })
-
-  const datosNuevosInsignias = {
-    objetivosSesion: sessionToSave.cantidadObjetivos,
-    tiempoEstudiado: (hoy.getTime() - InicioSesion.getTime()) / 1000,
-    ...nuevosCapyDatosParaEstadisticas,
-  }
-
-  for (const insignia of insignias) {
-    if (insignia.id === 15) continue
-
-    supabase
-      .from('CapyInsigniasXUsuarios')
-      .upsert({
-        idInsignia: insignia.id,
-        idUsuario: session.user.id,
-        progreso: await getProgresoInsignia(
-          insignia.id,
-          datosNuevosInsignias,
-          events,
-          session
-        ),
-      })
-      .eq('idInsignia', insignia.id)
-      .eq('idUsuario', session.user.id)
-      .neq('progreso', 100)
-      .select()
-      .then(({ data, error }) => {
-        if (error) console.error(error)
-        console.log(data)
-      })
-  }
+  await runSaveSession(
+    buildSaveSessionJob(sessionToSave, { motivationType, insignias, events })
+  )
 }
 
 export {
@@ -559,5 +480,7 @@ export {
   obtenerClaveMayorValor,
   recoverObjectiveFromId,
   saveSession,
+  buildSaveSessionJob,
+  runSaveSession,
   insigniaQuince,
 }

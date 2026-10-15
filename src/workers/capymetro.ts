@@ -1,49 +1,30 @@
-let timer1 = 0
-let timer2 = 0
-let intervalId1: NodeJS.Timeout
-let intervalId2: NodeJS.Timeout
+import {
+  applyCapymetroCommand,
+  capymetroSnapshot,
+  createCapymetroState,
+  isCapymetroRunning,
+  type CapymetroCommand,
+} from '../lib/timer/capymetroEngine.ts'
+import { createWorkerHost } from '../lib/timer/workerHost.ts'
 
-onmessage = function (e) {
-  switch (e.data) {
-    case 'startTimer1': {
-      clearInterval(intervalId2)
-      intervalId1 = setInterval(() => {
-        timer1++
-        postMessage({ timer1, timer2 })
-        // console.log(
-        //   `timer1: ${timer1}, timer2: ${timer2} at ${new Date().toLocaleString()}`
-        // )
-      }, 1000)
-      return
-    }
-    case 'pauseTimer1': {
-      clearInterval(intervalId1)
-      intervalId2 = setInterval(() => {
-        timer2++
-        postMessage({ timer1, timer2 })
-        // console.log(
-        //   `timer1: ${timer1}, timer2: ${timer2} at ${new Date().toLocaleString()}`
-        // )
-      }, 1000)
-      return
-    }
-    case 'reset': {
-      timer1 = 0
-      timer2 = 0
-      clearInterval(intervalId1)
-      clearInterval(intervalId2)
-      postMessage({ timer1, timer2 })
-      return
-    }
-    case 'finalize': {
-      clearInterval(intervalId1)
-      clearInterval(intervalId2)
-      postMessage({ timer1, timer2 })
+type Message =
+  | CapymetroCommand
+  | { command: CapymetroCommand; requestId: number }
 
-      return
-    }
-    default: {
-      return { timer1, timer2 }
-    }
-  }
+const host = createWorkerHost({
+  initialState: createCapymetroState(),
+  apply: applyCapymetroCommand,
+  snapshot: capymetroSnapshot,
+  isRunning: isCapymetroRunning,
+  now: () => Date.now(),
+  scheduler: {
+    setInterval: (callback, ms) => setInterval(callback, ms),
+    clearInterval: id => clearInterval(id as ReturnType<typeof setInterval>),
+  },
+  post: snapshot => postMessage(snapshot),
+})
+
+onmessage = function (e: MessageEvent<Message>) {
+  if (typeof e.data === 'string') host.handle(e.data)
+  else host.handle(e.data.command, e.data.requestId)
 }
