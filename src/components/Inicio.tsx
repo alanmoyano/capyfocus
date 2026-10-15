@@ -299,11 +299,13 @@ export default function Inicio() {
         setObjetivosFav(prev => combinarFavoritos(remotos, prev, sync))
         setTiempoFavorito(prev => combinarTiempoFavorito(prev, remotos))
         // Objetivos escritos antes de la carga que equivalen a un favorito
+        // (los que tienen un alta en vuelo adoptan el texto al confirmarse)
         reconciliarConFavoritos(
           objetivosActuales.current,
           remotos.map(favorito => favorito.descripcion)
         ).forEach(([anterior, nuevo]) => {
-          renombrarObjetivo(anterior, nuevo)
+          if (!sync.tieneAltaPendiente(anterior))
+            renombrarObjetivo(anterior, nuevo)
         })
         setEstadoFavoritos('listo')
       })
@@ -526,7 +528,10 @@ export default function Inicio() {
         )
       })
       .finally(() => {
-        marcarFavoritoPendiente(objetivo, false)
+        // Tras cambiar de identidad los pendientes ya se reiniciaron: no
+        // liberar el de una operación nueva con el mismo texto
+        if (sync.generacion() === generacion)
+          marcarFavoritoPendiente(objetivo, false)
       })
   }
 
