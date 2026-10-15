@@ -11,7 +11,10 @@
 
 export type CapymetroPhase = 'idle' | 'study' | 'break' | 'stopped'
 export type CapymetroCommand =
-  'startTimer1' | 'pauseTimer1' | 'finalize' | 'reset'
+  | 'startTimer1'
+  | 'pauseTimer1'
+  | 'finalize'
+  | 'reset'
 
 export type CapymetroState = {
   phase: CapymetroPhase

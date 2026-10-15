@@ -252,7 +252,8 @@ async function acumulateHoursInFavouriteObj(
   if (error) throw error
   if (eventId) {
     const ObjetivoMarcado = (await getObjectiveByName(objName, uuid)) as
-      { id: number }[] | undefined
+      | { id: number }[]
+      | undefined
     const idObjetivoMarcado = ObjetivoMarcado?.[0]?.id
     if (idObjetivoMarcado === undefined) {
       throw new Error(`No se encontró el objetivo favorito "${objName}"`)

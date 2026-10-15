@@ -8,7 +8,8 @@ import {
 import { createWorkerHost } from '../lib/timer/workerHost.ts'
 
 type Message =
-  CapymetroCommand | { command: CapymetroCommand; requestId: number }
+  | CapymetroCommand
+  | { command: CapymetroCommand; requestId: number }
 
 const host = createWorkerHost({
   initialState: createCapymetroState(),
